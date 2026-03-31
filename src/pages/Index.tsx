@@ -7,6 +7,7 @@ import StatsSection from "@/components/StatsSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import AchievementsSection from "@/components/AchievementsSection";
 import BCareWhySection from "@/components/BCareWhySection";
+import FAQSection from "@/components/FAQSection";
 import Footer from "@/components/Footer";
 import PullToRefresh from "@/components/PullToRefresh";
 import { toast } from "sonner";
