@@ -863,7 +863,7 @@ const InsuranceOffers = () => {
                             : "text-muted-foreground hover:text-foreground"
                         }`}
                       >
-                        {compareList.includes(offer.id) ? "✓ مقارنة" : "قارن"}
+                        {compareList.includes(offer.id) ? of.compareSelected : of.compare}
                       </button>
                     </div>
                   </div>
