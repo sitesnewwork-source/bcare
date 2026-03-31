@@ -42,7 +42,7 @@ const featureSets: Record<string, { title: string; items: { icon: any; title: st
     ],
   },
   travel: {
-    title: "سافر وأنت مطمّن مع بي كير",
+    title: "سافر مأمّن ومتطمّن مع بي كير",
     items: [
       { icon: Shield, title: "تغطية عالمية", desc: "تأمين سفر يغطي جميع أنحاء العالم بتغطية شاملة" },
       { icon: Zap, title: "إصدار فوري", desc: "احصل على وثيقة التأمين فوراً بعد الشراء" },
