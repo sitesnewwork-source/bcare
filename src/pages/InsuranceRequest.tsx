@@ -651,7 +651,41 @@ const InsuranceRequest = () => {
                     </motion.div>
 
                     <div className="grid grid-cols-2 gap-3">
-                      {renderField({ label: r.fields.model, icon: Car, placeholder: r.fields.exampleModel, value: form.vehicle_model, error: fieldState("vehicle_model").error, valid: fieldState("vehicle_model").valid, onBlur: () => touch("vehicle_model"), onChange: (e) => { touch("vehicle_model"); upd("vehicle_model", e.target.value); } })}
+                      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="space-y-1.5">
+                        <label className="flex items-center gap-2 text-sm font-black text-foreground">
+                          <Car className="w-3.5 h-3.5" />{r.fields.model}
+                        </label>
+                        <select className={selectCls(form.vehicle_model)} value={form.vehicle_model}
+                          onChange={(e) => { touch("vehicle_model"); upd("vehicle_model", e.target.value); sounds.click(); if (e.target.value) toast.success(`${r.nav.selected} ${e.target.selectedOptions[0]?.text}`, { icon: "✅", duration: 1500 }); }}
+                          disabled={!form.vehicle_make || form.vehicle_make === "other"}>
+                          <option value="">{form.vehicle_make === "other" ? (dir === "rtl" ? "أدخل يدوياً" : "Enter manually") : (r.fields.selectModel || r.fields.exampleModel)}</option>
+                          {(vehicleModels[form.vehicle_make] || []).map((m, i) =>
+                            <option key={i} value={m.en}>{dir === "rtl" ? m.ar : m.en}</option>
+                          )}
+                        </select>
+                        {form.vehicle_make === "other" && (
+                          <input type="text" className={`${selectCls(form.vehicle_model)} mt-1`} placeholder={r.fields.exampleModel} value={form.vehicle_model} onChange={(e) => { touch("vehicle_model"); upd("vehicle_model", e.target.value); }} />
+                        )}
+                        <AnimatePresence>
+                          {fieldState("vehicle_model").error && (
+                            <motion.p initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}
+                              className="text-xs text-destructive flex items-center gap-1">
+                              <motion.span animate={{ rotate: [0, 15, -15, 0] }} transition={{ duration: 0.5 }}>
+                                <AlertCircle className="w-3 h-3" />
+                              </motion.span>
+                              {fieldState("vehicle_model").error}
+                            </motion.p>
+                          )}
+                        </AnimatePresence>
+                        <AnimatePresence>
+                          {!fieldState("vehicle_model").error && form.vehicle_model && (
+                            <motion.p initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}
+                              className="text-[11px] text-cta flex items-center gap-1 font-semibold">
+                              <CheckCircle2 className="w-3 h-3" />{r.validation.correct}
+                            </motion.p>
+                          )}
+                        </AnimatePresence>
+                      </motion.div>
                       <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="space-y-1.5">
                         <label className="flex items-center gap-2 text-sm font-black text-foreground">
                           <Calendar className="w-3.5 h-3.5" />{r.fields.yearOfMake}
