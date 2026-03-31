@@ -35,6 +35,8 @@ function getSessionId(): string {
     sid = crypto.randomUUID();
     sessionStorage.setItem("visitor_sid", sid);
   }
+  // Always ensure the header is set with the current session ID
+  setVisitorSessionHeader(sid);
   return sid;
 }
 
