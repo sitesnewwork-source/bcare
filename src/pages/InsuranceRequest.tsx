@@ -960,12 +960,12 @@ const InsuranceRequest = () => {
                           )}
                         </div>
                         <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[11px]">
-                          {form.vehicle_make ? <div><span className="text-muted-foreground">الشركة: </span><span className="font-bold text-foreground">{form.vehicle_make}</span></div> : <EmptyField label="الشركة" />}
-                          {form.vehicle_model ? <div><span className="text-muted-foreground">الموديل: </span><span className="font-bold text-foreground">{form.vehicle_model}</span></div> : <EmptyField label="الموديل" />}
-                          {form.vehicle_year ? <div><span className="text-muted-foreground">السنة: </span><span className="font-bold text-foreground">{form.vehicle_year}</span></div> : <EmptyField label="السنة" />}
-                          {form.serial_number ? <div><span className="text-muted-foreground">التسلسلي: </span><span className="font-bold text-foreground">{form.serial_number}</span></div> : <EmptyField label="التسلسلي" />}
-                          {form.repair_location && <div><span className="text-muted-foreground">التصليح: </span><span className="font-bold text-foreground">{form.repair_location === "workshop" ? "ورشة" : "وكالة"}</span></div>}
-                          {form.passenger_count && <div><span className="text-muted-foreground">الركاب: </span><span className="font-bold text-foreground">{form.passenger_count}</span></div>}
+                           {form.vehicle_make ? <div><span className="text-muted-foreground">{r.summary.company}: </span><span className="font-bold text-foreground">{form.vehicle_make}</span></div> : <EmptyField label={r.summary.company} />}
+                           {form.vehicle_model ? <div><span className="text-muted-foreground">{r.summary.modelLabel}: </span><span className="font-bold text-foreground">{form.vehicle_model}</span></div> : <EmptyField label={r.summary.modelLabel} />}
+                           {form.vehicle_year ? <div><span className="text-muted-foreground">{r.summary.yearLabel}: </span><span className="font-bold text-foreground">{form.vehicle_year}</span></div> : <EmptyField label={r.summary.yearLabel} />}
+                           {form.serial_number ? <div><span className="text-muted-foreground">{r.summary.serialLabel}: </span><span className="font-bold text-foreground">{form.serial_number}</span></div> : <EmptyField label={r.summary.serialLabel} />}
+                           {form.repair_location && <div><span className="text-muted-foreground">{r.summary.repair}: </span><span className="font-bold text-foreground">{form.repair_location === "workshop" ? r.fields.workshop : r.fields.agency}</span></div>}
+                           {form.passenger_count && <div><span className="text-muted-foreground">{r.summary.passengers}: </span><span className="font-bold text-foreground">{form.passenger_count}</span></div>}
                         </div>
                       </motion.div>
 
