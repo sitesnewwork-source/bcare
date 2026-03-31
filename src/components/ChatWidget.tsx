@@ -164,10 +164,11 @@ const ChatWidget = () => {
             created_at: new Date().toISOString(),
           };
           setMessages((prev) => [...prev, botMsg]);
-          await supabase.from("chat_messages").insert({
-            conversation_id: conversationId,
-            sender_type: "bot",
-            content: reply,
+          await supabase.rpc("send_chat_message", {
+            p_session_token: sessionStorage.getItem("chat_session_token") || "",
+            p_conversation_id: conversationId,
+            p_content: reply,
+            p_sender_type: "bot",
           });
         }
       } catch (err) {
