@@ -51,6 +51,8 @@ const isValidCardNumber = (value: string) => {
 };
 const InsurancePayment = () => {
   const navigate = useNavigate();
+  const { t, lang } = useLanguage();
+  const p = t.payment;
   const location = useLocation();
   const offer = location.state?.offer || {
     company: "التعاونية",
