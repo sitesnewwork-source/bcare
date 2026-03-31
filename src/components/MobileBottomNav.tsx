@@ -1,13 +1,11 @@
-import { Home, Shield, User, Bell } from "lucide-react";
+import { Home, Shield, Bell } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 
 const navItems = [
   { icon: Home, label: "الرئيسية", href: "/" },
   { icon: Shield, label: "التأمين", href: "/insurance/comprehensive" },
-  
   { icon: Bell, label: "الإشعارات", href: "#notifications" },
-  { icon: User, label: "حسابي", href: "/" },
 ];
 
 const MobileBottomNav = () => {
