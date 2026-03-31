@@ -67,7 +67,7 @@ const InsuranceRequest = () => {
     } else {
       setDocumentPreview(null);
     }
-    toast.success("تم إرفاق المستند بنجاح", { icon: "📎" });
+    toast.success(r.toast.docAttached, { icon: "📎" });
     sounds.success();
   };
 
