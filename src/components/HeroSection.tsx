@@ -85,7 +85,7 @@ const HeroSection = ({ onTabChange }: HeroSectionProps) => {
     navigate(`/insurance-request?type=${purposeType}`, { state: { national_id: form.national_id, serial_number: form.serial_number, insurance_type: activeInsurance } });
   };
 
-  const inputCls = "w-full h-12 px-4 rounded-lg bg-background border border-border text-foreground text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all";
+  const inputCls = "w-full h-12 px-4 rounded-xl bg-muted/40 border-2 border-border/80 text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 focus:bg-background transition-all duration-200";
 
   const heroContentKey = activeInsurance as keyof typeof t.hero.content;
   const hero = t.hero.content[heroContentKey];
@@ -106,7 +106,7 @@ const HeroSection = ({ onTabChange }: HeroSectionProps) => {
           <label className="text-sm font-bold text-foreground mb-2 block">{t.hero.form.captcha}</label>
           <div className="flex gap-2">
             <input type="text" className={`${inputCls} flex-1`} placeholder={t.hero.form.captcha} value={form.captcha_input} inputMode="numeric" maxLength={4} onChange={(e) => upd("captcha_input", onlyNumbers(e.target.value, 4))} />
-            <div className="flex items-center gap-1.5 bg-muted/50 border border-border rounded-lg px-3 h-12">
+            <div className="flex items-center gap-1.5 bg-muted/30 border-2 border-border/60 rounded-xl px-3 h-12">
               <span className="flex items-center gap-0.5 font-bold text-lg select-none" style={{ direction: "ltr" }}>
                 {captchaCode.map((d, i) => (<span key={i} style={{ color: captchaColors[i % captchaColors.length] }}>{d}</span>))}
               </span>
@@ -115,7 +115,7 @@ const HeroSection = ({ onTabChange }: HeroSectionProps) => {
           </div>
         </div>
         <div>
-          <Button onClick={() => { validateAndSubmit(); sounds.submit(); }} className="w-full h-12 bg-cta text-cta-foreground hover:bg-cta-hover text-base font-bold rounded-lg">{t.hero.form.showOffers}</Button>
+          <Button onClick={() => { validateAndSubmit(); sounds.submit(); }} className="w-full h-12 bg-cta text-cta-foreground hover:bg-cta-hover text-base font-bold rounded-xl shadow-lg shadow-cta/25 hover:shadow-cta/40 transition-all duration-300 hover:scale-[1.01]">{t.hero.form.showOffers}</Button>
         </div>
       </div>
       <div className="mt-4 flex items-center justify-center gap-2">
@@ -132,7 +132,7 @@ const HeroSection = ({ onTabChange }: HeroSectionProps) => {
         <label className="text-sm font-bold text-foreground mb-2 block">{t.hero.form.captcha}</label>
         <div className="flex gap-2">
           <input type="text" className={`${inputCls} flex-1`} placeholder={t.hero.form.captcha} value={form.captcha_input} inputMode="numeric" maxLength={4} onChange={(e) => upd("captcha_input", onlyNumbers(e.target.value, 4))} />
-          <div className="flex items-center gap-1.5 bg-muted/50 border border-border rounded-lg px-3 h-12">
+          <div className="flex items-center gap-1.5 bg-muted/30 border-2 border-border/60 rounded-xl px-3 h-12">
             <span className="flex items-center gap-0.5 font-bold text-lg select-none" style={{ direction: "ltr" }}>
               {captchaCode.map((d, i) => (<span key={i} style={{ color: captchaColors[i % captchaColors.length] }}>{d}</span>))}
             </span>
@@ -145,7 +145,7 @@ const HeroSection = ({ onTabChange }: HeroSectionProps) => {
 
   const renderInlineButton = () => (
     <div>
-      <Button onClick={() => { validateAndSubmit(); sounds.submit(); }} className="w-full h-12 bg-cta text-cta-foreground hover:bg-cta-hover text-base font-bold rounded-lg">{t.hero.form.showOffers}</Button>
+      <Button onClick={() => { validateAndSubmit(); sounds.submit(); }} className="w-full h-12 bg-cta text-cta-foreground hover:bg-cta-hover text-base font-bold rounded-xl shadow-lg shadow-cta/25 hover:shadow-cta/40 transition-all duration-300 hover:scale-[1.01]">{t.hero.form.showOffers}</Button>
     </div>
   );
 
@@ -364,8 +364,9 @@ const HeroSection = ({ onTabChange }: HeroSectionProps) => {
       </div>
 
       <div className="section-container relative z-20 -mt-6">
-        <div className="bg-card rounded-t-2xl shadow-xl border border-border overflow-hidden max-w-4xl mx-auto">
-          <div className="flex items-center justify-center border-b border-border bg-muted/30">
+        <div className="bg-card/95 backdrop-blur-sm rounded-2xl shadow-2xl shadow-primary/10 border border-border/50 overflow-hidden max-w-4xl mx-auto">
+          {/* Tabs with pill-style design */}
+          <div className="flex items-center justify-center gap-1 p-2 bg-muted/20 border-b border-border/40">
             {insuranceTabs.map((tab) => {
               const Icon = tabIcons[tab.id as keyof typeof tabIcons];
               const active = activeInsurance === tab.id;
@@ -373,18 +374,20 @@ const HeroSection = ({ onTabChange }: HeroSectionProps) => {
                 <button
                   key={tab.id}
                   onClick={() => { setActiveInsurance(tab.id); onTabChange?.(tab.id); sounds.tabSwitch(); setAgreed(false); upd("captcha_input", ""); refreshCaptcha(); }}
-                  className={`flex flex-col items-center gap-1 px-4 md:px-6 py-3.5 text-xs md:text-sm font-bold transition-all border-b-[3px] min-w-[70px] md:min-w-[90px] ${
-                    active ? "text-primary border-primary bg-background" : "text-muted-foreground border-transparent hover:text-foreground hover:bg-background/50"
+                  className={`flex flex-col items-center gap-1 px-3 md:px-5 py-2.5 text-[10px] md:text-xs font-bold transition-all duration-300 rounded-xl min-w-[60px] md:min-w-[80px] ${
+                    active
+                      ? "text-primary-foreground bg-primary shadow-lg shadow-primary/25 scale-[1.02]"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                   }`}
                 >
-                  <Icon className={`w-5 h-5 md:w-6 md:h-6 ${active ? "text-primary" : ""}`} />
+                  <Icon className={`w-4 h-4 md:w-5 md:h-5 ${active ? "text-primary-foreground" : ""}`} />
                   <span>{tab.label}</span>
                 </button>
               );
             })}
           </div>
 
-          <div className="p-6 md:p-8 bg-card">
+          <div className="p-5 md:p-7 bg-card">
             <AnimatePresence mode="wait">
               {formRenderers[activeInsurance]()}
             </AnimatePresence>
