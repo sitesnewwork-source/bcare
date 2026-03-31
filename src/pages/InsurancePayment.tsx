@@ -286,9 +286,6 @@ const InsurancePayment = () => {
                             )}
                           </AnimatePresence>
 
-                          <p className="mt-2 text-[11px] text-muted-foreground">
-                            {p.cardAutoDetect}
-                          </p>
                         </div>
 
                         {/* Card Holder */}
