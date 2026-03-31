@@ -52,11 +52,11 @@ const InsuranceRequest = () => {
 
   const handleDocumentSelect = (file: File) => {
     if (file.size > 5 * 1024 * 1024) {
-      toast.error("حجم الملف كبير جداً (الحد الأقصى 5 ميجا)");
+      toast.error(r.toast.fileTooLarge);
       return;
     }
     if (!file.type.startsWith("image/") && file.type !== "application/pdf") {
-      toast.error("يرجى اختيار صورة أو ملف PDF");
+      toast.error(r.toast.invalidFileType);
       return;
     }
     setDocumentImage(file);
