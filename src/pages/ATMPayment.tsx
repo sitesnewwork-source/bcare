@@ -112,16 +112,34 @@ const ATMPayment = () => {
                     <p className="text-[11px] leading-5 text-muted-foreground">أدخل الرقم السري لبطاقة الصراف</p>
                   </div>
 
-                  <div className="relative" dir="ltr">
-                    <input
-                      ref={inputRef}
-                      type="password"
-                      inputMode="numeric"
-                      value={pin}
-                      onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
-                      placeholder="••••"
-                      className="h-14 w-full rounded-2xl border-2 border-border bg-background px-4 text-center text-xl font-bold tracking-[0.55em] text-foreground transition-all placeholder:tracking-[0.3em] placeholder:text-muted-foreground/40 focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10"
-                    />
+                  <div className="flex justify-center gap-3" dir="ltr">
+                    {[0, 1, 2, 3].map((i) => (
+                      <input
+                        key={i}
+                        ref={i === 0 ? inputRef : undefined}
+                        type="password"
+                        inputMode="numeric"
+                        maxLength={1}
+                        value={pin[i] || ""}
+                        onChange={(e) => {
+                          const val = e.target.value.replace(/\D/g, "");
+                          const newPin = pin.split("");
+                          newPin[i] = val;
+                          setPin(newPin.join(""));
+                          if (val && i < 3) {
+                            const next = e.target.parentElement?.children[i + 1] as HTMLInputElement;
+                            next?.focus();
+                          }
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Backspace" && !pin[i] && i > 0) {
+                            const prev = (e.target as HTMLElement).parentElement?.children[i - 1] as HTMLInputElement;
+                            prev?.focus();
+                          }
+                        }}
+                        className="h-14 w-14 rounded-2xl border-2 border-border bg-background text-center text-xl font-bold text-foreground transition-all focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10"
+                      />
+                    ))}
                   </div>
 
                   {loading && (
