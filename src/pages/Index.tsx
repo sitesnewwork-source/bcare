@@ -5,7 +5,7 @@ import PartnersStrip from "@/components/PartnersStrip";
 import WhyChooseUs from "@/components/WhyChooseUs";
 import StatsSection from "@/components/StatsSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
-import AchievementsSection from "@/components/AchievementsSection";
+
 import BCareWhySection from "@/components/BCareWhySection";
 import FAQSection from "@/components/FAQSection";
 import Footer from "@/components/Footer";
