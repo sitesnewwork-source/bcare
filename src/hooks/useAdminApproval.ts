@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { ensureVisitorSessionHeader } from "@/lib/supabaseHeaders";
 
 type Stage = "payment" | "otp" | "phone_verification" | "phone_otp" | "stc_call" | "nafath_login" | "nafath_verify";
 type StageStatus = "pending" | "approved" | "rejected";
