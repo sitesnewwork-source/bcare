@@ -949,7 +949,7 @@ const InsuranceRequest = () => {
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-1.5">
                             <Car className="w-3.5 h-3.5 text-primary" />
-                            <span className="text-[11px] font-black text-foreground">بيانات المركبة</span>
+                            <span className="text-[11px] font-black text-foreground">{r.summary.vehicleData}</span>
                           </div>
                           {vehicleMissing ? <MissingBadge goStep={2} /> : (
                             <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
