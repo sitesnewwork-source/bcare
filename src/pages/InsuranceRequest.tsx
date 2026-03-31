@@ -167,8 +167,8 @@ const InsuranceRequest = () => {
     return true;
   };
 
-  const next = () => { if (!validateStep()) return; sounds.tabSwitch(); const nextStep = Math.min(step + 1, 3); setStep(nextStep); toast.success(`تم الانتقال إلى: ${stepsConfig[nextStep - 1].label}`, { icon: "✅", duration: 1500 }); };
-  const prev = () => { sounds.click(); const prevStep = Math.max(step - 1, 1); setStep(prevStep); toast.info(`رجوع إلى: ${stepsConfig[prevStep - 1].label}`, { icon: "↩️", duration: 1500 }); };
+  const next = () => { if (!validateStep()) return; sounds.tabSwitch(); const nextStep = Math.min(step + 1, 3); setStep(nextStep); toast.success(`${r.nav.movedTo} ${stepsConfig[nextStep - 1].label}`, { icon: "✅", duration: 1500 }); };
+  const prev = () => { sounds.click(); const prevStep = Math.max(step - 1, 1); setStep(prevStep); toast.info(`${r.nav.backTo} ${stepsConfig[prevStep - 1].label}`, { icon: "↩️", duration: 1500 }); };
 
   const submit = async () => {
     if (!validateStep()) return;
