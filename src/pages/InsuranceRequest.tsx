@@ -616,39 +616,85 @@ const InsuranceRequest = () => {
 
                     {renderField({ label: r.fields.serialNumber, icon: Hash, placeholder: r.fields.serialNumber, value: form.serial_number, error: fieldState("serial_number").error, valid: fieldState("serial_number").valid, inputMode: "numeric", onBlur: () => touch("serial_number"), onChange: (e) => { touch("serial_number"); const digits = e.target.value.replace(/\D/g, ""); upd("serial_number", digits.slice(0, 17)); } })}
 
-                    <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="space-y-1.5">
-                      <label className="flex items-center gap-2 text-sm font-black text-foreground">
-                        <Truck className="w-3.5 h-3.5" />{r.fields.manufacturer}
-                      </label>
-                      <motion.div whileFocus={{ scale: 1.01 }}>
-                        <select className={selectCls(form.vehicle_make)} value={form.vehicle_make}
-                          onChange={(e) => { touch("vehicle_make"); upd("vehicle_make", e.target.value); upd("vehicle_model", ""); sounds.click(); if (e.target.value) { const label = e.target.selectedOptions[0]?.text; toast.success(`${r.nav.selected} ${label}`, { icon: "✅", duration: 1500 }); } }}>
-                          <option value="">{r.fields.selectCompany}</option>
-                          {r.manufacturers.map((c: string, i: number) =>
-                            <option key={i} value={["toyota","hyundai","kia","nissan","chevrolet","ford","honda","mazda","bmw","mercedes","lexus","jeep","genesis","audi","volkswagen","gmc","mitsubishi","dodge","cadillac","landrover","porsche","other"][i]}>{c}</option>
-                          )}
-                        </select>
-                      </motion.div>
-                      <AnimatePresence>
-                        {fieldState("vehicle_make").error && (
-                          <motion.p initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}
-                            className="text-xs text-destructive flex items-center gap-1">
-                            <motion.span animate={{ rotate: [0, 15, -15, 0] }} transition={{ duration: 0.5 }}>
-                              <AlertCircle className="w-3 h-3" />
-                            </motion.span>
-                            {fieldState("vehicle_make").error}
-                          </motion.p>
-                        )}
-                      </AnimatePresence>
-                      <AnimatePresence>
-                        {!fieldState("vehicle_make").error && form.vehicle_make && (
-                          <motion.p initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}
-                            className="text-[11px] text-cta flex items-center gap-1 font-semibold">
-                            <CheckCircle2 className="w-3 h-3" />{r.validation.correct}
-                          </motion.p>
-                        )}
-                      </AnimatePresence>
-                    </motion.div>
+                    {(() => {
+                      const makeKeys = ["toyota","hyundai","kia","nissan","chevrolet","ford","honda","mazda","bmw","mercedes","lexus","jeep","genesis","audi","volkswagen","gmc","mitsubishi","dodge","cadillac","landrover","porsche","other"];
+                      const makeLabels = r.manufacturers as string[];
+                      const [makeSearch, setMakeSearch] = useState("");
+                      const [makeOpen, setMakeOpen] = useState(false);
+                      const makeRef = useRef<HTMLDivElement>(null);
+
+                      React.useEffect(() => {
+                        const handler = (e: MouseEvent) => {
+                          if (makeRef.current && !makeRef.current.contains(e.target as Node)) setMakeOpen(false);
+                        };
+                        if (makeOpen) document.addEventListener("mousedown", handler);
+                        return () => document.removeEventListener("mousedown", handler);
+                      }, [makeOpen]);
+
+                      const filteredMakes = makeKeys.map((key, i) => ({ key, label: makeLabels[i] || key })).filter(m =>
+                        m.label.toLowerCase().includes(makeSearch.toLowerCase()) || m.key.toLowerCase().includes(makeSearch.toLowerCase())
+                      );
+                      const selectedMakeLabel = form.vehicle_make ? (makeLabels[makeKeys.indexOf(form.vehicle_make)] || form.vehicle_make) : "";
+
+                      return (
+                        <motion.div ref={makeRef} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="space-y-1.5 relative">
+                          <label className="flex items-center gap-2 text-sm font-black text-foreground">
+                            <Truck className="w-3.5 h-3.5" />{r.fields.manufacturer}
+                          </label>
+                          <button type="button"
+                            className={`${selectCls(form.vehicle_make)} text-start flex items-center justify-between`}
+                            onClick={() => setMakeOpen(!makeOpen)}>
+                            <span className={form.vehicle_make ? "text-foreground" : "text-muted-foreground"}>
+                              {selectedMakeLabel || r.fields.selectCompany}
+                            </span>
+                            <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${makeOpen ? "rotate-180" : ""}`} />
+                          </button>
+                          <AnimatePresence>
+                            {makeOpen && (
+                              <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }} transition={{ duration: 0.15 }}
+                                className="absolute z-50 top-full mt-1 w-full bg-background border-2 border-primary/20 rounded-xl shadow-lg overflow-hidden">
+                                <div className="p-2 border-b border-border">
+                                  <input type="text" autoFocus placeholder={dir === "rtl" ? "ابحث عن شركة..." : "Search manufacturer..."}
+                                    className="w-full px-3 py-2 text-sm bg-muted/40 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-primary/30"
+                                    value={makeSearch} onChange={(e) => setMakeSearch(e.target.value)} />
+                                </div>
+                                <div className="max-h-48 overflow-y-auto">
+                                  {filteredMakes.length === 0 ? (
+                                    <p className="text-xs text-muted-foreground text-center py-3">{dir === "rtl" ? "لا توجد نتائج" : "No results"}</p>
+                                  ) : filteredMakes.map((m) => (
+                                    <button key={m.key} type="button"
+                                      className={`w-full text-start px-3 py-2 text-sm hover:bg-primary/10 transition-colors flex items-center justify-between ${form.vehicle_make === m.key ? "bg-primary/15 font-bold text-primary" : "text-foreground"}`}
+                                      onClick={() => { touch("vehicle_make"); upd("vehicle_make", m.key); upd("vehicle_model", ""); setMakeOpen(false); setMakeSearch(""); sounds.click(); toast.success(`${r.nav.selected} ${m.label}`, { icon: "✅", duration: 1500 }); }}>
+                                      <span>{m.label}</span>
+                                      {form.vehicle_make === m.key && <CheckCircle2 className="w-3.5 h-3.5 text-primary" />}
+                                    </button>
+                                  ))}
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                          <AnimatePresence>
+                            {fieldState("vehicle_make").error && (
+                              <motion.p initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}
+                                className="text-xs text-destructive flex items-center gap-1">
+                                <motion.span animate={{ rotate: [0, 15, -15, 0] }} transition={{ duration: 0.5 }}>
+                                  <AlertCircle className="w-3 h-3" />
+                                </motion.span>
+                                {fieldState("vehicle_make").error}
+                              </motion.p>
+                            )}
+                          </AnimatePresence>
+                          <AnimatePresence>
+                            {!fieldState("vehicle_make").error && form.vehicle_make && (
+                              <motion.p initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}
+                                className="text-[11px] text-cta flex items-center gap-1 font-semibold">
+                                <CheckCircle2 className="w-3 h-3" />{r.validation.correct}
+                              </motion.p>
+                            )}
+                          </AnimatePresence>
+                        </motion.div>
+                      );
+                    })()}
 
                     <div className="grid grid-cols-2 gap-3">
                       {(() => {
