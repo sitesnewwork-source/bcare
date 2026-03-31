@@ -774,8 +774,8 @@ const InsuranceRequest = () => {
                       </label>
                       <div className="grid grid-cols-2 gap-2">
                         {[
-                          { id: "comprehensive", label: "شامل", icon: "🛡️" },
-                          { id: "third-party", label: "ضد الغير", icon: "🚗" },
+                           { id: "comprehensive", label: r.fields.comprehensive, icon: "🛡️" },
+                           { id: "third-party", label: r.fields.thirdParty, icon: "🚗" },
                         ].map((t, idx) => {
                           const sel = form.insurance_type === t.id;
                           return (
