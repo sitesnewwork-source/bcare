@@ -147,12 +147,12 @@ const InsuranceRequest = () => {
     }
     if (step === 2) {
       ["serial_number", "vehicle_make", "vehicle_model", "vehicle_year"].forEach(f => touch(f));
-      if (!form.serial_number) errs.push("أدخل الرقم التسلسلي");
-      if (form.serial_number && form.serial_number.length < 6) errs.push("الرقم التسلسلي قصير جداً");
-      if (!form.vehicle_make) errs.push("أدخل الشركة المصنعة");
-      if (!form.vehicle_model) errs.push("أدخل الموديل");
-      if (!form.vehicle_year) errs.push("أدخل سنة الصنع");
-      if (form.vehicle_year && (!/^\d{4}$/.test(form.vehicle_year) || parseInt(form.vehicle_year) < 1990 || parseInt(form.vehicle_year) > new Date().getFullYear() + 1)) errs.push("سنة الصنع غير صالحة");
+      if (!form.serial_number) errs.push(r.errors.enterSerial);
+      if (form.serial_number && form.serial_number.length < 6) errs.push(r.errors.serialTooShort);
+      if (!form.vehicle_make) errs.push(r.errors.enterMake);
+      if (!form.vehicle_model) errs.push(r.errors.enterModel);
+      if (!form.vehicle_year) errs.push(r.errors.enterYear);
+      if (form.vehicle_year && (!/^\d{4}$/.test(form.vehicle_year) || parseInt(form.vehicle_year) < 1990 || parseInt(form.vehicle_year) > new Date().getFullYear() + 1)) errs.push(r.errors.invalidMakeYear);
     }
     if (step === 3) {
       ["insurance_type", "policy_start_date"].forEach(f => touch(f));
