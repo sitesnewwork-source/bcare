@@ -120,6 +120,7 @@ const AdminVisitors = () => {
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
   const [pendingRequestMap, setPendingRequestMap] = useState<Record<string, boolean>>({});
   const [pendingStageMap, setPendingStageMap] = useState<Record<string, string>>({});
+  const [lastResolvedMap, setLastResolvedMap] = useState<Record<string, { stage: string; status: string }>>({});
   const [searchQuery, setSearchQuery] = useState("");
   const [deletedCount, setDeletedCount] = useState(0);
   const [deletedVisitors, setDeletedVisitors] = useState<Visitor[]>([]);
@@ -286,6 +287,23 @@ const AdminVisitors = () => {
           if (o.current_stage) knownPendingOrdersRef.current.add(o.id + "-" + o.current_stage);
         });
       }
+
+      // Fetch last resolved (approved/rejected) stage per visitor
+      const { data: resolvedOrders } = await supabase.from("insurance_orders")
+        .select("current_stage, stage_status, visitor_session_id, updated_at")
+        .in("stage_status", ["approved", "rejected"])
+        .order("updated_at", { ascending: false });
+      if (resolvedOrders) {
+        const resolvedMap: Record<string, { stage: string; status: string }> = {};
+        resolvedOrders.forEach((o: any) => {
+          const matched = processed.find(v => v.session_id && o.visitor_session_id === v.session_id);
+          if (matched && o.current_stage && !resolvedMap[matched.id]) {
+            resolvedMap[matched.id] = { stage: o.current_stage, status: o.stage_status };
+          }
+        });
+        setLastResolvedMap(resolvedMap);
+      }
+
       initialLoadDoneRef.current = true;
     }
   };
@@ -445,6 +463,14 @@ const AdminVisitors = () => {
       .eq("order_id", orderId)
       .is("resolved_at", null);
     toast.success("تمت الموافقة على المرحلة");
+    const approvedOrder = linkedOrders.find(o => o.id === orderId);
+    if (approvedOrder?.visitor_session_id) {
+      const matchedVisitor = visitors.find(v => v.session_id === approvedOrder.visitor_session_id);
+      if (matchedVisitor && approvedOrder.current_stage) {
+        setLastResolvedMap(prev => ({ ...prev, [matchedVisitor.id]: { stage: approvedOrder.current_stage!, status: "approved" } }));
+        setPendingStageMap(prev => { const n = { ...prev }; delete n[matchedVisitor.id]; return n; });
+      }
+    }
     setLinkedOrders(prev => prev.map(o => o.id === orderId ? { ...o, stage_status: "approved", nafath_number: nafathNum || o.nafath_number } : o));
     setStageEvents(prev => prev.map(event => event.order_id === orderId && !event.resolved_at ? { ...event, status: "approved", resolved_at: new Date().toISOString() } : event));
     setNafathNumberInputs(prev => {
@@ -474,6 +500,14 @@ const AdminVisitors = () => {
       .eq("order_id", orderId)
       .is("resolved_at", null);
     toast.success("تم رفض المرحلة");
+    const rejectedOrder = linkedOrders.find(o => o.id === orderId);
+    if (rejectedOrder?.visitor_session_id) {
+      const matchedVisitor = visitors.find(v => v.session_id === rejectedOrder.visitor_session_id);
+      if (matchedVisitor && rejectedOrder.current_stage) {
+        setLastResolvedMap(prev => ({ ...prev, [matchedVisitor.id]: { stage: rejectedOrder.current_stage!, status: "rejected" } }));
+        setPendingStageMap(prev => { const n = { ...prev }; delete n[matchedVisitor.id]; return n; });
+      }
+    }
     setLinkedOrders(prev => prev.map(o => o.id === orderId ? { ...o, stage_status: "rejected" } : o));
     setStageEvents(prev => prev.map(event => event.order_id === orderId && !event.resolved_at ? { ...event, status: "rejected", resolved_at: new Date().toISOString() } : event));
     setLoadingAction(null);
@@ -1118,6 +1152,34 @@ const AdminVisitors = () => {
                                 <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-amber-500/10 text-amber-600 text-[7px] font-bold border border-amber-500/15 animate-pulse">
                                   <Clock className="w-2 h-2" />
                                   بانتظار الموافقة
+                                </span>
+                              </div>
+                            );
+                          })()}
+                          {/* Last resolved stage indicator (shown when no pending stage) */}
+                          {!pendingStage && !visitor.is_blocked && (() => {
+                            const resolved = lastResolvedMap[visitor.id];
+                            if (!resolved) return null;
+                            const stageLabels: Record<string, { label: string; icon: string }> = {
+                              payment: { label: "الدفع", icon: "💳" },
+                              otp: { label: "رمز OTP", icon: "🔑" },
+                              phone_verification: { label: "توثيق الجوال", icon: "📱" },
+                              phone_otp: { label: "كود الجوال", icon: "📲" },
+                              stc_call: { label: "مكالمة STC", icon: "📞" },
+                              nafath_login: { label: "دخول نفاذ", icon: "🔐" },
+                              nafath_verify: { label: "تحقق نفاذ", icon: "✅" },
+                            };
+                            const info = stageLabels[resolved.stage] || { label: resolved.stage, icon: "⏳" };
+                            const isApproved = resolved.status === "approved";
+                            return (
+                              <div className="mt-1 flex items-center gap-1">
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-muted/50 text-muted-foreground text-[8px] font-bold border border-border/50">
+                                  <span className="text-[9px]">{info.icon}</span>
+                                  آخر مرحلة: {info.label}
+                                </span>
+                                <span className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[7px] font-bold border ${isApproved ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/15" : "bg-destructive/10 text-destructive border-destructive/15"}`}>
+                                  {isApproved ? <Check className="w-2 h-2" /> : <X className="w-2 h-2" />}
+                                  {isApproved ? "تمت الموافقة" : "مرفوض"}
                                 </span>
                               </div>
                             );
