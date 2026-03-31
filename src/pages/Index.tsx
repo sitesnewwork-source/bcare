@@ -24,7 +24,7 @@ const Index = () => {
         <HeroSection onTabChange={setActiveTab} />
         <PartnersStrip />
         <WhyChooseUs activeTab={activeTab} />
-        <DiscountsSection />
+        
         <BCareWhySection />
         <Footer />
       </div>
