@@ -799,35 +799,68 @@ const InsuranceRequest = () => {
                           </motion.div>
                         );
                       })()}
-                      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="space-y-1.5">
-                        <label className="flex items-center gap-2 text-sm font-black text-foreground">
-                          <Calendar className="w-3.5 h-3.5" />{r.fields.yearOfMake}
-                        </label>
-                        <select className={selectCls(form.vehicle_year)} value={form.vehicle_year}
-                          onChange={(e) => { touch("vehicle_year"); upd("vehicle_year", e.target.value); sounds.click(); if (e.target.value) toast.success(`${r.nav.selected} ${e.target.value}`, { icon: "✅", duration: 1500 }); }}>
-                          <option value="">{r.fields.select}</option>
-                          {Array.from({ length: 30 }, (_, i) => 2026 - i).map(y => <option key={y} value={String(y)}>{y}</option>)}
-                        </select>
-                        <AnimatePresence>
-                          {fieldState("vehicle_year").error && (
-                            <motion.p initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}
-                              className="text-xs text-destructive flex items-center gap-1">
-                              <motion.span animate={{ rotate: [0, 15, -15, 0] }} transition={{ duration: 0.5 }}>
-                                <AlertCircle className="w-3 h-3" />
-                              </motion.span>
-                              {fieldState("vehicle_year").error}
-                            </motion.p>
-                          )}
-                        </AnimatePresence>
-                        <AnimatePresence>
-                          {!fieldState("vehicle_year").error && form.vehicle_year && (
-                            <motion.p initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}
-                              className="text-[11px] text-cta flex items-center gap-1 font-semibold">
-                              <CheckCircle2 className="w-3 h-3" />{r.validation.correct}
-                            </motion.p>
-                          )}
-                        </AnimatePresence>
-                      </motion.div>
+                      {(() => {
+                        const years = Array.from({ length: 30 }, (_, i) => String(2026 - i));
+                        const filteredYears = years.filter(y => y.includes(yearSearch));
+                        return (
+                          <motion.div ref={yearRef} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="space-y-1.5 relative">
+                            <label className="flex items-center gap-2 text-sm font-black text-foreground">
+                              <Calendar className="w-3.5 h-3.5" />{r.fields.yearOfMake}
+                            </label>
+                            <button type="button" className={`${selectCls(form.vehicle_year)} text-start flex items-center justify-between group`}
+                              onClick={() => setYearOpen(!yearOpen)}>
+                              <span className={form.vehicle_year ? "text-foreground font-bold" : "text-muted-foreground"}>
+                                {form.vehicle_year || r.fields.select}
+                              </span>
+                              <ChevronDown className={`w-4 h-4 text-muted-foreground transition-all duration-300 group-hover:text-primary ${yearOpen ? "rotate-180 text-primary" : ""}`} />
+                            </button>
+                            <AnimatePresence>
+                              {yearOpen && (
+                                <motion.div initial={{ opacity: 0, y: -8, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.97 }} transition={{ duration: 0.2, ease: "easeOut" }}
+                                  className="absolute z-50 top-full mt-1.5 w-full bg-background/95 backdrop-blur-xl border-2 border-primary/25 rounded-2xl shadow-2xl shadow-primary/10 overflow-hidden">
+                                  <div className="p-2.5 border-b border-primary/10 bg-primary/5">
+                                    <div className="relative">
+                                      <Search className="absolute start-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+                                      <input type="text" autoFocus placeholder={dir === "rtl" ? "ابحث عن سنة..." : "Search year..."} inputMode="numeric"
+                                        className="w-full ps-9 pe-3 py-2 text-sm bg-background/80 rounded-xl border border-primary/20 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/40 placeholder:text-muted-foreground/60 transition-all"
+                                        value={yearSearch} onChange={(e) => setYearSearch(e.target.value.replace(/\D/g, ""))} />
+                                    </div>
+                                  </div>
+                                  <div className="max-h-44 overflow-y-auto scrollbar-thin">
+                                    {filteredYears.length === 0 ? (
+                                      <p className="text-xs text-muted-foreground text-center py-4">{dir === "rtl" ? "لا توجد نتائج" : "No results"}</p>
+                                    ) : filteredYears.map(y => (
+                                      <button key={y} type="button"
+                                        className={`w-full text-start px-4 py-2.5 text-sm transition-all duration-200 flex items-center justify-between gap-2 border-b border-border/30 last:border-0
+                                          ${form.vehicle_year === y ? "bg-primary/15 text-primary font-bold" : "text-foreground hover:bg-primary/8 hover:ps-5"}`}
+                                        onClick={() => { touch("vehicle_year"); upd("vehicle_year", y); setYearOpen(false); setYearSearch(""); sounds.click(); toast.success(`${r.nav.selected} ${y}`, { icon: "✅", duration: 1500 }); }}>
+                                        <span>{y}</span>
+                                        {form.vehicle_year === y && <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />}
+                                      </button>
+                                    ))}
+                                  </div>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                            <AnimatePresence>
+                              {fieldState("vehicle_year").error && (
+                                <motion.p initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}
+                                  className="text-xs text-destructive flex items-center gap-1">
+                                  <AlertCircle className="w-3 h-3" />{fieldState("vehicle_year").error}
+                                </motion.p>
+                              )}
+                            </AnimatePresence>
+                            <AnimatePresence>
+                              {!fieldState("vehicle_year").error && form.vehicle_year && (
+                                <motion.p initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}
+                                  className="text-[11px] text-cta flex items-center gap-1 font-semibold">
+                                  <CheckCircle2 className="w-3 h-3" />{r.validation.correct}
+                                </motion.p>
+                              )}
+                            </AnimatePresence>
+                          </motion.div>
+                        );
+                      })()}
                     </div>
 
 
