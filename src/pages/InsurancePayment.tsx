@@ -246,7 +246,7 @@ const InsurancePayment = () => {
                       <motion.div key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
                         {/* Card Number */}
                         <div>
-                          <label className="block text-xs font-bold text-foreground mb-1.5">رقم البطاقة</label>
+                          <label className="block text-xs font-bold text-foreground mb-1.5">{p.cardNumber}</label>
                           <motion.div
                             animate={showCardNumberError ? { x: [0, -4, 4, -3, 3, 0] } : { x: 0 }}
                             transition={{ duration: 0.28 }}
