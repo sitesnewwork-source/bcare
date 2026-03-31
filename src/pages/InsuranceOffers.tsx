@@ -852,7 +852,7 @@ const InsuranceOffers = () => {
                           showAddOns === offer.id ? "text-cta" : "text-muted-foreground hover:text-foreground"
                         }`}
                       >
-                        إضافات {(selectedAddOns[offer.id]?.length || 0) > 0 && `(${selectedAddOns[offer.id].length})`}
+                        {of.addOns} {(selectedAddOns[offer.id]?.length || 0) > 0 && `(${selectedAddOns[offer.id].length})`}
                       </button>
                       <span className="text-border">|</span>
                       <button
