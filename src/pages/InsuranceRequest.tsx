@@ -785,7 +785,7 @@ const InsuranceRequest = () => {
                               transition={{ delay: 0.1 + idx * 0.1, type: "spring", stiffness: 250, damping: 18 }}
                               whileHover={{ scale: 1.05, y: -3 }}
                               whileTap={{ scale: 0.92 }}
-                              onClick={() => { touch("insurance_type"); upd("insurance_type", t.id); sounds.click(); toast.success(`تم اختيار: ${t.label}`, { icon: "✅", duration: 1500 }); }}
+                              onClick={() => { touch("insurance_type"); upd("insurance_type", t.id); sounds.click(); toast.success(`${r.nav.selected} ${t.label}`, { icon: "✅", duration: 1500 }); }}
                               className={`relative p-3 rounded-xl border-2 text-center transition-colors duration-200 ${
                                 sel
                                   ? "border-primary bg-primary/5 shadow-md shadow-primary/10"
