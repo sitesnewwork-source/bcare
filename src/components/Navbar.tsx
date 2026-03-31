@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
+import BcareLogo from "@/assets/Bcare-logo.svg";
 
 const Navbar = () => {
   const [user, setUser] = useState<any>(null);
