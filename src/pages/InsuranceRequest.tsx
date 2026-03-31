@@ -102,7 +102,10 @@ const InsuranceRequest = () => {
         if (!/^[12]/.test(v)) return r.validation.startsWith12;
         if (v.length < 10) return `${10 - v.length} ${r.validation.digitsRemaining}`;
         return null;
-      case "full_name": return !v ? r.validation.required : v.length < 3 ? r.validation.tooShort : null;
+      case "full_name":
+        if (!v) return r.validation.required;
+        if (v.trim().split(/\s+/).length < 2) return lang === "ar" ? "يجب إدخال مقطعين على الأقل (الاسم الأول واسم العائلة)" : "Enter at least first and last name";
+        return null;
       case "phone":
         if (!v) return r.validation.required;
         if (!/^05/.test(v)) return r.validation.startsWith05;
