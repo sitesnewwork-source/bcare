@@ -1,4 +1,4 @@
-import { Eye, User, MapPin, Circle, Check, X, Trash2, Phone, CreditCard, Car, Shield, Clock, MessageCircle, Loader2, Ban, ShieldCheck, ChevronDown, FileText, ShoppingCart, AlertTriangle, ArrowRight, Download, Search, Monitor, Smartphone, Tablet, Globe, Star, Timer, GitBranch, Dot, RefreshCw } from "lucide-react";
+import { Eye, User, MapPin, Circle, Check, X, Trash2, Phone, CreditCard, Car, Shield, Clock, MessageCircle, Loader2, Ban, ShieldCheck, ChevronDown, FileText, ShoppingCart, AlertTriangle, ArrowRight, Download, Search, Monitor, Smartphone, Tablet, Globe, Star, Timer, GitBranch, Dot, RefreshCw, Tag } from "lucide-react";
 import { useState, useEffect, useCallback, useRef, forwardRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { sounds } from "@/lib/sounds";
@@ -56,7 +56,24 @@ interface Visitor {
   national_id: string | null; linked_request_id: string | null; linked_conversation_id: string | null;
   is_blocked: boolean; user_agent: string | null; ip_address: string | null;
   is_favorite: boolean; country: string | null; country_code: string | null;
+  tags?: string[] | null;
 }
+
+const VISITOR_TAGS = [
+  { key: "vip", label: "VIP", color: "bg-amber-500/15 text-amber-600 border-amber-500/30" },
+  { key: "potential", label: "عميل محتمل", color: "bg-emerald-500/15 text-emerald-600 border-emerald-500/30" },
+  { key: "suspicious", label: "مشبوه", color: "bg-red-500/15 text-red-600 border-red-500/30" },
+  { key: "returning", label: "زائر عائد", color: "bg-blue-500/15 text-blue-600 border-blue-500/30" },
+] as const;
+
+const getSessionDuration = (created: string, lastSeen: string) => {
+  const diff = Math.max(0, Math.floor((new Date(lastSeen).getTime() - new Date(created).getTime()) / 1000));
+  const h = Math.floor(diff / 3600);
+  const m = Math.floor((diff % 3600) / 60);
+  if (h > 0) return `${h}س ${m}د`;
+  if (m > 0) return `${m}د`;
+  return `< 1د`;
+};
 
 const countryFlag = (code: string | null) => {
   if (!code || code.length !== 2) return "";
@@ -125,10 +142,12 @@ const AdminVisitors = () => {
   const [deletedCount, setDeletedCount] = useState(0);
   const [deletedVisitors, setDeletedVisitors] = useState<Visitor[]>([]);
   const [countryFilter, setCountryFilter] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"all" | "online" | "offline" | "deleted" | "favorites" | "pending">("all");
+  const [statusFilter, setStatusFilter] = useState<"all" | "online" | "offline" | "deleted" | "favorites" | "pending" | "has_request">("all");
   const [pendingSubFilter, setPendingSubFilter] = useState<"all" | "requests" | "stages">("all");
   const [pendingJumpTarget, setPendingJumpTarget] = useState<"request" | "stage" | null>(null);
   const [detailsAccordionValue, setDetailsAccordionValue] = useState<string[]>(["all-data", "visitor-timeline"]);
+  const [deviceFilter, setDeviceFilter] = useState<"" | "Mobile" | "Desktop" | "Tablet">("");
+  const [pageFilter, setPageFilter] = useState("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<(() => void) | null>(null);
   const [chatClearTarget, setChatClearTarget] = useState<{ sessionId: string; visitorName: string } | null>(null);
   const [sortBy, setSortBy] = useState<"default" | "duration" | "entry" | "last_action">("default");
@@ -672,9 +691,21 @@ const AdminVisitors = () => {
     toast.success("تم تصدير البيانات بنجاح");
   };
 
+  const toggleVisitorTag = async (visitorId: string, tagKey: string) => {
+    const visitor = visitors.find(v => v.id === visitorId);
+    if (!visitor) return;
+    const currentTags = visitor.tags || [];
+    const newTags = currentTags.includes(tagKey) ? currentTags.filter(t => t !== tagKey) : [...currentTags, tagKey];
+    await supabase.from("site_visitors").update({ tags: newTags } as any).eq("id", visitorId);
+    setVisitors(prev => prev.map(v => v.id === visitorId ? { ...v, tags: newTags } : v));
+    if (selectedVisitor?.id === visitorId) setSelectedVisitor(prev => prev ? { ...prev, tags: newTags } : prev);
+    toast.success(currentTags.includes(tagKey) ? "تمت إزالة التصنيف" : "تم إضافة التصنيف");
+  };
+
   const onlineCount = visitors.filter(v => v.is_online).length;
   const offlineCount = visitors.filter(v => !v.is_online).length;
   const favoriteCount = visitors.filter(v => v.is_favorite).length;
+  const hasRequestCount = visitors.filter(v => v.linked_request_id || pendingRequestMap[v.id]).length;
   const totalCount = visitors.length;
   const awaitingDecisionVisitorIds = new Set<string>([
     ...Object.keys(pendingRequestMap),
@@ -763,12 +794,16 @@ const AdminVisitors = () => {
       } else {
         filtered = visitors.filter(v => awaitingDecisionVisitorIds.has(v.id));
       }
+    } else if (statusFilter === "has_request") {
+      filtered = visitors.filter(v => v.linked_request_id || pendingRequestMap[v.id]);
     } else {
       filtered = visitors;
       if (statusFilter === "online") filtered = filtered.filter(v => v.is_online);
       else if (statusFilter === "offline") filtered = filtered.filter(v => !v.is_online);
     }
     if (countryFilter) filtered = filtered.filter(v => v.country === countryFilter);
+    if (deviceFilter) filtered = filtered.filter(v => parseUserAgent(v.user_agent).device === deviceFilter);
+    if (pageFilter) filtered = filtered.filter(v => v.current_page === pageFilter);
     if (q) filtered = filtered.filter(v => (v.visitor_name || "").toLowerCase().includes(q) || (v.phone || "").includes(q) || v.session_id.toLowerCase().includes(q));
     if (sortBy === "duration") filtered = [...filtered].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
     else if (sortBy === "entry") filtered = [...filtered].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
@@ -780,6 +815,11 @@ const AdminVisitors = () => {
 
   // Country list for dropdown
   const countries = [...new Set(visitors.filter(v => v.country).map(v => v.country!))].sort();
+  // Unique pages for filter
+  const uniquePages = [...new Set(visitors.filter(v => v.current_page).map(v => v.current_page!))].sort();
+  // Device counts
+  const deviceCounts = { Mobile: 0, Desktop: 0, Tablet: 0 };
+  visitors.forEach(v => { const d = parseUserAgent(v.user_agent).device; if (d in deviceCounts) deviceCounts[d as keyof typeof deviceCounts]++; });
 
   return (
     <>
@@ -994,6 +1034,49 @@ const AdminVisitors = () => {
                   <Clock className="w-2.5 h-2.5" />
                   بانتظار قرار ({pendingCount})
                 </button>
+                {hasRequestCount > 0 && (
+                  <button
+                    onClick={() => setStatusFilter(statusFilter === "has_request" ? "all" : "has_request")}
+                    className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] transition-all ${
+                      statusFilter === "has_request" ? "bg-blue-500/20 text-blue-600 font-bold ring-1 ring-blue-500" : "bg-muted/50 text-muted-foreground hover:bg-muted"
+                    }`}
+                  >
+                    <ShoppingCart className="w-2.5 h-2.5" />
+                    لديه طلب ({hasRequestCount})
+                  </button>
+                )}
+              </div>
+
+              {/* Device & Page filters */}
+              <div className="flex items-center gap-1 flex-wrap">
+                {([
+                  { key: "Mobile" as const, icon: Smartphone, label: "جوال" },
+                  { key: "Desktop" as const, icon: Monitor, label: "كمبيوتر" },
+                  { key: "Tablet" as const, icon: Tablet, label: "لوحي" },
+                ] as const).filter(d => deviceCounts[d.key] > 0).map(d => (
+                  <button
+                    key={d.key}
+                    onClick={() => setDeviceFilter(deviceFilter === d.key ? "" : d.key)}
+                    className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9px] transition-all ${
+                      deviceFilter === d.key ? "bg-primary/20 text-primary font-bold ring-1 ring-primary" : "bg-muted/40 text-muted-foreground hover:bg-muted"
+                    }`}
+                  >
+                    <d.icon className="w-2.5 h-2.5" />
+                    {d.label} ({deviceCounts[d.key]})
+                  </button>
+                ))}
+                {uniquePages.length > 1 && (
+                  <select
+                    value={pageFilter}
+                    onChange={e => setPageFilter(e.target.value)}
+                    className="h-5 text-[9px] bg-background border border-border rounded px-1 text-foreground focus:outline-none focus:border-primary"
+                  >
+                    <option value="">كل الصفحات</option>
+                    {uniquePages.map(p => (
+                      <option key={p} value={p}>{p}</option>
+                    ))}
+                  </select>
+                )}
               </div>
 
               {/* Sub-filter for pending */}
@@ -1196,6 +1279,17 @@ const AdminVisitors = () => {
                               {visitor.is_online ? "متصل" : formatTime(visitor.last_seen_at)}
                             </span>
                             <LiveTimer since={visitor.created_at} />
+                            <span className="inline-flex items-center gap-0.5 text-[8px] text-muted-foreground/60" title="مدة الجلسة">
+                              🕐 {getSessionDuration(visitor.created_at, visitor.last_seen_at)}
+                            </span>
+                            {(visitor.tags || []).map(tagKey => {
+                              const tagInfo = VISITOR_TAGS.find(t => t.key === tagKey);
+                              return tagInfo ? (
+                                <span key={tagKey} className={`inline-flex items-center gap-0.5 px-1 py-0 rounded text-[7px] font-bold border ${tagInfo.color}`}>
+                                  <Tag className="w-2 h-2" />{tagInfo.label}
+                                </span>
+                              ) : null;
+                            })}
                             {hasPendingRequest && !visitor.is_blocked && (
                               <span
                                 role="button"
@@ -1439,6 +1533,47 @@ const AdminVisitors = () => {
                         </div>
                       ) : null;
                     })()}
+                  </div>
+                </div>
+
+                {/* Session duration & tags */}
+                <div className="flex items-center gap-2 flex-wrap pb-3 border-b border-border">
+                  <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-muted/30 rounded-lg">
+                    <Clock className="w-3.5 h-3.5 text-primary" />
+                    <div>
+                      <p className="text-[9px] text-muted-foreground">مدة الجلسة</p>
+                      <p className="text-xs font-bold text-foreground">{getSessionDuration(selectedVisitor.created_at, selectedVisitor.last_seen_at)}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-muted/30 rounded-lg">
+                    <Timer className="w-3.5 h-3.5 text-primary" />
+                    <div>
+                      <p className="text-[9px] text-muted-foreground">أول زيارة</p>
+                      <p className="text-xs font-bold text-foreground">{formatDateTime(selectedVisitor.created_at)}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Visitor tags */}
+                <div className="pb-3 border-b border-border space-y-2">
+                  <p className="text-[11px] font-bold text-foreground flex items-center gap-1.5"><Tag className="w-3.5 h-3.5 text-primary" />تصنيف الزائر</p>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    {VISITOR_TAGS.map(tag => {
+                      const isActive = (selectedVisitor.tags || []).includes(tag.key);
+                      return (
+                        <button
+                          key={tag.key}
+                          onClick={() => toggleVisitorTag(selectedVisitor.id, tag.key)}
+                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold border transition-all ${
+                            isActive ? tag.color + " ring-1" : "bg-muted/30 text-muted-foreground border-border hover:bg-muted/50"
+                          }`}
+                        >
+                          <Tag className="w-3 h-3" />
+                          {tag.label}
+                          {isActive && <Check className="w-3 h-3" />}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
 
