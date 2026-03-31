@@ -1096,7 +1096,7 @@ const AdminVisitors = () => {
                     );
                   })}
                   {uniqueDynamic.length > 0 && (
-                    <optgroup label="── أخرى ──">
+                    <optgroup label={`── أخرى (${visitors.filter(v => uniqueDynamic.some(p => p.value === v.current_page)).length}) ──`}>
                       {uniqueDynamic.map(p => {
                         const count = visitors.filter(v => v.current_page === p.value).length;
                         return (
