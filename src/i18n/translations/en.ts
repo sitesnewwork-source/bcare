@@ -454,6 +454,7 @@ export const en = {
     totalWithAddOns: "Total with add-ons:",
     offersSelectedForCompare: "offers selected for comparison",
     compareNow: "Compare Now",
+    sar: "SAR",
     searchSteps: [
       "Searching for the best offers...",
       "Comparing 15+ insurance companies...",
