@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Shield, Lock, Clock } from "lucide-react";
 
@@ -13,12 +14,26 @@ const icons = {
   clock: Clock,
 };
 
+const fmtElapsed = (s: number) => {
+  const m = Math.floor(s / 60);
+  const sec = s % 60;
+  return m > 0
+    ? `${m}:${sec.toString().padStart(2, "0")}`
+    : `0:${sec.toString().padStart(2, "0")}`;
+};
+
 const WaitingApprovalOverlay = ({
   title = "جارٍ التحقق من العملية",
   subtitle = "يرجى الانتظار، تتم مراجعة طلبك الآن...",
   icon = "lock",
 }: WaitingApprovalOverlayProps) => {
   const Icon = icons[icon];
+  const [elapsed, setElapsed] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => setElapsed((p) => p + 1), 1000);
+    return () => clearInterval(id);
+  }, []);
 
   return (
     <motion.div
@@ -31,15 +46,12 @@ const WaitingApprovalOverlay = ({
     >
       {/* Animated ring with icon */}
       <div className="relative w-20 h-20 mx-auto">
-        {/* Outer pulsing ring */}
         <motion.div
           className="absolute inset-0 rounded-full border-2 border-primary/20"
           animate={{ scale: [1, 1.15, 1], opacity: [0.3, 0.1, 0.3] }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
         />
-        {/* Spinning ring */}
         <div className="absolute inset-1 rounded-full border-[3px] border-primary/15 border-t-primary animate-spin" />
-        {/* Inner glow circle */}
         <div className="absolute inset-3 rounded-full bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
           <Icon className="w-6 h-6 text-primary" />
         </div>
@@ -52,6 +64,20 @@ const WaitingApprovalOverlay = ({
           {subtitle}
         </p>
       </div>
+
+      {/* Elapsed timer */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.3 }}
+        className="inline-flex items-center gap-2 rounded-xl border border-border/60 bg-secondary/50 px-4 py-2"
+      >
+        <Clock className="h-3.5 w-3.5 text-primary/70" />
+        <span className="font-mono text-sm font-bold text-foreground tabular-nums" dir="ltr">
+          {fmtElapsed(elapsed)}
+        </span>
+        <span className="text-[10px] text-muted-foreground">مدة الانتظار</span>
+      </motion.div>
 
       {/* Animated dots */}
       <div className="flex justify-center gap-1.5">
