@@ -137,9 +137,13 @@ const PhoneOTP = () => {
               )}
             </div>
 
-            <Button onClick={handleVerify} disabled={loading || code.length < 4} className="w-full bg-cta text-cta-foreground hover:bg-cta-hover rounded-xl py-5 font-bold text-sm gap-2">
+            <motion.button onClick={handleVerify} disabled={loading || code.length < 4}
+              className="w-full text-white hover:opacity-90 rounded-xl py-3 font-bold text-sm transition-all disabled:opacity-40 flex items-center justify-center gap-2 shadow-lg"
+              style={{ backgroundColor: '#11998e' }}
+              whileTap={{ scale: 0.98 }}
+            >
               <Lock className="w-3.5 h-3.5" />{loading ? po.processing : po.verify}
-            </Button>
+            </motion.button>
           </>
         )}
       </div>
