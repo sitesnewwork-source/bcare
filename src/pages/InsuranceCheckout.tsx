@@ -405,7 +405,7 @@ const InsuranceCheckout = () => {
               <div className="mx-4 mt-3 p-2 rounded-lg bg-destructive/10 border border-destructive/20 flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4 text-destructive shrink-0" />
                 <p className="text-[11px] text-destructive font-medium">
-                  مسودة أولية — تصبح نهائية بعد إتمام الدفع وربط البوليصة بحسابك في منصة النفاذ الوطني الموحد
+                  {ck.draftBanner}
                 </p>
               </div>
 
