@@ -358,15 +358,15 @@ const InsuranceRequest = () => {
     );
   };
 
-  const typeLabel = requestType === "new" ? "تأمين جديد" : requestType === "transfer" ? "نقل ملكية" : "تجديد الوثيقة";
+  const typeLabel = requestType === "new" ? r.newInsurance : requestType === "transfer" ? r.transfer : r.renewal;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background" dir={dir}>
       <Navbar />
 
       <PremiumPageHeader
-        title="طلب تأمين مركبة"
-        subtitle="أكمل البيانات في ٣ خطوات بسيطة للحصول على أفضل العروض"
+        title={r.title}
+        subtitle={r.subtitle}
         badge={typeLabel}
         badgeIcon={<Sparkles className="w-3 h-3 text-cta" />}
         compact
