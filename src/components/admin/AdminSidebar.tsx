@@ -77,10 +77,10 @@ const AdminSidebar = ({ activeTab, setActiveTab, pendingCounts = {} }: Props) =>
             </Link>
           )}
           <div className="flex items-center gap-1">
-            <button onClick={() => setMobileOpen(false)} className="md:hidden text-white/50 hover:text-white p-1.5 rounded-lg hover:bg-white/5">
+            <button onClick={() => setMobileOpen(false)} className="md:hidden text-muted-foreground hover:text-foreground p-1.5 rounded-lg hover:bg-secondary">
               <X className="w-4 h-4" />
             </button>
-            <button onClick={() => setCollapsed(!collapsed)} className="hidden md:block text-white/50 hover:text-white p-1.5 rounded-lg hover:bg-white/5">
+            <button onClick={() => setCollapsed(!collapsed)} className="hidden md:block text-muted-foreground hover:text-foreground p-1.5 rounded-lg hover:bg-secondary">
               <ChevronRight className={`w-4 h-4 transition-transform ${collapsed ? "" : "rotate-180"}`} />
             </button>
           </div>
