@@ -53,8 +53,6 @@ interface HeroSectionProps {
 const HeroSection = ({ onTabChange }: HeroSectionProps) => {
   const { t, isRTL } = useLanguage();
   const [activeInsurance, setActiveInsurance] = useState("vehicles");
-  const [purposeType, setPurposeType] = useState<"new" | "transfer">("new");
-  const [registrationType, setRegistrationType] = useState<"form" | "customs">("form");
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
