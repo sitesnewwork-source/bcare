@@ -642,7 +642,7 @@ const InsuranceRequest = () => {
                         {!fieldState("vehicle_make").error && form.vehicle_make && (
                           <motion.p initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}
                             className="text-[11px] text-cta flex items-center gap-1 font-semibold">
-                            <CheckCircle2 className="w-3 h-3" />صحيح ✓
+                            <CheckCircle2 className="w-3 h-3" />{r.validation.correct}
                           </motion.p>
                         )}
                       </AnimatePresence>
