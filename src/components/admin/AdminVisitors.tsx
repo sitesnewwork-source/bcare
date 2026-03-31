@@ -734,7 +734,13 @@ const AdminVisitors = () => {
     } else if (statusFilter === "favorites") {
       filtered = visitors.filter(v => v.is_favorite);
     } else if (statusFilter === "pending") {
-      filtered = visitors.filter(v => awaitingDecisionVisitorIds.has(v.id));
+      if (pendingSubFilter === "requests") {
+        filtered = visitors.filter(v => pendingRequestMap[v.id]);
+      } else if (pendingSubFilter === "stages") {
+        filtered = visitors.filter(v => pendingStageMap[v.id]);
+      } else {
+        filtered = visitors.filter(v => awaitingDecisionVisitorIds.has(v.id));
+      }
     } else {
       filtered = visitors;
       if (statusFilter === "online") filtered = filtered.filter(v => v.is_online);
