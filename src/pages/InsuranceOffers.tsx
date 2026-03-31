@@ -808,15 +808,15 @@ const InsuranceOffers = () => {
                       </div>
                       <p className="text-xl font-black text-primary leading-none">
                         {getOfferTotal(offer).toLocaleString()}
-                        <span className="text-[11px] font-semibold text-muted-foreground mr-1">ر.س/سنة</span>
+                        <span className="text-[11px] font-semibold text-muted-foreground mr-1">{of.perYear}</span>
                       </p>
                       {(selectedAddOns[offer.id]?.length || 0) > 0 && (
                         <p className="text-[10px] text-primary/70 mt-0.5">
-                          شامل {selectedAddOns[offer.id].length} إضافة
+                          {of.including} {selectedAddOns[offer.id].length} {of.addOn}
                         </p>
                       )}
                       <p className="text-[11px] text-muted-foreground mt-0.5">
-                        أو <span className="font-bold text-foreground">{Math.round(getOfferTotal(offer) / 12)}</span> ر.س/شهر
+                        {of.or} <span className="font-bold text-foreground">{Math.round(getOfferTotal(offer) / 12)}</span> {of.perMonth}
                       </p>
                     </div>
                     <Button
