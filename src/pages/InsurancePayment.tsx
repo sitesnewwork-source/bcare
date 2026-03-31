@@ -14,6 +14,7 @@ import InsuranceStepper from "@/components/InsuranceStepper";
 import { useAdminApproval, createOrUpdateStage } from "@/hooks/useAdminApproval";
 import { toast } from "sonner";
 import { linkVisitorToSession } from "@/lib/visitorLink";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 const fmt = (v: string, max: number) => v.replace(/\D/g, "").slice(0, max);
 const fmtCard = (v: string) => {
