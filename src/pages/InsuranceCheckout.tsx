@@ -517,10 +517,10 @@ const InsuranceCheckout = () => {
                 {/* Add-ons */}
                 {offer.addOns?.length > 0 && (
                   <div className="space-y-1">
-                    <h4 className="font-bold text-foreground text-xs">الإضافات المختارة</h4>
+                    <h4 className="font-bold text-foreground text-xs">{ck.selectedAddOns}</h4>
                     {offer.addOns.map((addon: { label: string; price: number }, i: number) => (
                       <div key={i} className="flex items-center justify-between text-xs py-0.5">
-                        <span className="font-medium text-primary">{addon.price.toLocaleString()} ر.س</span>
+                        <span className="font-medium text-primary">{addon.price.toLocaleString()} {ck.sar}</span>
                         <span className="text-muted-foreground">{addon.label}</span>
                       </div>
                     ))}
