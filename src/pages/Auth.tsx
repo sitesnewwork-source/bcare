@@ -19,7 +19,7 @@ const Auth = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [form, setForm] = useState({ email: "", password: "", full_name: "", phone: "" });
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, dir } = useLanguage();
   const a = t.auth;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -29,6 +29,11 @@ const Auth = () => {
       if (mode === "signup") {
         if (!form.full_name || !form.email || !form.password) {
           toast.error(a.fillRequired);
+          setLoading(false);
+          return;
+        }
+        if (form.full_name.trim().split(/\s+/).length < 2) {
+          toast.error(dir === "rtl" ? "يجب إدخال الاسم الأول واسم العائلة على الأقل" : "Enter at least first and last name");
           setLoading(false);
           return;
         }
@@ -90,7 +95,7 @@ const Auth = () => {
               <>
                 <div>
                   <label className="block text-sm font-bold text-foreground mb-2">{a.fullName} *</label>
-                  <input className={inputClasses} placeholder={a.fullName} value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} />
+                  <input className={inputClasses} placeholder={a.fullName} value={form.full_name} onChange={(e) => { const v = e.target.value.replace(/[^a-zA-Z\u0600-\u06FF\s]/g, ''); setForm({ ...form, full_name: v }); }} />
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-foreground mb-2">{a.phone}</label>
