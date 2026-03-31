@@ -1817,14 +1817,17 @@ const AdminVisitors = () => {
                   </AccordionItem>
 
                   {/* Timeline */}
-                  <AccordionItem value="visitor-timeline" className="border border-border rounded-xl overflow-hidden">
-                    <AccordionTrigger className="px-4 py-3 bg-muted/30 hover:bg-muted/50 text-sm font-bold [&[data-state=open]>svg]:rotate-180">
+                  <AccordionItem value="visitor-timeline" className="border border-border/60 rounded-2xl overflow-hidden">
+                    <AccordionTrigger className="px-4 py-3 bg-muted/20 hover:bg-muted/40 text-sm font-bold [&[data-state=open]>svg]:rotate-180">
                       <div className="flex items-center gap-2">
-                        <GitBranch className="w-4 h-4 text-primary" />الخط الزمني للمراحل
+                        <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
+                          <GitBranch className="w-3.5 h-3.5 text-primary" />
+                        </div>
+                        <span>الخط الزمني للمراحل</span>
                         {timelineEventsAll.length > 0 && <span className="px-1.5 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold">{timelineEventsAll.length}</span>}
                       </div>
                     </AccordionTrigger>
-                    <AccordionContent className="px-4 py-3">
+                    <AccordionContent className="px-4 py-4">
                       {timelineEventsAll.length > 0 && (
                         <div className="flex items-center gap-1.5 mb-3 flex-wrap">
                           {([["all", "الكل"], ["pending", "بانتظار"], ["approved", "موافق"], ["rejected", "مرفوض"]] as const).map(([val, label]) => (
