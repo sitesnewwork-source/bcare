@@ -652,7 +652,7 @@ const InsuranceRequest = () => {
                       {renderField({ label: r.fields.model, icon: Car, placeholder: r.fields.exampleModel, value: form.vehicle_model, error: fieldState("vehicle_model").error, valid: fieldState("vehicle_model").valid, onBlur: () => touch("vehicle_model"), onChange: (e) => { touch("vehicle_model"); upd("vehicle_model", e.target.value); } })}
                       <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="space-y-1.5">
                         <label className="flex items-center gap-2 text-sm font-black text-foreground">
-                          <Calendar className="w-3.5 h-3.5" />سنة الصنع *
+                          <Calendar className="w-3.5 h-3.5" />{r.fields.yearOfMake}
                         </label>
                         <select className={selectCls(form.vehicle_year)} value={form.vehicle_year}
                           onChange={(e) => { touch("vehicle_year"); upd("vehicle_year", e.target.value); sounds.click(); if (e.target.value) toast.success(`تم اختيار: ${e.target.value}`, { icon: "✅", duration: 1500 }); }}>
