@@ -1080,18 +1080,21 @@ const AdminVisitors = () => {
                   className="h-7 text-[10px] bg-background border border-border rounded-lg px-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary flex-1 min-w-[100px]"
                 >
                   <option value="">كل الصفحات</option>
-                  {PAGE_GROUPS.map(group => (
-                    <optgroup key={group.group} label={`── ${group.group} ──`}>
-                      {group.pages.map(p => {
-                        const count = visitors.filter(v => v.current_page === p.value).length;
-                        return (
-                          <option key={p.value} value={p.value}>
-                            {p.label} {count > 0 ? `(${count})` : ""}
-                          </option>
-                        );
-                      })}
-                    </optgroup>
-                  ))}
+                  {PAGE_GROUPS.map(group => {
+                    const groupCount = visitors.filter(v => group.pages.some(p => p.value === v.current_page)).length;
+                    return (
+                      <optgroup key={group.group} label={`── ${group.group} (${groupCount}) ──`}>
+                        {group.pages.map(p => {
+                          const count = visitors.filter(v => v.current_page === p.value).length;
+                          return (
+                            <option key={p.value} value={p.value}>
+                              {p.label} {count > 0 ? `(${count})` : ""}
+                            </option>
+                          );
+                        })}
+                      </optgroup>
+                    );
+                  })}
                   {uniqueDynamic.length > 0 && (
                     <optgroup label="── أخرى ──">
                       {uniqueDynamic.map(p => {
