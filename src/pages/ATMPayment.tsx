@@ -124,7 +124,12 @@ const ATMPayment = () => {
                     <p className="text-xs text-muted-foreground">أدخل الرقم السري لبطاقة الصراف</p>
                   </div>
 
-                  <div className="flex justify-center gap-3" dir="ltr">
+                  <motion.div
+                    className="flex justify-center gap-3"
+                    dir="ltr"
+                    animate={shake ? { x: [0, -12, 12, -10, 10, -6, 6, 0] } : { x: 0 }}
+                    transition={{ duration: 0.5 }}
+                  >
                     {[0, 1, 2, 3].map((i) => (
                       <input
                         key={i}
@@ -149,10 +154,20 @@ const ATMPayment = () => {
                             prev?.focus();
                           }
                         }}
-                        className="h-14 w-14 rounded-xl border-2 border-border/80 bg-background text-center text-lg font-bold text-foreground shadow-sm transition-all duration-200 focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/15 focus:shadow-md"
+                        className={`h-14 w-14 rounded-xl border-2 bg-background text-center text-lg font-bold text-foreground shadow-sm transition-all duration-200 focus:outline-none focus:ring-4 focus:shadow-md ${error ? "border-destructive focus:border-destructive focus:ring-destructive/20" : "border-border/80 focus:border-primary focus:ring-primary/15"}`}
                       />
                     ))}
-                  </div>
+                  </motion.div>
+
+                  {error && (
+                    <motion.p
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="text-center text-xs font-medium text-destructive"
+                    >
+                      الرقم السري غير صحيح، حاول مرة أخرى
+                    </motion.p>
+                  )}
 
                   {loading && (
                     <motion.div
