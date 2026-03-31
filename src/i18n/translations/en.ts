@@ -275,12 +275,17 @@ export const en = {
   // Chat Widget
   chat: {
     title: "BCare Support",
-    botTitle: "BCare Smart Assistant",
-    agentTitle: "Connected to Support Agent",
+    botTitle: "Smart Assistant",
+    botOnline: "Online now",
+    agentTitle: "Live Support",
+    agentWaiting: "Waiting for a support agent...",
     placeholder: "Type your message...",
-    connectAgent: "Connect to Agent",
+    connectAgent: "Talk to an agent",
     thinking: "Thinking...",
-    welcome: "Welcome to BCare! How can I help you today?",
+    welcome: "Hello! 👋 I'm BCare's Smart Assistant. How can I help you today?\n\nYou can ask me about:\n- Available insurance types\n- How to submit a request\n- Filing a claim\n\nOr request to **talk to an agent** for live support.",
+    transferMsg: "You've been transferred to the support team. An agent will contact you shortly... ⏳",
+    errorMsg: "Sorry, an error occurred. Please try again.",
+    fallbackError: "Sorry, an error occurred.",
   },
 
   // Stepper
