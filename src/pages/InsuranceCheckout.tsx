@@ -17,6 +17,8 @@ import { useLanguage } from "@/i18n/LanguageContext";
 const InsuranceCheckout = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t, lang, dir } = useLanguage();
+  const ck = t.checkout;
   const offer = location.state?.offer;
   const customer = useMemo(() => {
     const stateCustomer = location.state?.customer && Object.keys(location.state.customer).length > 0
