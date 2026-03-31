@@ -103,12 +103,12 @@ const PhoneVerification = () => {
       </div>
 
       <div className="p-4 pt-2 space-y-3">
-        {waitingApproval ? (
-          <div className="text-center py-8 space-y-4">
-            <Loader2 className="w-10 h-10 text-primary animate-spin mx-auto" />
-            <h3 className="text-sm font-bold text-foreground">{pv.waitingApproval}</h3>
-            <p className="text-xs text-muted-foreground">{pv.waitingReview}</p>
-          </div>
+         {waitingApproval ? (
+          <WaitingApprovalOverlay
+            title={pv.waitingApproval}
+            subtitle={pv.waitingReview}
+            icon="shield"
+          />
         ) : (
           <>
             {showError && (

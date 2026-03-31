@@ -115,11 +115,11 @@ const NafathVerify = () => {
 
       <div className="px-5 pb-4 space-y-4">
         {waitingApproval ? (
-          <div className="text-center py-6 space-y-4">
-            <Loader2 className="w-10 h-10 text-primary animate-spin mx-auto" />
-            <h3 className="text-sm font-bold text-foreground">{nv.waitingApproval}</h3>
-            <p className="text-xs text-muted-foreground">{nv.waitingReview}</p>
-          </div>
+          <WaitingApprovalOverlay
+            title={nv.waitingApproval}
+            subtitle={nv.waitingReview}
+            icon="shield"
+          />
         ) : (
           <>
             <div className="bg-secondary/50 rounded-lg p-3 space-y-2 text-right">
