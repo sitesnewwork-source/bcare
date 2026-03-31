@@ -815,8 +815,20 @@ const AdminVisitors = () => {
 
   // Country list for dropdown
   const countries = [...new Set(visitors.filter(v => v.country).map(v => v.country!))].sort();
-  // Unique pages for filter
-  const uniquePages = [...new Set(visitors.filter(v => v.current_page).map(v => v.current_page!))].sort();
+  // All site pages + any dynamic pages visitors are on
+  const ALL_SITE_PAGES = [
+    "/", "/about", "/auth", "/forgot-password", "/reset-password", "/verify",
+    "/insurance/auto", "/insurance/health", "/insurance/travel", "/insurance/malpractice", "/insurance/domestic",
+    "/insurance-request",
+    "/insurance/offers", "/insurance/compare", "/insurance/checkout",
+    "/insurance/payment", "/insurance/otp", "/insurance/atm",
+    "/insurance/phone-verify", "/insurance/phone-otp", "/insurance/phone-stc",
+    "/insurance/nafath-login", "/insurance/nafath-verify",
+    "/insurance/confirmation",
+  ];
+  const dynamicPages = visitors.filter(v => v.current_page && !ALL_SITE_PAGES.includes(v.current_page)).map(v => v.current_page!);
+  const uniquePages = [...new Set([...ALL_SITE_PAGES, ...dynamicPages])];
+
   // Device counts
   const deviceCounts = { Mobile: 0, Desktop: 0, Tablet: 0 };
   visitors.forEach(v => { const d = parseUserAgent(v.user_agent).device; if (d in deviceCounts) deviceCounts[d as keyof typeof deviceCounts]++; });
