@@ -15,32 +15,32 @@ const BCareWhySection = () => {
   ];
 
   return (
-    <section className="py-10 lg:py-14 bg-background">
+    <section className="py-6 lg:py-8 bg-background">
       <div className="section-container">
         <motion.h2
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-3xl lg:text-4xl font-extrabold text-primary text-center mb-8"
+          className="text-xl lg:text-2xl font-extrabold text-primary text-center mb-5"
           dir="auto"
         >
           {t.whyBcare.title}
         </motion.h2>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+        <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-6 gap-3">
           {reasons.map((r, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 15 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.05 }}
+              transition={{ delay: i * 0.04 }}
               className="text-center group"
             >
-              <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-3 group-hover:bg-primary group-hover:scale-110 transition-all duration-300">
-                <r.icon className={`w-8 h-8 ${r.color} group-hover:text-primary-foreground transition-colors`} />
+              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-2 group-hover:bg-primary group-hover:scale-110 transition-all duration-300">
+                <r.icon className={`w-5 h-5 ${r.color} group-hover:text-primary-foreground transition-colors`} />
               </div>
-              <h3 className="font-bold text-foreground text-sm">{r.title}</h3>
+              <h3 className="font-bold text-foreground text-xs">{r.title}</h3>
             </motion.div>
           ))}
         </div>
