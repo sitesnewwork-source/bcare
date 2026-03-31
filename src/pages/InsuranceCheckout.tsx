@@ -398,7 +398,7 @@ const InsuranceCheckout = () => {
                 <button onClick={() => setShowPolicy(false)} className="p-1.5 rounded-lg hover:bg-secondary transition-colors">
                   <X className="w-4 h-4 text-muted-foreground" />
                 </button>
-                <h3 className="font-bold text-sm text-foreground">بوليصة التأمين - مسودة</h3>
+                <h3 className="font-bold text-sm text-foreground">{ck.policyDraft}</h3>
               </div>
 
               {/* Draft Banner */}
