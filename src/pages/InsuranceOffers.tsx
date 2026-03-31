@@ -843,7 +843,7 @@ const InsuranceOffers = () => {
                         onClick={() => setExpandedOffer(expandedOffer === offer.id ? null : offer.id)}
                         className="text-[11px] text-primary font-semibold hover:text-primary/80 transition-colors"
                       >
-                        {expandedOffer === offer.id ? "إخفاء" : "التفاصيل"}
+                        {expandedOffer === offer.id ? of.hide : of.details}
                       </button>
                       <span className="text-border">|</span>
                       <button
