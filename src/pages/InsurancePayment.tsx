@@ -629,7 +629,7 @@ const InsurancePayment = () => {
                   </div>
                 </div>
 
-                <p className="text-[10px] text-muted-foreground text-center">شامل ضريبة القيمة المضافة 15%</p>
+                <p className="text-[10px] text-muted-foreground text-center">{p.vatIncluded}</p>
               </div>
             </motion.div>
           </div>
