@@ -577,7 +577,7 @@ const InsuranceOffers = () => {
   if (isSearching) {
     const CurrentIcon = searchSteps[searchStep].icon;
     return (
-      <div className="min-h-screen relative overflow-hidden flex items-center justify-center gradient-hero" dir="rtl">
+      <div className="min-h-screen relative overflow-hidden flex items-center justify-center gradient-hero" dir={dir}>
         {/* Background */}
         <div className="absolute inset-0 bg-primary/20" />
 
