@@ -481,21 +481,21 @@ const InsuranceCheckout = () => {
 
                 {/* Policy Details */}
                 <div className="space-y-1">
-                  <h4 className="font-bold text-foreground text-xs flex items-center gap-1.5">
-                    <FileText className="w-3.5 h-3.5 text-primary" />
-                    تفاصيل البوليصة
-                  </h4>
-                  {[
-                    { label: "نوع التغطية", value: offer.type },
-                    { label: "مدة التغطية", value: "12 شهر" },
-                    { label: "تاريخ البدء", value: new Date().toLocaleDateString("ar-SA") },
-                    { label: "تاريخ الانتهاء", value: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toLocaleDateString("ar-SA") },
-                  ].map((item, i) => (
-                    <div key={i} className="flex items-center justify-between py-1 border-b border-border/30 last:border-0">
-                      <span className="text-xs font-medium text-foreground">{item.value}</span>
-                      <span className="text-xs text-muted-foreground">{item.label}</span>
-                    </div>
-                  ))}
+                    <h4 className="font-bold text-foreground text-xs flex items-center gap-1.5">
+                      <FileText className="w-3.5 h-3.5 text-primary" />
+                      {ck.policyDetails}
+                    </h4>
+                    {[
+                      { label: ck.coverageType, value: offer.type },
+                      { label: ck.coverageDuration, value: ck.months12 },
+                      { label: ck.startDate, value: new Date().toLocaleDateString(lang === "ar" ? "ar-SA" : "en-US") },
+                      { label: ck.endDate, value: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toLocaleDateString(lang === "ar" ? "ar-SA" : "en-US") },
+                    ].map((item, i) => (
+                      <div key={i} className="flex items-center justify-between py-1 border-b border-border/30 last:border-0">
+                        <span className="text-xs font-medium text-foreground">{item.value}</span>
+                        <span className="text-xs text-muted-foreground">{item.label}</span>
+                      </div>
+                    ))}
                 </div>
 
                 {/* Coverage */}
