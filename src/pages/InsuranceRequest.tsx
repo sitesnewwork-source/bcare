@@ -106,7 +106,7 @@ const InsuranceRequest = () => {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-
+  const upd = (f: string, v: string) => setForm(p => ({ ...p, [f]: v }));
   const touch = (f: string) => setTouched(p => ({ ...p, [f]: true }));
 
   const getError = (field: string): string | null => {
