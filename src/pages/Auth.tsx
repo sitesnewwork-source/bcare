@@ -95,7 +95,7 @@ const Auth = () => {
               <>
                 <div>
                   <label className="block text-sm font-bold text-foreground mb-2">{a.fullName} *</label>
-                  <input className={inputClasses} placeholder={a.fullName} value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} />
+                  <input className={inputClasses} placeholder={a.fullName} value={form.full_name} onChange={(e) => { const v = e.target.value.replace(/[^a-zA-Z\u0600-\u06FF\s]/g, ''); setForm({ ...form, full_name: v }); }} />
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-foreground mb-2">{a.phone}</label>
