@@ -454,6 +454,7 @@ export const ar = {
     totalWithAddOns: "الإجمالي مع الإضافات:",
     offersSelectedForCompare: "عروض محددة للمقارنة",
     compareNow: "قارن الآن",
+    sar: "ر.س",
     searchSteps: [
       "جارِ البحث عن أفضل العروض...",
       "نقارن بين 15+ شركة تأمين...",
