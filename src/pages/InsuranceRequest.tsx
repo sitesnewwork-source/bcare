@@ -469,7 +469,7 @@ const InsuranceRequest = () => {
                         </select>
                         <select className={selectCls(form.birth_year)} value={form.birth_year}
                           onChange={(e) => { upd("birth_year", e.target.value); sounds.click(); }}>
-                          <option value="">السنة</option>
+                          <option value="">{r.fields.year}</option>
                           {Array.from({ length: 80 }, (_, i) => 2008 - i).map(y => <option key={y} value={String(y)}>{y}</option>)}
                         </select>
                       </div>
