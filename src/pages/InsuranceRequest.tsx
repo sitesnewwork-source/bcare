@@ -12,7 +12,7 @@ import { sounds } from "@/lib/sounds";
 import { vehicleModels } from "@/lib/vehicleModels";
 import {
   Car, User, CreditCard, Calendar, Phone, FileText,
-  Shield, CheckCircle2, AlertCircle, ArrowRight, ArrowLeft, Hash, Type, Truck, Sparkles, ChevronDown,
+  Shield, CheckCircle2, AlertCircle, ArrowRight, ArrowLeft, Hash, Type, Truck, Sparkles, ChevronDown, Search,
   Loader2, Users, Target, DollarSign, Wrench, Camera, Upload, X, Image
 } from "lucide-react";
 import { useRef } from "react";
@@ -642,31 +642,35 @@ const InsuranceRequest = () => {
                             <Truck className="w-3.5 h-3.5" />{r.fields.manufacturer}
                           </label>
                           <button type="button"
-                            className={`${selectCls(form.vehicle_make)} text-start flex items-center justify-between`}
+                            className={`${selectCls(form.vehicle_make)} text-start flex items-center justify-between group`}
                             onClick={() => setMakeOpen(!makeOpen)}>
-                            <span className={form.vehicle_make ? "text-foreground" : "text-muted-foreground"}>
+                            <span className={form.vehicle_make ? "text-foreground font-bold" : "text-muted-foreground"}>
                               {selectedMakeLabel || r.fields.selectCompany}
                             </span>
-                            <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${makeOpen ? "rotate-180" : ""}`} />
+                            <ChevronDown className={`w-4 h-4 text-muted-foreground transition-all duration-300 group-hover:text-primary ${makeOpen ? "rotate-180 text-primary" : ""}`} />
                           </button>
                           <AnimatePresence>
                             {makeOpen && (
-                              <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }} transition={{ duration: 0.15 }}
-                                className="absolute z-50 top-full mt-1 w-full bg-background border-2 border-primary/20 rounded-xl shadow-lg overflow-hidden">
-                                <div className="p-2 border-b border-border">
-                                  <input type="text" autoFocus placeholder={dir === "rtl" ? "ابحث عن شركة..." : "Search manufacturer..."}
-                                    className="w-full px-3 py-2 text-sm bg-muted/40 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-primary/30"
-                                    value={makeSearch} onChange={(e) => setMakeSearch(e.target.value)} />
+                              <motion.div initial={{ opacity: 0, y: -8, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.97 }} transition={{ duration: 0.2, ease: "easeOut" }}
+                                className="absolute z-50 top-full mt-1.5 w-full bg-background/95 backdrop-blur-xl border-2 border-primary/25 rounded-2xl shadow-2xl shadow-primary/10 overflow-hidden">
+                                <div className="p-2.5 border-b border-primary/10 bg-primary/5">
+                                  <div className="relative">
+                                    <Search className="absolute start-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+                                    <input type="text" autoFocus placeholder={dir === "rtl" ? "ابحث عن شركة..." : "Search manufacturer..."}
+                                      className="w-full ps-9 pe-3 py-2 text-sm bg-background/80 rounded-xl border border-primary/20 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/40 placeholder:text-muted-foreground/60 transition-all"
+                                      value={makeSearch} onChange={(e) => setMakeSearch(e.target.value)} />
+                                  </div>
                                 </div>
-                                <div className="max-h-48 overflow-y-auto">
+                                <div className="max-h-52 overflow-y-auto scrollbar-thin">
                                   {filteredMakes.length === 0 ? (
-                                    <p className="text-xs text-muted-foreground text-center py-3">{dir === "rtl" ? "لا توجد نتائج" : "No results"}</p>
+                                    <p className="text-xs text-muted-foreground text-center py-4">{dir === "rtl" ? "لا توجد نتائج" : "No results"}</p>
                                   ) : filteredMakes.map((m) => (
                                     <button key={m.key} type="button"
-                                      className={`w-full text-start px-3 py-2 text-sm hover:bg-primary/10 transition-colors flex items-center justify-between ${form.vehicle_make === m.key ? "bg-primary/15 font-bold text-primary" : "text-foreground"}`}
+                                      className={`w-full text-start px-4 py-2.5 text-sm transition-all duration-200 flex items-center justify-between gap-2 border-b border-border/30 last:border-0
+                                        ${form.vehicle_make === m.key ? "bg-primary/15 text-primary font-bold" : "text-foreground hover:bg-primary/8 hover:ps-5"}`}
                                       onClick={() => { touch("vehicle_make"); upd("vehicle_make", m.key); upd("vehicle_model", ""); setMakeOpen(false); setMakeSearch(""); sounds.click(); toast.success(`${r.nav.selected} ${m.label}`, { icon: "✅", duration: 1500 }); }}>
                                       <span>{m.label}</span>
-                                      {form.vehicle_make === m.key && <CheckCircle2 className="w-3.5 h-3.5 text-primary" />}
+                                      {form.vehicle_make === m.key && <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />}
                                     </button>
                                   ))}
                                 </div>
@@ -730,31 +734,35 @@ const InsuranceRequest = () => {
                             ) : (
                               <>
                                 <button type="button" disabled={disabled}
-                                  className={`${selectCls(form.vehicle_model)} text-start flex items-center justify-between`}
+                                  className={`${selectCls(form.vehicle_model)} text-start flex items-center justify-between group`}
                                   onClick={() => { if (!disabled) setModelOpen(!modelOpen); }}>
-                                  <span className={form.vehicle_model ? "text-foreground" : "text-muted-foreground"}>
+                                  <span className={form.vehicle_model ? "text-foreground font-bold" : "text-muted-foreground"}>
                                     {selectedLabel ? (dir === "rtl" ? selectedLabel.ar : selectedLabel.en) : (dir === "rtl" ? "اختر الموديل" : "Select model")}
                                   </span>
-                                  <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${modelOpen ? "rotate-180" : ""}`} />
+                                  <ChevronDown className={`w-4 h-4 text-muted-foreground transition-all duration-300 group-hover:text-primary ${modelOpen ? "rotate-180 text-primary" : ""}`} />
                                 </button>
                                 <AnimatePresence>
                                   {modelOpen && (
-                                    <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }} transition={{ duration: 0.15 }}
-                                      className="absolute z-50 top-full mt-1 w-full bg-background border-2 border-primary/20 rounded-xl shadow-lg overflow-hidden">
-                                      <div className="p-2 border-b border-border">
-                                        <input type="text" autoFocus placeholder={dir === "rtl" ? "ابحث عن موديل..." : "Search model..."}
-                                          className="w-full px-3 py-2 text-sm bg-muted/40 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-primary/30"
-                                          value={modelSearch} onChange={(e) => setModelSearch(e.target.value)} />
+                                    <motion.div initial={{ opacity: 0, y: -8, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.97 }} transition={{ duration: 0.2, ease: "easeOut" }}
+                                      className="absolute z-50 top-full mt-1.5 w-full bg-background/95 backdrop-blur-xl border-2 border-primary/25 rounded-2xl shadow-2xl shadow-primary/10 overflow-hidden">
+                                      <div className="p-2.5 border-b border-primary/10 bg-primary/5">
+                                        <div className="relative">
+                                          <Search className="absolute start-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+                                          <input type="text" autoFocus placeholder={dir === "rtl" ? "ابحث عن موديل..." : "Search model..."}
+                                            className="w-full ps-9 pe-3 py-2 text-sm bg-background/80 rounded-xl border border-primary/20 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/40 placeholder:text-muted-foreground/60 transition-all"
+                                            value={modelSearch} onChange={(e) => setModelSearch(e.target.value)} />
+                                        </div>
                                       </div>
-                                      <div className="max-h-40 overflow-y-auto">
+                                      <div className="max-h-44 overflow-y-auto scrollbar-thin">
                                         {filtered.length === 0 ? (
-                                          <p className="text-xs text-muted-foreground text-center py-3">{dir === "rtl" ? "لا توجد نتائج" : "No results"}</p>
+                                          <p className="text-xs text-muted-foreground text-center py-4">{dir === "rtl" ? "لا توجد نتائج" : "No results"}</p>
                                         ) : filtered.map((m, i) => (
                                           <button key={i} type="button"
-                                            className={`w-full text-start px-3 py-2 text-sm hover:bg-primary/10 transition-colors flex items-center justify-between ${form.vehicle_model === m.en ? "bg-primary/15 font-bold text-primary" : "text-foreground"}`}
+                                            className={`w-full text-start px-4 py-2.5 text-sm transition-all duration-200 flex items-center justify-between gap-2 border-b border-border/30 last:border-0
+                                              ${form.vehicle_model === m.en ? "bg-primary/15 text-primary font-bold" : "text-foreground hover:bg-primary/8 hover:ps-5"}`}
                                             onClick={() => { touch("vehicle_model"); upd("vehicle_model", m.en); setModelOpen(false); setModelSearch(""); sounds.click(); toast.success(`${r.nav.selected} ${dir === "rtl" ? m.ar : m.en}`, { icon: "✅", duration: 1500 }); }}>
                                             <span>{dir === "rtl" ? m.ar : m.en}</span>
-                                            {form.vehicle_model === m.en && <CheckCircle2 className="w-3.5 h-3.5 text-primary" />}
+                                            {form.vehicle_model === m.en && <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />}
                                           </button>
                                         ))}
                                       </div>
