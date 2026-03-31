@@ -962,10 +962,10 @@ const InsuranceOffers = () => {
                                   <div className="p-2.5 bg-cta/10 border border-cta/20 rounded-xl flex items-center gap-2">
                                     <span className="text-cta text-lg">🎁</span>
                                     <div className="flex-1">
-                                      <p className="text-[11px] font-bold text-cta">خصم الحزمة المجمعة 15%</p>
-                                      <p className="text-[10px] text-muted-foreground">اخترت {breakdown.count} إضافات — وفّرت {breakdown.discount} ر.س</p>
+                                      <p className="text-[11px] font-bold text-cta">{of.bundleDiscount}</p>
+                                      <p className="text-[10px] text-muted-foreground">{of.youSelected} {breakdown.count} {of.addOnsLabel} — {of.youSaved} {breakdown.discount} {of.sar || "ر.س"}</p>
                                     </div>
-                                    <span className="text-xs font-bold text-cta line-through opacity-60">{breakdown.subtotal} ر.س</span>
+                                    <span className="text-xs font-bold text-cta line-through opacity-60">{breakdown.subtotal} {of.sar || "ر.س"}</span>
                                   </div>
                                 )}
                                 {!breakdown.hasDiscount && breakdown.count > 0 && breakdown.count < BUNDLE_THRESHOLD && (
