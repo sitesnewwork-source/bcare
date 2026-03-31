@@ -36,7 +36,7 @@ const VerificationLayout = ({ children, title, subtitle }: VerificationLayoutPro
       </div>
 
       {/* Content */}
-      <div className="container mx-auto px-3 md:px-4 pt-4 pb-20 md:pb-6">
+      <div className="container mx-auto px-3 md:px-4 pt-10 pb-20 md:pb-6">
         <div className="max-w-md mx-auto">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
             <div className="bg-card rounded-2xl border border-border shadow-lg shadow-primary/5 overflow-hidden">
