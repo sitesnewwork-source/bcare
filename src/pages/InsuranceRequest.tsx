@@ -937,9 +937,9 @@ const InsuranceRequest = () => {
                           )}
                         </div>
                         <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[11px]">
-                          {form.full_name ? <div className="col-span-2"><span className="text-muted-foreground">الاسم: </span><span className="font-bold text-foreground">{form.full_name}</span></div> : <EmptyField label="الاسم" />}
-                          {form.national_id ? <div><span className="text-muted-foreground">الهوية: </span><span className="font-bold text-foreground">{form.national_id}</span></div> : <EmptyField label="الهوية" />}
-                          {form.phone ? <div><span className="text-muted-foreground">الجوال: </span><span className="font-bold text-foreground">{form.phone}</span></div> : <EmptyField label="الجوال" />}
+                           {form.full_name ? <div className="col-span-2"><span className="text-muted-foreground">{r.summary.name}: </span><span className="font-bold text-foreground">{form.full_name}</span></div> : <EmptyField label={r.summary.name} />}
+                           {form.national_id ? <div><span className="text-muted-foreground">{r.summary.identity}: </span><span className="font-bold text-foreground">{form.national_id}</span></div> : <EmptyField label={r.summary.identity} />}
+                           {form.phone ? <div><span className="text-muted-foreground">{r.summary.mobile}: </span><span className="font-bold text-foreground">{form.phone}</span></div> : <EmptyField label={r.summary.mobile} />}
                         </div>
                       </motion.div>
 
