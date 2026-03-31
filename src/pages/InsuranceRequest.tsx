@@ -448,7 +448,7 @@ const InsuranceRequest = () => {
                       },
                     })}
 
-                    {renderField({ label: "الاسم الكامل *", icon: Type, placeholder: "الاسم كما في الهوية", value: form.full_name, error: fieldState("full_name").error, valid: fieldState("full_name").valid, onBlur: () => touch("full_name"), onChange: (e) => { touch("full_name"); upd("full_name", e.target.value); } })}
+                    {renderField({ label: r.fields.fullName, icon: Type, placeholder: r.fields.fullName, value: form.full_name, error: fieldState("full_name").error, valid: fieldState("full_name").valid, onBlur: () => touch("full_name"), onChange: (e) => { touch("full_name"); upd("full_name", e.target.value); } })}
 
                     {/* Birth Date */}
                     <div className="space-y-1">
