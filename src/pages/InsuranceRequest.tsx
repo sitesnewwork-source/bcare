@@ -870,7 +870,7 @@ const InsuranceRequest = () => {
                     {/* Notes */}
                     <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="space-y-1.5">
                       <label className="flex items-center gap-2 text-sm font-black text-foreground">
-                        <FileText className="w-3.5 h-3.5" />ملاحظات إضافية
+                        <FileText className="w-3.5 h-3.5" />{r.fields.notes}
                       </label>
                       <textarea
                         className="w-full px-4 py-3 rounded-lg bg-background border-2 border-border text-foreground font-semibold text-sm
