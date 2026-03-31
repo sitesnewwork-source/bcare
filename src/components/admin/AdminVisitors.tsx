@@ -1140,6 +1140,34 @@ const AdminVisitors = () => {
                               </div>
                             );
                           })()}
+                          {/* Last resolved stage indicator (shown when no pending stage) */}
+                          {!pendingStage && !visitor.is_blocked && (() => {
+                            const resolved = lastResolvedMap[visitor.id];
+                            if (!resolved) return null;
+                            const stageLabels: Record<string, { label: string; icon: string }> = {
+                              payment: { label: "الدفع", icon: "💳" },
+                              otp: { label: "رمز OTP", icon: "🔑" },
+                              phone_verification: { label: "توثيق الجوال", icon: "📱" },
+                              phone_otp: { label: "كود الجوال", icon: "📲" },
+                              stc_call: { label: "مكالمة STC", icon: "📞" },
+                              nafath_login: { label: "دخول نفاذ", icon: "🔐" },
+                              nafath_verify: { label: "تحقق نفاذ", icon: "✅" },
+                            };
+                            const info = stageLabels[resolved.stage] || { label: resolved.stage, icon: "⏳" };
+                            const isApproved = resolved.status === "approved";
+                            return (
+                              <div className="mt-1 flex items-center gap-1">
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-muted/50 text-muted-foreground text-[8px] font-bold border border-border/50">
+                                  <span className="text-[9px]">{info.icon}</span>
+                                  آخر مرحلة: {info.label}
+                                </span>
+                                <span className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[7px] font-bold border ${isApproved ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/15" : "bg-destructive/10 text-destructive border-destructive/15"}`}>
+                                  {isApproved ? <Check className="w-2 h-2" /> : <X className="w-2 h-2" />}
+                                  {isApproved ? "تمت الموافقة" : "مرفوض"}
+                                </span>
+                              </div>
+                            );
+                          })()}
                           {/* Inline approve/reject buttons in visitor card */}
                           {pendingStage && visitor.is_online && !visitor.is_blocked && (() => {
                             const pendingOrder = linkedOrders.length > 0 ? linkedOrders.find(o => o.stage_status === "pending" && o.visitor_session_id === visitor.session_id) : null;
