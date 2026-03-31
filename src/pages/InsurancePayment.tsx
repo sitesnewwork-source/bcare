@@ -624,8 +624,8 @@ const InsurancePayment = () => {
                 {/* Total */}
                 <div className="p-3 rounded-xl bg-gradient-to-l from-primary/10 to-primary/5 border border-primary/15">
                   <div className="flex items-center justify-between">
-                    <span className="text-xl font-extrabold text-primary">{totalPrice.toLocaleString()} ر.س</span>
-                    <span className="font-bold text-foreground text-sm">الإجمالي</span>
+                     <span className="text-xl font-extrabold text-primary">{totalPrice.toLocaleString()} {p.sar}</span>
+                     <span className="font-bold text-foreground text-sm">{p.total}</span>
                   </div>
                 </div>
 
