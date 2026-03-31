@@ -349,7 +349,7 @@ const InsuranceRequest = () => {
                 className="text-[11px] text-cta flex items-center gap-1 font-semibold"
               >
                 <CheckCircle2 className="w-3 h-3" />
-                صحيح ✓
+                {r.validation.correct}
               </motion.p>
             ) : null}
           </AnimatePresence>
