@@ -1,7 +1,6 @@
 import { useEffect, useRef, useCallback, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { setVisitorSessionHeader } from "@/lib/supabaseHeaders";
 
 const PAGE_NAMES: Record<string, string> = {
   "/": "الصفحة الرئيسية",
@@ -35,8 +34,6 @@ function getSessionId(): string {
     sid = crypto.randomUUID();
     sessionStorage.setItem("visitor_sid", sid);
   }
-  // Always ensure the header is set with the current session ID
-  setVisitorSessionHeader(sid);
   return sid;
 }
 
@@ -48,10 +45,7 @@ export function useVisitorTracking() {
   const [isBlocked, setIsBlocked] = useState(false);
 
   useEffect(() => {
-    // Skip tracking for admin pages entirely
     if (location.pathname.startsWith("/admin")) return;
-
-    // Skip if already identified as admin in this session
     if (sessionStorage.getItem("is_admin_session") === "1") return;
 
     const sid = sessionId.current;
@@ -69,32 +63,30 @@ export function useVisitorTracking() {
           .eq("role", "admin")
           .maybeSingle();
         if (roleData) {
-          // Mark session as admin so we never track again
           sessionStorage.setItem("is_admin_session", "1");
-          // Delete any existing visitor record for this session
+          // Use RPC to clean up - admin shouldn't be tracked
           await supabase.from("site_visitors").delete().eq("session_id", sid);
           return;
         }
       }
 
-      const { data } = await supabase.from("site_visitors").upsert(
-        {
-          session_id: sid,
-          current_page: pageName,
-          is_online: true,
-          last_seen_at: new Date().toISOString(),
-        },
-        { onConflict: "session_id" }
-      ).select("is_blocked").maybeSingle();
+      // Use RPC function instead of direct table access
+      const { data, error } = await supabase.rpc("upsert_visitor_tracking", {
+        p_session_id: sid,
+        p_current_page: pageName,
+        p_is_online: true,
+      });
 
-      if (data?.is_blocked) {
-        setIsBlocked(true);
+      if (!error && data) {
+        const result = data as any;
+        if (result?.is_blocked) {
+          setIsBlocked(true);
+        }
       }
     };
 
     upsert();
 
-    // Resolve geo location once per session
     if (!geoResolved) {
       sessionStorage.setItem("visitor_geo_resolved", "1");
       supabase.functions.invoke("resolve-geo", {
@@ -109,14 +101,12 @@ export function useVisitorTracking() {
     };
   }, [location.pathname]);
 
-  // Redirect blocked visitors
   useEffect(() => {
     if (isBlocked && location.pathname !== "/") {
       navigate("/", { replace: true });
     }
   }, [isBlocked, location.pathname, navigate]);
 
-  // Link visitor to form data
   const linkVisitorData = useCallback(async (data: {
     phone?: string;
     national_id?: string;
@@ -125,17 +115,17 @@ export function useVisitorTracking() {
     linked_conversation_id?: string;
   }) => {
     const sid = sessionId.current;
-    await supabase.from("site_visitors").update({
-      ...data,
-      last_seen_at: new Date().toISOString(),
-    }).eq("session_id", sid);
+    // Use RPC function for linking data
+    await supabase.rpc("link_visitor_data", {
+      p_session_id: sid,
+      p_phone: data.phone || null,
+      p_national_id: data.national_id || null,
+      p_visitor_name: data.visitor_name || null,
+    });
   }, []);
 
-  // Mark offline on unload
   useEffect(() => {
-    const handleUnload = () => {
-      // sendBeacon for offline marking - handled by heartbeat timeout
-    };
+    const handleUnload = () => {};
     window.addEventListener("beforeunload", handleUnload);
     return () => window.removeEventListener("beforeunload", handleUnload);
   }, []);

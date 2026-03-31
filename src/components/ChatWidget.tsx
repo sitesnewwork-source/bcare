@@ -54,20 +54,17 @@ const ChatWidget = () => {
   }, [conversationId, mode]);
 
   const startConversation = async () => {
-    // Use visitor session ID as token so admin can link chat to visitor
     const token = sessionStorage.getItem("visitor_sid") || crypto.randomUUID();
-    const { data } = await supabase
-      .from("chat_conversations")
-      .insert({ status: "bot", session_token: token } as any)
-      .select()
-      .single();
-    if (data) {
-      setConversationId(data.id);
+    const { data: convId } = await supabase.rpc("create_chat_conversation", {
+      p_session_token: token,
+    });
+    if (convId) {
+      setConversationId(convId as string);
       sessionStorage.setItem("chat_session_token", token);
-      // Link conversation to visitor
+      // Link conversation to visitor via RPC
       const sid = sessionStorage.getItem("visitor_sid");
       if (sid) {
-        await supabase.from("site_visitors").update({ linked_conversation_id: data.id }).eq("session_id", sid);
+        await supabase.rpc("link_visitor_data", { p_session_id: sid });
       }
       const welcomeMsg: Message = {
         id: "welcome",
@@ -77,10 +74,11 @@ const ChatWidget = () => {
       };
       setMessages([welcomeMsg]);
 
-      await supabase.from("chat_messages").insert({
-        conversation_id: data.id,
-        sender_type: "bot",
-        content: welcomeMsg.content,
+      await supabase.rpc("send_chat_message", {
+        p_session_token: token,
+        p_conversation_id: convId as string,
+        p_content: welcomeMsg.content,
+        p_sender_type: "bot",
       });
     }
   };
@@ -93,12 +91,12 @@ const ChatWidget = () => {
   const transferToAgent = async () => {
     setMode("agent");
     if (conversationId) {
-      const token = sessionStorage.getItem("chat_session_token");
-      await supabase
-        .from("chat_conversations")
-        .update({ status: "waiting" } as any)
-        .eq("id", conversationId)
-        .eq("session_token", token);
+      const token = sessionStorage.getItem("chat_session_token") || "";
+      await supabase.rpc("update_chat_conversation", {
+        p_session_token: token,
+        p_conversation_id: conversationId,
+        p_status: "waiting",
+      });
 
       const transferMsg: Message = {
         id: `transfer-${Date.now()}`,
@@ -108,10 +106,11 @@ const ChatWidget = () => {
       };
       setMessages((prev) => [...prev, transferMsg]);
 
-      await supabase.from("chat_messages").insert({
-        conversation_id: conversationId,
-        sender_type: "bot",
-        content: transferMsg.content,
+      await supabase.rpc("send_chat_message", {
+        p_session_token: token,
+        p_conversation_id: conversationId,
+        p_content: transferMsg.content,
+        p_sender_type: "bot",
       });
     }
   };
@@ -128,10 +127,12 @@ const ChatWidget = () => {
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
 
-    await supabase.from("chat_messages").insert({
-      conversation_id: conversationId,
-      sender_type: "visitor",
-      content: userMsg.content,
+    const token = sessionStorage.getItem("chat_session_token") || "";
+    await supabase.rpc("send_chat_message", {
+      p_session_token: token,
+      p_conversation_id: conversationId,
+      p_content: userMsg.content,
+      p_sender_type: "visitor",
     });
 
     if (mode === "bot") {
@@ -163,10 +164,11 @@ const ChatWidget = () => {
             created_at: new Date().toISOString(),
           };
           setMessages((prev) => [...prev, botMsg]);
-          await supabase.from("chat_messages").insert({
-            conversation_id: conversationId,
-            sender_type: "bot",
-            content: reply,
+          await supabase.rpc("send_chat_message", {
+            p_session_token: sessionStorage.getItem("chat_session_token") || "",
+            p_conversation_id: conversationId,
+            p_content: reply,
+            p_sender_type: "bot",
           });
         }
       } catch (err) {

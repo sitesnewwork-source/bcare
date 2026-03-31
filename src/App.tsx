@@ -32,10 +32,6 @@ import ChatWidget from "./components/ChatWidget.tsx";
 import PageTransition from "./components/PageTransition.tsx";
 import { useVisitorTracking } from "./hooks/useVisitorTracking";
 import ScrollToTop from "./components/ScrollToTop";
-import { ensureVisitorSessionHeader } from "./lib/supabaseHeaders";
-
-// Initialize visitor session header as early as possible
-ensureVisitorSessionHeader();
 import MobileBottomNav from "./components/MobileBottomNav";
 
 const queryClient = new QueryClient();
