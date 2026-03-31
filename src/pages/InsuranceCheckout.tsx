@@ -502,7 +502,7 @@ const InsuranceCheckout = () => {
                 <div className="space-y-1">
                   <h4 className="font-bold text-foreground text-xs flex items-center gap-1.5">
                     <Shield className="w-3.5 h-3.5 text-primary" />
-                    التغطيات
+                    {ck.coverages}
                   </h4>
                   <div className="space-y-0.5">
                     {offer.features?.map((f: string, i: number) => (
