@@ -158,28 +158,56 @@ const HeroSection = ({ onTabChange }: HeroSectionProps) => {
 
   const renderVehiclesForm = () => (
     <motion.div key={`vehicles-form-${purposeType}-${registrationType}`} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-end gap-6 md:gap-10 mb-6">
-        <div className="flex items-center gap-3">
-          <span className="text-sm font-bold text-foreground">{t.hero.form.purposeLabel}</span>
-          <label className="flex items-center gap-1.5 cursor-pointer">
-            <input type="radio" name="purpose" checked={purposeType === "new"} onChange={() => setPurposeType("new")} className="w-4 h-4 accent-primary" />
-            <span className={`text-sm ${purposeType === "new" ? "font-bold text-primary" : "text-muted-foreground"}`}>{t.hero.form.newInsurance}</span>
-          </label>
-          <label className="flex items-center gap-1.5 cursor-pointer">
-            <input type="radio" name="purpose" checked={purposeType === "transfer"} onChange={() => setPurposeType("transfer")} className="w-4 h-4 accent-primary" />
-            <span className={`text-sm ${purposeType === "transfer" ? "font-bold text-primary" : "text-muted-foreground"}`}>{t.hero.form.transfer}</span>
-          </label>
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-end gap-4 md:gap-8 mb-6">
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-bold text-foreground ml-1">{t.hero.form.purposeLabel}</span>
+          <div className="flex bg-muted/40 rounded-xl p-1 border border-border/50">
+            <button
+              onClick={() => setPurposeType("new")}
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all duration-300 ${
+                purposeType === "new"
+                  ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {t.hero.form.newInsurance}
+            </button>
+            <button
+              onClick={() => setPurposeType("transfer")}
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all duration-300 ${
+                purposeType === "transfer"
+                  ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {t.hero.form.transfer}
+            </button>
+          </div>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="text-sm font-bold text-foreground">{t.hero.form.regTypeLabel}</span>
-          <label className="flex items-center gap-1.5 cursor-pointer">
-            <input type="radio" name="regtype" checked={registrationType === "form"} onChange={() => setRegistrationType("form")} className="w-4 h-4 accent-primary" />
-            <span className={`text-sm ${registrationType === "form" ? "font-bold text-primary" : "text-muted-foreground"}`}>{t.hero.form.regForm}</span>
-          </label>
-          <label className="flex items-center gap-1.5 cursor-pointer">
-            <input type="radio" name="regtype" checked={registrationType === "customs"} onChange={() => setRegistrationType("customs")} className="w-4 h-4 accent-primary" />
-            <span className={`text-sm ${registrationType === "customs" ? "font-bold text-primary" : "text-muted-foreground"}`}>{t.hero.form.regCustoms}</span>
-          </label>
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-bold text-foreground ml-1">{t.hero.form.regTypeLabel}</span>
+          <div className="flex bg-muted/40 rounded-xl p-1 border border-border/50">
+            <button
+              onClick={() => setRegistrationType("form")}
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all duration-300 ${
+                registrationType === "form"
+                  ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {t.hero.form.regForm}
+            </button>
+            <button
+              onClick={() => setRegistrationType("customs")}
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all duration-300 ${
+                registrationType === "customs"
+                  ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {t.hero.form.regCustoms}
+            </button>
+          </div>
         </div>
       </div>
 
