@@ -584,7 +584,7 @@ const InsuranceRequest = () => {
                           {documentPreview ? (
                             <img
                               src={documentPreview}
-                              alt="صورة الاستمارة"
+                              alt={r.upload.attached}
                               className="w-full h-32 object-cover rounded-lg"
                             />
                           ) : (
