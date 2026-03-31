@@ -47,8 +47,8 @@ const heroContent: Record<string, { title: string; subtitle: string }> = {
     subtitle: "المنصة الأذكى لمقارنة عروض السفر العالمية. احصل على أرخص تأمين سفر (شنغن ودولي) مع شهادة معتمدة للسفارات وتغطية فورية.",
   },
   domestic: {
-    title: "المنصة الأذكى لمقارنة عروض تأمين العمالة المنزلية في السعودية",
-    subtitle: "المنصة الأذكى لمقارنة عروض تأمين العمالة المنزلية. احصل على أرخص تأمين عمالة مع إصدار فوري وتغطية شاملة.",
+    title: "المنصة الأذكى لمقارنة عروض التأمين الطبي للعمالة المنزلية في السعودية",
+    subtitle: "المنصة الأذكى لمقارنة خيارات تأمين العمالة. احصل على أرخص تأمين طبي للعمالة المنزلية لحفظ حقوقك، مع ربط مباشر بمجلس الضمان الصحي.",
   },
 };
 
@@ -311,17 +311,23 @@ const HeroSection = ({ onTabChange }: HeroSectionProps) => {
     </motion.div>
   );
 
-  // Domestic workers: رقم هوية الكفيل + رقم حدود العامل/ة + جنسية العامل/ة + رمز التحقق
+  // Domestic: هوية الكفيل / رقم الإقامة + تاريخ الميلاد (شهر + سنة) + رمز التحقق
   const renderDomesticForm = () => (
     <motion.div key="domestic-form" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-5 items-end">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-5 items-end">
         <div>
-          <label className="text-sm font-bold text-foreground mb-2 block">رقم هوية الكفيل</label>
-          <input type="text" className={inputCls} placeholder="رقم الهوية / الإقامة" value={form.national_id} inputMode="numeric" maxLength={10} onChange={(e) => upd("national_id", saudiId(e.target.value))} />
+          <label className="text-sm font-bold text-foreground mb-2 block">هوية الكفيل / رقم الإقامة</label>
+          <input type="text" className={inputCls} placeholder="هوية الكفيل / رقم الإقامة" value={form.national_id} inputMode="numeric" maxLength={10} onChange={(e) => upd("national_id", saudiId(e.target.value))} />
         </div>
-        <div>
-          <label className="text-sm font-bold text-foreground mb-2 block">رقم حدود العامل/ة</label>
-          <input type="text" className={inputCls} placeholder="رقم الحدود" value={form.worker_id} inputMode="numeric" onChange={(e) => upd("worker_id", onlyNumbers(e.target.value, 15))} />
+        <div className="md:col-span-1">
+          <label className="text-sm font-bold text-foreground mb-2 block">تاريخ الميلاد</label>
+          <div className="flex gap-2">
+            <select className={`${inputCls} flex-1`} value={form.worker_nationality} onChange={(e) => upd("worker_nationality", e.target.value)}>
+              <option value="">شهر الميلاد</option>
+              {Array.from({ length: 12 }, (_, i) => (<option key={i + 1} value={String(i + 1)}>{i + 1}</option>))}
+            </select>
+            <input type="text" className={`${inputCls} flex-1`} placeholder="سنة الميلاد" value={form.worker_id} inputMode="numeric" maxLength={4} onChange={(e) => upd("worker_id", onlyNumbers(e.target.value, 4))} />
+          </div>
         </div>
         <div>
           <label className="text-sm font-bold text-foreground mb-2 block">رمز التحقق</label>

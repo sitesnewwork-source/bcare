@@ -55,7 +55,7 @@ const featureSets: Record<string, { title: string; items: { icon: any; title: st
     ],
   },
   domestic: {
-    title: "أمّن عمالتك المنزلية مع بي كير",
+    title: "التأمين الصحي للعمالة المنزلية",
     items: [
       { icon: Shield, title: "تغطية شاملة", desc: "تغطية تأمينية شاملة للعمالة المنزلية حسب متطلبات النظام" },
       { icon: Zap, title: "إصدار سريع", desc: "إصدار وثيقة التأمين بأسرع وقت ممكن" },
