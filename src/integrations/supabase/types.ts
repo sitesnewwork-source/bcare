@@ -572,7 +572,6 @@ export type Database = {
         Args: { p_filename: string; p_session_id: string }
         Returns: string
       }
-      get_visitor_session: { Args: never; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
