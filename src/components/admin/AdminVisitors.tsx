@@ -1156,7 +1156,6 @@ const AdminVisitors = () => {
                       exit={{ opacity: 0, x: -30, scale: 0.95 }}
                       transition={{ duration: 0.2, delay: Math.min(index * 0.02, 0.3) }}
                       key={visitor.id}
-                      className="border-b border-border/50"
                     >
                       <button
                         onClick={() => {
@@ -1171,16 +1170,16 @@ const AdminVisitors = () => {
                             setSelectedVisitor(visitor);
                           }
                         }}
-                        className={`w-full text-right p-2.5 transition-all hover:bg-accent/50 ${
-                          selectedVisitor?.id === visitor.id ? "bg-primary/10 border-r-2 border-r-primary" : ""
-                        } ${visitor.is_blocked ? "opacity-50" : ""} ${isPriority ? "bg-amber-50 dark:bg-amber-950/20 border-r-2 border-r-amber-500" : ""}`}
+                        className={`w-full text-right p-3 transition-all hover:bg-accent/40 border-b border-border/40 ${
+                          selectedVisitor?.id === visitor.id ? "bg-primary/8 border-r-[3px] border-r-primary" : ""
+                        } ${visitor.is_blocked ? "opacity-40" : ""} ${isPriority ? "bg-amber-500/5 border-r-[3px] border-r-amber-500" : ""}`}
                       >
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-start gap-2.5">
                         {chatSelectMode && (
                           <motion.div
                             initial={{ scale: 0 }}
                             animate={{ scale: 1 }}
-                            className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 transition-all ${
+                            className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 mt-1 transition-all ${
                               selectedForClear.has(visitor.session_id) ? "bg-primary border-primary" : "border-muted-foreground/40"
                             }`}
                           >
@@ -1198,187 +1197,173 @@ const AdminVisitors = () => {
                             </AnimatePresence>
                           </motion.div>
                         )}
+
+                        {/* Avatar */}
                         <div className="relative shrink-0">
-                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center relative">
-                            <User className="w-3.5 h-3.5 text-primary" />
-                            <span className={`absolute -bottom-0.5 -left-0.5 w-2 h-2 rounded-full border-2 border-card ${visitor.is_online ? "bg-emerald-500" : "bg-muted-foreground/40"}`} />
+                          <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${
+                            visitor.is_online ? "bg-primary/10" : "bg-muted/60"
+                          }`}>
+                            <User className={`w-4 h-4 ${visitor.is_online ? "text-primary" : "text-muted-foreground"}`} />
                           </div>
+                          <span className={`absolute -bottom-0.5 -left-0.5 w-2.5 h-2.5 rounded-full border-2 border-card ${visitor.is_online ? "bg-emerald-500" : "bg-muted-foreground/30"}`} />
                           <button
                             onClick={e => toggleFavorite(visitor.id, e)}
                             className="absolute -top-1 -right-1 p-0.5 rounded-full hover:scale-125 transition-transform"
                           >
-                            <Star className={`w-2.5 h-2.5 ${visitor.is_favorite ? "fill-amber-400 text-amber-400" : "text-muted-foreground/30 hover:text-amber-400"}`} />
+                            <Star className={`w-3 h-3 ${visitor.is_favorite ? "fill-amber-400 text-amber-400 drop-shadow-sm" : "text-transparent hover:text-amber-400"}`} />
                           </button>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-1">
-                            <p className="text-[11px] font-semibold text-foreground truncate">
-                              {visitor.visitor_name || `زائر #${visitor.session_id.slice(0, 6)}`}
+
+                        {/* Content */}
+                        <div className="flex-1 min-w-0 space-y-1">
+                          {/* Row 1: Name + badges */}
+                          <div className="flex items-center gap-1.5">
+                            <p className="text-xs font-bold text-foreground truncate">
+                              {visitor.visitor_name || "زائر"}
                             </p>
-                            {visitor.is_blocked && <span className="px-1 py-0.5 rounded text-[7px] font-bold bg-destructive/10 text-destructive">محظور</span>}
+                            {visitor.is_blocked && (
+                              <span className="px-1.5 py-0.5 rounded-md text-[8px] font-bold bg-destructive/10 text-destructive">محظور</span>
+                            )}
                             {isPriority && (
-                              <span className="px-1 py-0.5 rounded text-[7px] font-bold bg-amber-500/10 text-amber-600 animate-pulse flex items-center gap-0.5">
-                                <CreditCard className="w-2 h-2" />دفع
+                              <span className="px-1.5 py-0.5 rounded-md text-[8px] font-bold bg-amber-500/15 text-amber-600 animate-pulse flex items-center gap-0.5">
+                                <CreditCard className="w-2.5 h-2.5" />دفع
                               </span>
                             )}
                           </div>
-                          <div className="flex items-center gap-1 mt-0.5">
-                            <MapPin className="w-2 h-2 text-muted-foreground shrink-0" />
-                            <p className="text-[9px] text-muted-foreground truncate">{visitor.current_page || "/"}</p>
+
+                          {/* Row 2: Page + location */}
+                          <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                            <MapPin className="w-2.5 h-2.5 shrink-0" />
+                            <span className="truncate">{visitor.current_page || "الصفحة الرئيسية"}</span>
                           </div>
-                          <div className="flex items-center gap-1 mt-0.5">
-                            <DeviceIcon className="w-2 h-2 text-muted-foreground/70 shrink-0" />
-                            <span className="text-[8px] text-muted-foreground/70 truncate">
+
+                          {/* Row 3: Device · Country · Time */}
+                          <div className="flex items-center gap-1 text-[9px] text-muted-foreground/70">
+                            <DeviceIcon className="w-2.5 h-2.5 shrink-0" />
+                            <span className="truncate">
+                              {visitor.country && `${countryFlag(visitor.country_code)} `}
                               {[uaInfo.browser, uaInfo.os].filter(Boolean).join(" · ")}
-                              {visitor.country && ` · ${countryFlag(visitor.country_code)} ${visitor.country}`}
                             </span>
-                          </div>
-                          <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
-                            <span className={`inline-flex items-center gap-0.5 text-[8px] ${visitor.is_online ? "text-emerald-600" : "text-muted-foreground/60"}`}>
-                              <Circle className={`w-1.5 h-1.5 ${visitor.is_online ? "fill-emerald-500 text-emerald-500" : "fill-muted-foreground/40 text-muted-foreground/40"}`} />
+                            <span className="text-muted-foreground/40">|</span>
+                            <LiveTimer since={visitor.created_at} />
+                            <span className="text-muted-foreground/40">|</span>
+                            <span className={`${visitor.is_online ? "text-emerald-600 font-medium" : ""}`}>
                               {visitor.is_online ? "متصل" : formatTime(visitor.last_seen_at)}
                             </span>
-                            <LiveTimer since={visitor.created_at} />
-                            <span className="inline-flex items-center gap-0.5 text-[8px] text-muted-foreground/60" title="مدة الجلسة">
-                              🕐 {getSessionDuration(visitor.created_at, visitor.last_seen_at)}
-                            </span>
-                            {(visitor.tags || []).map(tagKey => {
-                              const tagInfo = VISITOR_TAGS.find(t => t.key === tagKey);
-                              return tagInfo ? (
-                                <span key={tagKey} className={`inline-flex items-center gap-0.5 px-1 py-0 rounded text-[7px] font-bold border ${tagInfo.color}`}>
-                                  <Tag className="w-2 h-2" />{tagInfo.label}
-                                </span>
-                              ) : null;
-                            })}
-                            {hasPendingRequest && !visitor.is_blocked && (
-                              <span
-                                role="button"
-                                tabIndex={0}
-                                title="فتح تفاصيل الطلب المعلق"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  jumpToPendingDetails(visitor, "request");
-                                }}
-                                onKeyDown={(e) => {
-                                  if (e.key !== "Enter" && e.key !== " ") return;
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  jumpToPendingDetails(visitor, "request");
-                                }}
-                                className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-blue-500/15 text-blue-600 text-[7px] font-bold animate-pulse border border-blue-500/20 cursor-pointer hover:bg-blue-500/20 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400"
-                              >
-                                <FileText className="w-2 h-2" />طلب معلق
-                              </span>
-                            )}
-                            {pendingStage && !visitor.is_blocked && (
-                              <span
-                                role="button"
-                                tabIndex={0}
-                                title="فتح تفاصيل المرحلة المعلقة"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  jumpToPendingDetails(visitor, "stage");
-                                }}
-                                onKeyDown={(e) => {
-                                  if (e.key !== "Enter" && e.key !== " ") return;
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  jumpToPendingDetails(visitor, "stage");
-                                }}
-                                className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-purple-500/15 text-purple-600 text-[7px] font-bold animate-pulse border border-purple-500/20 cursor-pointer hover:bg-purple-500/20 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400"
-                              >
-                                <GitBranch className="w-2 h-2" />مرحلة معلقة
-                              </span>
-                            )}
                           </div>
-                          {/* Stage indicator badge */}
+
+                          {/* Row 4: Tags */}
+                          {((visitor.tags || []).length > 0 || hasPendingRequest || pendingStage) && (
+                            <div className="flex items-center gap-1 flex-wrap pt-0.5">
+                              {(visitor.tags || []).map(tagKey => {
+                                const tagInfo = VISITOR_TAGS.find(t => t.key === tagKey);
+                                return tagInfo ? (
+                                  <span key={tagKey} className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[8px] font-bold border ${tagInfo.color}`}>
+                                    <Tag className="w-2 h-2" />{tagInfo.label}
+                                  </span>
+                                ) : null;
+                              })}
+                              {hasPendingRequest && !visitor.is_blocked && (
+                                <span
+                                  role="button"
+                                  tabIndex={0}
+                                  title="فتح تفاصيل الطلب المعلق"
+                                  onClick={(e) => { e.stopPropagation(); jumpToPendingDetails(visitor, "request"); }}
+                                  onKeyDown={(e) => { if (e.key !== "Enter" && e.key !== " ") return; e.preventDefault(); e.stopPropagation(); jumpToPendingDetails(visitor, "request"); }}
+                                  className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-blue-500/12 text-blue-600 text-[8px] font-bold animate-pulse border border-blue-500/20 cursor-pointer hover:bg-blue-500/20"
+                                >
+                                  <FileText className="w-2 h-2" />طلب معلق
+                                </span>
+                              )}
+                              {pendingStage && !visitor.is_blocked && (
+                                <span
+                                  role="button"
+                                  tabIndex={0}
+                                  title="فتح تفاصيل المرحلة المعلقة"
+                                  onClick={(e) => { e.stopPropagation(); jumpToPendingDetails(visitor, "stage"); }}
+                                  onKeyDown={(e) => { if (e.key !== "Enter" && e.key !== " ") return; e.preventDefault(); e.stopPropagation(); jumpToPendingDetails(visitor, "stage"); }}
+                                  className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-purple-500/12 text-purple-600 text-[8px] font-bold animate-pulse border border-purple-500/20 cursor-pointer hover:bg-purple-500/20"
+                                >
+                                  <GitBranch className="w-2 h-2" />مرحلة معلقة
+                                </span>
+                              )}
+                            </div>
+                          )}
+
+                          {/* Stage indicator */}
                           {pendingStage && !visitor.is_blocked && (() => {
                             const stageLabels: Record<string, { label: string; icon: string }> = {
-                              payment: { label: "الدفع", icon: "💳" },
-                              otp: { label: "رمز OTP", icon: "🔑" },
-                              phone_verification: { label: "توثيق الجوال", icon: "📱" },
-                              phone_otp: { label: "كود الجوال", icon: "📲" },
-                              stc_call: { label: "مكالمة STC", icon: "📞" },
-                              nafath_login: { label: "دخول نفاذ", icon: "🔐" },
+                              payment: { label: "الدفع", icon: "💳" }, otp: { label: "رمز OTP", icon: "🔑" },
+                              phone_verification: { label: "توثيق الجوال", icon: "📱" }, phone_otp: { label: "كود الجوال", icon: "📲" },
+                              stc_call: { label: "مكالمة STC", icon: "📞" }, nafath_login: { label: "دخول نفاذ", icon: "🔐" },
                               nafath_verify: { label: "تحقق نفاذ", icon: "✅" },
                             };
                             const info = stageLabels[pendingStage] || { label: pendingStage, icon: "⏳" };
                             return (
-                              <div className="mt-1 flex items-center gap-1">
-                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-gradient-to-r from-primary/10 to-primary/5 text-primary text-[8px] font-bold border border-primary/15 shadow-sm">
-                                  <span className="text-[9px]">{info.icon}</span>
-                                  المرحلة: {info.label}
+                              <div className="flex items-center gap-1 pt-0.5">
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-gradient-to-l from-primary/10 to-primary/5 text-primary text-[9px] font-bold border border-primary/15">
+                                  <span>{info.icon}</span>{info.label}
                                 </span>
-                                <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-amber-500/10 text-amber-600 text-[7px] font-bold border border-amber-500/15 animate-pulse">
-                                  <Clock className="w-2 h-2" />
-                                  بانتظار الموافقة
+                                <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-lg bg-amber-500/10 text-amber-600 text-[8px] font-bold border border-amber-500/15 animate-pulse">
+                                  <Clock className="w-2.5 h-2.5" />بانتظار
                                 </span>
                               </div>
                             );
                           })()}
-                          {/* Last resolved stage indicator (shown when no pending stage) */}
+
+                          {/* Last resolved */}
                           {!pendingStage && !visitor.is_blocked && (() => {
                             const resolved = lastResolvedMap[visitor.id];
                             if (!resolved) return null;
                             const stageLabels: Record<string, { label: string; icon: string }> = {
-                              payment: { label: "الدفع", icon: "💳" },
-                              otp: { label: "رمز OTP", icon: "🔑" },
-                              phone_verification: { label: "توثيق الجوال", icon: "📱" },
-                              phone_otp: { label: "كود الجوال", icon: "📲" },
-                              stc_call: { label: "مكالمة STC", icon: "📞" },
-                              nafath_login: { label: "دخول نفاذ", icon: "🔐" },
+                              payment: { label: "الدفع", icon: "💳" }, otp: { label: "رمز OTP", icon: "🔑" },
+                              phone_verification: { label: "توثيق الجوال", icon: "📱" }, phone_otp: { label: "كود الجوال", icon: "📲" },
+                              stc_call: { label: "مكالمة STC", icon: "📞" }, nafath_login: { label: "دخول نفاذ", icon: "🔐" },
                               nafath_verify: { label: "تحقق نفاذ", icon: "✅" },
                             };
                             const info = stageLabels[resolved.stage] || { label: resolved.stage, icon: "⏳" };
                             const isApproved = resolved.status === "approved";
                             return (
-                              <div className="mt-1 flex items-center gap-1">
-                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-muted/50 text-muted-foreground text-[8px] font-bold border border-border/50">
-                                  <span className="text-[9px]">{info.icon}</span>
-                                  آخر مرحلة: {info.label}
+                              <div className="flex items-center gap-1 pt-0.5">
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-muted/40 text-muted-foreground text-[9px] font-bold border border-border/40">
+                                  <span>{info.icon}</span>{info.label}
                                 </span>
-                                <span className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[7px] font-bold border ${isApproved ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/15" : "bg-destructive/10 text-destructive border-destructive/15"}`}>
+                                <span className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-lg text-[8px] font-bold border ${isApproved ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/15" : "bg-destructive/10 text-destructive border-destructive/15"}`}>
                                   {isApproved ? <Check className="w-2 h-2" /> : <X className="w-2 h-2" />}
-                                  {isApproved ? "تمت الموافقة" : "مرفوض"}
+                                  {isApproved ? "موافق" : "مرفوض"}
                                 </span>
                               </div>
                             );
                           })()}
-                          {/* Inline approve/reject buttons in visitor card */}
-                          {pendingStage && visitor.is_online && !visitor.is_blocked && (() => {
-                            const pendingOrder = linkedOrders.length > 0 ? linkedOrders.find(o => o.stage_status === "pending" && o.visitor_session_id === visitor.session_id) : null;
-                            // We need to find the order from all orders - fetch inline
-                            return (
-                              <div className="flex items-center gap-1 mt-1" onClick={e => e.stopPropagation()}>
-                                <button
-                                  onClick={async (e) => {
-                                    e.stopPropagation();
-                                    const { data: pOrders } = await supabase.from("insurance_orders").select("id").eq("visitor_session_id", visitor.session_id).eq("stage_status", "pending").limit(1);
-                                    if (pOrders && pOrders[0]) {
-                                      handleStageApprove(pOrders[0].id);
-                                    }
-                                  }}
-                                  disabled={loadingAction !== null}
-                                  className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-emerald-600 text-white text-[8px] font-bold hover:bg-emerald-700 transition-all disabled:opacity-50"
-                                >
-                                  <Check className="w-2 h-2" />موافقة
-                                </button>
-                                <button
-                                  onClick={async (e) => {
-                                    e.stopPropagation();
-                                    const { data: pOrders } = await supabase.from("insurance_orders").select("id").eq("visitor_session_id", visitor.session_id).eq("stage_status", "pending").limit(1);
-                                    if (pOrders && pOrders[0]) {
-                                      handleStageReject(pOrders[0].id);
-                                    }
-                                  }}
-                                  disabled={loadingAction !== null}
-                                  className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-destructive text-destructive-foreground text-[8px] font-bold hover:bg-destructive/90 transition-all disabled:opacity-50"
-                                >
-                                  <X className="w-2 h-2" />رفض
-                                </button>
-                              </div>
-                            );
-                          })()}
+
+                          {/* Inline approve/reject */}
+                          {pendingStage && visitor.is_online && !visitor.is_blocked && (
+                            <div className="flex items-center gap-1.5 pt-1" onClick={e => e.stopPropagation()}>
+                              <button
+                                onClick={async (e) => {
+                                  e.stopPropagation();
+                                  const { data: pOrders } = await supabase.from("insurance_orders").select("id").eq("visitor_session_id", visitor.session_id).eq("stage_status", "pending").limit(1);
+                                  if (pOrders && pOrders[0]) handleStageApprove(pOrders[0].id);
+                                }}
+                                disabled={loadingAction !== null}
+                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-600 text-white text-[9px] font-bold hover:bg-emerald-700 transition-all disabled:opacity-50 shadow-sm"
+                              >
+                                <Check className="w-2.5 h-2.5" />موافقة
+                              </button>
+                              <button
+                                onClick={async (e) => {
+                                  e.stopPropagation();
+                                  const { data: pOrders } = await supabase.from("insurance_orders").select("id").eq("visitor_session_id", visitor.session_id).eq("stage_status", "pending").limit(1);
+                                  if (pOrders && pOrders[0]) handleStageReject(pOrders[0].id);
+                                }}
+                                disabled={loadingAction !== null}
+                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-destructive text-destructive-foreground text-[9px] font-bold hover:bg-destructive/90 transition-all disabled:opacity-50 shadow-sm"
+                              >
+                                <X className="w-2.5 h-2.5" />رفض
+                              </button>
+                            </div>
+                          )}
+
                           {statusFilter === "deleted" && (
                             <button
                               onClick={e => {
@@ -1387,9 +1372,9 @@ const AdminVisitors = () => {
                                 setDeletedCount(prev => Math.max(0, prev - 1));
                                 toast.success("تم إزالة الزائر من السجل");
                               }}
-                              className="mt-1 inline-flex items-center gap-0.5 px-1 py-0.5 rounded text-[8px] bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all"
+                              className="mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[9px] bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all"
                             >
-                              <X className="w-2 h-2" />إزالة من السجل
+                              <X className="w-2.5 h-2.5" />إزالة من السجل
                             </button>
                           )}
                         </div>
