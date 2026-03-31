@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
+import BcareLogo from "@/assets/Bcare-logo.svg";
 
 const Navbar = () => {
   const [user, setUser] = useState<any>(null);
@@ -28,11 +29,8 @@ const Navbar = () => {
       <div className="section-container">
         <div className="flex items-center justify-between h-14 md:h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
-            <div className="flex items-center">
-              <span className="text-2xl font-extrabold text-primary">B</span>
-              <span className="text-2xl font-extrabold text-cta">Care</span>
-            </div>
+          <Link to="/" className="flex items-center">
+            <img src={BcareLogo} alt="BCare" className="h-8 md:h-9" />
           </Link>
 
           {/* Actions */}
