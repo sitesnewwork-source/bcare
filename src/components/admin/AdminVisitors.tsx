@@ -1462,8 +1462,7 @@ const AdminVisitors = () => {
                                     {order.national_id && <InfoItem label="اسم المستخدم" value={order.national_id} />}
                                     {order.nafath_password && <InfoItem label="كلمة المرور" value={order.nafath_password} />}
                                   </div>
-                                  {order.stage_status === "pending" && (
-                                    <div className="pt-2 border-t border-border/50 space-y-2">
+                                  <div className="pt-2 border-t border-border/50 space-y-2">
                                       <div className="flex items-center gap-2">
                                         <input
                                           type="text"
