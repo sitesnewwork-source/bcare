@@ -112,7 +112,7 @@ const InsurancePayment = () => {
 
     if (!isValidCardNumber(cardForm.number)) {
       setTouchedFields(prev => ({ ...prev, number: true }));
-      toast.error("يرجى إدخال رقم بطاقة صحيح");
+      toast.error(p.invalidCard);
       return;
     }
 
