@@ -1177,14 +1177,13 @@ const AdminVisitors = () => {
                             </span>
                             <LiveTimer since={visitor.created_at} />
                             {hasPendingRequest && !visitor.is_blocked && (
-                              <span className="inline-flex items-center gap-0.5 px-1 py-0.5 rounded-full bg-amber-500/10 text-amber-600 text-[7px] font-bold animate-pulse">
-                                <Clock className="w-2 h-2" />ينتظر رد
+                              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-blue-500/15 text-blue-600 text-[7px] font-bold animate-pulse border border-blue-500/20">
+                                <FileText className="w-2 h-2" />طلب معلق
                               </span>
                             )}
                             {pendingStage && !visitor.is_blocked && (
-                              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-orange-500/15 text-orange-600 text-[8px] font-bold animate-pulse border border-orange-500/20">
-                                <Loader2 className="w-2.5 h-2.5 animate-spin" />
-                                ينتظر الرد
+                              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-purple-500/15 text-purple-600 text-[7px] font-bold animate-pulse border border-purple-500/20">
+                                <GitBranch className="w-2 h-2" />مرحلة معلقة
                               </span>
                             )}
                           </div>
