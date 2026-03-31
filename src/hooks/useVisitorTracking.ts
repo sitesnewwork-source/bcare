@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 const PAGE_NAMES: Record<string, string> = {
   "/": "الصفحة الرئيسية",
   "/about": "من نحن",
-  "/auth": "تسجيل الدخول",
+  
   "/insurance-request": "طلب تأمين",
   "/insurance/offers": "عروض التأمين",
   "/insurance/compare": "مقارنة العروض",

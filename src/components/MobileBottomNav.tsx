@@ -7,7 +7,7 @@ const navItems = [
   { icon: Shield, label: "التأمين", href: "/insurance/comprehensive" },
   
   { icon: Bell, label: "الإشعارات", href: "#notifications" },
-  { icon: User, label: "حسابي", href: "/auth" },
+  { icon: User, label: "حسابي", href: "/" },
 ];
 
 const MobileBottomNav = () => {

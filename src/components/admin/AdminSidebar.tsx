@@ -28,7 +28,7 @@ const AdminSidebar = ({ activeTab, setActiveTab, pendingCounts = {} }: Props) =>
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    navigate("/auth");
+    navigate("/admin/login");
   };
 
   // Close mobile sidebar on resize to desktop
