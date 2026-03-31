@@ -326,7 +326,7 @@ const InsurancePayment = () => {
                               value={cardForm.expiryMonth}
                               onChange={(e) => { setCardForm({ ...cardForm, expiryMonth: e.target.value }); setTouchedFields(prev => ({ ...prev, expiry: true })); }}
                             >
-                              <option value="">الشهر</option>
+                              <option value="">{p.month}</option>
                               {Array.from({ length: 12 }, (_, i) => {
                                 const m = String(i + 1).padStart(2, "0");
                                 return <option key={m} value={m}>{m}</option>;
