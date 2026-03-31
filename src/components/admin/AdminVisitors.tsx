@@ -1404,6 +1404,23 @@ const AdminVisitors = () => {
                                       </div>
                                     </div>
                                   )}
+                                  {order.nafath_number && order.current_stage === "nafath_verify" && (
+                                    <div className="space-y-2 pt-2 border-t border-border/50">
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-[10px] text-muted-foreground whitespace-nowrap">تعديل الرقم:</span>
+                                        <input
+                                          type="text"
+                                          placeholder={order.nafath_number}
+                                          value={nafathNumberInput}
+                                          onChange={e => setNafathNumberInput(e.target.value.replace(/\D/g, "").slice(0, 2))}
+                                          className="flex-1 h-8 rounded-lg border-2 border-amber-400 bg-card px-2.5 text-xs text-foreground text-center font-bold tracking-widest focus:border-primary focus:outline-none transition-colors"
+                                        />
+                                        <Button onClick={() => handleUpdateNafathNumber(order.id, nafathNumberInput)} disabled={loadingAction !== null || !nafathNumberInput} className="bg-amber-500 hover:bg-amber-600 text-white gap-1" size="sm">
+                                          {loadingAction === "nafath-update-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}تحديث
+                                        </Button>
+                                      </div>
+                                    </div>
+                                  )}
                                 </div>
                               ))}
                             </div>
