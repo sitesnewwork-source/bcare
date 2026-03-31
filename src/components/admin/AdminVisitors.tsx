@@ -1914,11 +1914,13 @@ const AdminVisitors = () => {
   );
 };
 
-const InfoItem = ({ label, value }: { label: string; value: string | null }) => (
-  <div>
+import React from "react";
+const InfoItem = React.forwardRef<HTMLDivElement, { label: string; value: string | null }>(({ label, value }, ref) => (
+  <div ref={ref}>
     <p className="text-[10px] text-muted-foreground mb-0.5">{label}</p>
     <p className="text-xs font-semibold text-foreground">{value || "-"}</p>
   </div>
-);
+));
+InfoItem.displayName = "InfoItem";
 
 export default AdminVisitors;
