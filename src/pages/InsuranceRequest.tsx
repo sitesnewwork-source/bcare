@@ -876,7 +876,7 @@ const InsuranceRequest = () => {
                         className="w-full px-4 py-3 rounded-lg bg-background border-2 border-border text-foreground font-semibold text-sm
                           placeholder:text-muted-foreground/50 transition-all duration-200 outline-none min-h-[80px] resize-none
                           hover:border-primary/40 focus:border-primary focus:ring-2 focus:ring-primary/20"
-                        placeholder="أي ملاحظات أو طلبات خاصة..."
+                        placeholder={r.fields.notesPlaceholder}
                         value={form.notes} onChange={(e) => upd("notes", e.target.value)}
                         onFocus={() => sounds.hover()} />
                     </motion.div>
