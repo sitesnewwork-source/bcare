@@ -834,7 +834,7 @@ const InsuranceRequest = () => {
                       <div className="grid grid-cols-3 gap-2">
                         <select className={selectCls(form.policy_day)} value={form.policy_day}
                           onChange={(e) => { upd("policy_day", e.target.value); touch("policy_start_date"); sounds.click(); }}>
-                          <option value="">اليوم</option>
+                          <option value="">{r.fields.day}</option>
                           {Array.from({ length: 31 }, (_, i) => i + 1).map(d => <option key={d} value={String(d)}>{d}</option>)}
                         </select>
                         <select className={selectCls(form.policy_month)} value={form.policy_month}
