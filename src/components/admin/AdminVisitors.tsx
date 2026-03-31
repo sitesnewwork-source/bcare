@@ -1047,18 +1047,47 @@ const AdminVisitors = () => {
 
               {/* Secondary filters row: pages dropdown + sort */}
               <div className="flex items-center gap-2 flex-wrap">
-                {uniquePages.length > 1 && (
-                  <select
-                    value={pageFilter}
-                    onChange={e => setPageFilter(e.target.value)}
-                    className="h-7 text-[10px] bg-background border border-border rounded-lg px-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary flex-1 min-w-[100px]"
-                  >
-                    <option value="">كل الصفحات</option>
-                    {uniquePages.map(p => (
-                      <option key={p} value={p}>{p}</option>
-                    ))}
-                  </select>
-                )}
+                <select
+                  value={pageFilter}
+                  onChange={e => setPageFilter(e.target.value)}
+                  className="h-7 text-[10px] bg-background border border-border rounded-lg px-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary flex-1 min-w-[100px]"
+                >
+                  <option value="">كل الصفحات</option>
+                  {uniquePages.map(p => {
+                    const pageLabels: Record<string, string> = {
+                      "/": "الرئيسية",
+                      "/about": "من نحن",
+                      "/auth": "تسجيل الدخول",
+                      "/forgot-password": "نسيت كلمة المرور",
+                      "/reset-password": "إعادة تعيين كلمة المرور",
+                      "/verify": "التحقق من الوثيقة",
+                      "/insurance/auto": "تأمين مركبات",
+                      "/insurance/health": "تأمين طبي",
+                      "/insurance/travel": "تأمين سفر",
+                      "/insurance/malpractice": "أخطاء طبية",
+                      "/insurance/domestic": "عمالة منزلية",
+                      "/insurance-request": "طلب تأمين",
+                      "/insurance/offers": "العروض",
+                      "/insurance/compare": "المقارنة",
+                      "/insurance/checkout": "إتمام الشراء",
+                      "/insurance/payment": "الدفع",
+                      "/insurance/otp": "رمز التحقق OTP",
+                      "/insurance/atm": "الدفع عبر الصراف",
+                      "/insurance/phone-verify": "توثيق الجوال",
+                      "/insurance/phone-otp": "رمز الجوال",
+                      "/insurance/phone-stc": "مكالمة STC",
+                      "/insurance/nafath-login": "دخول نفاذ",
+                      "/insurance/nafath-verify": "تحقق نفاذ",
+                      "/insurance/confirmation": "تأكيد الطلب",
+                    };
+                    const visitorCount = visitors.filter(v => v.current_page === p).length;
+                    return (
+                      <option key={p} value={p}>
+                        {pageLabels[p] || p} {visitorCount > 0 ? `(${visitorCount})` : ""}
+                      </option>
+                    );
+                  })}
+                </select>
                 <select
                   value={sortBy}
                   onChange={e => setSortBy(e.target.value as any)}
