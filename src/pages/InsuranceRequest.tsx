@@ -980,8 +980,8 @@ const InsuranceRequest = () => {
                           <span className={`text-[10px] font-bold px-2.5 py-1 rounded-lg ${insuranceMissing ? "text-destructive bg-destructive/10" : "text-cta bg-cta/10"}`}>{r.summary.currentStep}</span>
                         </div>
                         <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[11px]">
-                          {form.insurance_type ? <div><span className="text-muted-foreground">النوع: </span><span className="font-bold text-foreground">{form.insurance_type === "comprehensive" ? "شامل" : "ضد الغير"}</span></div> : <EmptyField label="النوع" />}
-                          {form.policy_day && form.policy_month && form.policy_year ? <div><span className="text-muted-foreground">البدء: </span><span className="font-bold text-foreground">{form.policy_day}/{form.policy_month}/{form.policy_year}</span></div> : <EmptyField label="تاريخ البدء" />}
+                           {form.insurance_type ? <div><span className="text-muted-foreground">{r.summary.type}: </span><span className="font-bold text-foreground">{form.insurance_type === "comprehensive" ? r.fields.comprehensive : r.fields.thirdParty}</span></div> : <EmptyField label={r.summary.type} />}
+                           {form.policy_day && form.policy_month && form.policy_year ? <div><span className="text-muted-foreground">{r.summary.startDate}: </span><span className="font-bold text-foreground">{form.policy_day}/{form.policy_month}/{form.policy_year}</span></div> : <EmptyField label={r.summary.startDate} />}
                         </div>
                       </motion.div>
                     </motion.div>
