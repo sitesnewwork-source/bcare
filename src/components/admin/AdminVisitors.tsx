@@ -728,6 +728,8 @@ const AdminVisitors = () => {
       filtered = deletedVisitors;
     } else if (statusFilter === "favorites") {
       filtered = visitors.filter(v => v.is_favorite);
+    } else if (statusFilter === "pending") {
+      filtered = visitors.filter(v => !!pendingStageMap[v.id]);
     } else {
       filtered = visitors;
       if (statusFilter === "online") filtered = filtered.filter(v => v.is_online);
