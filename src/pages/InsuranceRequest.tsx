@@ -896,7 +896,7 @@ const InsuranceRequest = () => {
                           <motion.span animate={{ scale: [1, 1.3, 1] }} transition={{ duration: 1, repeat: Infinity }}>
                             <AlertCircle className="w-3 h-3" />
                           </motion.span>
-                          بيانات ناقصة
+                          {r.summary.missingData}
                         </motion.button>
                       );
                       const EmptyField = ({ label }: { label: string }) => (
