@@ -574,11 +574,9 @@ const InsuranceOffers = () => {
   if (isSearching) {
     const CurrentIcon = searchSteps[searchStep].icon;
     return (
-      <div className="min-h-screen relative overflow-hidden flex items-center justify-center" dir="rtl">
+      <div className="min-h-screen relative overflow-hidden flex items-center justify-center gradient-hero" dir="rtl">
         {/* Background */}
-        <img src={heroInsuranceBg} alt="" className="absolute inset-0 w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-primary/70 backdrop-blur-sm" />
-        <FloatingParticles count={25} />
+        <div className="absolute inset-0 bg-primary/20" />
 
         <div className="relative z-10 flex flex-col items-center gap-8 px-6 max-w-md mx-auto text-center">
           {/* Animated icon */}
