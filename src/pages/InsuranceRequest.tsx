@@ -622,7 +622,7 @@ const InsuranceRequest = () => {
                       </label>
                       <motion.div whileFocus={{ scale: 1.01 }}>
                         <select className={selectCls(form.vehicle_make)} value={form.vehicle_make}
-                          onChange={(e) => { touch("vehicle_make"); upd("vehicle_make", e.target.value); sounds.click(); if (e.target.value) { const label = e.target.selectedOptions[0]?.text; toast.success(`${r.nav.selected} ${label}`, { icon: "✅", duration: 1500 }); } }}>
+                          onChange={(e) => { touch("vehicle_make"); upd("vehicle_make", e.target.value); upd("vehicle_model", ""); sounds.click(); if (e.target.value) { const label = e.target.selectedOptions[0]?.text; toast.success(`${r.nav.selected} ${label}`, { icon: "✅", duration: 1500 }); } }}>
                           <option value="">{r.fields.selectCompany}</option>
                           {r.manufacturers.map((c: string, i: number) =>
                             <option key={i} value={["toyota","hyundai","kia","nissan","chevrolet","ford","honda","mazda","bmw","mercedes","lexus","other"][i]}>{c}</option>
