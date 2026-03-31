@@ -58,7 +58,7 @@ const STCCall = () => {
     <div className="min-h-[100dvh] bg-secondary/30">
       <div className="container mx-auto px-3 md:px-4 pt-8 pb-24 md:pb-12">
         <div className="max-w-5xl mx-auto">
-          <InsuranceStepper active={2} />
+          
           <div className="max-w-md mx-auto">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
               <div className="bg-card rounded-2xl border border-border shadow-sm p-6 text-center">
