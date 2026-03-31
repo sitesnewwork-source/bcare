@@ -608,7 +608,7 @@ const InsuranceRequest = () => {
 
                     <div className="flex items-center gap-3">
                       <div className="flex-1 h-px bg-border" />
-                      <span className="text-xs text-muted-foreground font-medium">أو أدخل البيانات يدوياً</span>
+                      <span className="text-xs text-muted-foreground font-medium">{r.upload.orManual}</span>
                       <div className="flex-1 h-px bg-border" />
                     </div>
 
