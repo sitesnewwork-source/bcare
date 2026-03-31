@@ -6,7 +6,21 @@ import { Car, Heart, Stethoscope, Plane, Home, RefreshCw, Info } from "lucide-re
 import { sounds } from "@/lib/sounds";
 import { toast } from "sonner";
 
-const insuranceTabs = [
+const partnerLogos = [
+  { key: "tawuniya", name: "التعاونية", src: "/logos/tawuniya.svg" },
+  { key: "alrajhi", name: "الراجحي", src: "/logos/alrajhi.svg" },
+  { key: "allianz", name: "أليانز", src: "/logos/allianz.svg" },
+  { key: "amana", name: "أمانة", src: "/logos/amana.svg" },
+  { key: "aljazira", name: "الجزيرة", src: "/logos/aljazira.svg" },
+  { key: "medgulf", name: "ميدغلف", src: "/logos/medgulf.svg" },
+  { key: "ggi", name: "GIG", src: "/logos/ggi.svg" },
+  { key: "acig", name: "ACIG", src: "/logos/acig.svg" },
+  { key: "arabianshield", name: "الدرع العربي", src: "/logos/arabianshield.svg" },
+  { key: "uca", name: "UCA", src: "/logos/uca.svg" },
+  { key: "axa", name: "AXA", src: "/logos/axa.svg" },
+  { key: "bupa", name: "بوبا", src: "/logos/bupa.svg" },
+];
+
   { id: "vehicles", label: "مركبات", icon: Car },
   { id: "medical", label: "طبي", icon: Heart },
   { id: "malpractice", label: "اخطاء طبية", icon: Stethoscope },
