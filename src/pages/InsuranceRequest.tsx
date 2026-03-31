@@ -600,7 +600,7 @@ const InsuranceRequest = () => {
                           )}
                           <div className="flex items-center gap-1 mt-2">
                             <CheckCircle2 className="w-3.5 h-3.5 text-cta" />
-                            <span className="text-xs font-semibold text-cta">تم إرفاق المستند</span>
+                            <span className="text-xs font-semibold text-cta">{r.upload.attached}</span>
                           </div>
                         </motion.div>
                       )}
