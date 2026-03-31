@@ -331,10 +331,10 @@ const InsuranceCheckout = () => {
               {/* Total highlight */}
               <div className="mx-4 mb-4 p-4 rounded-xl bg-gradient-to-l from-primary/10 to-primary/5 border border-primary/15">
                 <div className="flex items-center justify-between">
-                  <span className="text-2xl font-extrabold text-primary">{(offer.totalPrice || offer.price).toLocaleString()} ر.س</span>
-                  <span className="font-bold text-foreground text-sm">الإجمالي</span>
+                  <span className="text-2xl font-extrabold text-primary">{(offer.totalPrice || offer.price).toLocaleString()} {ck.sar}</span>
+                  <span className="font-bold text-foreground text-sm">{ck.total}</span>
                 </div>
-                <p className="text-[10px] text-muted-foreground text-center mt-1.5">شامل ضريبة القيمة المضافة 15%</p>
+                <p className="text-[10px] text-muted-foreground text-center mt-1.5">{ck.vatIncluded}</p>
               </div>
             </div>
           </motion.div>
