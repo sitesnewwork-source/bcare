@@ -87,8 +87,18 @@ const TestimonialsSection = () => {
   };
 
   return (
-    <section className="py-16 md:py-24 bg-background relative overflow-hidden">
-      <div className="max-w-6xl mx-auto px-4">
+    <section className="py-16 md:py-24 relative overflow-hidden">
+      {/* Gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/90 to-[hsl(193,72%,28%)]" />
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-0 left-0 w-96 h-96 rounded-full bg-cta blur-[120px]" />
+        <div className="absolute bottom-0 right-0 w-80 h-80 rounded-full bg-white blur-[100px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-primary-foreground/5 blur-[80px]" />
+      </div>
+      {/* Subtle pattern overlay */}
+      <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "32px 32px" }} />
+
+      <div className="max-w-6xl mx-auto px-4 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -96,10 +106,13 @@ const TestimonialsSection = () => {
           transition={{ duration: 0.5 }}
           className="text-center mb-12"
         >
-          <h2 className="text-2xl lg:text-4xl font-extrabold text-primary mb-3">
+          <span className="inline-block px-4 py-1.5 rounded-full bg-white/10 text-white/80 text-xs font-semibold mb-4 backdrop-blur-sm border border-white/10">
+            ⭐ {lang === "ar" ? "تقييم 4.9 من 5" : "Rated 4.9 out of 5"}
+          </span>
+          <h2 className="text-2xl lg:text-4xl font-extrabold text-white mb-3">
             {lang === "ar" ? "آراء عملائنا" : "What Our Clients Say"}
           </h2>
-          <p className="text-muted-foreground text-sm max-w-xl mx-auto">
+          <p className="text-white/70 text-sm max-w-xl mx-auto">
             {lang === "ar"
               ? "اكتشف لماذا يختار أكثر من نصف مليون عميل بي كير لتأمينهم"
               : "Discover why over half a million clients choose BCare for their insurance"}
@@ -114,10 +127,10 @@ const TestimonialsSection = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: i * 0.1 }}
-              className="bg-card border border-border/60 rounded-2xl p-6 hover:shadow-lg hover:shadow-primary/5 hover:border-primary/20 transition-all duration-300 flex flex-col"
+              className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-6 hover:bg-white/15 hover:border-white/25 hover:shadow-2xl hover:shadow-black/10 transition-all duration-300 flex flex-col"
             >
-              <Quote className="w-8 h-8 text-primary/15 mb-3" />
-              <p className="text-sm text-foreground/80 leading-relaxed flex-1 mb-4">
+              <Quote className="w-8 h-8 text-cta/40 mb-3" />
+              <p className="text-sm text-white/85 leading-relaxed flex-1 mb-4">
                 "{lang === "ar" ? t.textAr : t.textEn}"
               </p>
               <div className="flex items-center gap-1 mb-4">
@@ -125,15 +138,15 @@ const TestimonialsSection = () => {
                   <Star key={j} className="w-3.5 h-3.5 fill-cta text-cta" />
                 ))}
               </div>
-              <div className="flex items-center gap-3 pt-4 border-t border-border/40">
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
+              <div className="flex items-center gap-3 pt-4 border-t border-white/10">
+                <div className="w-10 h-10 rounded-full bg-cta/20 flex items-center justify-center text-cta font-bold text-sm">
                   {t.avatar}
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-foreground">
+                  <p className="text-sm font-bold text-white">
                     {lang === "ar" ? t.nameAr : t.nameEn}
                   </p>
-                  <p className="text-[11px] text-muted-foreground">
+                  <p className="text-[11px] text-white/50">
                     {lang === "ar" ? t.roleAr : t.roleEn}
                   </p>
                 </div>
@@ -149,10 +162,10 @@ const TestimonialsSection = () => {
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3 }}
-            className="bg-card border border-border/60 rounded-2xl p-5"
+            className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-5"
           >
-            <Quote className="w-7 h-7 text-primary/15 mb-3" />
-            <p className="text-sm text-foreground/80 leading-relaxed mb-4">
+            <Quote className="w-7 h-7 text-cta/40 mb-3" />
+            <p className="text-sm text-white/85 leading-relaxed mb-4">
               "{lang === "ar" ? testimonials[activeIndex].textAr : testimonials[activeIndex].textEn}"
             </p>
             <div className="flex items-center gap-1 mb-4">
@@ -160,15 +173,15 @@ const TestimonialsSection = () => {
                 <Star key={j} className="w-3.5 h-3.5 fill-cta text-cta" />
               ))}
             </div>
-            <div className="flex items-center gap-3 pt-4 border-t border-border/40">
-              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
+            <div className="flex items-center gap-3 pt-4 border-t border-white/10">
+              <div className="w-10 h-10 rounded-full bg-cta/20 flex items-center justify-center text-cta font-bold text-sm">
                 {testimonials[activeIndex].avatar}
               </div>
               <div>
-                <p className="text-sm font-bold text-foreground">
+                <p className="text-sm font-bold text-white">
                   {lang === "ar" ? testimonials[activeIndex].nameAr : testimonials[activeIndex].nameEn}
                 </p>
-                <p className="text-[11px] text-muted-foreground">
+                <p className="text-[11px] text-white/50">
                   {lang === "ar" ? testimonials[activeIndex].roleAr : testimonials[activeIndex].roleEn}
                 </p>
               </div>
@@ -183,8 +196,8 @@ const TestimonialsSection = () => {
                 onClick={() => setActiveIndex(i)}
                 className={`w-2 h-2 rounded-full transition-all duration-300 ${
                   i === activeIndex
-                    ? "bg-primary w-6"
-                    : "bg-border hover:bg-muted-foreground/30"
+                    ? "bg-cta w-6"
+                    : "bg-white/20 hover:bg-white/40"
                 }`}
               />
             ))}
