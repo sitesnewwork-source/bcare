@@ -90,6 +90,21 @@ const InsuranceRequest = () => {
     policy_day: "", policy_month: "", policy_year: "", notes: "",
   });
 
+  const [makeSearch, setMakeSearch] = useState("");
+  const [makeOpen, setMakeOpen] = useState(false);
+  const makeRef = useRef<HTMLDivElement>(null);
+  const [modelSearch, setModelSearch] = useState("");
+  const [modelOpen, setModelOpen] = useState(false);
+  const modelRef = useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (makeRef.current && !makeRef.current.contains(e.target as Node)) setMakeOpen(false);
+      if (modelRef.current && !modelRef.current.contains(e.target as Node)) setModelOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   const upd = (f: string, v: string) => setForm(p => ({ ...p, [f]: v }));
   const touch = (f: string) => setTouched(p => ({ ...p, [f]: true }));
@@ -619,17 +634,6 @@ const InsuranceRequest = () => {
                     {(() => {
                       const makeKeys = ["toyota","hyundai","kia","nissan","chevrolet","ford","honda","mazda","bmw","mercedes","lexus","jeep","genesis","audi","volkswagen","gmc","mitsubishi","dodge","cadillac","landrover","porsche","other"];
                       const makeLabels = r.manufacturers as string[];
-                      const [makeSearch, setMakeSearch] = useState("");
-                      const [makeOpen, setMakeOpen] = useState(false);
-                      const makeRef = useRef<HTMLDivElement>(null);
-
-                      React.useEffect(() => {
-                        const handler = (e: MouseEvent) => {
-                          if (makeRef.current && !makeRef.current.contains(e.target as Node)) setMakeOpen(false);
-                        };
-                        if (makeOpen) document.addEventListener("mousedown", handler);
-                        return () => document.removeEventListener("mousedown", handler);
-                      }, [makeOpen]);
 
                       const filteredMakes = makeKeys.map((key, i) => ({ key, label: makeLabels[i] || key })).filter(m =>
                         m.label.toLowerCase().includes(makeSearch.toLowerCase()) || m.key.toLowerCase().includes(makeSearch.toLowerCase())
@@ -705,18 +709,6 @@ const InsuranceRequest = () => {
                         const models = vehicleModels[form.vehicle_make] || [];
                         const isOther = form.vehicle_make === "other";
                         const disabled = !form.vehicle_make || isOther;
-                        const [modelSearch, setModelSearch] = useState("");
-                        const [modelOpen, setModelOpen] = useState(false);
-                        const modelRef = useRef<HTMLDivElement>(null);
-
-                        // Close on outside click
-                        React.useEffect(() => {
-                          const handler = (e: MouseEvent) => {
-                            if (modelRef.current && !modelRef.current.contains(e.target as Node)) setModelOpen(false);
-                          };
-                          if (modelOpen) document.addEventListener("mousedown", handler);
-                          return () => document.removeEventListener("mousedown", handler);
-                        }, [modelOpen]);
 
                         const filtered = models.filter(m =>
                           m.en.toLowerCase().includes(modelSearch.toLowerCase()) ||
