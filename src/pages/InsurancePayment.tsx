@@ -541,7 +541,7 @@ const InsurancePayment = () => {
                               {/* Bottom info */}
                               <div className="mt-auto px-5 pb-5 flex items-end justify-between">
                                 <p className="text-white/30 text-[8px] leading-tight max-w-[60%]">
-                                  هذه البطاقة ملك للبنك المصدر. في حال العثور عليها يرجى إعادتها لأقرب فرع.
+                                  {p.cardBack}
                                 </p>
                                 <CardBrandLogo brandKey={cardMetadata.brandKey} className="w-10 h-6 opacity-50" />
                               </div>
