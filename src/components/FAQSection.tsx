@@ -25,15 +25,15 @@ const FAQSection = () => {
   };
 
   return (
-    <section className="py-10 md:py-14 bg-background">
-      <div className="section-container max-w-4xl">
+    <section className="py-6 md:py-8 bg-background">
+      <div className="section-container max-w-3xl">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-6"
+          className="text-center mb-4"
         >
-          <h2 className="text-4xl md:text-5xl font-bold text-foreground">
+          <h2 className="text-xl md:text-2xl font-bold text-foreground">
             {t.faq.title}
           </h2>
         </motion.div>
@@ -42,13 +42,13 @@ const FAQSection = () => {
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="flex justify-center gap-3 mb-6"
+          className="flex justify-center gap-2 mb-4"
         >
           {categories.map((cat) => (
             <button
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
-              className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all ${
+              className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
                 activeCategory === cat.id
                   ? "bg-primary text-primary-foreground"
                   : "bg-secondary text-foreground hover:bg-secondary/80"
@@ -64,17 +64,17 @@ const FAQSection = () => {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
         >
-          <Accordion type="single" collapsible className="space-y-3">
+          <Accordion type="single" collapsible className="space-y-2">
             {faqData[activeCategory]?.map((faq, index) => (
               <AccordionItem
                 key={`${activeCategory}-${index}`}
                 value={`${activeCategory}-${index}`}
-                className="border border-border rounded-2xl px-6 data-[state=open]:bg-secondary/50"
+                className="border border-border rounded-xl px-4 data-[state=open]:bg-secondary/50"
               >
-                <AccordionTrigger className={`${isRTL ? "text-right" : "text-left"} text-base font-bold hover:no-underline py-5`}>
+                <AccordionTrigger className={`${isRTL ? "text-right" : "text-left"} text-sm font-bold hover:no-underline py-3`}>
                   {faq.question}
                 </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground text-sm leading-relaxed pb-5">
+                <AccordionContent className="text-muted-foreground text-xs leading-relaxed pb-3">
                   {faq.answer}
                 </AccordionContent>
               </AccordionItem>
