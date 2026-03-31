@@ -5,8 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PremiumPageHeader from "@/components/PremiumPageHeader";
-import FloatingParticles from "@/components/FloatingParticles";
-import heroInsuranceBg from "@/assets/hero-insurance-bg.jpg";
+
 import { Button } from "@/components/ui/button";
 import {
   Shield, Star, Check, ChevronDown, ChevronUp, X,
@@ -575,11 +574,9 @@ const InsuranceOffers = () => {
   if (isSearching) {
     const CurrentIcon = searchSteps[searchStep].icon;
     return (
-      <div className="min-h-screen relative overflow-hidden flex items-center justify-center" dir="rtl">
+      <div className="min-h-screen relative overflow-hidden flex items-center justify-center gradient-hero" dir="rtl">
         {/* Background */}
-        <img src={heroInsuranceBg} alt="" className="absolute inset-0 w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-primary/70 backdrop-blur-sm" />
-        <FloatingParticles count={25} />
+        <div className="absolute inset-0 bg-primary/20" />
 
         <div className="relative z-10 flex flex-col items-center gap-8 px-6 max-w-md mx-auto text-center">
           {/* Animated icon */}
@@ -656,7 +653,7 @@ const InsuranceOffers = () => {
   }
 
   return (
-    <div className="min-h-screen bg-secondary/30" dir="rtl">
+    <div className="min-h-screen bg-background" dir="rtl">
       <Navbar />
 
       <PremiumPageHeader

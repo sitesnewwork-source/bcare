@@ -80,7 +80,7 @@ const InsuranceCompare = () => {
   };
 
   return (
-    <div className="min-h-screen bg-secondary/30" dir="rtl">
+    <div className="min-h-screen bg-background" dir="rtl">
       <Navbar />
 
       <PremiumPageHeader
