@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import InsuranceStepper from "@/components/InsuranceStepper";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 
 const InsuranceCheckout = () => {
