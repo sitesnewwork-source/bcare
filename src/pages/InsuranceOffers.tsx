@@ -448,6 +448,8 @@ const mockOffers: Offer[] = [
 const InsuranceOffers = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t, dir, lang } = useLanguage();
+  const of = t.offers;
   const customerData = useMemo(() => {
     const stateCustomer = location.state && Object.keys(location.state as Record<string, unknown>).length > 0 ? location.state : null;
     if (stateCustomer) return stateCustomer;
