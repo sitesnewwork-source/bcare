@@ -553,7 +553,7 @@ const InsuranceRequest = () => {
                                 onClick={() => { cameraInputRef.current?.click(); sounds.click(); }}
                               >
                                 <Camera className="w-4 h-4" />
-                                تصوير
+                                {r.upload.camera}
                               </Button>
                               <Button
                                 type="button"
