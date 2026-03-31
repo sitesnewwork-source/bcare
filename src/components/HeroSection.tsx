@@ -43,8 +43,8 @@ const heroContent: Record<string, { title: string; subtitle: string }> = {
     subtitle: "المنصة الأذكى لمقارنة عروض الحماية المهنية. احصل على أرخص تأمين أخطاء طبية (ممارس بلس) مع تغطية شاملة ومعتمدة لدى هيئة التخصصات الطبية.",
   },
   travel: {
-    title: "المنصة الأذكى لمقارنة عروض تأمين السفر في السعودية",
-    subtitle: "المنصة الأذكى لمقارنة عروض تأمين السفر. احصل على أفضل تغطية تأمينية لرحلاتك مع إصدار فوري وتغطية شاملة حول العالم.",
+    title: "المنصة الأذكى لمقارنة عروض تأمين السفر لشنغن والعالم في السعودية",
+    subtitle: "المنصة الأذكى لمقارنة عروض السفر العالمية. احصل على أرخص تأمين سفر (شنغن ودولي) مع شهادة معتمدة للسفارات وتغطية فورية.",
   },
   domestic: {
     title: "المنصة الأذكى لمقارنة عروض تأمين العمالة المنزلية في السعودية",
@@ -272,38 +272,20 @@ const HeroSection = ({ onTabChange }: HeroSectionProps) => {
     </motion.div>
   );
 
-  // Travel: رقم الهوية + جهة السفر + تاريخ المغادرة + تاريخ العودة + رمز التحقق
+  // Travel: رقم الهوية + تاريخ بداية التغطية + تاريخ نهاية التغطية + رمز التحقق
   const renderTravelForm = () => (
     <motion.div key="travel-form" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-5 items-end">
         <div>
-          <label className="text-sm font-bold text-foreground mb-2 block">رقم الهوية / الإقامة</label>
+          <label className="text-sm font-bold text-foreground mb-2 block">رقم الهوية</label>
           <input type="text" className={inputCls} placeholder="رقم الهوية / الإقامة" value={form.national_id} inputMode="numeric" maxLength={10} onChange={(e) => upd("national_id", saudiId(e.target.value))} />
         </div>
         <div>
-          <label className="text-sm font-bold text-foreground mb-2 block">جهة السفر</label>
-          <select className={inputCls} value={form.destination} onChange={(e) => upd("destination", e.target.value)}>
-            <option value="">اختر جهة السفر</option>
-            <option value="europe">أوروبا</option>
-            <option value="asia">آسيا</option>
-            <option value="america">أمريكا</option>
-            <option value="africa">أفريقيا</option>
-            <option value="australia">أستراليا</option>
-            <option value="worldwide">جميع أنحاء العالم</option>
-          </select>
-        </div>
-        <div>
-          <label className="text-sm font-bold text-foreground mb-2 block">رقم جواز السفر</label>
-          <input type="text" className={inputCls} placeholder="رقم جواز السفر" value={form.passport_number} onChange={(e) => upd("passport_number", e.target.value)} />
-        </div>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-5 items-end">
-        <div>
-          <label className="text-sm font-bold text-foreground mb-2 block">تاريخ المغادرة</label>
+          <label className="text-sm font-bold text-foreground mb-2 block">تاريخ بداية التغطية</label>
           <input type="date" className={inputCls} value={form.travel_start} onChange={(e) => upd("travel_start", e.target.value)} />
         </div>
         <div>
-          <label className="text-sm font-bold text-foreground mb-2 block">تاريخ العودة</label>
+          <label className="text-sm font-bold text-foreground mb-2 block">تاريخ نهاية التغطية</label>
           <input type="date" className={inputCls} value={form.travel_end} onChange={(e) => upd("travel_end", e.target.value)} />
         </div>
         <div>
