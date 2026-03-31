@@ -433,25 +433,54 @@ const HeroSection = ({ onTabChange }: HeroSectionProps) => {
         </div>
       </div>
 
-      {/* Partners strip */}
-      <div className="bg-background pt-0 pb-4">
-        <div className="section-container">
-          <div className="max-w-4xl mx-auto bg-card rounded-b-2xl shadow-xl border border-t-0 border-border px-6 py-5">
-            <div className="flex items-center justify-between gap-4 flex-wrap">
-              <div className="flex items-center gap-3 shrink-0">
-                <span className="font-bold text-sm text-foreground">مصرح من:</span>
-                <div className="flex items-center gap-2">
-                  <img src="/logos/ia.svg" alt="هيئة التأمين" className="h-10" />
-                  <img src="/logos/23companies.svg" alt="23 شركة تأمين" className="h-10" />
+      {/* Partners strip — BCare style */}
+      <div className="relative bg-[hsl(var(--primary)/0.06)] py-10 overflow-hidden">
+        {/* Decorative SVG illustrations */}
+        <div className="absolute inset-0 pointer-events-none opacity-[0.07]">
+          {/* Airplane */}
+          <svg className="absolute top-4 left-[10%] w-40 h-40 text-primary" viewBox="0 0 100 100" fill="currentColor">
+            <path d="M90 45L65 35V20L55 25V35L10 50L55 65V75L65 80V65L90 55L85 50Z" />
+          </svg>
+          {/* Shield */}
+          <svg className="absolute bottom-4 right-[8%] w-48 h-48 text-primary" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M50 10L15 25V50C15 72 50 90 50 90S85 72 85 50V25L50 10Z" />
+            <path d="M50 20L25 32V50C25 66 50 80 50 80S75 66 75 50V32L50 20Z" />
+          </svg>
+          {/* Heart */}
+          <svg className="absolute top-6 right-[35%] w-24 h-24 text-primary" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <path d="M50 85S10 60 10 35C10 20 22 10 35 10C42 10 48 14 50 18C52 14 58 10 65 10C78 10 90 20 90 35C90 60 50 85 50 85Z" />
+          </svg>
+        </div>
+
+        <div className="section-container relative z-10">
+          <div className="max-w-5xl mx-auto bg-card/90 backdrop-blur-sm rounded-2xl shadow-lg border border-border px-6 py-5">
+            <div className="flex items-center gap-0 flex-row-reverse">
+              {/* Right: مصرح من + IA + 23 */}
+              <div className="flex items-center gap-4 shrink-0 border-r-0 border-l-2 border-border pl-6">
+                <div className="text-center leading-tight">
+                  <span className="block text-xs text-muted-foreground font-bold">مصرح من:</span>
+                  <span className="block text-[10px] text-muted-foreground mt-0.5">هيئة التأمين</span>
+                </div>
+                <img src="/logos/ia.svg" alt="هيئة التأمين" className="h-12" />
+                <div className="flex flex-col items-center">
+                  <span className="text-2xl font-extrabold text-primary leading-none">23</span>
+                  <span className="text-[10px] text-muted-foreground font-medium">شركة تأمين</span>
                 </div>
               </div>
-              <div className="flex-1 overflow-hidden relative">
-                <div className="absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-card to-transparent z-10" />
-                <div className="absolute inset-y-0 left-0 w-8 bg-gradient-to-r from-card to-transparent z-10" />
-                <div className="flex animate-marquee gap-4 items-center">
-                  {[...partnerLogos, ...partnerLogos].map((logo, i) => (
-                    <img key={`${logo.key}-${i}`} src={logo.src} alt={logo.name} className="h-9 shrink-0 opacity-70 hover:opacity-100 transition-opacity" />
-                  ))}
+
+              {/* Left: Scrolling logos with arrow */}
+              <div className="flex-1 overflow-hidden relative flex items-center gap-3">
+                <button className="shrink-0 w-8 h-8 rounded-full border border-border bg-background flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M15 19l-7-7 7-7" /></svg>
+                </button>
+                <div className="flex-1 overflow-hidden relative">
+                  <div className="absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-card/90 to-transparent z-10" />
+                  <div className="absolute inset-y-0 left-0 w-6 bg-gradient-to-r from-card/90 to-transparent z-10" />
+                  <div className="flex animate-marquee gap-8 items-center">
+                    {[...partnerLogos, ...partnerLogos].map((logo, i) => (
+                      <img key={`${logo.key}-${i}`} src={logo.src} alt={logo.name} className="h-10 shrink-0 opacity-60 hover:opacity-100 transition-opacity" />
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
