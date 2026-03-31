@@ -351,7 +351,7 @@ const InsuranceCheckout = () => {
               className="w-full bg-cta text-cta-foreground hover:bg-cta-hover rounded-2xl py-6 font-bold text-base gap-2 shadow-[0_4px_16px_hsl(var(--cta)/0.3)]"
             >
               <CreditCard className="w-5 h-5" />
-              متابعة للدفع
+              {ck.continueToPayment}
             </Button>
             <div className="grid grid-cols-2 gap-2">
               <Button
