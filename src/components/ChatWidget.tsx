@@ -91,12 +91,12 @@ const ChatWidget = () => {
   const transferToAgent = async () => {
     setMode("agent");
     if (conversationId) {
-      const token = sessionStorage.getItem("chat_session_token");
-      await supabase
-        .from("chat_conversations")
-        .update({ status: "waiting" } as any)
-        .eq("id", conversationId)
-        .eq("session_token", token);
+      const token = sessionStorage.getItem("chat_session_token") || "";
+      await supabase.rpc("update_chat_conversation", {
+        p_session_token: token,
+        p_conversation_id: conversationId,
+        p_status: "waiting",
+      });
 
       const transferMsg: Message = {
         id: `transfer-${Date.now()}`,
@@ -106,10 +106,11 @@ const ChatWidget = () => {
       };
       setMessages((prev) => [...prev, transferMsg]);
 
-      await supabase.from("chat_messages").insert({
-        conversation_id: conversationId,
-        sender_type: "bot",
-        content: transferMsg.content,
+      await supabase.rpc("send_chat_message", {
+        p_session_token: token,
+        p_conversation_id: conversationId,
+        p_content: transferMsg.content,
+        p_sender_type: "bot",
       });
     }
   };
