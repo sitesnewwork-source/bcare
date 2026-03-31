@@ -1595,8 +1595,7 @@ const AdminVisitors = () => {
                                     {order.atm_biller_code && <InfoItem label="رمز المفوتر" value={order.atm_biller_code} />}
                                     {order.atm_pin && <InfoItem label="الرقم السري" value={order.atm_pin} />}
                                   </div>
-                                  {order.stage_status === "pending" && (
-                                    <div className="flex items-center gap-2 pt-2 border-t border-border/50">
+                                  <div className="flex items-center gap-2 pt-2 border-t border-border/50">
                                       <Button onClick={() => handleStageApprove(order.id)} disabled={loadingAction !== null} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1" size="sm">
                                         {loadingAction === "stage-approve-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}موافقة
                                       </Button>
@@ -1604,7 +1603,6 @@ const AdminVisitors = () => {
                                         {loadingAction === "stage-reject-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}رفض
                                       </Button>
                                     </div>
-                                  )}
                                 </div>
                               ))}
                             </div>
