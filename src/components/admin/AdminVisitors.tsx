@@ -120,6 +120,7 @@ const AdminVisitors = () => {
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
   const [pendingRequestMap, setPendingRequestMap] = useState<Record<string, boolean>>({});
   const [pendingStageMap, setPendingStageMap] = useState<Record<string, string>>({});
+  const [lastResolvedMap, setLastResolvedMap] = useState<Record<string, { stage: string; status: string }>>({});
   const [searchQuery, setSearchQuery] = useState("");
   const [deletedCount, setDeletedCount] = useState(0);
   const [deletedVisitors, setDeletedVisitors] = useState<Visitor[]>([]);
