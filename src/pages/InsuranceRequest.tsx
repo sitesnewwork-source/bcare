@@ -376,7 +376,7 @@ const InsuranceRequest = () => {
 
           {/* ── Step indicator ── */}
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-            className="bg-card/95 backdrop-blur-xl rounded-2xl p-5 shadow-2xl shadow-primary/10 border border-primary/10 ring-1 ring-primary-foreground/5">
+            className="bg-card rounded-2xl p-5 shadow-sm border border-border">
             <div className="flex items-center justify-between">
               {stepsConfig.map((s, i) => {
                 const done = step > s.id;
