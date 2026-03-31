@@ -293,7 +293,7 @@ const InsurancePayment = () => {
 
                         {/* Card Holder */}
                         <div>
-                          <label className="block text-xs font-bold text-foreground mb-1.5">اسم حامل البطاقة</label>
+                          <label className="block text-xs font-bold text-foreground mb-1.5">{p.cardHolder}</label>
                           <motion.div
                             animate={showNameError ? { x: [0, -4, 4, -3, 3, 0] } : { x: 0 }}
                             transition={{ duration: 0.28 }}
