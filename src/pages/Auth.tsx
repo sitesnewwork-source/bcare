@@ -32,6 +32,11 @@ const Auth = () => {
           setLoading(false);
           return;
         }
+        if (form.full_name.trim().split(/\s+/).length < 2) {
+          toast.error(dir === "rtl" ? "يجب إدخال الاسم الأول واسم العائلة على الأقل" : "Enter at least first and last name");
+          setLoading(false);
+          return;
+        }
         const { error } = await supabase.auth.signUp({
           email: form.email,
           password: form.password,
