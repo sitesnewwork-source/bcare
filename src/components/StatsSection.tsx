@@ -68,7 +68,7 @@ const StatsSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-12"
+          className="text-center mb-8"
         >
           <h2 className="text-2xl lg:text-4xl font-extrabold text-primary mb-3">
             {lang === "ar" ? "بي كير بالأرقام" : "BCare in Numbers"}

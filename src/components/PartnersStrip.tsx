@@ -16,7 +16,7 @@ const PartnersStrip = () => {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="text-center text-sm text-muted-foreground font-medium mb-6"
+          className="text-center text-sm text-muted-foreground font-medium mb-4"
         >
           نتعاون مع أفضل شركات التأمين في المملكة
         </motion.p>

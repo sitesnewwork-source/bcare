@@ -42,7 +42,7 @@ const FAQSection = () => {
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="flex justify-center gap-3 mb-10"
+          className="flex justify-center gap-3 mb-6"
         >
           {categories.map((cat) => (
             <button

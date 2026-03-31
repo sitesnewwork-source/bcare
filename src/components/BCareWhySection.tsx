@@ -21,7 +21,7 @@ const BCareWhySection = () => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-3xl lg:text-4xl font-extrabold text-primary text-center mb-12"
+          className="text-3xl lg:text-4xl font-extrabold text-primary text-center mb-8"
           dir="auto"
         >
           {t.whyBcare.title}

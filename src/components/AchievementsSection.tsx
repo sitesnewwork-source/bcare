@@ -132,7 +132,7 @@ const AchievementsSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-8"
+          className="text-center mb-5"
         >
           <h3 className="text-lg md:text-xl font-bold text-foreground mb-2">
             {lang === "ar" ? "شركات التأمين الشريكة" : "Our Insurance Partners"}

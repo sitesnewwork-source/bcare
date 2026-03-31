@@ -104,7 +104,7 @@ const TestimonialsSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-12"
+          className="text-center mb-8"
         >
           <span className="inline-block px-4 py-1.5 rounded-full bg-white/10 text-white/80 text-xs font-semibold mb-4 backdrop-blur-sm border border-white/10">
             ⭐ {lang === "ar" ? "تقييم 4.9 من 5" : "Rated 4.9 out of 5"}

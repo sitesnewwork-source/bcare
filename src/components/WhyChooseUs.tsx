@@ -20,7 +20,7 @@ const WhyChooseUs = ({ activeTab = "vehicles" }: WhyChooseUsProps) => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-12"
+          className="text-center mb-8"
         >
           <h2 className="text-2xl lg:text-4xl font-extrabold text-primary mb-3">
             {content.title}
