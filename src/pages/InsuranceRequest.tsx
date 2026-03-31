@@ -16,20 +16,21 @@ import {
 } from "lucide-react";
 import { useRef } from "react";
 
-/* ───── Steps config ───── */
-const stepsConfig = [
-  { id: 1, label: "بيانات المالك", icon: User },
-  { id: 2, label: "بيانات المركبة", icon: Car },
-  { id: 3, label: "تفاصيل التأمين", icon: Shield },
-];
-
-const months = ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
-
 const InsuranceRequest = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const requestType = searchParams.get("type") || "new";
+  const { t, dir } = useLanguage();
+  const r = t.request;
+
+  const stepsConfig = [
+    { id: 1, label: r.steps.ownerData, icon: User },
+    { id: 2, label: r.steps.vehicleData, icon: Car },
+    { id: 3, label: r.steps.insuranceDetails, icon: Shield },
+  ];
+
+  const months = r.months;
   
 
   const heroData = (location.state as any) || {};
