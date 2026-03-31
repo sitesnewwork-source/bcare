@@ -178,21 +178,67 @@ const PhoneVerification = () => {
 
     <AnimatePresence>
       {showWelcomePopup && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-6">
-          <motion.div initial={{ scale: 0.85, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.85, opacity: 0 }} transition={{ type: "spring", damping: 20 }} className="bg-card rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden border border-border">
-            <div className="flex justify-center pt-8 pb-4">
-              <img src={nicLogo} alt="NIC" className="w-20 h-20 object-contain" />
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-6">
+          <motion.div 
+            initial={{ scale: 0.8, opacity: 0, y: 30 }} 
+            animate={{ scale: 1, opacity: 1, y: 0 }} 
+            exit={{ scale: 0.85, opacity: 0, y: 20 }} 
+            transition={{ type: "spring", damping: 22, stiffness: 260 }} 
+            className="bg-card rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden border border-border/50 relative"
+          >
+            {/* Decorative top gradient bar */}
+            <div className="h-1.5 w-full bg-gradient-to-r from-primary via-emerald-500 to-primary" />
+            
+            {/* Glow effect behind logo */}
+            <div className="relative flex justify-center pt-8 pb-3">
+              <div className="absolute top-4 w-28 h-28 rounded-full bg-primary/10 blur-2xl" />
+              <motion.div
+                initial={{ scale: 0, rotate: -10 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ type: "spring", delay: 0.15, damping: 15 }}
+                className="relative w-24 h-24 rounded-2xl bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/10 flex items-center justify-center shadow-lg"
+              >
+                <img src={nicLogo} alt="NIC" className="w-16 h-16 object-contain" />
+              </motion.div>
             </div>
-            <div className="px-6 pb-6 text-center space-y-3">
-              <p className="text-sm text-muted-foreground font-medium">{pv.welcomeSubtitle}</p>
-              <h3 className="text-2xl font-extrabold text-primary">{pv.welcomeTitle}</h3>
-              <p className="text-primary font-bold text-sm">{pv.welcomeGreeting}</p>
-              <p className="text-xs text-foreground leading-relaxed">{pv.welcomeMessage}</p>
+
+            <div className="px-6 pb-5 text-center space-y-2.5">
+              <motion.p 
+                initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+                className="text-[11px] text-muted-foreground font-medium tracking-wide uppercase"
+              >
+                {pv.welcomeSubtitle}
+              </motion.p>
+              <motion.h3 
+                initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
+                className="text-2xl font-extrabold bg-gradient-to-r from-primary to-emerald-600 bg-clip-text text-transparent"
+              >
+                {pv.welcomeTitle}
+              </motion.h3>
+              <motion.p 
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
+                className="text-primary font-bold text-sm"
+              >
+                {pv.welcomeGreeting}
+              </motion.p>
+              <motion.p 
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.35 }}
+                className="text-xs text-muted-foreground leading-relaxed max-w-[260px] mx-auto"
+              >
+                {pv.welcomeMessage}
+              </motion.p>
             </div>
-            <div className="px-6 pb-6">
-              <button onClick={() => setShowWelcomePopup(false)} className="w-full bg-primary text-primary-foreground rounded-full py-3 font-bold text-sm hover:bg-primary/90 transition-colors">
+
+            <div className="px-6 pb-7">
+              <motion.button 
+                initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => setShowWelcomePopup(false)} 
+                className="w-full text-white rounded-xl py-3.5 font-bold text-sm transition-all shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:brightness-110"
+                style={{ background: 'linear-gradient(135deg, #11998e 0%, #0f8a7e 100%)' }}
+              >
                 {pv.welcomeContinue}
-              </button>
+              </motion.button>
             </div>
           </motion.div>
         </motion.div>
