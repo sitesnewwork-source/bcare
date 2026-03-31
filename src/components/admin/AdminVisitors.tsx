@@ -142,10 +142,12 @@ const AdminVisitors = () => {
   const [deletedCount, setDeletedCount] = useState(0);
   const [deletedVisitors, setDeletedVisitors] = useState<Visitor[]>([]);
   const [countryFilter, setCountryFilter] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"all" | "online" | "offline" | "deleted" | "favorites" | "pending">("all");
+  const [statusFilter, setStatusFilter] = useState<"all" | "online" | "offline" | "deleted" | "favorites" | "pending" | "has_request">("all");
   const [pendingSubFilter, setPendingSubFilter] = useState<"all" | "requests" | "stages">("all");
   const [pendingJumpTarget, setPendingJumpTarget] = useState<"request" | "stage" | null>(null);
   const [detailsAccordionValue, setDetailsAccordionValue] = useState<string[]>(["all-data", "visitor-timeline"]);
+  const [deviceFilter, setDeviceFilter] = useState<"" | "Mobile" | "Desktop" | "Tablet">("");
+  const [pageFilter, setPageFilter] = useState("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<(() => void) | null>(null);
   const [chatClearTarget, setChatClearTarget] = useState<{ sessionId: string; visitorName: string } | null>(null);
   const [sortBy, setSortBy] = useState<"default" | "duration" | "entry" | "last_action">("default");
