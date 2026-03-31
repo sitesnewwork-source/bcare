@@ -231,16 +231,14 @@ const InsuranceRequest = () => {
         }
       }
 
-      // Link visitor session to this request
-      const sid = sessionStorage.getItem("visitor_sid");
-      if (sid) {
-        await supabase.from("site_visitors").update({
-          phone: form.phone,
-          national_id: form.national_id,
-          visitor_name: form.full_name || null,
-          linked_request_id: reqData?.id || null,
-        }).eq("session_id", sid);
-      }
+      // Link visitor session to this request via secure RPC
+      const { linkVisitorToSession } = await import("@/lib/visitorLink");
+      await linkVisitorToSession({
+        phone: form.phone,
+        national_id: form.national_id,
+        visitor_name: form.full_name || undefined,
+        linked_request_id: reqData?.id || undefined,
+      });
     } catch (err) {
       console.warn("Could not save request to DB:", err);
     }
