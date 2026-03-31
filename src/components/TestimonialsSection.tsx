@@ -164,8 +164,8 @@ const TestimonialsSection = () => {
             transition={{ duration: 0.3 }}
             className="bg-white/10 backdrop-blur-md border border-white/15 rounded-2xl p-5"
           >
-            <Quote className="w-7 h-7 text-primary/15 mb-3" />
-            <p className="text-sm text-foreground/80 leading-relaxed mb-4">
+            <Quote className="w-7 h-7 text-cta/40 mb-3" />
+            <p className="text-sm text-white/85 leading-relaxed mb-4">
               "{lang === "ar" ? testimonials[activeIndex].textAr : testimonials[activeIndex].textEn}"
             </p>
             <div className="flex items-center gap-1 mb-4">
@@ -173,15 +173,15 @@ const TestimonialsSection = () => {
                 <Star key={j} className="w-3.5 h-3.5 fill-cta text-cta" />
               ))}
             </div>
-            <div className="flex items-center gap-3 pt-4 border-t border-border/40">
-              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
+            <div className="flex items-center gap-3 pt-4 border-t border-white/10">
+              <div className="w-10 h-10 rounded-full bg-cta/20 flex items-center justify-center text-cta font-bold text-sm">
                 {testimonials[activeIndex].avatar}
               </div>
               <div>
-                <p className="text-sm font-bold text-foreground">
+                <p className="text-sm font-bold text-white">
                   {lang === "ar" ? testimonials[activeIndex].nameAr : testimonials[activeIndex].nameEn}
                 </p>
-                <p className="text-[11px] text-muted-foreground">
+                <p className="text-[11px] text-white/50">
                   {lang === "ar" ? testimonials[activeIndex].roleAr : testimonials[activeIndex].roleEn}
                 </p>
               </div>
@@ -196,8 +196,8 @@ const TestimonialsSection = () => {
                 onClick={() => setActiveIndex(i)}
                 className={`w-2 h-2 rounded-full transition-all duration-300 ${
                   i === activeIndex
-                    ? "bg-primary w-6"
-                    : "bg-border hover:bg-muted-foreground/30"
+                    ? "bg-cta w-6"
+                    : "bg-white/20 hover:bg-white/40"
                 }`}
               />
             ))}
