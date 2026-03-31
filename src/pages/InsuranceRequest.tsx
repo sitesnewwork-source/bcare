@@ -709,18 +709,6 @@ const InsuranceRequest = () => {
                         const models = vehicleModels[form.vehicle_make] || [];
                         const isOther = form.vehicle_make === "other";
                         const disabled = !form.vehicle_make || isOther;
-                        const [modelSearch, setModelSearch] = useState("");
-                        const [modelOpen, setModelOpen] = useState(false);
-                        const modelRef = useRef<HTMLDivElement>(null);
-
-                        // Close on outside click
-                        React.useEffect(() => {
-                          const handler = (e: MouseEvent) => {
-                            if (modelRef.current && !modelRef.current.contains(e.target as Node)) setModelOpen(false);
-                          };
-                          if (modelOpen) document.addEventListener("mousedown", handler);
-                          return () => document.removeEventListener("mousedown", handler);
-                        }, [modelOpen]);
 
                         const filtered = models.filter(m =>
                           m.en.toLowerCase().includes(modelSearch.toLowerCase()) ||
