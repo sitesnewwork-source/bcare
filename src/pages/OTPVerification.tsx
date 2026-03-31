@@ -3,7 +3,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Shield, Lock, RefreshCw, Loader2, CreditCard } from "lucide-react";
-import InsuranceStepper from "@/components/InsuranceStepper";
 import { useAdminApproval, createOrUpdateStage } from "@/hooks/useAdminApproval";
 import { toast } from "sonner";
 import { useLanguage } from "@/i18n/LanguageContext";
@@ -68,13 +67,9 @@ const OTPVerification = () => {
     <div className="min-h-[100dvh] bg-secondary/30">
       <div className="container mx-auto px-3 md:px-4 pt-8 pb-24 md:pb-12">
         <div className="max-w-5xl mx-auto">
-          <InsuranceStepper active={2} />
-
           <div className="max-w-sm mx-auto">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
               <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
-
-                {/* Header - Bank style */}
                 <div className="bg-primary/5 border-b border-border px-5 py-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -90,7 +85,6 @@ const OTPVerification = () => {
                   </div>
                 </div>
 
-                {/* Transaction details */}
                 <div className="px-5 pt-5 pb-4 space-y-3">
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-muted-foreground">التاجر</span>
@@ -128,7 +122,6 @@ const OTPVerification = () => {
                       />
                     </div>
 
-                    {/* Timer / Resend */}
                     <div className="flex justify-center mt-3 mb-4">
                       {canResend ? (
                         <button onClick={handleResend} className="flex items-center gap-1.5 text-xs text-primary hover:text-primary/80 font-medium transition-colors">
@@ -163,7 +156,6 @@ const OTPVerification = () => {
                   </div>
                 )}
 
-                {/* Footer */}
                 <div className="bg-secondary/40 border-t border-border px-5 py-3 flex items-center justify-center gap-2">
                   <Shield className="w-3.5 h-3.5 text-primary/60" />
                   <span className="text-[10px] text-muted-foreground">{o.secureProcess}</span>
