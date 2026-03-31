@@ -970,7 +970,7 @@ const InsuranceOffers = () => {
                                 )}
                                 {!breakdown.hasDiscount && breakdown.count > 0 && breakdown.count < BUNDLE_THRESHOLD && (
                                   <div className="p-2 bg-muted/50 rounded-xl text-center">
-                                    <p className="text-[10px] text-muted-foreground">أضف {BUNDLE_THRESHOLD - breakdown.count} إضافة أخرى للحصول على <span className="font-bold text-primary">خصم 15%</span> على الإضافات</p>
+                                    <p className="text-[10px] text-muted-foreground">{of.addMoreForDiscount.replace("{n}", String(BUNDLE_THRESHOLD - breakdown.count))} <span className="font-bold text-primary">{of.discountLabel}</span> {of.onAddOns}</p>
                                   </div>
                                 )}
                                 <div className="p-3 bg-primary/5 rounded-xl flex items-center justify-between">
