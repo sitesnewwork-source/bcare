@@ -473,7 +473,7 @@ const InsurancePayment = () => {
                                 <div className="min-w-0 flex-1">
                                   <p className="text-white/40 text-[7px] uppercase tracking-widest mb-0.5">CARD HOLDER</p>
                                   <p className="text-white text-[11px] font-medium truncate">
-                                    {cardForm.name || "الاسم على البطاقة"}
+                                    {cardForm.name || p.nameOnCard}
                                   </p>
                                 </div>
                                 <div className="text-left shrink-0" dir="ltr">
