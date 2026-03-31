@@ -3,7 +3,8 @@ import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import PartnersStrip from "@/components/PartnersStrip";
 import WhyChooseUs from "@/components/WhyChooseUs";
-
+import StatsSection from "@/components/StatsSection";
+import TestimonialsSection from "@/components/TestimonialsSection";
 import BCareWhySection from "@/components/BCareWhySection";
 import Footer from "@/components/Footer";
 import PullToRefresh from "@/components/PullToRefresh";
@@ -25,6 +26,8 @@ const Index = () => {
         <PartnersStrip />
         <WhyChooseUs activeTab={activeTab} />
         
+        <StatsSection />
+        <TestimonialsSection />
         <BCareWhySection />
         <Footer />
       </div>
