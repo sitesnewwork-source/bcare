@@ -691,9 +691,21 @@ const AdminVisitors = () => {
     toast.success("تم تصدير البيانات بنجاح");
   };
 
+  const toggleVisitorTag = async (visitorId: string, tagKey: string) => {
+    const visitor = visitors.find(v => v.id === visitorId);
+    if (!visitor) return;
+    const currentTags = visitor.tags || [];
+    const newTags = currentTags.includes(tagKey) ? currentTags.filter(t => t !== tagKey) : [...currentTags, tagKey];
+    await supabase.from("site_visitors").update({ tags: newTags } as any).eq("id", visitorId);
+    setVisitors(prev => prev.map(v => v.id === visitorId ? { ...v, tags: newTags } : v));
+    if (selectedVisitor?.id === visitorId) setSelectedVisitor(prev => prev ? { ...prev, tags: newTags } : prev);
+    toast.success(currentTags.includes(tagKey) ? "تمت إزالة التصنيف" : "تم إضافة التصنيف");
+  };
+
   const onlineCount = visitors.filter(v => v.is_online).length;
   const offlineCount = visitors.filter(v => !v.is_online).length;
   const favoriteCount = visitors.filter(v => v.is_favorite).length;
+  const hasRequestCount = visitors.filter(v => v.linked_request_id || pendingRequestMap[v.id]).length;
   const totalCount = visitors.length;
   const awaitingDecisionVisitorIds = new Set<string>([
     ...Object.keys(pendingRequestMap),
