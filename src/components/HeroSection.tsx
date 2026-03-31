@@ -80,7 +80,7 @@ const HeroSection = ({ onTabChange }: HeroSectionProps) => {
     if (activeInsurance === "vehicles" && !form.serial_number) { toast.error(t.hero.errors.enterSerialNumber); return; }
     if (form.captcha_input !== captchaCode.join("")) { toast.error(t.hero.errors.captchaError); refreshCaptcha(); upd("captcha_input", ""); return; }
     if (!agreed) { toast.error(t.hero.errors.agreeRequired); return; }
-    navigate(`/insurance-request?type=${purposeType}`, { state: { national_id: form.national_id, serial_number: form.serial_number, insurance_type: activeInsurance } });
+    navigate(`/insurance-request?type=new`, { state: { national_id: form.national_id, serial_number: form.serial_number, insurance_type: activeInsurance } });
   };
 
   const inputCls = "w-full h-12 px-4 rounded-xl bg-muted/40 border-2 border-border/80 text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 focus:bg-background transition-all duration-200";
