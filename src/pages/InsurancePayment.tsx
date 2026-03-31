@@ -340,7 +340,7 @@ const InsurancePayment = () => {
                               value={cardForm.expiryYear}
                               onChange={(e) => { setCardForm({ ...cardForm, expiryYear: e.target.value }); setTouchedFields(prev => ({ ...prev, expiry: true })); }}
                             >
-                              <option value="">السنة</option>
+                              <option value="">{p.year}</option>
                               {Array.from({ length: 10 }, (_, i) => {
                                 const y = String(new Date().getFullYear() % 100 + i).padStart(2, "0");
                                 return <option key={y} value={y}>{y}</option>;
