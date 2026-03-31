@@ -10,6 +10,8 @@ export const useAdminApproval = (orderId: string | null, stage: Stage) => {
   useEffect(() => {
     if (!orderId) return;
 
+    const visitorSid = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("visitor_sid") : null;
+
     const channel = supabase
       .channel(`order-stage-${orderId}`)
       .on(
@@ -31,15 +33,17 @@ export const useAdminApproval = (orderId: string | null, stage: Stage) => {
       .subscribe();
 
     const interval = setInterval(async () => {
-      // Use RPC to read order status securely
-      const { data } = await supabase
-        .from("insurance_orders")
-        .select("stage_status, current_stage")
-        .eq("id", orderId)
-        .maybeSingle();
-      if (data?.current_stage === stage) {
-        if (data.stage_status === "approved") setStatus("approved");
-        else if (data.stage_status === "rejected") setStatus("rejected");
+      // Use secure RPC to read order status (bypasses RLS for anon users)
+      if (visitorSid) {
+        const { data } = await supabase.rpc("get_own_order", {
+          p_visitor_session_id: visitorSid,
+          p_order_id: orderId,
+        });
+        const order = data as any;
+        if (order?.current_stage === stage) {
+          if (order.stage_status === "approved") setStatus("approved");
+          else if (order.stage_status === "rejected") setStatus("rejected");
+        }
       }
     }, 3000);
 
