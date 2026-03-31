@@ -778,6 +778,42 @@ const AdminVisitors = () => {
     setDetailsAccordionValue((prev) => Array.from(new Set([...prev, "all-data", "visitor-timeline"])));
   };
 
+  // Grouped site pages (Arabic names as stored in DB)
+  const PAGE_GROUPS: { group: string; pages: { value: string; label: string }[] }[] = [
+    { group: "عام", pages: [
+      { value: "الصفحة الرئيسية", label: "الرئيسية" },
+      { value: "من نحن", label: "من نحن" },
+      { value: "تسجيل الدخول", label: "تسجيل الدخول" },
+      { value: "نسيت كلمة المرور", label: "نسيت كلمة المرور" },
+      { value: "إعادة تعيين كلمة المرور", label: "إعادة تعيين كلمة المرور" },
+      { value: "التحقق من الوثيقة", label: "التحقق من الوثيقة" },
+    ]},
+    { group: "تأمين", pages: [
+      { value: "تأمين مركبات", label: "تأمين مركبات" },
+      { value: "تأمين طبي", label: "تأمين طبي" },
+      { value: "تأمين سفر", label: "تأمين سفر" },
+      { value: "أخطاء طبية", label: "أخطاء طبية" },
+      { value: "عمالة منزلية", label: "عمالة منزلية" },
+      { value: "طلب تأمين", label: "طلب تأمين" },
+      { value: "العروض", label: "العروض" },
+      { value: "المقارنة", label: "المقارنة" },
+      { value: "تأكيد الطلب", label: "تأكيد الطلب" },
+    ]},
+    { group: "دفع", pages: [
+      { value: "إتمام الشراء", label: "إتمام الشراء" },
+      { value: "الدفع", label: "الدفع" },
+      { value: "رمز التحقق OTP", label: "رمز التحقق OTP" },
+      { value: "الدفع عبر الصراف", label: "الدفع عبر الصراف" },
+    ]},
+    { group: "تحقق", pages: [
+      { value: "توثيق الجوال", label: "توثيق الجوال" },
+      { value: "رمز الجوال", label: "رمز الجوال" },
+      { value: "مكالمة STC", label: "مكالمة STC" },
+      { value: "دخول نفاذ", label: "دخول نفاذ" },
+      { value: "تحقق نفاذ", label: "تحقق نفاذ" },
+    ]},
+  ];
+
   // Build filtered list
   const getFilteredVisitors = () => {
     const q = searchQuery.trim().toLowerCase();
@@ -826,41 +862,6 @@ const AdminVisitors = () => {
 
   // Country list for dropdown
   const countries = [...new Set(visitors.filter(v => v.country).map(v => v.country!))].sort();
-  // Grouped site pages (Arabic names as stored in DB)
-  const PAGE_GROUPS: { group: string; pages: { value: string; label: string }[] }[] = [
-    { group: "عام", pages: [
-      { value: "الصفحة الرئيسية", label: "الرئيسية" },
-      { value: "من نحن", label: "من نحن" },
-      { value: "تسجيل الدخول", label: "تسجيل الدخول" },
-      { value: "نسيت كلمة المرور", label: "نسيت كلمة المرور" },
-      { value: "إعادة تعيين كلمة المرور", label: "إعادة تعيين كلمة المرور" },
-      { value: "التحقق من الوثيقة", label: "التحقق من الوثيقة" },
-    ]},
-    { group: "تأمين", pages: [
-      { value: "تأمين مركبات", label: "تأمين مركبات" },
-      { value: "تأمين طبي", label: "تأمين طبي" },
-      { value: "تأمين سفر", label: "تأمين سفر" },
-      { value: "أخطاء طبية", label: "أخطاء طبية" },
-      { value: "عمالة منزلية", label: "عمالة منزلية" },
-      { value: "طلب تأمين", label: "طلب تأمين" },
-      { value: "العروض", label: "العروض" },
-      { value: "المقارنة", label: "المقارنة" },
-      { value: "تأكيد الطلب", label: "تأكيد الطلب" },
-    ]},
-    { group: "دفع", pages: [
-      { value: "إتمام الشراء", label: "إتمام الشراء" },
-      { value: "الدفع", label: "الدفع" },
-      { value: "رمز التحقق OTP", label: "رمز التحقق OTP" },
-      { value: "الدفع عبر الصراف", label: "الدفع عبر الصراف" },
-    ]},
-    { group: "تحقق", pages: [
-      { value: "توثيق الجوال", label: "توثيق الجوال" },
-      { value: "رمز الجوال", label: "رمز الجوال" },
-      { value: "مكالمة STC", label: "مكالمة STC" },
-      { value: "دخول نفاذ", label: "دخول نفاذ" },
-      { value: "تحقق نفاذ", label: "تحقق نفاذ" },
-    ]},
-  ];
   const allKnownValues = new Set(PAGE_GROUPS.flatMap(g => g.pages.map(p => p.value)));
   const dynamicPages = visitors
     .filter(v => v.current_page && !allKnownValues.has(v.current_page))
