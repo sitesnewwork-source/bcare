@@ -529,14 +529,14 @@ const InsuranceCheckout = () => {
 
                 {/* Total */}
                 <div className="p-3 rounded-lg bg-primary/5 border border-primary/15 text-center">
-                  <p className="text-xs text-muted-foreground">القسط الإجمالي</p>
-                  <p className="text-xl font-bold text-primary">{(offer.totalPrice || offer.price).toLocaleString()} ر.س</p>
-                  <p className="text-[10px] text-muted-foreground">شامل ضريبة القيمة المضافة 15%</p>
+                  <p className="text-xs text-muted-foreground">{ck.totalPremium}</p>
+                  <p className="text-xl font-bold text-primary">{(offer.totalPrice || offer.price).toLocaleString()} {ck.sar}</p>
+                  <p className="text-[10px] text-muted-foreground">{ck.vatIncluded}</p>
                 </div>
 
                 {/* QR Code */}
                 <div className="flex flex-col items-center gap-2 p-3 rounded-lg bg-secondary/50 border border-border">
-                  <p className="text-xs font-bold text-foreground">رمز التحقق</p>
+                  <p className="text-xs font-bold text-foreground">{ck.verificationCode}</p>
                   <QRCodeSVG
                     value={verificationUrl}
                     size={96}
@@ -545,13 +545,13 @@ const InsuranceCheckout = () => {
                     level="M"
                   />
                   <p className="text-[10px] text-muted-foreground text-center">
-                    امسح الرمز للتحقق من صحة البوليصة
+                    {ck.scanToVerify}
                   </p>
                 </div>
 
                 {/* Disclaimer */}
                 <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
-                  هذه البوليصة مسودة أولية لأغراض المراجعة فقط. سيتم إصدار البوليصة النهائية بعد إتمام عملية الدفع والتحقق من جميع البيانات المطلوبة.
+                  {ck.draftDisclaimer}
                 </p>
               </div>
 
