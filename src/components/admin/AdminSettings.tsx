@@ -126,7 +126,7 @@ const AdminSettings = () => {
         });
       }
 
-      doc.save("tree-insurance-data.pdf");
+      doc.save("bcare-insurance-data.pdf");
       toast.success("تم تصدير البيانات كملف PDF");
       logActivity("تصدير البيانات كملف PDF", "settings");
     } catch (err: any) {
