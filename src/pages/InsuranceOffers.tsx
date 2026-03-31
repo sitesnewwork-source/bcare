@@ -675,8 +675,8 @@ const InsuranceOffers = () => {
             {/* Filter tabs */}
             <div className="flex gap-2 flex-1">
               {[
-                { id: "comprehensive", label: "شامل", count: mockOffers.filter((o) => o.type === "comprehensive").length, icon: Shield },
-                { id: "third-party", label: "ضد الغير", count: mockOffers.filter((o) => o.type === "third-party").length, icon: Car },
+                { id: "comprehensive", label: of.comprehensive, count: mockOffers.filter((o) => o.type === "comprehensive").length, icon: Shield },
+                { id: "third-party", label: of.thirdParty, count: mockOffers.filter((o) => o.type === "third-party").length, icon: Car },
               ].map((f) => (
                 <button
                   key={f.id}
