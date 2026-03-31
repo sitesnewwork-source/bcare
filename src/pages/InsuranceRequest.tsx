@@ -651,41 +651,94 @@ const InsuranceRequest = () => {
                     </motion.div>
 
                     <div className="grid grid-cols-2 gap-3">
-                      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="space-y-1.5">
-                        <label className="flex items-center gap-2 text-sm font-black text-foreground">
-                          <Car className="w-3.5 h-3.5" />{r.fields.model}
-                        </label>
-                        <select className={selectCls(form.vehicle_model)} value={form.vehicle_model}
-                          onChange={(e) => { touch("vehicle_model"); upd("vehicle_model", e.target.value); sounds.click(); if (e.target.value) toast.success(`${r.nav.selected} ${e.target.selectedOptions[0]?.text}`, { icon: "✅", duration: 1500 }); }}
-                          disabled={!form.vehicle_make || form.vehicle_make === "other"}>
-                          <option value="">{form.vehicle_make === "other" ? (dir === "rtl" ? "أدخل يدوياً" : "Enter manually") : (dir === "rtl" ? "اختر الموديل" : "Select model")}</option>
-                          {(vehicleModels[form.vehicle_make] || []).map((m, i) =>
-                            <option key={i} value={m.en}>{dir === "rtl" ? m.ar : m.en}</option>
-                          )}
-                        </select>
-                        {form.vehicle_make === "other" && (
-                          <input type="text" className={`${selectCls(form.vehicle_model)} mt-1`} placeholder={r.fields.exampleModel} value={form.vehicle_model} onChange={(e) => { touch("vehicle_model"); upd("vehicle_model", e.target.value); }} />
-                        )}
-                        <AnimatePresence>
-                          {fieldState("vehicle_model").error && (
-                            <motion.p initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}
-                              className="text-xs text-destructive flex items-center gap-1">
-                              <motion.span animate={{ rotate: [0, 15, -15, 0] }} transition={{ duration: 0.5 }}>
-                                <AlertCircle className="w-3 h-3" />
-                              </motion.span>
-                              {fieldState("vehicle_model").error}
-                            </motion.p>
-                          )}
-                        </AnimatePresence>
-                        <AnimatePresence>
-                          {!fieldState("vehicle_model").error && form.vehicle_model && (
-                            <motion.p initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}
-                              className="text-[11px] text-cta flex items-center gap-1 font-semibold">
-                              <CheckCircle2 className="w-3 h-3" />{r.validation.correct}
-                            </motion.p>
-                          )}
-                        </AnimatePresence>
-                      </motion.div>
+                      {(() => {
+                        const models = vehicleModels[form.vehicle_make] || [];
+                        const isOther = form.vehicle_make === "other";
+                        const disabled = !form.vehicle_make || isOther;
+                        const [modelSearch, setModelSearch] = useState("");
+                        const [modelOpen, setModelOpen] = useState(false);
+                        const modelRef = useRef<HTMLDivElement>(null);
+
+                        // Close on outside click
+                        React.useEffect(() => {
+                          const handler = (e: MouseEvent) => {
+                            if (modelRef.current && !modelRef.current.contains(e.target as Node)) setModelOpen(false);
+                          };
+                          if (modelOpen) document.addEventListener("mousedown", handler);
+                          return () => document.removeEventListener("mousedown", handler);
+                        }, [modelOpen]);
+
+                        const filtered = models.filter(m =>
+                          m.en.toLowerCase().includes(modelSearch.toLowerCase()) ||
+                          m.ar.includes(modelSearch)
+                        );
+                        const selectedLabel = models.find(m => m.en === form.vehicle_model);
+
+                        return (
+                          <motion.div ref={modelRef} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="space-y-1.5 relative">
+                            <label className="flex items-center gap-2 text-sm font-black text-foreground">
+                              <Car className="w-3.5 h-3.5" />{r.fields.model}
+                            </label>
+                            {isOther ? (
+                              <input type="text" className={selectCls(form.vehicle_model)} placeholder={r.fields.exampleModel} value={form.vehicle_model} onChange={(e) => { touch("vehicle_model"); upd("vehicle_model", e.target.value); }} />
+                            ) : (
+                              <>
+                                <button type="button" disabled={disabled}
+                                  className={`${selectCls(form.vehicle_model)} text-start flex items-center justify-between`}
+                                  onClick={() => { if (!disabled) setModelOpen(!modelOpen); }}>
+                                  <span className={form.vehicle_model ? "text-foreground" : "text-muted-foreground"}>
+                                    {selectedLabel ? (dir === "rtl" ? selectedLabel.ar : selectedLabel.en) : (dir === "rtl" ? "اختر الموديل" : "Select model")}
+                                  </span>
+                                  <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${modelOpen ? "rotate-180" : ""}`} />
+                                </button>
+                                <AnimatePresence>
+                                  {modelOpen && (
+                                    <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }} transition={{ duration: 0.15 }}
+                                      className="absolute z-50 top-full mt-1 w-full bg-background border-2 border-primary/20 rounded-xl shadow-lg overflow-hidden">
+                                      <div className="p-2 border-b border-border">
+                                        <input type="text" autoFocus placeholder={dir === "rtl" ? "ابحث عن موديل..." : "Search model..."}
+                                          className="w-full px-3 py-2 text-sm bg-muted/40 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-primary/30"
+                                          value={modelSearch} onChange={(e) => setModelSearch(e.target.value)} />
+                                      </div>
+                                      <div className="max-h-40 overflow-y-auto">
+                                        {filtered.length === 0 ? (
+                                          <p className="text-xs text-muted-foreground text-center py-3">{dir === "rtl" ? "لا توجد نتائج" : "No results"}</p>
+                                        ) : filtered.map((m, i) => (
+                                          <button key={i} type="button"
+                                            className={`w-full text-start px-3 py-2 text-sm hover:bg-primary/10 transition-colors flex items-center justify-between ${form.vehicle_model === m.en ? "bg-primary/15 font-bold text-primary" : "text-foreground"}`}
+                                            onClick={() => { touch("vehicle_model"); upd("vehicle_model", m.en); setModelOpen(false); setModelSearch(""); sounds.click(); toast.success(`${r.nav.selected} ${dir === "rtl" ? m.ar : m.en}`, { icon: "✅", duration: 1500 }); }}>
+                                            <span>{dir === "rtl" ? m.ar : m.en}</span>
+                                            {form.vehicle_model === m.en && <CheckCircle2 className="w-3.5 h-3.5 text-primary" />}
+                                          </button>
+                                        ))}
+                                      </div>
+                                    </motion.div>
+                                  )}
+                                </AnimatePresence>
+                              </>
+                            )}
+                            <AnimatePresence>
+                              {fieldState("vehicle_model").error && (
+                                <motion.p initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}
+                                  className="text-xs text-destructive flex items-center gap-1">
+                                  <motion.span animate={{ rotate: [0, 15, -15, 0] }} transition={{ duration: 0.5 }}>
+                                    <AlertCircle className="w-3 h-3" />
+                                  </motion.span>
+                                  {fieldState("vehicle_model").error}
+                                </motion.p>
+                              )}
+                            </AnimatePresence>
+                            <AnimatePresence>
+                              {!fieldState("vehicle_model").error && form.vehicle_model && (
+                                <motion.p initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}
+                                  className="text-[11px] text-cta flex items-center gap-1 font-semibold">
+                                  <CheckCircle2 className="w-3 h-3" />{r.validation.correct}
+                                </motion.p>
+                              )}
+                            </AnimatePresence>
+                          </motion.div>
+                        );
+                      })()}
                       <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="space-y-1.5">
                         <label className="flex items-center gap-2 text-sm font-black text-foreground">
                           <Calendar className="w-3.5 h-3.5" />{r.fields.yearOfMake}
