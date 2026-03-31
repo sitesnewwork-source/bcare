@@ -311,7 +311,7 @@ const InsurancePayment = () => {
                           <AnimatePresence>
                             {showNameError && (
                               <motion.p initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} className="mt-2 text-[11px] font-medium text-destructive">
-                                يرجى إدخال اسم حامل البطاقة بالكامل.
+                                {p.cardHolderError}
                               </motion.p>
                             )}
                           </AnimatePresence>
