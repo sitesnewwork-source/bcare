@@ -612,7 +612,7 @@ const InsuranceRequest = () => {
                       <div className="flex-1 h-px bg-border" />
                     </div>
 
-                    {renderField({ label: "الرقم التسلسلي *", icon: Hash, placeholder: "الرقم التسلسلي للمركبة", value: form.serial_number, error: fieldState("serial_number").error, valid: fieldState("serial_number").valid, inputMode: "numeric", onBlur: () => touch("serial_number"), onChange: (e) => { touch("serial_number"); const digits = e.target.value.replace(/\D/g, ""); upd("serial_number", digits.slice(0, 17)); } })}
+                    {renderField({ label: r.fields.serialNumber, icon: Hash, placeholder: r.fields.serialNumber, value: form.serial_number, error: fieldState("serial_number").error, valid: fieldState("serial_number").valid, inputMode: "numeric", onBlur: () => touch("serial_number"), onChange: (e) => { touch("serial_number"); const digits = e.target.value.replace(/\D/g, ""); upd("serial_number", digits.slice(0, 17)); } })}
 
                     <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="space-y-1.5">
                       <label className="flex items-center gap-2 text-sm font-black text-foreground">
