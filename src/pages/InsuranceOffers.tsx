@@ -706,9 +706,9 @@ const InsuranceOffers = () => {
                 onChange={(e) => setSortBy(e.target.value as any)}
                 className="text-sm bg-transparent text-foreground border-none focus:outline-none font-medium cursor-pointer"
               >
-                <option value="price">الأقل سعراً</option>
-                <option value="rating">الأعلى تقييماً</option>
-                <option value="discount">الأعلى خصماً</option>
+                <option value="price">{of.sortByPrice}</option>
+                <option value="rating">{of.sortByRating}</option>
+                <option value="discount">{of.sortByDiscount}</option>
               </select>
             </div>
           </div>
