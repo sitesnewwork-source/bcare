@@ -101,7 +101,7 @@ const InsurancePayment = () => {
       sessionStorage.setItem("insurance_order_id", orderId);
       navigate("/insurance/otp", { state: { offer, paymentMethod: "card", orderId } });
     } else if (approvalStatus === "rejected") {
-      toast.error("تم رفض عملية الدفع");
+      toast.error(p.paymentRejected);
       setWaitingApproval(false);
       setLoading(false);
     }
