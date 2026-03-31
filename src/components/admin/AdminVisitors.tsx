@@ -1407,7 +1407,7 @@ const AdminVisitors = () => {
                 )}
 
 
-                <Accordion type="multiple" defaultValue={["visitor-timeline", "all-data", "chat"]} className="space-y-2">
+                <Accordion type="multiple" defaultValue={["all-data", "visitor-timeline", "chat"]} className="space-y-2">
                   {/* Timeline */}
                   <AccordionItem value="visitor-timeline" className="border border-border rounded-xl overflow-hidden">
                     <AccordionTrigger className="px-4 py-3 bg-muted/30 hover:bg-muted/50 text-sm font-bold [&[data-state=open]>svg]:rotate-180">
