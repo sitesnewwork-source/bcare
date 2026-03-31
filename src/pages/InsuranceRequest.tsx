@@ -829,7 +829,7 @@ const InsuranceRequest = () => {
                       return (
                     <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="space-y-1.5">
                       <label className="flex items-center gap-2 text-sm font-black text-foreground">
-                        <Calendar className="w-3.5 h-3.5" />تاريخ بدء الوثيقة *
+                        <Calendar className="w-3.5 h-3.5" />{r.fields.policyStartDate}
                       </label>
                       <div className="grid grid-cols-3 gap-2">
                         <select className={selectCls(form.policy_day)} value={form.policy_day}
