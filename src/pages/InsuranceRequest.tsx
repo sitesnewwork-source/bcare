@@ -724,20 +724,20 @@ const InsuranceRequest = () => {
 
                       {/* Estimated Value */}
                       <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="space-y-1.5">
-                        <label className="flex items-center gap-2 text-sm font-black text-foreground">
-                          <DollarSign className="w-3.5 h-3.5" />القيمة التقديرية
-                        </label>
-                        <select className={selectCls(form.estimated_value)} value={form.estimated_value}
-                          onChange={(e) => { upd("estimated_value", e.target.value); sounds.click(); if (e.target.value) toast.success(`تم اختيار: ${e.target.selectedOptions[0]?.text}`, { icon: "✅", duration: 1500 }); }}>
-                          <option value="">اختر</option>
-                          {[
-                            { v: "below-30k", l: "أقل من 30,000" },
-                            { v: "30k-60k", l: "30,000 - 60,000" },
-                            { v: "60k-100k", l: "60,000 - 100,000" },
-                            { v: "100k-150k", l: "100,000 - 150,000" },
-                            { v: "150k-200k", l: "150,000 - 200,000" },
-                            { v: "above-200k", l: "أكثر من 200,000" },
-                          ].map(o => <option key={o.v} value={o.v}>{o.l} ريال</option>)}
+                         <label className="flex items-center gap-2 text-sm font-black text-foreground">
+                           <DollarSign className="w-3.5 h-3.5" />{r.fields.estimatedValue}
+                         </label>
+                         <select className={selectCls(form.estimated_value)} value={form.estimated_value}
+                           onChange={(e) => { upd("estimated_value", e.target.value); sounds.click(); if (e.target.value) toast.success(`${r.nav.selected} ${e.target.selectedOptions[0]?.text}`, { icon: "✅", duration: 1500 }); }}>
+                           <option value="">{r.fields.select}</option>
+                           {[
+                             { v: "below-30k", l: r.valueOptions.below30k },
+                             { v: "30k-60k", l: r.valueOptions["30k60k"] },
+                             { v: "60k-100k", l: r.valueOptions["60k100k"] },
+                             { v: "100k-150k", l: r.valueOptions["100k150k"] },
+                             { v: "150k-200k", l: r.valueOptions["150k200k"] },
+                             { v: "above-200k", l: r.valueOptions.above200k },
+                           ].map(o => <option key={o.v} value={o.v}>{o.l}</option>)}
                         </select>
                       </motion.div>
                     </div>
