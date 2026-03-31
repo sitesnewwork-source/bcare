@@ -974,8 +974,8 @@ const InsuranceOffers = () => {
                                   </div>
                                 )}
                                 <div className="p-3 bg-primary/5 rounded-xl flex items-center justify-between">
-                                  <span className="text-xs font-bold text-foreground">الإجمالي مع الإضافات:</span>
-                                  <span className="text-sm font-bold text-primary">{getOfferTotal(offer).toLocaleString()} ر.س/سنة</span>
+                                  <span className="text-xs font-bold text-foreground">{of.totalWithAddOns}</span>
+                                  <span className="text-sm font-bold text-primary">{getOfferTotal(offer).toLocaleString()} {of.perYear}</span>
                                 </div>
                               </motion.div>
                             );
