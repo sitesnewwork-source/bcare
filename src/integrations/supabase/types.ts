@@ -548,6 +548,26 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_chat_conversation: {
+        Args: {
+          p_session_token: string
+          p_visitor_email?: string
+          p_visitor_name?: string
+        }
+        Returns: string
+      }
+      get_chat_conversation: {
+        Args: { p_session_token: string }
+        Returns: Json
+      }
+      get_chat_messages: {
+        Args: { p_conversation_id: string; p_session_token: string }
+        Returns: Json
+      }
+      get_own_order: {
+        Args: { p_order_id: string; p_visitor_session_id: string }
+        Returns: Json
+      }
       get_visitor_session: { Args: never; Returns: string }
       has_role: {
         Args: {
@@ -572,6 +592,23 @@ export type Database = {
           p_phone?: string
           p_session_id: string
           p_visitor_name?: string
+        }
+        Returns: undefined
+      }
+      send_chat_message: {
+        Args: {
+          p_content: string
+          p_conversation_id: string
+          p_sender_type?: string
+          p_session_token: string
+        }
+        Returns: string
+      }
+      update_chat_conversation: {
+        Args: {
+          p_conversation_id: string
+          p_session_token: string
+          p_status?: string
         }
         Returns: undefined
       }
