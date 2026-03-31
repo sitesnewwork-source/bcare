@@ -742,9 +742,9 @@ const InsuranceOffers = () => {
                       ? "bg-primary text-primary-foreground"
                       : "bg-secondary text-foreground"
                   }`}>
-                    {offer.popular && "⭐ الأكثر شيوعاً"}
-                    {offer.bestValue && "💎 أفضل قيمة"}
-                    {offer.cheapest && "💰 الأقل سعراً"}
+                    {offer.popular && of.mostPopular}
+                    {offer.bestValue && of.bestValue}
+                    {offer.cheapest && of.cheapest}
                   </div>
                 )}
 
