@@ -480,7 +480,7 @@ const HeroSection = ({ onTabChange }: HeroSectionProps) => {
                   <span className="block text-xs text-muted-foreground font-bold">مصرح من:</span>
                   <span className="block text-[10px] text-muted-foreground mt-0.5">هيئة التأمين</span>
                 </div>
-                <img src="/logos/ia.svg" alt="هيئة التأمين" className="h-12" />
+                <img src={iaLogo} alt="هيئة التأمين" className="h-14 w-auto" loading="lazy" />
                 <div className="flex flex-col items-center">
                   <span className="text-2xl font-extrabold text-primary leading-none">23</span>
                   <span className="text-[10px] text-muted-foreground font-medium">شركة تأمين</span>
