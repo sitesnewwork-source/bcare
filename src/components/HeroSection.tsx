@@ -85,7 +85,7 @@ const HeroSection = ({ onTabChange }: HeroSectionProps) => {
     navigate(`/insurance-request?type=${purposeType}`, { state: { national_id: form.national_id, serial_number: form.serial_number, insurance_type: activeInsurance } });
   };
 
-  const inputCls = "w-full h-12 px-4 rounded-lg bg-background border border-border text-foreground text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all";
+  const inputCls = "w-full h-12 px-4 rounded-xl bg-muted/40 border-2 border-border/80 text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 focus:bg-background transition-all duration-200";
 
   const heroContentKey = activeInsurance as keyof typeof t.hero.content;
   const hero = t.hero.content[heroContentKey];
