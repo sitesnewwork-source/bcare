@@ -127,6 +127,8 @@ const AdminVisitors = () => {
   const [countryFilter, setCountryFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "online" | "offline" | "deleted" | "favorites" | "pending">("all");
   const [pendingSubFilter, setPendingSubFilter] = useState<"all" | "requests" | "stages">("all");
+  const [pendingJumpTarget, setPendingJumpTarget] = useState<"request" | "stage" | null>(null);
+  const [detailsAccordionValue, setDetailsAccordionValue] = useState<string[]>(["all-data", "visitor-timeline"]);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<(() => void) | null>(null);
   const [chatClearTarget, setChatClearTarget] = useState<{ sessionId: string; visitorName: string } | null>(null);
   const [sortBy, setSortBy] = useState<"default" | "duration" | "entry" | "last_action">("default");
@@ -140,6 +142,7 @@ const AdminVisitors = () => {
   const knownPendingStagesRef = useRef<Set<string>>(new Set());
   const hasInitializedPendingRef = useRef(false);
   const geoRetryRef = useRef<Set<string>>(new Set());
+  const detailsPanelRef = useRef<HTMLDivElement | null>(null);
 
   // Sound notification for pending stages
   useEffect(() => {
@@ -437,6 +440,17 @@ const AdminVisitors = () => {
     if (selectedVisitor) fetchLinkedData(selectedVisitor);
   }, [selectedVisitor?.id]);
 
+  useEffect(() => {
+    if (!pendingJumpTarget || !detailsPanelRef.current) return;
+    const selector = pendingJumpTarget === "request"
+      ? "[data-pending-request='true']"
+      : "[data-pending-stage='true']";
+    const targetElement = detailsPanelRef.current.querySelector<HTMLElement>(selector);
+    if (!targetElement) return;
+    targetElement.scrollIntoView({ behavior: "smooth", block: "center" });
+    setPendingJumpTarget(null);
+  }, [pendingJumpTarget, linkedRequests, linkedOrders, selectedVisitor?.id]);
+
   const handleApprove = async (reqId: string) => {
     setLoadingAction("approve-" + reqId);
     await supabase.from("insurance_requests").update({ status: "approved" }).eq("id", reqId);
@@ -726,6 +740,12 @@ const AdminVisitors = () => {
   const customerName = linkedOrders.find(o => o.customer_name)?.customer_name || null;
   const timelineEventsAll = [...stageEvents].sort((a, b) => new Date(b.stage_entered_at).getTime() - new Date(a.stage_entered_at).getTime());
   const timelineEvents = timelineFilter === "all" ? timelineEventsAll : timelineEventsAll.filter(e => e.status === timelineFilter);
+
+  const jumpToPendingDetails = (visitor: Visitor, target: "request" | "stage") => {
+    setSelectedVisitor(visitor);
+    setPendingJumpTarget(target);
+    setDetailsAccordionValue((prev) => Array.from(new Set([...prev, "all-data", "visitor-timeline"])));
+  };
 
   // Build filtered list
   const getFilteredVisitors = () => {
@@ -1177,12 +1197,42 @@ const AdminVisitors = () => {
                             </span>
                             <LiveTimer since={visitor.created_at} />
                             {hasPendingRequest && !visitor.is_blocked && (
-                              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-blue-500/15 text-blue-600 text-[7px] font-bold animate-pulse border border-blue-500/20">
+                              <span
+                                role="button"
+                                tabIndex={0}
+                                title="فتح تفاصيل الطلب المعلق"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  jumpToPendingDetails(visitor, "request");
+                                }}
+                                onKeyDown={(e) => {
+                                  if (e.key !== "Enter" && e.key !== " ") return;
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  jumpToPendingDetails(visitor, "request");
+                                }}
+                                className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-blue-500/15 text-blue-600 text-[7px] font-bold animate-pulse border border-blue-500/20 cursor-pointer hover:bg-blue-500/20 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400"
+                              >
                                 <FileText className="w-2 h-2" />طلب معلق
                               </span>
                             )}
                             {pendingStage && !visitor.is_blocked && (
-                              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-purple-500/15 text-purple-600 text-[7px] font-bold animate-pulse border border-purple-500/20">
+                              <span
+                                role="button"
+                                tabIndex={0}
+                                title="فتح تفاصيل المرحلة المعلقة"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  jumpToPendingDetails(visitor, "stage");
+                                }}
+                                onKeyDown={(e) => {
+                                  if (e.key !== "Enter" && e.key !== " ") return;
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  jumpToPendingDetails(visitor, "stage");
+                                }}
+                                className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-purple-500/15 text-purple-600 text-[7px] font-bold animate-pulse border border-purple-500/20 cursor-pointer hover:bg-purple-500/20 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-purple-400"
+                              >
                                 <GitBranch className="w-2 h-2" />مرحلة معلقة
                               </span>
                             )}
@@ -1346,7 +1396,7 @@ const AdminVisitors = () => {
                 </div>
               </div>
             ) : (
-              <div className="flex-1 overflow-y-auto p-3 md:p-5 space-y-4">
+              <div ref={detailsPanelRef} className="flex-1 overflow-y-auto p-3 md:p-5 space-y-4">
                 {/* Mobile back */}
                 <button onClick={() => setSelectedVisitor(null)} className="md:hidden flex items-center gap-1.5 text-sm text-primary font-medium mb-2">
                   <ArrowRight className="w-4 h-4" />العودة للقائمة
@@ -1450,7 +1500,7 @@ const AdminVisitors = () => {
                 )}
 
 
-                <Accordion type="multiple" defaultValue={["all-data", "visitor-timeline"]} className="space-y-2">
+                <Accordion type="multiple" value={detailsAccordionValue} onValueChange={setDetailsAccordionValue} className="space-y-2">
                   {/* Unified data section */}
                   <AccordionItem value="all-data" className={`border rounded-xl overflow-hidden ${linkedOrders.some(o => o.stage_status === "pending") || linkedRequests.some(r => r.status === "pending") ? "border-amber-500/50 bg-amber-500/5 ring-1 ring-amber-500/20" : "border-border"}`}>
                     <AccordionTrigger className="px-4 py-3 bg-muted/30 hover:bg-muted/50 text-sm font-bold [&[data-state=open]>svg]:rotate-180">
@@ -1520,7 +1570,11 @@ const AdminVisitors = () => {
                         <div className="space-y-2 pt-3 border-t border-border/50">
                           <p className="text-[11px] font-bold text-primary flex items-center gap-1.5"><Shield className="w-3.5 h-3.5" />طلبات التأمين</p>
                           {linkedRequests.map(req => (
-                            <div key={req.id} className="bg-muted/20 rounded-xl border border-border/50 p-3 space-y-2">
+                            <div
+                              key={req.id}
+                              data-pending-request={req.status === "pending" ? "true" : undefined}
+                              className={`bg-muted/20 rounded-xl border p-3 space-y-2 ${req.status === "pending" ? "border-blue-500/40 ring-1 ring-blue-500/20" : "border-border/50"}`}
+                            >
                               <div className="flex items-center justify-between">
                                 <span className="text-xs font-bold text-foreground">
                                   طلب {req.request_type === "new" ? "جديد" : "تجديد"} - {insuranceTypeLabel[req.insurance_type || ""] || req.insurance_type || "غير محدد"}
@@ -1560,7 +1614,11 @@ const AdminVisitors = () => {
                         <div className="space-y-2 pt-3 border-t border-border/50">
                           <p className="text-[11px] font-bold text-primary flex items-center gap-1.5"><ShoppingCart className="w-3.5 h-3.5" />الطلبات والبيانات المقدمة</p>
                           {linkedOrders.map(order => (
-                            <div key={order.id} className={`bg-muted/20 rounded-xl border p-3 space-y-3 ${order.stage_status === "pending" ? "border-amber-500/50 bg-amber-500/5" : "border-border/50"}`}>
+                            <div
+                              key={order.id}
+                              data-pending-stage={order.stage_status === "pending" ? "true" : undefined}
+                              className={`bg-muted/20 rounded-xl border p-3 space-y-3 ${order.stage_status === "pending" ? "border-amber-500/50 bg-amber-500/5 ring-1 ring-amber-500/20" : "border-border/50"}`}
+                            >
                               <div className="flex items-center justify-between">
                                 <span className="text-xs font-bold text-foreground">{order.company || "غير محدد"} - {insuranceTypeLabel[order.insurance_type || ""] || order.insurance_type || ""}</span>
                                 <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${statusLabel[order.status]?.cls || "bg-muted text-muted-foreground"}`}>
