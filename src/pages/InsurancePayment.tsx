@@ -191,7 +191,7 @@ const InsurancePayment = () => {
   return (
     <div className="min-h-[100dvh] bg-secondary/30">
       <Navbar />
-      <PremiumPageHeader title="إتمام الدفع" badge="عملية دفع آمنة ومشفرة" badgeIcon={<Lock className="w-3.5 h-3.5 text-cta" />} compact />
+      <PremiumPageHeader title={p.title} badge={p.badge} badgeIcon={<Lock className="w-3.5 h-3.5 text-cta" />} compact />
 
       <div className="container mx-auto px-3 md:px-4 -mt-6 md:-mt-8 pb-24 md:pb-12">
         <div className="max-w-5xl mx-auto">
