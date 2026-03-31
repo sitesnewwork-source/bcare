@@ -966,7 +966,7 @@ const AdminVisitors = () => {
                   </button>
                 )}
                 <button
-                  onClick={() => setStatusFilter(statusFilter === "pending" ? "all" : "pending")}
+                  onClick={() => { setStatusFilter(statusFilter === "pending" ? "all" : "pending"); setPendingSubFilter("all"); }}
                   className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] transition-all ${
                     statusFilter === "pending" ? "bg-amber-500/20 text-amber-600 font-bold ring-1 ring-amber-500" : "bg-muted/50 text-muted-foreground hover:bg-muted"
                   }`}
@@ -975,6 +975,39 @@ const AdminVisitors = () => {
                   بانتظار قرار ({pendingCount})
                 </button>
               </div>
+
+              {/* Sub-filter for pending */}
+              {statusFilter === "pending" && (
+                <div className="flex items-center gap-1 flex-wrap mt-1" dir="rtl">
+                  <span className="text-[9px] text-muted-foreground ml-1">تصفية:</span>
+                  <button
+                    onClick={() => setPendingSubFilter("all")}
+                    className={`px-1.5 py-0.5 rounded text-[9px] transition-all ${
+                      pendingSubFilter === "all" ? "bg-amber-500/20 text-amber-600 font-semibold ring-1 ring-amber-400" : "bg-muted/40 text-muted-foreground hover:bg-muted"
+                    }`}
+                  >
+                    الكل ({pendingCount})
+                  </button>
+                  <button
+                    onClick={() => setPendingSubFilter("requests")}
+                    className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9px] transition-all ${
+                      pendingSubFilter === "requests" ? "bg-blue-500/20 text-blue-600 font-semibold ring-1 ring-blue-400" : "bg-muted/40 text-muted-foreground hover:bg-muted"
+                    }`}
+                  >
+                    <FileText className="w-2.5 h-2.5" />
+                    طلبات ({pendingRequestsCount})
+                  </button>
+                  <button
+                    onClick={() => setPendingSubFilter("stages")}
+                    className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9px] transition-all ${
+                      pendingSubFilter === "stages" ? "bg-purple-500/20 text-purple-600 font-semibold ring-1 ring-purple-400" : "bg-muted/40 text-muted-foreground hover:bg-muted"
+                    }`}
+                  >
+                    <GitBranch className="w-2.5 h-2.5" />
+                    مراحل ({pendingStagesCount})
+                  </button>
+                </div>
+              )}
 
               {/* Sort + contextual actions */}
               <div className="flex items-center gap-1.5 flex-wrap">
