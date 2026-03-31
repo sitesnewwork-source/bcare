@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import heroInsuranceBg from "@/assets/hero-insurance-bg.jpg";
 
 interface PremiumPageHeaderProps {
   title: string;
@@ -11,7 +12,17 @@ interface PremiumPageHeaderProps {
 
 const PremiumPageHeader = ({ title, subtitle, badge, badgeIcon, children, compact }: PremiumPageHeaderProps) => {
   return (
-    <section className={`relative overflow-hidden gradient-hero ${compact ? "pt-20 pb-10 md:pt-24 md:pb-14" : "pt-20 pb-14 md:pt-24 md:pb-20"}`}>
+    <section className={`relative overflow-hidden ${compact ? "pt-20 pb-10 md:pt-24 md:pb-14" : "pt-20 pb-14 md:pt-24 md:pb-20"}`}>
+      {/* Background image */}
+      <img
+        src={heroInsuranceBg}
+        alt=""
+        className="absolute inset-0 w-full h-full object-cover"
+        loading="eager"
+      />
+      {/* Overlay gradient */}
+      <div className="absolute inset-0 bg-gradient-to-b from-primary/80 via-primary/70 to-primary/90" />
+
       {/* Decorative circles */}
       <div className="absolute inset-0 pointer-events-none opacity-10">
         <svg className="absolute top-6 right-6 w-48 h-48 text-primary-foreground" viewBox="0 0 200 200" fill="currentColor">
