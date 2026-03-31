@@ -157,7 +157,7 @@ const InsuranceCheckout = () => {
 
   <div class="disclaimer">
     هذه البوليصة مسودة أولية لأغراض المراجعة فقط. سيتم إصدار البوليصة النهائية بعد إتمام عملية الدفع والتحقق من جميع البيانات المطلوبة.
-    <br>© ${new Date().getFullYear()} تري للتأمين. جميع الحقوق محفوظة.
+    <br>© ${new Date().getFullYear()} بي كير. جميع الحقوق محفوظة.
   </div>
 
   <button class="print-btn" onclick="window.print()">طباعة / حفظ كـ PDF</button>
