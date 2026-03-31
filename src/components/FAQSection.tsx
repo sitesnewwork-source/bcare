@@ -25,13 +25,13 @@ const FAQSection = () => {
   };
 
   return (
-    <section className="py-20 bg-background">
+    <section className="py-10 md:py-14 bg-background">
       <div className="section-container max-w-4xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-10"
+          className="text-center mb-6"
         >
           <h2 className="text-4xl md:text-5xl font-bold text-foreground">
             {t.faq.title}
@@ -42,7 +42,7 @@ const FAQSection = () => {
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="flex justify-center gap-3 mb-10"
+          className="flex justify-center gap-3 mb-6"
         >
           {categories.map((cat) => (
             <button

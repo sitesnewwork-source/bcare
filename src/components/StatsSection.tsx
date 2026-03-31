@@ -55,7 +55,7 @@ const StatsSection = () => {
   const { lang } = useLanguage();
 
   return (
-    <section className="py-16 md:py-24 bg-gradient-to-b from-primary/[0.03] to-background relative overflow-hidden">
+    <section className="py-10 md:py-14 bg-gradient-to-b from-primary/[0.03] to-background relative overflow-hidden">
       {/* Decorative background */}
       <div className="absolute inset-0 opacity-[0.02]">
         <div className="absolute top-10 right-10 w-72 h-72 rounded-full bg-primary blur-3xl" />
@@ -68,7 +68,7 @@ const StatsSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-12"
+          className="text-center mb-8"
         >
           <h2 className="text-2xl lg:text-4xl font-extrabold text-primary mb-3">
             {lang === "ar" ? "بي كير بالأرقام" : "BCare in Numbers"}

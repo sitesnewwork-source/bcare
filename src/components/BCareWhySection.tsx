@@ -15,13 +15,13 @@ const BCareWhySection = () => {
   ];
 
   return (
-    <section className="py-16 lg:py-24 bg-background">
+    <section className="py-10 lg:py-14 bg-background">
       <div className="section-container">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-3xl lg:text-4xl font-extrabold text-primary text-center mb-12"
+          className="text-3xl lg:text-4xl font-extrabold text-primary text-center mb-8"
           dir="auto"
         >
           {t.whyBcare.title}

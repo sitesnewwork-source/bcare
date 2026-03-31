@@ -14,13 +14,13 @@ const WhyChooseUs = ({ activeTab = "vehicles" }: WhyChooseUsProps) => {
   const content = t.whyChooseUs[tabKey] || t.whyChooseUs.vehicles;
 
   return (
-    <section className="py-16 lg:py-24 bg-background">
+    <section className="py-10 lg:py-14 bg-background">
       <div className="section-container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-12"
+          className="text-center mb-8"
         >
           <h2 className="text-2xl lg:text-4xl font-extrabold text-primary mb-3">
             {content.title}

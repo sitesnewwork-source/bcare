@@ -75,7 +75,7 @@ const AchievementsSection = () => {
   const { lang } = useLanguage();
 
   return (
-    <section className="py-16 md:py-24 bg-gradient-to-b from-background to-primary/[0.03] relative overflow-hidden">
+    <section className="py-10 md:py-14 bg-gradient-to-b from-background to-primary/[0.03] relative overflow-hidden">
       <div className="absolute inset-0 opacity-[0.015]">
         <div className="absolute top-20 left-1/4 w-80 h-80 rounded-full bg-cta blur-3xl" />
         <div className="absolute bottom-20 right-1/4 w-64 h-64 rounded-full bg-primary blur-3xl" />
@@ -88,7 +88,7 @@ const AchievementsSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-12"
+          className="text-center mb-8"
         >
           <h2 className="text-2xl lg:text-4xl font-extrabold text-primary mb-3">
             {lang === "ar" ? "شركاء النجاح والاعتمادات" : "Partners & Certifications"}
@@ -101,7 +101,7 @@ const AchievementsSection = () => {
         </motion.div>
 
         {/* Certifications cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
           {certifications.map((item, i) => (
             <motion.div
               key={item.titleEn}
@@ -132,7 +132,7 @@ const AchievementsSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center mb-8"
+          className="text-center mb-5"
         >
           <h3 className="text-lg md:text-xl font-bold text-foreground mb-2">
             {lang === "ar" ? "شركات التأمين الشريكة" : "Our Insurance Partners"}
