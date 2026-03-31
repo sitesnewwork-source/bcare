@@ -839,7 +839,7 @@ const InsuranceRequest = () => {
                         </select>
                         <select className={selectCls(form.policy_month)} value={form.policy_month}
                           onChange={(e) => { upd("policy_month", e.target.value); touch("policy_start_date"); sounds.click(); }}>
-                          <option value="">الشهر</option>
+                          <option value="">{r.fields.month}</option>
                           {months.map((m, i) => <option key={i} value={String(i + 1)}>{m}</option>)}
                         </select>
                         <select className={selectCls(form.policy_year)} value={form.policy_year}
