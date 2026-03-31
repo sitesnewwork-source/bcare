@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import WhyChooseUs from "@/components/WhyChooseUs";
+import DiscountsSection from "@/components/DiscountsSection";
 import BCareWhySection from "@/components/BCareWhySection";
 import Footer from "@/components/Footer";
 import PullToRefresh from "@/components/PullToRefresh";
@@ -19,6 +20,7 @@ const Index = () => {
         <Navbar />
         <HeroSection />
         <WhyChooseUs />
+        <DiscountsSection />
         <BCareWhySection />
         <Footer />
       </div>

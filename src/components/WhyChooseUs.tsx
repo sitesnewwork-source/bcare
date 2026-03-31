@@ -2,19 +2,19 @@ import { motion } from "framer-motion";
 import { Clock, SlidersHorizontal, TrendingDown, CalendarClock, Zap, BadgePercent, Shield, Building2 } from "lucide-react";
 
 const features = [
-  { icon: Clock, title: "تأمينك في دقيقة", desc: "نُقارن لك كل عروض الأسعار بشكل فوري من كل شركات التأمين" },
-  { icon: SlidersHorizontal, title: "فصّل تأمينك", desc: "أنواع تأمين متعددة: تأمين ضد الغير، تأمين مميز، تأمين شامل وقيمة تحمل متنوعة" },
-  { icon: TrendingDown, title: "أسعار أقل", desc: "عندنا فريق يراقب كل صغيرة وكبيرة في السوق ويضمن أن سعرك الأقل" },
-  { icon: CalendarClock, title: "جدول تأمينك", desc: "نُرسل لك إشعارات تذكيرية لتجديد تأمينك وتقدر تجدول تاريخ بدايته" },
-  { icon: Zap, title: "هب ريح", desc: "نُربط وثيقتك في أسرع وقت مع نظام المرور ونجم" },
-  { icon: BadgePercent, title: "خصومات تضبطك", desc: "خصومات لبعض القطاعات الحكومية وشبه الحكومية والخاصة" },
-  { icon: Shield, title: "منافع تحميك", desc: "خطط تأمين متنوعة مع المرونة في تحديد المنافع الإضافية اللي تناسبك" },
-  { icon: Building2, title: "مكان واحد", desc: "تُدير كل وثائقك إدارة إلكترونية كاملة من مكان واحد وتُجددها في أي وقت" },
+  { icon: Shield, title: "منافع وشبكات متعددة", desc: "اطلع على تفاصيل وثيقتك وحدود تغطيتها في أي وقت" },
+  { icon: SlidersHorizontal, title: "عشر بيدك", desc: "عشر فئات تأمينية تغطي شبكة المستشفيات المختلفة في المملكة" },
+  { icon: Zap, title: "سرعة الربط مع نجم", desc: "نربط وثيقتك بأسرع وقت في نظام المرور ونجم" },
+  { icon: CalendarClock, title: "إضافة وحذف الأعضاء", desc: "سهل إنك تضيف أو تلغي أي عضو اونلاين" },
+  { icon: Clock, title: "تلقانا حولك", desc: "مكاتب موظفينا حولك تخدمك في تأمينك في المستشفيات المتعاقدة معنا" },
+  { icon: TrendingDown, title: "فئتك التأمينية", desc: "مرونة تغيير نوع الفئة في أي وقت حسب سياسة الشركة" },
+  { icon: Building2, title: "إدارة وثيقتك", desc: "تدير وثيقتك إدارة إلكترونية كاملة وتجددها بشكل مضمون" },
+  { icon: BadgePercent, title: "معك لحظة بلحظة", desc: "نتابع مطالباتك ونحرص على تخليص الموافقات لعملاء فئة VIP" },
 ];
 
 const WhyChooseUs = () => {
   return (
-    <section className="py-16 lg:py-24 bg-secondary/30">
+    <section className="py-16 lg:py-24 bg-background">
       <div className="section-container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -22,12 +22,9 @@ const WhyChooseUs = () => {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          <h2 className="text-3xl lg:text-4xl font-extrabold text-primary mb-3">
-            طريقك آمــن مع بي كير
+          <h2 className="text-2xl lg:text-4xl font-extrabold text-primary mb-3">
+            مع بي كير خذ تأمينك وأنت متطمّن
           </h2>
-          <p className="text-muted-foreground max-w-xl mx-auto">
-            منصة واحدة تجمع لك كل ما تحتاجه في التأمين
-          </p>
         </motion.div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
@@ -43,7 +40,7 @@ const WhyChooseUs = () => {
               <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4 group-hover:bg-primary group-hover:shadow-lg transition-all duration-300">
                 <f.icon className="w-7 h-7 text-primary group-hover:text-primary-foreground transition-colors" />
               </div>
-              <h3 className="font-bold text-foreground mb-2">{f.title}</h3>
+              <h3 className="font-bold text-foreground mb-2 text-sm">{f.title}</h3>
               <p className="text-xs text-muted-foreground leading-relaxed">{f.desc}</p>
             </motion.div>
           ))}

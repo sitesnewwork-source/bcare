@@ -1,8 +1,8 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Car, Heart, Stethoscope, Plane, Home, CreditCard, Link2, Lock, RefreshCw, CheckCircle2, AlertCircle, Info } from "lucide-react";
+import { Car, Heart, Stethoscope, Plane, Home, RefreshCw, Info } from "lucide-react";
 import { sounds } from "@/lib/sounds";
 import { toast } from "sonner";
 
@@ -37,8 +37,6 @@ const HeroSection = () => {
     return digits.slice(0, 10);
   };
 
-  const [touched, setTouched] = useState<Record<string, boolean>>({});
-  const touch = (f: string) => setTouched((p) => ({ ...p, [f]: true }));
   const [agreed, setAgreed] = useState(false);
 
   const generateCaptcha = useCallback(() => {
@@ -75,94 +73,84 @@ const HeroSection = () => {
     });
   };
 
-  const inputCls = "w-full h-12 px-4 rounded-lg bg-background border-2 border-border text-foreground text-sm font-medium placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all";
+  const inputCls = "w-full h-12 px-4 rounded-lg bg-background border border-border text-foreground text-sm placeholder:text-muted-foreground/60 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all";
 
   return (
-    <>
-      {/* Hero */}
-      <section className="relative overflow-hidden">
-        {/* Background */}
-        <div className="gradient-hero py-16 lg:py-24">
-          <div className="section-container relative z-10 text-center">
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-primary-foreground leading-tight mb-4"
-            >
-              المنصة الأذكى لمقارنة عروض تأمين السيارات في السعودية
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="text-sm md:text-base text-primary-foreground/80 max-w-2xl mx-auto"
-            >
-              المنصة الأذكى لمقارنة عروض أكثر من 20 شركة تأمين. احصل على أرخص تأمين سيارات مع إصدار فوري وربط مباشر بنجم.
-            </motion.p>
-          </div>
+    <section className="relative">
+      {/* Hero gradient background with SVG decorations */}
+      <div className="gradient-hero relative overflow-hidden">
+        {/* Decorative SVG shapes */}
+        <div className="absolute inset-0 pointer-events-none opacity-10">
+          <svg className="absolute top-8 right-8 w-64 h-64 text-primary-foreground" viewBox="0 0 200 200" fill="currentColor">
+            <circle cx="100" cy="100" r="80" fillOpacity="0.15" />
+            <circle cx="100" cy="100" r="60" fillOpacity="0.1" />
+          </svg>
+          <svg className="absolute bottom-8 left-8 w-48 h-48 text-primary-foreground" viewBox="0 0 200 200" fill="currentColor">
+            <circle cx="100" cy="100" r="70" fillOpacity="0.12" />
+          </svg>
         </div>
 
-        {/* Insurance Tabs */}
-        <div className="bg-background border-b border-border">
-          <div className="section-container">
-            <div className="flex items-center justify-center gap-1 -mt-0 overflow-x-auto pb-0">
-              {insuranceTabs.map((tab) => {
-                const Icon = tab.icon;
-                const active = activeInsurance === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => {
-                      setActiveInsurance(tab.id);
-                      sounds.tabSwitch();
-                    }}
-                    className={`flex flex-col items-center gap-1.5 px-5 py-4 text-sm font-bold transition-all border-b-3 min-w-[90px] ${
-                      active
-                        ? "text-primary border-b-[3px] border-primary"
-                        : "text-muted-foreground border-b-[3px] border-transparent hover:text-foreground"
-                    }`}
-                  >
-                    <Icon className={`w-6 h-6 ${active ? "text-primary" : "text-muted-foreground"}`} />
-                    <span>{tab.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+        <div className="section-container relative z-10 py-14 lg:py-20 text-center">
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-2xl md:text-3xl lg:text-[2.75rem] font-extrabold text-primary-foreground leading-tight mb-4 max-w-4xl mx-auto"
+          >
+            المنصة الأذكى لمقارنة عروض تأمين السيارات في السعودية
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-sm md:text-base text-primary-foreground/80 max-w-3xl mx-auto leading-relaxed"
+          >
+            المنصة الأذكى لمقارنة عروض أكثر من 20 شركة تأمين. احصل على أرخص تأمين سيارات مع إصدار فوري وربط مباشر بنجم.
+          </motion.p>
         </div>
+      </div>
 
-        {/* Form Section */}
-        <div className="bg-background py-8">
-          <div className="section-container">
+      {/* White card overlapping hero */}
+      <div className="section-container relative z-20 -mt-6">
+        <div className="bg-card rounded-t-2xl shadow-xl border border-border overflow-hidden max-w-4xl mx-auto">
+          {/* Tabs */}
+          <div className="flex items-center justify-center border-b border-border bg-muted/30">
+            {insuranceTabs.map((tab) => {
+              const Icon = tab.icon;
+              const active = activeInsurance === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => {
+                    setActiveInsurance(tab.id);
+                    sounds.tabSwitch();
+                  }}
+                  className={`flex flex-col items-center gap-1 px-4 md:px-6 py-3.5 text-xs md:text-sm font-bold transition-all border-b-[3px] min-w-[70px] md:min-w-[90px] ${
+                    active
+                      ? "text-primary border-primary bg-background"
+                      : "text-muted-foreground border-transparent hover:text-foreground hover:bg-background/50"
+                  }`}
+                >
+                  <Icon className={`w-5 h-5 md:w-6 md:h-6 ${active ? "text-primary" : ""}`} />
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Form area */}
+          <div className="p-6 md:p-8 bg-card">
             <AnimatePresence mode="wait">
               {activeInsurance === "vehicles" ? (
                 <motion.div
                   key="vehicles-form"
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="max-w-3xl mx-auto"
+                  exit={{ opacity: 0, y: -8 }}
                 >
-                  {/* Purpose & Registration toggles */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                    {/* الغرض من التأمين */}
+                  {/* Row 1: ID + Purpose + Registration */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
                     <div>
-                      <label className="text-sm font-bold text-primary mb-2 block">الغرض من التأمين</label>
-                      <div className="flex gap-3">
-                        <label className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border-2 cursor-pointer transition-all flex-1 ${purposeType === "new" ? "border-primary bg-primary/5" : "border-border"}`}>
-                          <input type="radio" name="purpose" checked={purposeType === "new"} onChange={() => setPurposeType("new")} className="accent-primary" />
-                          <span className="text-sm font-semibold">تأمين جديد</span>
-                        </label>
-                        <label className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border-2 cursor-pointer transition-all flex-1 ${purposeType === "transfer" ? "border-primary bg-primary/5" : "border-border"}`}>
-                          <input type="radio" name="purpose" checked={purposeType === "transfer"} onChange={() => setPurposeType("transfer")} className="accent-primary" />
-                          <span className="text-sm font-semibold">نقل ملكية</span>
-                        </label>
-                      </div>
-                    </div>
-
-                    {/* رقم الهوية */}
-                    <div>
-                      <label className="text-sm font-bold text-primary mb-2 block">رقم الهوية / الإقامة</label>
+                      <label className="text-sm font-bold text-foreground mb-2 block">رقم الهوية / الإقامة</label>
                       <input
                         type="text"
                         className={inputCls}
@@ -170,31 +158,37 @@ const HeroSection = () => {
                         value={form.national_id}
                         inputMode="numeric"
                         maxLength={10}
-                        onChange={(e) => { touch("national_id"); upd("national_id", saudiId(e.target.value)); }}
+                        onChange={(e) => upd("national_id", saudiId(e.target.value))}
                       />
                     </div>
-
-                    {/* نوع التسجيل */}
                     <div>
-                      <label className="text-sm font-bold text-primary mb-2 block">نوع تسجيل المركبة</label>
-                      <div className="flex gap-3">
-                        <label className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border-2 cursor-pointer transition-all flex-1 ${registrationType === "form" ? "border-primary bg-primary/5" : "border-border"}`}>
-                          <input type="radio" name="reg" checked={registrationType === "form"} onChange={() => setRegistrationType("form")} className="accent-primary" />
-                          <span className="text-sm font-semibold">استمارة</span>
-                        </label>
-                        <label className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border-2 cursor-pointer transition-all flex-1 ${registrationType === "customs" ? "border-primary bg-primary/5" : "border-border"}`}>
-                          <input type="radio" name="reg" checked={registrationType === "customs"} onChange={() => setRegistrationType("customs")} className="accent-primary" />
-                          <span className="text-sm font-semibold">بطاقة جمركية</span>
-                        </label>
+                      <label className="text-sm font-bold text-foreground mb-2 block">الغرض من التأمين</label>
+                      <div className="flex gap-2">
+                        <button onClick={() => setPurposeType("new")} className={`flex-1 h-12 rounded-lg border text-sm font-semibold transition-all ${purposeType === "new" ? "border-primary bg-primary/5 text-primary" : "border-border text-muted-foreground hover:border-primary/50"}`}>
+                          تأمين جديد
+                        </button>
+                        <button onClick={() => setPurposeType("transfer")} className={`flex-1 h-12 rounded-lg border text-sm font-semibold transition-all ${purposeType === "transfer" ? "border-primary bg-primary/5 text-primary" : "border-border text-muted-foreground hover:border-primary/50"}`}>
+                          نقل ملكية
+                        </button>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-sm font-bold text-foreground mb-2 block">نوع تسجيل المركبة</label>
+                      <div className="flex gap-2">
+                        <button onClick={() => setRegistrationType("form")} className={`flex-1 h-12 rounded-lg border text-sm font-semibold transition-all ${registrationType === "form" ? "border-primary bg-primary/5 text-primary" : "border-border text-muted-foreground hover:border-primary/50"}`}>
+                          استمارة
+                        </button>
+                        <button onClick={() => setRegistrationType("customs")} className={`flex-1 h-12 rounded-lg border text-sm font-semibold transition-all ${registrationType === "customs" ? "border-primary bg-primary/5 text-primary" : "border-border text-muted-foreground hover:border-primary/50"}`}>
+                          بطاقة جمركية
+                        </button>
                       </div>
                     </div>
                   </div>
 
-                  {/* Serial + Captcha + Agreement row */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                    {/* الرقم التسلسلي */}
+                  {/* Row 2: Serial + Captcha + Button */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-end">
                     <div>
-                      <label className="text-sm font-bold text-primary mb-2 flex items-center gap-1">
+                      <label className="text-sm font-bold text-foreground mb-2 flex items-center gap-1">
                         الرقم التسلسلي
                         <Info className="w-3.5 h-3.5 text-muted-foreground" />
                       </label>
@@ -206,10 +200,8 @@ const HeroSection = () => {
                         onChange={(e) => upd("serial_number", e.target.value)}
                       />
                     </div>
-
-                    {/* رمز التحقق */}
                     <div>
-                      <label className="text-sm font-bold text-primary mb-2 block">رمز التحقق</label>
+                      <label className="text-sm font-bold text-foreground mb-2 block">رمز التحقق</label>
                       <div className="flex gap-2">
                         <input
                           type="text"
@@ -220,60 +212,61 @@ const HeroSection = () => {
                           maxLength={4}
                           onChange={(e) => upd("captcha_input", onlyNumbers(e.target.value, 4))}
                         />
-                        <div className="flex items-center gap-1.5 bg-muted border border-border rounded-lg px-3 h-12">
-                          <span className="flex items-center gap-1 font-bold text-lg select-none" style={{ direction: "ltr" }}>
+                        <div className="flex items-center gap-1.5 bg-muted/50 border border-border rounded-lg px-3 h-12">
+                          <span className="flex items-center gap-0.5 font-bold text-lg select-none" style={{ direction: "ltr" }}>
                             {captchaCode.map((d, i) => (
                               <span key={i} style={{ color: captchaColors[i % captchaColors.length] }}>{d}</span>
                             ))}
                           </span>
-                          <button onClick={() => { refreshCaptcha(); sounds.refresh(); }} className="text-muted-foreground hover:text-primary transition-colors">
+                          <button onClick={() => { refreshCaptcha(); sounds.refresh(); }} className="text-muted-foreground hover:text-primary transition-colors mr-1">
                             <RefreshCw className="w-4 h-4" />
                           </button>
                         </div>
                       </div>
                     </div>
-
-                    {/* Agreement + Button */}
-                    <div className="flex flex-col justify-end">
-                      <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer mb-3">
-                        <input
-                          type="checkbox"
-                          checked={agreed}
-                          onChange={(e) => setAgreed(e.target.checked)}
-                          className="w-4 h-4 accent-primary rounded"
-                        />
-                        <span>أوافق على منح حق الاستعلام</span>
-                      </label>
+                    <div>
                       <Button
                         onClick={() => { handleSubmit(); sounds.submit(); }}
-                        className="w-full h-12 bg-cta text-cta-foreground hover:bg-cta-hover text-base font-bold rounded-lg btn-glow"
+                        className="w-full h-12 bg-cta text-cta-foreground hover:bg-cta-hover text-base font-bold rounded-lg"
                       >
                         إظهار العروض
                       </Button>
                     </div>
                   </div>
+
+                  {/* Agreement */}
+                  <div className="mt-4 flex items-center justify-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="agree"
+                      checked={agreed}
+                      onChange={(e) => setAgreed(e.target.checked)}
+                      className="w-4 h-4 accent-primary rounded"
+                    />
+                    <label htmlFor="agree" className="text-xs text-muted-foreground cursor-pointer">
+                      أوافق على منح حق الاستعلام
+                    </label>
+                  </div>
                 </motion.div>
               ) : (
                 <motion.div
                   key="other-insurance"
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="max-w-lg mx-auto text-center py-12"
+                  exit={{ opacity: 0, y: -8 }}
+                  className="text-center py-10"
                 >
-                  <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
                     {(() => {
                       const tab = insuranceTabs.find(t => t.id === activeInsurance);
                       const Icon = tab?.icon || Car;
-                      return <Icon className="w-10 h-10 text-primary" />;
+                      return <Icon className="w-8 h-8 text-primary" />;
                     })()}
                   </div>
-                  <h3 className="text-xl font-bold text-foreground mb-2">
+                  <h3 className="text-lg font-bold text-foreground mb-2">
                     {insuranceTabs.find(t => t.id === activeInsurance)?.label}
                   </h3>
-                  <p className="text-muted-foreground mb-6">
-                    قريباً! نعمل على إضافة هذا النوع من التأمين
-                  </p>
+                  <p className="text-muted-foreground text-sm mb-5">قريباً! نعمل على إضافة هذا النوع من التأمين</p>
                   <Button
                     variant="outline"
                     onClick={() => setActiveInsurance("vehicles")}
@@ -286,8 +279,36 @@ const HeroSection = () => {
             </AnimatePresence>
           </div>
         </div>
-      </section>
-    </>
+      </div>
+
+      {/* Partners strip integrated below the form card */}
+      <div className="bg-background pt-0 pb-4">
+        <div className="section-container">
+          <div className="max-w-4xl mx-auto bg-card rounded-b-2xl shadow-xl border border-t-0 border-border px-6 py-5">
+            <div className="flex items-center justify-between gap-4 flex-wrap">
+              <div className="flex items-center gap-3 text-sm text-muted-foreground shrink-0">
+                <span className="font-bold text-foreground">مصرح من:</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center text-[8px] font-bold text-primary">IA</div>
+                  <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center text-[8px] font-bold text-primary">SAMA</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-1.5 text-primary font-bold text-sm">
+                <span className="text-2xl font-extrabold">23</span>
+                <span className="text-xs text-muted-foreground">شركة تأمين</span>
+              </div>
+              <div className="flex items-center gap-3 overflow-hidden">
+                {["التعاونية", "أمانة", "الراجحي", "ميدغلف", "أليانز", "الجزيرة"].map((name) => (
+                  <div key={name} className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center text-[9px] font-bold text-muted-foreground shrink-0">
+                    {name.slice(0, 3)}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 };
 
