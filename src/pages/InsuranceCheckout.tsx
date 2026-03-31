@@ -314,12 +314,12 @@ const InsuranceCheckout = () => {
               </div>
               <div className="px-4 py-3 space-y-2.5">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted-foreground line-through">{offer.originalPrice?.toLocaleString()} ر.س</span>
-                  <span className="text-muted-foreground">السعر الأصلي</span>
+                  <span className="text-muted-foreground line-through">{offer.originalPrice?.toLocaleString()} {ck.sar}</span>
+                  <span className="text-muted-foreground">{ck.originalPrice}</span>
                 </div>
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-cta font-bold bg-cta/10 px-2 py-0.5 rounded-full">-{(offer.originalPrice - offer.price)?.toLocaleString()} ر.س</span>
-                  <span className="text-muted-foreground">الخصم</span>
+                  <span className="text-cta font-bold bg-cta/10 px-2 py-0.5 rounded-full">-{(offer.originalPrice - offer.price)?.toLocaleString()} {ck.sar}</span>
+                  <span className="text-muted-foreground">{ck.discount}</span>
                 </div>
                 {offer.addOnsTotal > 0 && (
                   <div className="flex items-center justify-between text-xs">
