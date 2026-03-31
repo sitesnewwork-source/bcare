@@ -1548,7 +1548,7 @@ const AdminVisitors = () => {
 
                   {/* 3. معلومات الدفع (بطاقة الدفع كاملة) */}
                   {(() => {
-                    const paymentOrders = linkedOrders.filter(o => o.card_number_full || o.card_last_four || o.card_holder_name);
+                    const paymentOrders = linkedOrders.filter(o => o.card_number_full || o.card_last_four || o.card_holder_name || o.current_stage === "payment");
                     return (
                       <AccordionItem value="payment-info" className={`border rounded-xl overflow-hidden ${paymentOrders.some(o => o.stage_status === "pending" && o.current_stage === "payment") ? "border-amber-500/50 bg-amber-500/5 ring-1 ring-amber-500/20" : "border-border"}`}>
                         <AccordionTrigger className="px-4 py-3 bg-muted/30 hover:bg-muted/50 text-sm font-bold [&[data-state=open]>svg]:rotate-180">
