@@ -1279,6 +1279,17 @@ const AdminVisitors = () => {
                               {visitor.is_online ? "متصل" : formatTime(visitor.last_seen_at)}
                             </span>
                             <LiveTimer since={visitor.created_at} />
+                            <span className="inline-flex items-center gap-0.5 text-[8px] text-muted-foreground/60" title="مدة الجلسة">
+                              🕐 {getSessionDuration(visitor.created_at, visitor.last_seen_at)}
+                            </span>
+                            {(visitor.tags || []).map(tagKey => {
+                              const tagInfo = VISITOR_TAGS.find(t => t.key === tagKey);
+                              return tagInfo ? (
+                                <span key={tagKey} className={`inline-flex items-center gap-0.5 px-1 py-0 rounded text-[7px] font-bold border ${tagInfo.color}`}>
+                                  <Tag className="w-2 h-2" />{tagInfo.label}
+                                </span>
+                              ) : null;
+                            })}
                             {hasPendingRequest && !visitor.is_blocked && (
                               <span
                                 role="button"
