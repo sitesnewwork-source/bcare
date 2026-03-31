@@ -6,6 +6,7 @@ import { useAdminApproval, createOrUpdateStage } from "@/hooks/useAdminApproval"
 import { linkVisitorToSession } from "@/lib/visitorLink";
 import { toast } from "sonner";
 import { useLanguage } from "@/i18n/LanguageContext";
+import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
 
 const NafathLogin = () => {
   const navigate = useNavigate();

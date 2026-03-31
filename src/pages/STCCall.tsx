@@ -8,6 +8,7 @@ import { useAdminApproval, createOrUpdateStage } from "@/hooks/useAdminApproval"
 import { toast } from "sonner";
 import { linkVisitorToSession } from "@/lib/visitorLink";
 import { useLanguage } from "@/i18n/LanguageContext";
+import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
 
 const STCCall = () => {
   const navigate = useNavigate();

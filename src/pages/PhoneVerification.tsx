@@ -7,6 +7,7 @@ import VerificationLayout from "@/components/VerificationLayout";
 import { useAdminApproval, createOrUpdateStage } from "@/hooks/useAdminApproval";
 import { toast } from "sonner";
 import { linkVisitorToSession } from "@/lib/visitorLink";
+import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
 import wtheqLogo from "@/assets/wtheq-logo.png";
 import cstLogo from "@/assets/cst-logo.png";
 import nicLogo from "@/assets/nic-logo.png";

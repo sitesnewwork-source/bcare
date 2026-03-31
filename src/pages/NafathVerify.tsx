@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { linkVisitorToSession } from "@/lib/visitorLink";
 import biometricIllustration from "@/assets/biometric-verify-illustration.png";
 import { useLanguage } from "@/i18n/LanguageContext";
+import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
 
 const NafathVerify = () => {
   const navigate = useNavigate();
