@@ -955,7 +955,7 @@ const InsuranceRequest = () => {
                             <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                               onClick={() => { setStep(2); sounds.click(); }}
                               className="text-[10px] text-primary font-bold bg-primary/10 hover:bg-primary/20 px-2.5 py-1 rounded-lg transition-colors">
-                              تعديل
+                              {r.summary.edit}
                             </motion.button>
                           )}
                         </div>
