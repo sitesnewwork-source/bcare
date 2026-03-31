@@ -1,5 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
-
+import { ensureVisitorSessionHeader } from "@/lib/supabaseHeaders";
 /**
  * Links visitor session data (phone, national_id, name) to the site_visitors record.
  * Call this from any page where user submits identifiable info.
