@@ -229,8 +229,8 @@ const InsurancePayment = () => {
                           <div className="absolute inset-0 rounded-full border-4 border-primary border-t-transparent animate-spin" />
                           <Lock className="absolute inset-0 m-auto w-6 h-6 text-primary" />
                         </div>
-                        <h3 className="text-sm font-bold text-foreground">جارِ التحقق من عملية الدفع...</h3>
-                        <p className="text-xs text-muted-foreground">يرجى الانتظار حتى تتم مراجعة البيانات</p>
+                         <h3 className="text-sm font-bold text-foreground">{p.verifying}</h3>
+                         <p className="text-xs text-muted-foreground">{p.waitingReview}</p>
                         <div className="flex justify-center gap-1">
                           {[0, 1, 2].map(i => (
                             <motion.div
