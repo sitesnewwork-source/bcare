@@ -667,6 +667,8 @@ const AdminVisitors = () => {
     ...Object.keys(pendingStageMap),
   ]);
   const pendingCount = awaitingDecisionVisitorIds.size;
+  const pendingRequestsCount = Object.keys(pendingRequestMap).length;
+  const pendingStagesCount = Object.keys(pendingStageMap).length;
 
   const formatTime = (dateStr: string) => new Date(dateStr).toLocaleTimeString("ar-SA", { hour: "2-digit", minute: "2-digit" });
   const formatDate = (dateStr: string) => new Date(dateStr).toLocaleDateString("ar-SA", { year: "numeric", month: "short", day: "numeric" });
