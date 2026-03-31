@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PremiumPageHeader from "@/components/PremiumPageHeader";
-import heroInsuranceBg from "@/assets/hero-insurance-bg.jpg";
+
 import { Button } from "@/components/ui/button";
 import {
   Shield, Star, Check, ChevronDown, ChevronUp, X,
