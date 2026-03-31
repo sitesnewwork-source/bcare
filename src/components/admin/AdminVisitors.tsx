@@ -794,12 +794,16 @@ const AdminVisitors = () => {
       } else {
         filtered = visitors.filter(v => awaitingDecisionVisitorIds.has(v.id));
       }
+    } else if (statusFilter === "has_request") {
+      filtered = visitors.filter(v => v.linked_request_id || pendingRequestMap[v.id]);
     } else {
       filtered = visitors;
       if (statusFilter === "online") filtered = filtered.filter(v => v.is_online);
       else if (statusFilter === "offline") filtered = filtered.filter(v => !v.is_online);
     }
     if (countryFilter) filtered = filtered.filter(v => v.country === countryFilter);
+    if (deviceFilter) filtered = filtered.filter(v => parseUserAgent(v.user_agent).device === deviceFilter);
+    if (pageFilter) filtered = filtered.filter(v => v.current_page === pageFilter);
     if (q) filtered = filtered.filter(v => (v.visitor_name || "").toLowerCase().includes(q) || (v.phone || "").includes(q) || v.session_id.toLowerCase().includes(q));
     if (sortBy === "duration") filtered = [...filtered].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
     else if (sortBy === "entry") filtered = [...filtered].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
@@ -811,6 +815,11 @@ const AdminVisitors = () => {
 
   // Country list for dropdown
   const countries = [...new Set(visitors.filter(v => v.country).map(v => v.country!))].sort();
+  // Unique pages for filter
+  const uniquePages = [...new Set(visitors.filter(v => v.current_page).map(v => v.current_page!))].sort();
+  // Device counts
+  const deviceCounts = { Mobile: 0, Desktop: 0, Tablet: 0 };
+  visitors.forEach(v => { const d = parseUserAgent(v.user_agent).device; if (d in deviceCounts) deviceCounts[d as keyof typeof deviceCounts]++; });
 
   return (
     <>
