@@ -1012,7 +1012,7 @@ const InsuranceRequest = () => {
                   <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
                     <Button onClick={next}
                       className="bg-gradient-to-l from-primary to-primary/80 text-primary-foreground rounded-xl px-8 h-12 font-bold text-sm shadow-xl shadow-primary/25 gap-2 border border-primary-foreground/10">
-                      التالي <ArrowRight className="w-4 h-4" />
+                      {r.nav.next} <ArrowRight className="w-4 h-4" />
                     </Button>
                   </motion.div>
                 ) : (
