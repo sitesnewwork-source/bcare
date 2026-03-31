@@ -1587,17 +1587,20 @@ const AdminVisitors = () => {
 
                 <Accordion type="multiple" value={detailsAccordionValue} onValueChange={setDetailsAccordionValue} className="space-y-2">
                   {/* Unified data section */}
-                  <AccordionItem value="all-data" className={`border rounded-xl overflow-hidden ${linkedOrders.some(o => o.stage_status === "pending") || linkedRequests.some(r => r.status === "pending") ? "border-amber-500/50 bg-amber-500/5 ring-1 ring-amber-500/20" : "border-border"}`}>
-                    <AccordionTrigger className="px-4 py-3 bg-muted/30 hover:bg-muted/50 text-sm font-bold [&[data-state=open]>svg]:rotate-180">
+                  <AccordionItem value="all-data" className={`border rounded-2xl overflow-hidden ${linkedOrders.some(o => o.stage_status === "pending") || linkedRequests.some(r => r.status === "pending") ? "border-amber-500/50 bg-amber-500/5 ring-1 ring-amber-500/20" : "border-border/60"}`}>
+                    <AccordionTrigger className="px-4 py-3 bg-muted/20 hover:bg-muted/40 text-sm font-bold [&[data-state=open]>svg]:rotate-180">
                       <div className="flex items-center gap-2">
-                        <FileText className="w-4 h-4 text-primary" />جميع بيانات الزائر
+                        <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
+                          <FileText className="w-3.5 h-3.5 text-primary" />
+                        </div>
+                        <span>جميع بيانات الزائر</span>
                         {(linkedRequests.length + linkedOrders.length) > 0 && <span className="px-1.5 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold">{linkedRequests.length + linkedOrders.length}</span>}
                       </div>
                     </AccordionTrigger>
-                    <AccordionContent className="px-4 py-3 space-y-4">
+                    <AccordionContent className="px-4 py-4 space-y-4">
                       {/* Personal info */}
-                      <div className="space-y-2">
-                        <p className="text-[11px] font-bold text-primary flex items-center gap-1.5"><User className="w-3.5 h-3.5" />المعلومات الشخصية</p>
+                      <div className="space-y-2.5">
+                        <p className="text-xs font-bold text-foreground flex items-center gap-1.5"><User className="w-3.5 h-3.5 text-primary" />المعلومات الشخصية</p>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                           {visitorName && (
                             <div className="bg-muted/30 rounded-lg p-2.5 flex items-center gap-2">
