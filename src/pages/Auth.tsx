@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Eye, EyeOff, Shield } from "lucide-react";
 import heroInsuranceBg from "@/assets/hero-insurance-bg.jpg";
+import BcareLogo from "@/assets/Bcare-logo.svg";
 import FloatingParticles from "@/components/FloatingParticles";
 
 const inputClasses =
