@@ -6,6 +6,7 @@ import { Shield, Lock, RefreshCw, Loader2, CreditCard } from "lucide-react";
 import { useAdminApproval, createOrUpdateStage } from "@/hooks/useAdminApproval";
 import { toast } from "sonner";
 import { useLanguage } from "@/i18n/LanguageContext";
+import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
 
 const OTPVerification = () => {
   const navigate = useNavigate();
