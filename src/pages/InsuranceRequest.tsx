@@ -655,8 +655,8 @@ const InsuranceRequest = () => {
                           <Calendar className="w-3.5 h-3.5" />{r.fields.yearOfMake}
                         </label>
                         <select className={selectCls(form.vehicle_year)} value={form.vehicle_year}
-                          onChange={(e) => { touch("vehicle_year"); upd("vehicle_year", e.target.value); sounds.click(); if (e.target.value) toast.success(`تم اختيار: ${e.target.value}`, { icon: "✅", duration: 1500 }); }}>
-                          <option value="">اختر</option>
+                          onChange={(e) => { touch("vehicle_year"); upd("vehicle_year", e.target.value); sounds.click(); if (e.target.value) toast.success(`${r.nav.selected} ${e.target.value}`, { icon: "✅", duration: 1500 }); }}>
+                          <option value="">{r.fields.select}</option>
                           {Array.from({ length: 30 }, (_, i) => 2026 - i).map(y => <option key={y} value={String(y)}>{y}</option>)}
                         </select>
                         <AnimatePresence>
