@@ -32,6 +32,7 @@ const Index = () => {
         <TestimonialsSection />
         <AchievementsSection />
         <BCareWhySection />
+        <FAQSection />
         <Footer />
       </div>
     </PullToRefresh>
