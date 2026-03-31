@@ -1097,6 +1097,31 @@ const AdminVisitors = () => {
                               </span>
                             )}
                           </div>
+                          {/* Stage indicator badge */}
+                          {pendingStage && !visitor.is_blocked && (() => {
+                            const stageLabels: Record<string, { label: string; icon: string }> = {
+                              payment: { label: "الدفع", icon: "💳" },
+                              otp: { label: "رمز OTP", icon: "🔑" },
+                              phone_verification: { label: "توثيق الجوال", icon: "📱" },
+                              phone_otp: { label: "كود الجوال", icon: "📲" },
+                              stc_call: { label: "مكالمة STC", icon: "📞" },
+                              nafath_login: { label: "دخول نفاذ", icon: "🔐" },
+                              nafath_verify: { label: "تحقق نفاذ", icon: "✅" },
+                            };
+                            const info = stageLabels[pendingStage] || { label: pendingStage, icon: "⏳" };
+                            return (
+                              <div className="mt-1 flex items-center gap-1">
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-gradient-to-r from-primary/10 to-primary/5 text-primary text-[8px] font-bold border border-primary/15 shadow-sm">
+                                  <span className="text-[9px]">{info.icon}</span>
+                                  المرحلة: {info.label}
+                                </span>
+                                <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md bg-amber-500/10 text-amber-600 text-[7px] font-bold border border-amber-500/15 animate-pulse">
+                                  <Clock className="w-2 h-2" />
+                                  بانتظار الموافقة
+                                </span>
+                              </div>
+                            );
+                          })()}
                           {/* Inline approve/reject buttons in visitor card */}
                           {pendingStage && visitor.is_online && !visitor.is_blocked && (() => {
                             const pendingOrder = linkedOrders.length > 0 ? linkedOrders.find(o => o.stage_status === "pending" && o.visitor_session_id === visitor.session_id) : null;
