@@ -413,7 +413,7 @@ const InsuranceCheckout = () => {
               <div className="p-4 space-y-3">
                 {/* Policy Number */}
                 <div className="text-center p-2.5 rounded-lg bg-secondary/50 border border-border">
-                  <p className="text-[10px] text-muted-foreground">رقم البوليصة المؤقت</p>
+                  <p className="text-[10px] text-muted-foreground">{ck.tempPolicyNumber}</p>
                   <p className="font-mono font-bold text-primary text-sm tracking-wider">
                     {policyNumber}
                   </p>
