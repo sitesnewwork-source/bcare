@@ -1,5 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
-
+import { ensureVisitorSessionHeader } from "@/lib/supabaseHeaders";
 /**
  * Links visitor session data (phone, national_id, name) to the site_visitors record.
  * Call this from any page where user submits identifiable info.
@@ -11,6 +11,7 @@ export async function linkVisitorToSession(data: {
 }) {
   const sid = sessionStorage.getItem("visitor_sid");
   if (!sid) return;
+  ensureVisitorSessionHeader();
 
   const updatePayload: Record<string, any> = {
     last_seen_at: new Date().toISOString(),

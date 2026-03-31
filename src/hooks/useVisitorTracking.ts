@@ -1,6 +1,7 @@
 import { useEffect, useRef, useCallback, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { setVisitorSessionHeader } from "@/lib/supabaseHeaders";
 
 const PAGE_NAMES: Record<string, string> = {
   "/": "الصفحة الرئيسية",
@@ -34,6 +35,8 @@ function getSessionId(): string {
     sid = crypto.randomUUID();
     sessionStorage.setItem("visitor_sid", sid);
   }
+  // Always ensure the header is set with the current session ID
+  setVisitorSessionHeader(sid);
   return sid;
 }
 
