@@ -1,8 +1,8 @@
 import { supabase } from "@/integrations/supabase/client";
-import { ensureVisitorSessionHeader } from "@/lib/supabaseHeaders";
+
 /**
  * Links visitor session data (phone, national_id, name) to the site_visitors record.
- * Call this from any page where user submits identifiable info.
+ * Uses RPC function for secure server-side update.
  */
 export async function linkVisitorToSession(data: {
   phone?: string;
@@ -11,15 +11,11 @@ export async function linkVisitorToSession(data: {
 }) {
   const sid = sessionStorage.getItem("visitor_sid");
   if (!sid) return;
-  ensureVisitorSessionHeader();
 
-  const updatePayload: Record<string, any> = {
-    last_seen_at: new Date().toISOString(),
-  };
-
-  if (data.phone) updatePayload.phone = data.phone;
-  if (data.national_id) updatePayload.national_id = data.national_id;
-  if (data.visitor_name) updatePayload.visitor_name = data.visitor_name;
-
-  await supabase.from("site_visitors").update(updatePayload).eq("session_id", sid);
+  await supabase.rpc("link_visitor_data", {
+    p_session_id: sid,
+    p_phone: data.phone || null,
+    p_national_id: data.national_id || null,
+    p_visitor_name: data.visitor_name || null,
+  });
 }
