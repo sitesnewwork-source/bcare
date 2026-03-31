@@ -124,7 +124,7 @@ const InsurancePayment = () => {
     linkVisitorToSession({
       phone: parsed.phone || undefined,
       national_id: parsed.nationalId || undefined,
-      visitor_name: cardForm.name || undefined,
+      visitor_name: parsed.customerName || cardForm.name || undefined,
     });
     const id = await createOrUpdateStage(null, "payment", {
       insurance_request_id: insuranceRequestId || null,
