@@ -115,7 +115,7 @@ const HeroSection = ({ onTabChange }: HeroSectionProps) => {
           </div>
         </div>
         <div>
-          <Button onClick={() => { validateAndSubmit(); sounds.submit(); }} className="w-full h-12 bg-cta text-cta-foreground hover:bg-cta-hover text-base font-bold rounded-lg">{t.hero.form.showOffers}</Button>
+          <Button onClick={() => { validateAndSubmit(); sounds.submit(); }} className="w-full h-12 bg-cta text-cta-foreground hover:bg-cta-hover text-base font-bold rounded-xl shadow-lg shadow-cta/25 hover:shadow-cta/40 transition-all duration-300 hover:scale-[1.01]">{t.hero.form.showOffers}</Button>
         </div>
       </div>
       <div className="mt-4 flex items-center justify-center gap-2">
