@@ -1024,7 +1024,7 @@ const InsuranceRequest = () => {
                           <Shield className="w-4 h-4" />
                         </motion.div>
                       ) : (
-                        <>إرسال الطلب <CheckCircle2 className="w-4 h-4" /></>
+                        <>{r.nav.submit} <CheckCircle2 className="w-4 h-4" /></>
                       )}
                     </Button>
                   </motion.div>
