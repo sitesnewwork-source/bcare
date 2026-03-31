@@ -26,6 +26,8 @@ const Index = () => {
         <PartnersStrip />
         <WhyChooseUs activeTab={activeTab} />
         
+        <StatsSection />
+        <TestimonialsSection />
         <BCareWhySection />
         <Footer />
       </div>
