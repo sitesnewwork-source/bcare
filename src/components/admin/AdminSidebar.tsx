@@ -88,11 +88,11 @@ const AdminSidebar = ({ activeTab, setActiveTab, pendingCounts = {} }: Props) =>
 
         {/* Status bar */}
         {!collapsed && (
-          <div className="px-3 py-2 border-b border-white/10">
+          <div className="px-3 py-2 border-b border-border">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-[10px] text-white/60">الموقع يعمل</span>
-              <Globe className="w-3 h-3 text-white/40 mr-auto" />
+              <span className="text-[10px] text-muted-foreground">الموقع يعمل</span>
+              <Globe className="w-3 h-3 text-muted-foreground/60 mr-auto" />
             </div>
           </div>
         )}
