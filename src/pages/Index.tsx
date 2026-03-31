@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import WhyChooseUs from "@/components/WhyChooseUs";
@@ -9,6 +9,8 @@ import PullToRefresh from "@/components/PullToRefresh";
 import { toast } from "sonner";
 
 const Index = () => {
+  const [activeTab, setActiveTab] = useState("vehicles");
+
   const handleRefresh = useCallback(async () => {
     await new Promise((resolve) => setTimeout(resolve, 800));
     toast.success("تم تحديث الصفحة", { icon: "🔄", duration: 1500 });
@@ -18,8 +20,8 @@ const Index = () => {
     <PullToRefresh onRefresh={handleRefresh}>
       <div className="min-h-screen bg-background">
         <Navbar />
-        <HeroSection />
-        <WhyChooseUs />
+        <HeroSection onTabChange={setActiveTab} />
+        <WhyChooseUs activeTab={activeTab} />
         <DiscountsSection />
         <BCareWhySection />
         <Footer />
