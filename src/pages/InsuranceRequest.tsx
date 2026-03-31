@@ -649,7 +649,7 @@ const InsuranceRequest = () => {
                     </motion.div>
 
                     <div className="grid grid-cols-2 gap-3">
-                      {renderField({ label: "الموديل *", icon: Car, placeholder: "مثال: كامري", value: form.vehicle_model, error: fieldState("vehicle_model").error, valid: fieldState("vehicle_model").valid, onBlur: () => touch("vehicle_model"), onChange: (e) => { touch("vehicle_model"); upd("vehicle_model", e.target.value); } })}
+                      {renderField({ label: r.fields.model, icon: Car, placeholder: r.fields.exampleModel, value: form.vehicle_model, error: fieldState("vehicle_model").error, valid: fieldState("vehicle_model").valid, onBlur: () => touch("vehicle_model"), onChange: (e) => { touch("vehicle_model"); upd("vehicle_model", e.target.value); } })}
                       <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="space-y-1.5">
                         <label className="flex items-center gap-2 text-sm font-black text-foreground">
                           <Calendar className="w-3.5 h-3.5" />سنة الصنع *
