@@ -25,23 +25,25 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border">
+    <nav className="sticky top-0 z-50 bg-background border-b-[3px] border-primary">
       <div className="section-container">
         <div className="flex items-center justify-between h-14 md:h-16">
-          {/* Logo */}
+          {/* Logo - Right side (RTL) */}
           <Link to="/" className="flex items-center">
             <img src={BcareLogo} alt="BCare" className="h-8 md:h-9" />
           </Link>
 
-          {/* Actions */}
+          {/* Actions - Left side (RTL) */}
           <div className="flex items-center gap-3">
+            <span className="text-sm font-medium text-muted-foreground hover:text-foreground cursor-pointer transition-colors">EN</span>
+            <div className="w-px h-5 bg-border" />
             {user ? (
-              <Button size="sm" variant="outline" className="rounded-full border-border text-foreground hover:bg-muted" onClick={handleLogout}>
+              <Button size="sm" variant="ghost" className="rounded-full text-muted-foreground hover:text-foreground" onClick={handleLogout}>
                 تسجيل الخروج
               </Button>
             ) : (
               <Link to="/auth">
-                <Button size="sm" variant="ghost" className="rounded-full w-10 h-10 p-0 bg-muted hover:bg-primary hover:text-primary-foreground transition-colors">
+                <Button size="icon" variant="ghost" className="rounded-full w-9 h-9 text-primary hover:bg-primary/10">
                   <User className="w-5 h-5" />
                 </Button>
               </Link>
