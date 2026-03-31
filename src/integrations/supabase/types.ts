@@ -589,15 +589,26 @@ export type Database = {
         }
         Returns: string
       }
-      link_visitor_data: {
-        Args: {
-          p_national_id?: string
-          p_phone?: string
-          p_session_id: string
-          p_visitor_name?: string
-        }
-        Returns: undefined
-      }
+      link_visitor_data:
+        | {
+            Args: {
+              p_national_id?: string
+              p_phone?: string
+              p_session_id: string
+              p_visitor_name?: string
+            }
+            Returns: undefined
+          }
+        | {
+            Args: {
+              p_linked_request_id?: string
+              p_national_id?: string
+              p_phone?: string
+              p_session_id: string
+              p_visitor_name?: string
+            }
+            Returns: undefined
+          }
       send_chat_message: {
         Args: {
           p_content: string
