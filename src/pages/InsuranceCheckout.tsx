@@ -180,8 +180,8 @@ const InsuranceCheckout = () => {
         <Navbar />
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
-            <p className="text-muted-foreground mb-4">لم يتم اختيار عرض</p>
-            <Button onClick={() => navigate("/insurance/offers")} className="rounded-xl">عرض العروض المتاحة</Button>
+            <p className="text-muted-foreground mb-4">{ck.noOfferSelected}</p>
+            <Button onClick={() => navigate("/insurance/offers")} className="rounded-xl">{ck.showAvailableOffers}</Button>
           </div>
         </div>
       </div>
