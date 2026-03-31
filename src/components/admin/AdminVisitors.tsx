@@ -1073,36 +1073,10 @@ const AdminVisitors = () => {
                 >
                   <option value="">كل الصفحات</option>
                   {uniquePages.map(p => {
-                    const pageLabels: Record<string, string> = {
-                      "/": "الرئيسية",
-                      "/about": "من نحن",
-                      "/auth": "تسجيل الدخول",
-                      "/forgot-password": "نسيت كلمة المرور",
-                      "/reset-password": "إعادة تعيين كلمة المرور",
-                      "/verify": "التحقق من الوثيقة",
-                      "/insurance/auto": "تأمين مركبات",
-                      "/insurance/health": "تأمين طبي",
-                      "/insurance/travel": "تأمين سفر",
-                      "/insurance/malpractice": "أخطاء طبية",
-                      "/insurance/domestic": "عمالة منزلية",
-                      "/insurance-request": "طلب تأمين",
-                      "/insurance/offers": "العروض",
-                      "/insurance/compare": "المقارنة",
-                      "/insurance/checkout": "إتمام الشراء",
-                      "/insurance/payment": "الدفع",
-                      "/insurance/otp": "رمز التحقق OTP",
-                      "/insurance/atm": "الدفع عبر الصراف",
-                      "/insurance/phone-verify": "توثيق الجوال",
-                      "/insurance/phone-otp": "رمز الجوال",
-                      "/insurance/phone-stc": "مكالمة STC",
-                      "/insurance/nafath-login": "دخول نفاذ",
-                      "/insurance/nafath-verify": "تحقق نفاذ",
-                      "/insurance/confirmation": "تأكيد الطلب",
-                    };
-                    const visitorCount = visitors.filter(v => v.current_page === p).length;
+                    const visitorCount = visitors.filter(v => v.current_page === p.value).length;
                     return (
-                      <option key={p} value={p}>
-                        {pageLabels[p] || p} {visitorCount > 0 ? `(${visitorCount})` : ""}
+                      <option key={p.value} value={p.value}>
+                        {p.label} {visitorCount > 0 ? `(${visitorCount})` : ""}
                       </option>
                     );
                   })}
