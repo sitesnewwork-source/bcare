@@ -125,7 +125,7 @@ const AdminVisitors = () => {
   const [deletedCount, setDeletedCount] = useState(0);
   const [deletedVisitors, setDeletedVisitors] = useState<Visitor[]>([]);
   const [countryFilter, setCountryFilter] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"all" | "online" | "offline" | "deleted" | "favorites">("all");
+  const [statusFilter, setStatusFilter] = useState<"all" | "online" | "offline" | "deleted" | "favorites" | "pending">("all");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<(() => void) | null>(null);
   const [chatClearTarget, setChatClearTarget] = useState<{ sessionId: string; visitorName: string } | null>(null);
   const [sortBy, setSortBy] = useState<"default" | "duration" | "entry" | "last_action">("default");
