@@ -975,7 +975,7 @@ const InsuranceRequest = () => {
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-1.5">
                             <Shield className={`w-3.5 h-3.5 ${insuranceMissing ? "text-destructive" : "text-cta"}`} />
-                            <span className="text-[11px] font-black text-foreground">تفاصيل التأمين</span>
+                            <span className="text-[11px] font-black text-foreground">{r.summary.insuranceDetails}</span>
                           </div>
                           <span className={`text-[10px] font-bold px-2.5 py-1 rounded-lg ${insuranceMissing ? "text-destructive bg-destructive/10" : "text-cta bg-cta/10"}`}>الخطوة الحالية</span>
                         </div>
