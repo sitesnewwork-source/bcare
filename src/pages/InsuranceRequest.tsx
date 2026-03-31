@@ -98,35 +98,35 @@ const InsuranceRequest = () => {
     const v = form[field as keyof typeof form];
     switch (field) {
       case "national_id":
-        if (!v) return "مطلوب";
-        if (!/^[12]/.test(v)) return "يبدأ بـ 1 أو 2";
-        if (v.length < 10) return `${10 - v.length} أرقام متبقية`;
+        if (!v) return r.validation.required;
+        if (!/^[12]/.test(v)) return r.validation.startsWith12;
+        if (v.length < 10) return `${10 - v.length} ${r.validation.digitsRemaining}`;
         return null;
-      case "full_name": return !v ? "مطلوب" : v.length < 3 ? "قصير جداً" : null;
+      case "full_name": return !v ? r.validation.required : v.length < 3 ? r.validation.tooShort : null;
       case "phone":
-        if (!v) return "مطلوب";
-        if (!/^05/.test(v)) return "يبدأ بـ 05";
-        if (v.length < 10) return `${10 - v.length} أرقام متبقية`;
+        if (!v) return r.validation.required;
+        if (!/^05/.test(v)) return r.validation.startsWith05;
+        if (v.length < 10) return `${10 - v.length} ${r.validation.digitsRemaining}`;
         return null;
       case "serial_number":
-        if (!v) return "مطلوب";
-        if (v.length < 6) return `${6 - v.length} أرقام متبقية`;
+        if (!v) return r.validation.required;
+        if (v.length < 6) return `${6 - v.length} ${r.validation.digitsRemaining}`;
         return null;
-      case "vehicle_make": return !v ? "مطلوب" : null;
-      case "vehicle_model": return !v ? "مطلوب" : null;
+      case "vehicle_make": return !v ? r.validation.required : null;
+      case "vehicle_model": return !v ? r.validation.required : null;
       case "vehicle_year":
-        if (!v) return "مطلوب";
-        if (!/^\d{4}$/.test(v)) return "أدخل سنة صحيحة (4 أرقام)";
-        if (parseInt(v) < 1990 || parseInt(v) > new Date().getFullYear() + 1) return "سنة غير صالحة";
+        if (!v) return r.validation.required;
+        if (!/^\d{4}$/.test(v)) return r.validation.enterValidYear;
+        if (parseInt(v) < 1990 || parseInt(v) > new Date().getFullYear() + 1) return r.validation.invalidYear;
         return null;
       case "policy_start_date": {
         const { policy_day: pd, policy_month: pm, policy_year: py } = form;
-        if (!pd || !pm || !py) return "مطلوب";
+        if (!pd || !pm || !py) return r.validation.required;
         const dateStr = `${py}-${pm.padStart(2, "0")}-${pd.padStart(2, "0")}`;
-        if (new Date(dateStr) < new Date(new Date().toDateString())) return "لا يمكن اختيار تاريخ في الماضي";
+        if (new Date(dateStr) < new Date(new Date().toDateString())) return r.validation.pastDate;
         return null;
       }
-      case "insurance_type": return !v ? "اختر نوع التأمين" : null;
+      case "insurance_type": return !v ? r.validation.selectInsuranceType : null;
       default: return null;
     }
   };
