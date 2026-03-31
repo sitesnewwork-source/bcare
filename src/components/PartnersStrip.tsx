@@ -10,7 +10,7 @@ const partners = [
 
 const PartnersStrip = () => {
   return (
-    <section className="py-10 bg-background border-b border-border overflow-hidden">
+    <section className="py-6 bg-background border-b border-border overflow-hidden">
       <div className="section-container">
         <motion.p
           initial={{ opacity: 0 }}
