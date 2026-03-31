@@ -929,31 +929,33 @@ const AdminVisitors = () => {
           {/* Visitors list */}
           <div className={`${selectedVisitor ? "hidden md:flex" : "flex"} md:w-1/4 min-w-0 md:min-w-[220px] bg-card border border-border rounded-xl flex-col overflow-hidden ${!selectedVisitor ? "flex-1" : ""}`}>
             {/* List header */}
-            <div className="p-2.5 border-b border-border bg-muted/30 space-y-2">
+            <div className="p-3 border-b border-border bg-gradient-to-b from-muted/40 to-transparent space-y-2.5">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1.5">
-                  <Eye className="w-3.5 h-3.5 text-primary" />
-                  <h3 className="text-xs font-bold text-foreground">قائمة الزوار</h3>
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Eye className="w-3.5 h-3.5 text-primary" />
+                  </div>
+                  <h3 className="text-sm font-bold text-foreground">قائمة الزوار</h3>
                 </div>
                 <div className="relative">
                   <button
                     onClick={() => setShowChatMenu(!showChatMenu)}
-                    className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all"
+                    className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all"
                     title="خيارات مسح المحادثات"
                   >
-                    <Trash2 className="w-2.5 h-2.5" />
-                    <ChevronDown className="w-2.5 h-2.5" />
+                    <Trash2 className="w-3 h-3" />
+                    <ChevronDown className="w-3 h-3" />
                   </button>
                   {showChatMenu && (
                     <>
                     <div className="fixed inset-0 z-40" onClick={() => setShowChatMenu(false)} />
-                    <div className="absolute left-0 top-full mt-1 z-50 bg-card border border-border rounded-lg shadow-lg py-1 min-w-[160px]" dir="rtl">
+                    <div className="absolute left-0 top-full mt-1 z-50 bg-card border border-border rounded-xl shadow-xl py-1.5 min-w-[180px]" dir="rtl">
                       <button
                         onClick={() => {
                           setShowChatMenu(false);
                           setShowDeleteConfirm(() => clearOfflineVisitors);
                         }}
-                        className="w-full text-right px-3 py-2 text-[11px] text-destructive hover:bg-destructive/10 transition-colors flex items-center gap-2"
+                        className="w-full text-right px-3 py-2 text-[11px] text-destructive hover:bg-destructive/10 transition-colors flex items-center gap-2 rounded-lg mx-0.5"
                       >
                         <Trash2 className="w-3 h-3" />مسح جميع الزوار الغير متصلين
                       </button>
@@ -963,7 +965,7 @@ const AdminVisitors = () => {
                           setChatSelectMode(!chatSelectMode);
                           setSelectedForClear(new Set());
                         }}
-                        className="w-full text-right px-3 py-2 text-[11px] text-foreground hover:bg-accent/50 transition-colors flex items-center gap-2"
+                        className="w-full text-right px-3 py-2 text-[11px] text-foreground hover:bg-accent/50 transition-colors flex items-center gap-2 rounded-lg mx-0.5"
                       >
                         <Check className="w-3 h-3" />تحديد للمسح
                       </button>
@@ -975,39 +977,43 @@ const AdminVisitors = () => {
 
               {/* Search */}
               <div className="relative">
-                <Search className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground" />
+                <Search className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
                 <input
                   type="text"
                   placeholder="بحث بالاسم أو الجوال..."
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  className="w-full h-7 pr-7 pl-2 text-[11px] bg-background border border-border rounded-lg focus:outline-none focus:border-primary placeholder:text-muted-foreground"
+                  className="w-full h-8 pr-8 pl-3 text-xs bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary placeholder:text-muted-foreground transition-all"
                 />
               </div>
 
-              {/* Filters row */}
-              <div className="flex items-center gap-1 flex-wrap">
+              {/* Status filters */}
+              <div className="flex items-center gap-1.5 flex-wrap">
                 {[
                   { key: "all" as const, label: "الكل", count: totalCount },
                   { key: "online" as const, label: "متصل", count: onlineCount, dot: "fill-emerald-500 text-emerald-500" },
                   { key: "offline" as const, label: "غير متصل", count: offlineCount },
+                  ...(pendingCount > 0 ? [{ key: "pending" as const, label: "بانتظار قرار", count: pendingCount }] : []),
                 ].map(f => (
                   <button
                     key={f.key}
-                    onClick={() => setStatusFilter(f.key)}
-                    className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] transition-all ${
-                      statusFilter === f.key ? "bg-primary/20 text-primary font-bold ring-1 ring-primary" : "bg-muted/50 text-muted-foreground hover:bg-muted"
+                    onClick={() => { setStatusFilter(f.key as any); if (f.key === "pending") setPendingSubFilter("all"); }}
+                    className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-medium transition-all ${
+                      statusFilter === f.key
+                        ? "bg-primary text-primary-foreground shadow-sm"
+                        : "bg-muted/60 text-muted-foreground hover:bg-muted"
                     }`}
                   >
-                    {f.dot && <Circle className={`w-1.5 h-1.5 ${f.dot}`} />}
+                    {f.dot && <Circle className={`w-1.5 h-1.5 ${statusFilter === f.key ? "fill-primary-foreground text-primary-foreground" : f.dot}`} />}
+                    {f.key === "pending" && <Clock className="w-2.5 h-2.5" />}
                     {f.label} ({f.count})
                   </button>
                 ))}
                 {favoriteCount > 0 && (
                   <button
                     onClick={() => setStatusFilter(statusFilter === "favorites" ? "all" : "favorites")}
-                    className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] transition-all ${
-                      statusFilter === "favorites" ? "bg-amber-400/20 text-amber-600 font-bold ring-1 ring-amber-400" : "bg-muted/50 text-muted-foreground hover:bg-muted"
+                    className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-medium transition-all ${
+                      statusFilter === "favorites" ? "bg-amber-400/20 text-amber-600 ring-1 ring-amber-400" : "bg-muted/60 text-muted-foreground hover:bg-muted"
                     }`}
                   >
                     <Star className={`w-2.5 h-2.5 ${statusFilter === "favorites" ? "fill-amber-400 text-amber-400" : ""}`} />
@@ -1017,59 +1023,23 @@ const AdminVisitors = () => {
                 {deletedCount > 0 && (
                   <button
                     onClick={() => setStatusFilter(statusFilter === "deleted" ? "all" : "deleted")}
-                    className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] transition-all ${
-                      statusFilter === "deleted" ? "bg-destructive/20 text-destructive font-bold ring-1 ring-destructive" : "bg-muted/50 text-muted-foreground hover:bg-muted"
+                    className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-medium transition-all ${
+                      statusFilter === "deleted" ? "bg-destructive/20 text-destructive ring-1 ring-destructive" : "bg-muted/60 text-muted-foreground hover:bg-muted"
                     }`}
                   >
                     <Trash2 className="w-2.5 h-2.5" />
                     محذوفين ({deletedCount})
                   </button>
                 )}
-                <button
-                  onClick={() => { setStatusFilter(statusFilter === "pending" ? "all" : "pending"); setPendingSubFilter("all"); }}
-                  className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] transition-all ${
-                    statusFilter === "pending" ? "bg-amber-500/20 text-amber-600 font-bold ring-1 ring-amber-500" : "bg-muted/50 text-muted-foreground hover:bg-muted"
-                  }`}
-                >
-                  <Clock className="w-2.5 h-2.5" />
-                  بانتظار قرار ({pendingCount})
-                </button>
-                {hasRequestCount > 0 && (
-                  <button
-                    onClick={() => setStatusFilter(statusFilter === "has_request" ? "all" : "has_request")}
-                    className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] transition-all ${
-                      statusFilter === "has_request" ? "bg-blue-500/20 text-blue-600 font-bold ring-1 ring-blue-500" : "bg-muted/50 text-muted-foreground hover:bg-muted"
-                    }`}
-                  >
-                    <ShoppingCart className="w-2.5 h-2.5" />
-                    لديه طلب ({hasRequestCount})
-                  </button>
-                )}
               </div>
 
-              {/* Device & Page filters */}
-              <div className="flex items-center gap-1 flex-wrap">
-                {([
-                  { key: "Mobile" as const, icon: Smartphone, label: "جوال" },
-                  { key: "Desktop" as const, icon: Monitor, label: "كمبيوتر" },
-                  { key: "Tablet" as const, icon: Tablet, label: "لوحي" },
-                ] as const).filter(d => deviceCounts[d.key] > 0).map(d => (
-                  <button
-                    key={d.key}
-                    onClick={() => setDeviceFilter(deviceFilter === d.key ? "" : d.key)}
-                    className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9px] transition-all ${
-                      deviceFilter === d.key ? "bg-primary/20 text-primary font-bold ring-1 ring-primary" : "bg-muted/40 text-muted-foreground hover:bg-muted"
-                    }`}
-                  >
-                    <d.icon className="w-2.5 h-2.5" />
-                    {d.label} ({deviceCounts[d.key]})
-                  </button>
-                ))}
+              {/* Secondary filters row: pages dropdown + sort */}
+              <div className="flex items-center gap-2 flex-wrap">
                 {uniquePages.length > 1 && (
                   <select
                     value={pageFilter}
                     onChange={e => setPageFilter(e.target.value)}
-                    className="h-5 text-[9px] bg-background border border-border rounded px-1 text-foreground focus:outline-none focus:border-primary"
+                    className="h-7 text-[10px] bg-background border border-border rounded-lg px-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary flex-1 min-w-[100px]"
                   >
                     <option value="">كل الصفحات</option>
                     {uniquePages.map(p => (
@@ -1077,72 +1047,62 @@ const AdminVisitors = () => {
                     ))}
                   </select>
                 )}
-              </div>
-
-              {/* Sub-filter for pending */}
-              {statusFilter === "pending" && (
-                <div className="flex items-center gap-1 flex-wrap mt-1" dir="rtl">
-                  <span className="text-[9px] text-muted-foreground ml-1">تصفية:</span>
-                  <button
-                    onClick={() => setPendingSubFilter("all")}
-                    className={`px-1.5 py-0.5 rounded text-[9px] transition-all ${
-                      pendingSubFilter === "all" ? "bg-amber-500/20 text-amber-600 font-semibold ring-1 ring-amber-400" : "bg-muted/40 text-muted-foreground hover:bg-muted"
-                    }`}
-                  >
-                    الكل ({pendingCount})
-                  </button>
-                  <button
-                    onClick={() => setPendingSubFilter("requests")}
-                    className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9px] transition-all ${
-                      pendingSubFilter === "requests" ? "bg-blue-500/20 text-blue-600 font-semibold ring-1 ring-blue-400" : "bg-muted/40 text-muted-foreground hover:bg-muted"
-                    }`}
-                  >
-                    <FileText className="w-2.5 h-2.5" />
-                    طلبات ({pendingRequestsCount})
-                  </button>
-                  <button
-                    onClick={() => setPendingSubFilter("stages")}
-                    className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9px] transition-all ${
-                      pendingSubFilter === "stages" ? "bg-purple-500/20 text-purple-600 font-semibold ring-1 ring-purple-400" : "bg-muted/40 text-muted-foreground hover:bg-muted"
-                    }`}
-                  >
-                    <GitBranch className="w-2.5 h-2.5" />
-                    مراحل ({pendingStagesCount})
-                  </button>
-                </div>
-              )}
-
-              {/* Sort + contextual actions */}
-              <div className="flex items-center gap-1.5 flex-wrap">
                 <select
                   value={sortBy}
                   onChange={e => setSortBy(e.target.value as any)}
-                  className="h-6 text-[10px] bg-background border border-border rounded px-1 pr-5 text-foreground focus:outline-none focus:border-primary"
+                  className="h-7 text-[10px] bg-background border border-border rounded-lg px-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary flex-1 min-w-[100px]"
                 >
                   <option value="default">ترتيب: افتراضي</option>
                   <option value="duration">الأطول مدة</option>
                   <option value="entry">الأحدث دخولاً</option>
                   <option value="last_action">آخر إجراء</option>
                 </select>
+              </div>
 
-                {/* Contextual actions per filter */}
-                {statusFilter === "offline" && offlineCount > 0 && (
-                  <button
-                    onClick={() => setShowDeleteConfirm(() => () => deleteVisitors(visitors.filter(v => !v.is_online).map(v => v.id)))}
-                    className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9px] bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all"
-                  >
-                    <Trash2 className="w-2.5 h-2.5" />مسح الكل
-                  </button>
-                )}
-                {statusFilter === "deleted" && deletedVisitors.length > 0 && (
-                  <button
-                    onClick={() => { setDeletedVisitors([]); setDeletedCount(0); setStatusFilter("all"); toast.success("تم مسح سجل الزوار المحذوفين"); }}
-                    className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9px] bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all"
-                  >
-                    <Trash2 className="w-2.5 h-2.5" />مسح السجل
-                  </button>
-                )}
-                {statusFilter === "favorites" && favoriteCount > 0 && (
+              {/* Sub-filter for pending */}
+              {statusFilter === "pending" && (
+                <div className="flex items-center gap-1.5 flex-wrap" dir="rtl">
+                  <span className="text-[10px] text-muted-foreground">تصفية:</span>
+                  {[
+                    { key: "all" as const, label: "الكل", count: pendingCount, color: "amber" },
+                    { key: "requests" as const, label: "طلبات", count: pendingRequestsCount, color: "blue", icon: FileText },
+                    { key: "stages" as const, label: "مراحل", count: pendingStagesCount, color: "purple", icon: GitBranch },
+                  ].map(f => (
+                    <button
+                      key={f.key}
+                      onClick={() => setPendingSubFilter(f.key)}
+                      className={`inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-medium transition-all ${
+                        pendingSubFilter === f.key
+                          ? `bg-${f.color}-500/20 text-${f.color}-600 ring-1 ring-${f.color}-400`
+                          : "bg-muted/40 text-muted-foreground hover:bg-muted"
+                      }`}
+                    >
+                      {f.icon && <f.icon className="w-2.5 h-2.5" />}
+                      {f.label} ({f.count})
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Contextual actions */}
+              {statusFilter === "offline" && offlineCount > 0 && (
+                <button
+                  onClick={() => setShowDeleteConfirm(() => () => deleteVisitors(visitors.filter(v => !v.is_online).map(v => v.id)))}
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-medium bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all w-full justify-center"
+                >
+                  <Trash2 className="w-3 h-3" />مسح جميع غير المتصلين
+                </button>
+              )}
+              {statusFilter === "deleted" && deletedVisitors.length > 0 && (
+                <button
+                  onClick={() => { setDeletedVisitors([]); setDeletedCount(0); setStatusFilter("all"); toast.success("تم مسح سجل الزوار المحذوفين"); }}
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-medium bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all w-full justify-center"
+                >
+                  <Trash2 className="w-3 h-3" />مسح السجل
+                </button>
+              )}
+              {statusFilter === "favorites" && favoriteCount > 0 && (
+                <div className="flex items-center gap-1.5">
                   <button
                     onClick={async () => {
                       const favIds = visitors.filter(v => v.is_favorite).map(v => v.id);
@@ -1151,20 +1111,20 @@ const AdminVisitors = () => {
                       setStatusFilter("all");
                       fetchVisitors();
                     }}
-                    className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9px] bg-amber-400/10 text-amber-600 hover:bg-amber-400/20 transition-all"
+                    className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-medium bg-amber-400/10 text-amber-600 hover:bg-amber-400/20 transition-all flex-1 justify-center"
                   >
-                    <Star className="w-2.5 h-2.5" />إزالة الكل
+                    <Star className="w-3 h-3" />إزالة الكل
                   </button>
-                )}
-                {statusFilter === "favorites" && visitors.filter(v => v.is_favorite && !v.is_online).length > 0 && (
-                  <button
-                    onClick={() => setShowDeleteConfirm(() => () => deleteVisitors(visitors.filter(v => v.is_favorite && !v.is_online).map(v => v.id)))}
-                    className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9px] bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all"
-                  >
-                    <Trash2 className="w-2.5 h-2.5" />مسح غير المتصلين
-                  </button>
-                )}
-              </div>
+                  {visitors.filter(v => v.is_favorite && !v.is_online).length > 0 && (
+                    <button
+                      onClick={() => setShowDeleteConfirm(() => () => deleteVisitors(visitors.filter(v => v.is_favorite && !v.is_online).map(v => v.id)))}
+                      className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-medium bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all flex-1 justify-center"
+                    >
+                      <Trash2 className="w-3 h-3" />مسح غير المتصلين
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Visitor items */}
