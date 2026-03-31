@@ -1001,7 +1001,7 @@ const InsuranceOffers = () => {
             >
               <SlidersHorizontal className="w-5 h-5" />
               <span className="text-sm font-bold">
-                {compareList.length} عروض محددة للمقارنة
+                {compareList.length} {of.offersSelectedForCompare}
               </span>
               <Button
                 size="sm"
@@ -1010,7 +1010,7 @@ const InsuranceOffers = () => {
                   state: { offers: mockOffers.filter((o) => compareList.includes(o.id)) },
                 })}
               >
-                قارن الآن
+                {of.compareNow}
               </Button>
               <button onClick={() => setCompareList([])} className="text-primary-foreground/60 hover:text-primary-foreground">
                 <X className="w-4 h-4" />
