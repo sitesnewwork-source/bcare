@@ -977,7 +977,7 @@ const InsuranceRequest = () => {
                             <Shield className={`w-3.5 h-3.5 ${insuranceMissing ? "text-destructive" : "text-cta"}`} />
                             <span className="text-[11px] font-black text-foreground">{r.summary.insuranceDetails}</span>
                           </div>
-                          <span className={`text-[10px] font-bold px-2.5 py-1 rounded-lg ${insuranceMissing ? "text-destructive bg-destructive/10" : "text-cta bg-cta/10"}`}>الخطوة الحالية</span>
+                          <span className={`text-[10px] font-bold px-2.5 py-1 rounded-lg ${insuranceMissing ? "text-destructive bg-destructive/10" : "text-cta bg-cta/10"}`}>{r.summary.currentStep}</span>
                         </div>
                         <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[11px]">
                           {form.insurance_type ? <div><span className="text-muted-foreground">النوع: </span><span className="font-bold text-foreground">{form.insurance_type === "comprehensive" ? "شامل" : "ضد الغير"}</span></div> : <EmptyField label="النوع" />}
