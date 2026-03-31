@@ -223,7 +223,7 @@ const HeroSection = ({ onTabChange }: HeroSectionProps) => {
                 <label className="text-sm font-bold text-foreground mb-2 flex items-center gap-1">
                   {registrationType === "customs" ? t.hero.form.customsCard : t.hero.form.serialNumber} <Info className="w-3.5 h-3.5 text-muted-foreground" />
                 </label>
-                <input type="text" className={inputCls} placeholder={registrationType === "customs" ? t.hero.form.customsCard : t.hero.form.serialNumber} value={form.serial_number} onChange={(e) => upd("serial_number", e.target.value)} />
+                <input type="text" className={inputCls} placeholder={registrationType === "customs" ? t.hero.form.customsCard : t.hero.form.serialNumber} value={form.serial_number} onChange={(e) => { const v = e.target.value.replace(/[^a-zA-Z0-9]/g, ''); upd("serial_number", v); }} />
               </div>
               {renderInlineCaptcha()}
               {renderInlineButton()}
@@ -243,7 +243,7 @@ const HeroSection = ({ onTabChange }: HeroSectionProps) => {
                   <label className="text-sm font-bold text-foreground mb-2 flex items-center gap-1">
                     {registrationType === "customs" ? t.hero.form.customsCard : t.hero.form.serialNumber} <Info className="w-3.5 h-3.5 text-muted-foreground" />
                   </label>
-                  <input type="text" className={inputCls} placeholder={registrationType === "customs" ? t.hero.form.customsCard : t.hero.form.serialNumber} value={form.serial_number} onChange={(e) => upd("serial_number", e.target.value)} />
+                  <input type="text" className={inputCls} placeholder={registrationType === "customs" ? t.hero.form.customsCard : t.hero.form.serialNumber} value={form.serial_number} onChange={(e) => { const v = e.target.value.replace(/[^a-zA-Z0-9]/g, ''); upd("serial_number", v); }} />
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-end">
