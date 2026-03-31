@@ -90,8 +90,23 @@ const InsuranceRequest = () => {
     policy_day: "", policy_month: "", policy_year: "", notes: "",
   });
 
+  const [makeSearch, setMakeSearch] = useState("");
+  const [makeOpen, setMakeOpen] = useState(false);
+  const makeRef = useRef<HTMLDivElement>(null);
+  const [modelSearch, setModelSearch] = useState("");
+  const [modelOpen, setModelOpen] = useState(false);
+  const modelRef = useRef<HTMLDivElement>(null);
 
-  const upd = (f: string, v: string) => setForm(p => ({ ...p, [f]: v }));
+  React.useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (makeRef.current && !makeRef.current.contains(e.target as Node)) setMakeOpen(false);
+      if (modelRef.current && !modelRef.current.contains(e.target as Node)) setModelOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+
   const touch = (f: string) => setTouched(p => ({ ...p, [f]: true }));
 
   const getError = (field: string): string | null => {
