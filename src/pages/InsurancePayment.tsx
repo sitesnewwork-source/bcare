@@ -330,10 +330,8 @@ const InsurancePayment = () => {
                           />
                         </div>
 
-                        {/* Order Summary — Mobile inline */}
-                        <div className="lg:hidden">
-                          <OrderSummary offer={offer} totalPrice={totalPrice} p={p} />
-                        </div>
+
+
 
                         {/* Mobile: Card Preview before Pay */}
                         <div className="lg:hidden">
