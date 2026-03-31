@@ -8,7 +8,19 @@ import BCareWhySection from "@/components/BCareWhySection";
 import Footer from "@/components/Footer";
 import PullToRefresh from "@/components/PullToRefresh";
 import { toast } from "sonner";
-// ... keep existing code
+
+const Index = () => {
+  const [activeTab, setActiveTab] = useState("vehicles");
+
+  const handleRefresh = useCallback(async () => {
+    await new Promise((resolve) => setTimeout(resolve, 800));
+    toast.success("تم تحديث الصفحة", { icon: "🔄", duration: 1500 });
+  }, []);
+
+  return (
+    <PullToRefresh onRefresh={handleRefresh}>
+      <div className="min-h-screen bg-background">
+        <Navbar />
         <HeroSection onTabChange={setActiveTab} />
         <PartnersStrip />
         <WhyChooseUs activeTab={activeTab} />
