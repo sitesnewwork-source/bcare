@@ -1,112 +1,53 @@
 import { motion } from "framer-motion";
-import { Award, Eye, Zap, Globe, BadgePercent, Headphones } from "lucide-react";
+import { Clock, SlidersHorizontal, TrendingDown, CalendarClock, Zap, BadgePercent, Shield, Building2 } from "lucide-react";
 
-const reasons = [
-  {
-    icon: Award,
-    title: "الأول في المملكة",
-    desc: "كمنصة رائدة لجميع أنواع التأمين",
-    gradient: "from-primary/10 to-primary/5",
-  },
-  {
-    icon: Globe,
-    title: "وجهة واحدة للتأمين",
-    desc: "خيارات متعددة من شركات التأمين مع عملية مقارنة سلسة وسريعة",
-    gradient: "from-cta/10 to-cta/5",
-  },
-  {
-    icon: Eye,
-    title: "الشفافية والوضوح",
-    desc: "نضمن استخدام مصطلحات مباشرة وأسعار واضحة بدون رسوم مخفية",
-    gradient: "from-accent/30 to-accent/10",
-  },
-  {
-    icon: Zap,
-    title: "إصدار فوري",
-    desc: "احصل على وثيقة التأمين فوراً بعد إتمام عملية الشراء",
-    gradient: "from-primary/10 to-primary/5",
-  },
-  {
-    icon: BadgePercent,
-    title: "تسعير موحّد",
-    desc: "أسعار مطابقة لشركات التأمين إن لم تكن أقل من خلال عروضنا الحصرية",
-    gradient: "from-cta/10 to-cta/5",
-  },
-  {
-    icon: Headphones,
-    title: "دعم فني متميز",
-    desc: "كفاءة تعتمد عليها وإجابة سريعة لجميع استفساراتك",
-    gradient: "from-accent/30 to-accent/10",
-  },
+const features = [
+  { icon: Clock, title: "تأمينك في دقيقة", desc: "نُقارن لك كل عروض الأسعار بشكل فوري من كل شركات التأمين" },
+  { icon: SlidersHorizontal, title: "فصّل تأمينك", desc: "أنواع تأمين متعددة: تأمين ضد الغير، تأمين مميز، تأمين شامل وقيمة تحمل متنوعة" },
+  { icon: TrendingDown, title: "أسعار أقل", desc: "عندنا فريق يراقب كل صغيرة وكبيرة في السوق ويضمن أن سعرك الأقل" },
+  { icon: CalendarClock, title: "جدول تأمينك", desc: "نُرسل لك إشعارات تذكيرية لتجديد تأمينك وتقدر تجدول تاريخ بدايته" },
+  { icon: Zap, title: "هب ريح", desc: "نُربط وثيقتك في أسرع وقت مع نظام المرور ونجم" },
+  { icon: BadgePercent, title: "خصومات تضبطك", desc: "خصومات لبعض القطاعات الحكومية وشبه الحكومية والخاصة" },
+  { icon: Shield, title: "منافع تحميك", desc: "خطط تأمين متنوعة مع المرونة في تحديد المنافع الإضافية اللي تناسبك" },
+  { icon: Building2, title: "مكان واحد", desc: "تُدير كل وثائقك إدارة إلكترونية كاملة من مكان واحد وتُجددها في أي وقت" },
 ];
-
-const containerVariants = {
-  hidden: {},
-  visible: {
-    transition: { staggerChildren: 0.1 },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 30, scale: 0.95 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: { type: "spring" as const, stiffness: 100, damping: 15 },
-  },
-};
 
 const WhyChooseUs = () => {
   return (
-    <section className="py-20 lg:py-28 bg-background relative overflow-hidden">
-      {/* Decorative bg elements */}
-      <div className="absolute top-0 left-0 w-96 h-96 bg-primary/[0.03] rounded-full -translate-x-1/2 -translate-y-1/2" />
-      <div className="absolute bottom-0 right-0 w-72 h-72 bg-cta/[0.03] rounded-full translate-x-1/3 translate-y-1/3" />
-
-      <div className="section-container relative z-10">
+    <section className="py-16 lg:py-24 bg-secondary/30">
+      <div className="section-container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-14"
+          className="text-center mb-12"
         >
-          <span className="inline-block text-cta font-bold text-sm bg-cta/10 px-4 py-1.5 rounded-full mb-4">لماذا نحن؟</span>
-          <h2 className="text-4xl lg:text-5xl font-bold text-foreground mb-4">
-            ليش تختارنا؟
+          <h2 className="text-3xl lg:text-4xl font-extrabold text-primary mb-3">
+            طريقك آمــن مع بي كير
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            اختر شريك تأمينك بذكاء — منصة واحدة تجمع لك أفضل العروض
+          <p className="text-muted-foreground max-w-xl mx-auto">
+            منصة واحدة تجمع لك كل ما تحتاجه في التأمين
           </p>
         </motion.div>
 
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-50px" }}
-          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          {reasons.map((r) => (
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+          {features.map((f, i) => (
             <motion.div
-              key={r.title}
-              variants={itemVariants}
-              whileHover={{ y: -6, transition: { duration: 0.2 } }}
-              className="bg-card rounded-2xl p-7 border border-border group cursor-default relative overflow-hidden"
+              key={f.title}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.05 }}
+              className="bg-card rounded-2xl p-5 lg:p-6 border border-border text-center group hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
             >
-              {/* Gradient bg on hover */}
-              <div className={`absolute inset-0 bg-gradient-to-br ${r.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
-
-              <div className="relative z-10">
-                <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-5 group-hover:bg-primary group-hover:shadow-lg group-hover:shadow-primary/20 transition-all duration-300">
-                  <r.icon className="w-7 h-7 text-primary group-hover:text-primary-foreground transition-colors duration-300" />
-                </div>
-                <h3 className="text-lg font-bold text-foreground mb-2">{r.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{r.desc}</p>
+              <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4 group-hover:bg-primary group-hover:shadow-lg transition-all duration-300">
+                <f.icon className="w-7 h-7 text-primary group-hover:text-primary-foreground transition-colors" />
               </div>
+              <h3 className="font-bold text-foreground mb-2">{f.title}</h3>
+              <p className="text-xs text-muted-foreground leading-relaxed">{f.desc}</p>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

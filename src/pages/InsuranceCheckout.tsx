@@ -39,7 +39,7 @@ const InsuranceCheckout = () => {
   }, [customer]);
 
   const policyNumber = useMemo(() => `DRAFT-${Date.now().toString().slice(-8)}`, []);
-  const verificationUrl = useMemo(() => `https://treetaminesa.lovable.app/verify?policy=${policyNumber}`, [policyNumber]);
+  const verificationUrl = useMemo(() => `${window.location.origin}/verify?policy=${policyNumber}`, [policyNumber]);
 
   useEffect(() => {
     if (policyNumber) {
@@ -109,7 +109,7 @@ const InsuranceCheckout = () => {
 </head>
 <body>
   <div class="header">
-    <div class="logo">tree</div>
+    <div class="logo"><span style="color:#2196a9">B</span><span style="color:#f5a623">Care</span></div>
     <div class="draft-badge">⚠ مسودة - لأغراض المراجعة فقط</div>
     <div class="policy-num">${policyNumber}</div>
   </div>
@@ -157,7 +157,7 @@ const InsuranceCheckout = () => {
 
   <div class="disclaimer">
     هذه البوليصة مسودة أولية لأغراض المراجعة فقط. سيتم إصدار البوليصة النهائية بعد إتمام عملية الدفع والتحقق من جميع البيانات المطلوبة.
-    <br>© ${new Date().getFullYear()} تري للتأمين. جميع الحقوق محفوظة.
+    <br>© ${new Date().getFullYear()} بي كير. جميع الحقوق محفوظة.
   </div>
 
   <button class="print-btn" onclick="window.print()">طباعة / حفظ كـ PDF</button>

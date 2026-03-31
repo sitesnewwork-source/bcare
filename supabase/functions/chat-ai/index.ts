@@ -5,8 +5,8 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 };
 
-const SYSTEM_PROMPT = `أنت مساعد ذكي لشركة "tree" للتأمين. تساعد العملاء بالإجابة على أسئلتهم حول:
-- أنواع التأمين (شامل، ضد الغير، ذكي)
+const SYSTEM_PROMPT = `أنت مساعد ذكي لشركة "بي كير" (BCare) للتأمين. تساعد العملاء بالإجابة على أسئلتهم حول:
+- أنواع التأمين (مركبات، طبي، أخطاء طبية، سفر، عمالة منزلية)
 - كيفية تقديم طلب تأمين
 - كيفية تقديم مطالبة
 - أسعار وتغطيات التأمين

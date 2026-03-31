@@ -71,7 +71,7 @@ const AdminSettings = () => {
 
       // Use default font (Helvetica) - works for LTR content
       doc.setFontSize(18);
-      doc.text("Tree Insurance - Data Export", 14, 20);
+      doc.text("BCare Insurance - Data Export", 14, 20);
       doc.setFontSize(10);
       doc.text(`Export Date: ${new Date().toLocaleDateString("en-US")}`, 14, 28);
 
@@ -126,7 +126,7 @@ const AdminSettings = () => {
         });
       }
 
-      doc.save("tree-insurance-data.pdf");
+      doc.save("bcare-insurance-data.pdf");
       toast.success("تم تصدير البيانات كملف PDF");
       logActivity("تصدير البيانات كملف PDF", "settings");
     } catch (err: any) {
@@ -157,7 +157,7 @@ const AdminSettings = () => {
         XLSX.utils.book_append_sheet(wb, ws, "Conversations");
       }
 
-      XLSX.writeFile(wb, "tree-insurance-data.xlsx");
+      XLSX.writeFile(wb, "bcare-insurance-data.xlsx");
       toast.success("تم تصدير البيانات كملف Excel");
       logActivity("تصدير البيانات كملف Excel", "settings");
     } catch (err: any) {
