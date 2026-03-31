@@ -96,11 +96,25 @@ const InsuranceRequest = () => {
   const [modelSearch, setModelSearch] = useState("");
   const [modelOpen, setModelOpen] = useState(false);
   const modelRef = useRef<HTMLDivElement>(null);
+  const [yearSearch, setYearSearch] = useState("");
+  const [yearOpen, setYearOpen] = useState(false);
+  const yearRef = useRef<HTMLDivElement>(null);
+  const [passengerOpen, setPassengerOpen] = useState(false);
+  const passengerRef = useRef<HTMLDivElement>(null);
+  const [valueSearch, setValueSearch] = useState("");
+  const [valueOpen, setValueOpen] = useState(false);
+  const valueRef = useRef<HTMLDivElement>(null);
+  const [usageOpen, setUsageOpen] = useState(false);
+  const usageRef = useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (makeRef.current && !makeRef.current.contains(e.target as Node)) setMakeOpen(false);
       if (modelRef.current && !modelRef.current.contains(e.target as Node)) setModelOpen(false);
+      if (yearRef.current && !yearRef.current.contains(e.target as Node)) setYearOpen(false);
+      if (passengerRef.current && !passengerRef.current.contains(e.target as Node)) setPassengerOpen(false);
+      if (valueRef.current && !valueRef.current.contains(e.target as Node)) setValueOpen(false);
+      if (usageRef.current && !usageRef.current.contains(e.target as Node)) setUsageOpen(false);
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
