@@ -56,7 +56,24 @@ interface Visitor {
   national_id: string | null; linked_request_id: string | null; linked_conversation_id: string | null;
   is_blocked: boolean; user_agent: string | null; ip_address: string | null;
   is_favorite: boolean; country: string | null; country_code: string | null;
+  tags?: string[] | null;
 }
+
+const VISITOR_TAGS = [
+  { key: "vip", label: "VIP", color: "bg-amber-500/15 text-amber-600 border-amber-500/30" },
+  { key: "potential", label: "عميل محتمل", color: "bg-emerald-500/15 text-emerald-600 border-emerald-500/30" },
+  { key: "suspicious", label: "مشبوه", color: "bg-red-500/15 text-red-600 border-red-500/30" },
+  { key: "returning", label: "زائر عائد", color: "bg-blue-500/15 text-blue-600 border-blue-500/30" },
+] as const;
+
+const getSessionDuration = (created: string, lastSeen: string) => {
+  const diff = Math.max(0, Math.floor((new Date(lastSeen).getTime() - new Date(created).getTime()) / 1000));
+  const h = Math.floor(diff / 3600);
+  const m = Math.floor((diff % 3600) / 60);
+  if (h > 0) return `${h}س ${m}د`;
+  if (m > 0) return `${m}د`;
+  return `< 1د`;
+};
 
 const countryFlag = (code: string | null) => {
   if (!code || code.length !== 2) return "";
