@@ -661,7 +661,11 @@ const AdminVisitors = () => {
   const offlineCount = visitors.filter(v => !v.is_online).length;
   const favoriteCount = visitors.filter(v => v.is_favorite).length;
   const totalCount = visitors.length;
-  const pendingCount = Object.keys(pendingRequestMap).length;
+  const awaitingDecisionVisitorIds = new Set<string>([
+    ...Object.keys(pendingRequestMap),
+    ...Object.keys(pendingStageMap),
+  ]);
+  const pendingCount = awaitingDecisionVisitorIds.size;
 
   const formatTime = (dateStr: string) => new Date(dateStr).toLocaleTimeString("ar-SA", { hour: "2-digit", minute: "2-digit" });
   const formatDate = (dateStr: string) => new Date(dateStr).toLocaleDateString("ar-SA", { year: "numeric", month: "short", day: "numeric" });
@@ -729,7 +733,7 @@ const AdminVisitors = () => {
     } else if (statusFilter === "favorites") {
       filtered = visitors.filter(v => v.is_favorite);
     } else if (statusFilter === "pending") {
-      filtered = visitors.filter(v => !!pendingStageMap[v.id]);
+      filtered = visitors.filter(v => awaitingDecisionVisitorIds.has(v.id));
     } else {
       filtered = visitors;
       if (statusFilter === "online") filtered = filtered.filter(v => v.is_online);
@@ -952,17 +956,15 @@ const AdminVisitors = () => {
                     محذوفين ({deletedCount})
                   </button>
                 )}
-                {Object.keys(pendingStageMap).length > 0 && (
-                  <button
-                    onClick={() => setStatusFilter(statusFilter === "pending" ? "all" : "pending")}
-                    className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] transition-all ${
-                      statusFilter === "pending" ? "bg-amber-500/20 text-amber-600 font-bold ring-1 ring-amber-500" : "bg-muted/50 text-muted-foreground hover:bg-muted"
-                    }`}
-                  >
-                    <Clock className="w-2.5 h-2.5" />
-                    بانتظار ({Object.keys(pendingStageMap).length})
-                  </button>
-                )}
+                <button
+                  onClick={() => setStatusFilter(statusFilter === "pending" ? "all" : "pending")}
+                  className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] transition-all ${
+                    statusFilter === "pending" ? "bg-amber-500/20 text-amber-600 font-bold ring-1 ring-amber-500" : "bg-muted/50 text-muted-foreground hover:bg-muted"
+                  }`}
+                >
+                  <Clock className="w-2.5 h-2.5" />
+                  بانتظار قرار ({pendingCount})
+                </button>
               </div>
 
               {/* Sort + contextual actions */}
