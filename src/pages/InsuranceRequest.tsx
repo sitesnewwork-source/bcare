@@ -616,7 +616,7 @@ const InsuranceRequest = () => {
 
                     <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="space-y-1.5">
                       <label className="flex items-center gap-2 text-sm font-black text-foreground">
-                        <Truck className="w-3.5 h-3.5" />الشركة المصنعة *
+                        <Truck className="w-3.5 h-3.5" />{r.fields.manufacturer}
                       </label>
                       <motion.div whileFocus={{ scale: 1.01 }}>
                         <select className={selectCls(form.vehicle_make)} value={form.vehicle_make}
