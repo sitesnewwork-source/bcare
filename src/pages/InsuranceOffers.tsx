@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PremiumPageHeader from "@/components/PremiumPageHeader";
-import FloatingParticles from "@/components/FloatingParticles";
 import heroInsuranceBg from "@/assets/hero-insurance-bg.jpg";
 import { Button } from "@/components/ui/button";
 import {
