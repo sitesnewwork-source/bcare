@@ -1,8 +1,8 @@
 import { motion } from "framer-motion";
 import { useLanguage } from "@/i18n/LanguageContext";
-import { ShieldCheck, Award, BadgeCheck, Landmark, FileCheck2, Handshake } from "lucide-react";
+import { ShieldCheck, Award, BadgeCheck, Landmark, FileCheck2 } from "lucide-react";
 
-const achievements = [
+const certifications = [
   {
     icon: Landmark,
     titleAr: "مرخصة من البنك المركزي",
@@ -40,15 +40,6 @@ const achievements = [
     iconColor: "text-blue-600",
   },
   {
-    icon: Handshake,
-    titleAr: "18+ شركة تأمين شريكة",
-    titleEn: "18+ Insurance Partners",
-    descAr: "شراكات استراتيجية مع أكبر شركات التأمين في المملكة العربية السعودية",
-    descEn: "Strategic partnerships with the largest insurance companies in Saudi Arabia",
-    color: "from-violet-500/15 to-violet-500/5",
-    iconColor: "text-violet-600",
-  },
-  {
     icon: FileCheck2,
     titleAr: "تسوية مطالبات سريعة",
     titleEn: "Fast Claims Settlement",
@@ -57,6 +48,27 @@ const achievements = [
     color: "from-rose-500/15 to-rose-500/5",
     iconColor: "text-rose-600",
   },
+];
+
+const partners = [
+  { name: "التعاونية", nameEn: "Tawuniya", logo: "/logos/tawuniya.svg" },
+  { name: "بوبا", nameEn: "Bupa", logo: "/logos/bupa.svg" },
+  { name: "الراجحي", nameEn: "Al Rajhi", logo: "/logos/alrajhi.svg" },
+  { name: "أليانز", nameEn: "Allianz", logo: "/logos/allianz.svg" },
+  { name: "AXA", nameEn: "AXA", logo: "/logos/axa.svg" },
+  { name: "ميدغلف", nameEn: "Medgulf", logo: "/logos/medgulf.svg" },
+  { name: "الجزيرة تكافل", nameEn: "Al Jazira", logo: "/logos/aljazira.svg" },
+  { name: "سلامة", nameEn: "Salama", logo: "/logos/salama.svg" },
+  { name: "ملاذ", nameEn: "Malath", logo: "/logos/malath.svg" },
+  { name: "ولاء", nameEn: "Walaa", logo: "/logos/walaa.svg" },
+  { name: "أمانة", nameEn: "Amana", logo: "/logos/amana.svg" },
+  { name: "ACIG", nameEn: "ACIG", logo: "/logos/acig.svg" },
+  { name: "سند", nameEn: "Sanad", logo: "/logos/sanad.svg" },
+  { name: "GGI", nameEn: "GGI", logo: "/logos/ggi.svg" },
+  { name: "الدرع العربي", nameEn: "Arabian Shield", logo: "/logos/arabianshield.svg" },
+  { name: "UCA", nameEn: "UCA", logo: "/logos/uca.svg" },
+  { name: "IA", nameEn: "IA", logo: "/logos/ia.svg" },
+  { name: "23 شركة", nameEn: "23 Companies", logo: "/logos/23companies.svg" },
 ];
 
 const AchievementsSection = () => {
@@ -70,6 +82,7 @@ const AchievementsSection = () => {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 relative z-10">
+        {/* Section header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -87,8 +100,9 @@ const AchievementsSection = () => {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {achievements.map((item, i) => (
+        {/* Certifications cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-16">
+          {certifications.map((item, i) => (
             <motion.div
               key={item.titleEn}
               initial={{ opacity: 0, y: 25 }}
@@ -107,6 +121,51 @@ const AchievementsSection = () => {
                 <p className="text-xs text-muted-foreground leading-relaxed">
                   {lang === "ar" ? item.descAr : item.descEn}
                 </p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Partners logos */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="text-center mb-8"
+        >
+          <h3 className="text-lg md:text-xl font-bold text-foreground mb-2">
+            {lang === "ar" ? "شركات التأمين الشريكة" : "Our Insurance Partners"}
+          </h3>
+          <p className="text-muted-foreground text-xs">
+            {lang === "ar"
+              ? "نتعاون مع أكبر وأعرق شركات التأمين في المملكة"
+              : "We partner with the largest and most reputable insurance companies in Saudi Arabia"}
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3 md:gap-4">
+          {partners.map((partner, i) => (
+            <motion.div
+              key={partner.nameEn}
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.3, delay: i * 0.03 }}
+              className="group"
+            >
+              <div className="bg-card border border-border/50 rounded-xl p-3 md:p-4 flex flex-col items-center gap-2 hover:shadow-md hover:border-primary/20 hover:bg-primary/[0.02] transition-all duration-300 h-full">
+                <div className="w-full aspect-[3/2] flex items-center justify-center">
+                  <img
+                    src={partner.logo}
+                    alt={lang === "ar" ? partner.name : partner.nameEn}
+                    className="max-h-10 md:max-h-12 w-auto object-contain opacity-70 group-hover:opacity-100 transition-opacity duration-300"
+                    loading="lazy"
+                  />
+                </div>
+                <span className="text-[10px] text-muted-foreground font-medium truncate w-full text-center">
+                  {lang === "ar" ? partner.name : partner.nameEn}
+                </span>
               </div>
             </motion.div>
           ))}
