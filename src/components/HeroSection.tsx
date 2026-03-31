@@ -53,8 +53,6 @@ interface HeroSectionProps {
 const HeroSection = ({ onTabChange }: HeroSectionProps) => {
   const { t, isRTL } = useLanguage();
   const [activeInsurance, setActiveInsurance] = useState("vehicles");
-  const [purposeType, setPurposeType] = useState<"new" | "transfer">("new");
-  const [registrationType, setRegistrationType] = useState<"form" | "customs">("form");
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -82,7 +80,7 @@ const HeroSection = ({ onTabChange }: HeroSectionProps) => {
     if (activeInsurance === "vehicles" && !form.serial_number) { toast.error(t.hero.errors.enterSerialNumber); return; }
     if (form.captcha_input !== captchaCode.join("")) { toast.error(t.hero.errors.captchaError); refreshCaptcha(); upd("captcha_input", ""); return; }
     if (!agreed) { toast.error(t.hero.errors.agreeRequired); return; }
-    navigate(`/insurance-request?type=${purposeType}`, { state: { national_id: form.national_id, serial_number: form.serial_number, insurance_type: activeInsurance } });
+    navigate(`/insurance-request?type=new`, { state: { national_id: form.national_id, serial_number: form.serial_number, insurance_type: activeInsurance } });
   };
 
   const inputCls = "w-full h-12 px-4 rounded-xl bg-muted/40 border-2 border-border/80 text-foreground text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/15 focus:bg-background transition-all duration-200";
@@ -157,103 +155,21 @@ const HeroSection = ({ onTabChange }: HeroSectionProps) => {
   );
 
   const renderVehiclesForm = () => (
-    <motion.div key={`vehicles-form-${purposeType}-${registrationType}`} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-end gap-4 md:gap-8 mb-6">
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-foreground ml-1">{t.hero.form.purposeLabel}</span>
-          <div className="flex bg-muted/40 rounded-xl p-1 border border-border/50">
-            <button
-              onClick={() => setPurposeType("new")}
-              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all duration-300 ${
-                purposeType === "new"
-                  ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {t.hero.form.newInsurance}
-            </button>
-            <button
-              onClick={() => setPurposeType("transfer")}
-              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all duration-300 ${
-                purposeType === "transfer"
-                  ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {t.hero.form.transfer}
-            </button>
-          </div>
+    <motion.div key="vehicles-form" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-5 items-end">
+        <div>
+          <label className="text-sm font-bold text-foreground mb-2 block">{t.hero.form.nationalId}</label>
+          <input type="text" className={inputCls} placeholder={t.hero.form.nationalId} value={form.national_id} inputMode="numeric" maxLength={10} onChange={(e) => upd("national_id", saudiId(e.target.value))} />
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-foreground ml-1">{t.hero.form.regTypeLabel}</span>
-          <div className="flex bg-muted/40 rounded-xl p-1 border border-border/50">
-            <button
-              onClick={() => setRegistrationType("form")}
-              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all duration-300 ${
-                registrationType === "form"
-                  ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {t.hero.form.regForm}
-            </button>
-            <button
-              onClick={() => setRegistrationType("customs")}
-              className={`px-4 py-2 rounded-lg text-xs font-bold transition-all duration-300 ${
-                registrationType === "customs"
-                  ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {t.hero.form.regCustoms}
-            </button>
-          </div>
+        <div>
+          <label className="text-sm font-bold text-foreground mb-2 flex items-center gap-1">
+            {t.hero.form.serialNumber} <Info className="w-3.5 h-3.5 text-muted-foreground" />
+          </label>
+          <input type="text" className={inputCls} placeholder={t.hero.form.serialNumber} value={form.serial_number} onChange={(e) => upd("serial_number", e.target.value)} />
         </div>
+        {renderInlineCaptcha()}
+        {renderInlineButton()}
       </div>
-
-      <AnimatePresence mode="wait">
-        <motion.div key={`fields-${purposeType}-${registrationType}`} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.2 }}>
-          {purposeType === "new" ? (
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-5 items-end">
-              <div>
-                <label className="text-sm font-bold text-foreground mb-2 block">{t.hero.form.nationalId}</label>
-                <input type="text" className={inputCls} placeholder={t.hero.form.nationalId} value={form.national_id} inputMode="numeric" maxLength={10} onChange={(e) => upd("national_id", saudiId(e.target.value))} />
-              </div>
-              <div>
-                <label className="text-sm font-bold text-foreground mb-2 flex items-center gap-1">
-                  {registrationType === "customs" ? t.hero.form.customsCard : t.hero.form.serialNumber} <Info className="w-3.5 h-3.5 text-muted-foreground" />
-                </label>
-                <input type="text" className={inputCls} placeholder={registrationType === "customs" ? t.hero.form.customsCard : t.hero.form.serialNumber} value={form.serial_number} onChange={(e) => upd("serial_number", e.target.value)} />
-              </div>
-              {renderInlineCaptcha()}
-              {renderInlineButton()}
-            </div>
-          ) : (
-            <>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-end mb-5">
-                <div>
-                  <label className="text-sm font-bold text-foreground mb-2 block">{t.hero.form.newOwnerId}</label>
-                  <input type="text" className={inputCls} placeholder={t.hero.form.newOwnerId} value={form.national_id} inputMode="numeric" maxLength={10} onChange={(e) => upd("national_id", saudiId(e.target.value))} />
-                </div>
-                <div>
-                  <label className="text-sm font-bold text-foreground mb-2 block">{t.hero.form.currentOwnerId}</label>
-                  <input type="text" className={inputCls} placeholder={t.hero.form.currentOwnerId} value={form.passport_number} inputMode="numeric" maxLength={10} onChange={(e) => upd("passport_number", e.target.value.replace(/\D/g, "").slice(0, 10))} />
-                </div>
-                <div>
-                  <label className="text-sm font-bold text-foreground mb-2 flex items-center gap-1">
-                    {registrationType === "customs" ? t.hero.form.customsCard : t.hero.form.serialNumber} <Info className="w-3.5 h-3.5 text-muted-foreground" />
-                  </label>
-                  <input type="text" className={inputCls} placeholder={registrationType === "customs" ? t.hero.form.customsCard : t.hero.form.serialNumber} value={form.serial_number} onChange={(e) => upd("serial_number", e.target.value)} />
-                </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-end">
-                {renderInlineCaptcha()}
-                {renderInlineButton()}
-              </div>
-            </>
-          )}
-        </motion.div>
-      </AnimatePresence>
       {renderAgree()}
     </motion.div>
   );
