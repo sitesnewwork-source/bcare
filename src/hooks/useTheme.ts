@@ -21,7 +21,13 @@ export const useTheme = () => {
   }, [theme]);
 
   const toggleTheme = useCallback(() => {
+    // Add transition class before toggling
+    document.documentElement.classList.add("theme-transitioning");
     setThemeState((prev) => (prev === "dark" ? "light" : "dark"));
+    // Remove after transition completes
+    setTimeout(() => {
+      document.documentElement.classList.remove("theme-transitioning");
+    }, 500);
   }, []);
 
   return { theme, toggleTheme };
