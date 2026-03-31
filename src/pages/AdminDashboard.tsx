@@ -14,7 +14,8 @@ import AdminSettings from "@/components/admin/AdminSettings";
 import AdminVisitors from "@/components/admin/AdminVisitors";
 import AdminLiveFeed from "@/components/admin/AdminLiveFeed";
 import PullToRefresh from "@/components/PullToRefresh";
-import { Search, RefreshCw, Activity, VolumeX } from "lucide-react";
+import { Search, RefreshCw, Activity, VolumeX, Sun, Moon } from "lucide-react";
+import { useTheme } from "@/hooks/useTheme";
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("visitors");
