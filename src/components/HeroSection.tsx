@@ -5,20 +5,39 @@ import { Button } from "@/components/ui/button";
 import { Car, Heart, Stethoscope, Plane, Home, RefreshCw, Info, Calendar } from "lucide-react";
 import { sounds } from "@/lib/sounds";
 import { toast } from "sonner";
+import iaLogo from "@/assets/ia-logo.png";
+import tawuniyaLogo from "@/assets/logos/tawuniya.png";
+import allianzLogo from "@/assets/logos/allianz.png";
+import rajhiLogo from "@/assets/logos/rajhi.png";
+import bupaLogo from "@/assets/logos/bupa.png";
+import medgulfLogo from "@/assets/logos/medgulf.png";
+import gigLogo from "@/assets/logos/gig.png";
+import acigLogo from "@/assets/logos/acig.png";
+import arabianShieldLogo from "@/assets/logos/arabian-shield.png";
+import walaaLogo from "@/assets/logos/walaa.png";
+import salamaLogo from "@/assets/logos/salama.png";
+import livaLogo from "@/assets/logos/liva.png";
+import takafulLogo from "@/assets/logos/takaful.png";
+import malathLogo from "@/assets/logos/malath.png";
+import unitedLogo from "@/assets/logos/united.png";
+import aseigLogo from "@/assets/logos/aseig.png";
 
 const partnerLogos = [
-  { key: "tawuniya", name: "التعاونية", src: "/logos/tawuniya.svg" },
-  { key: "alrajhi", name: "الراجحي", src: "/logos/alrajhi.svg" },
-  { key: "allianz", name: "أليانز", src: "/logos/allianz.svg" },
-  { key: "amana", name: "أمانة", src: "/logos/amana.svg" },
-  { key: "aljazira", name: "الجزيرة", src: "/logos/aljazira.svg" },
-  { key: "medgulf", name: "ميدغلف", src: "/logos/medgulf.svg" },
-  { key: "ggi", name: "GIG", src: "/logos/ggi.svg" },
-  { key: "acig", name: "ACIG", src: "/logos/acig.svg" },
-  { key: "arabianshield", name: "الدرع العربي", src: "/logos/arabianshield.svg" },
-  { key: "uca", name: "UCA", src: "/logos/uca.svg" },
-  { key: "axa", name: "AXA", src: "/logos/axa.svg" },
-  { key: "bupa", name: "بوبا", src: "/logos/bupa.svg" },
+  { key: "tawuniya", name: "التعاونية", src: tawuniyaLogo },
+  { key: "alrajhi", name: "الراجحي تكافل", src: rajhiLogo },
+  { key: "allianz", name: "أليانز السعودية", src: allianzLogo },
+  { key: "medgulf", name: "ميدغلف", src: medgulfLogo },
+  { key: "bupa", name: "بوبا العربية", src: bupaLogo },
+  { key: "gig", name: "GIG", src: gigLogo },
+  { key: "acig", name: "ACIG", src: acigLogo },
+  { key: "arabianshield", name: "الدرع العربي", src: arabianShieldLogo },
+  { key: "walaa", name: "ولاء للتأمين", src: walaaLogo },
+  { key: "salama", name: "سلامة", src: salamaLogo },
+  { key: "liva", name: "ليفا للتأمين", src: livaLogo },
+  { key: "takaful", name: "التكافل العربي", src: takafulLogo },
+  { key: "malath", name: "ملاذ للتأمين", src: malathLogo },
+  { key: "united", name: "المتحدة للتأمين", src: unitedLogo },
+  { key: "aseig", name: "المتكاملة (أسيج)", src: aseigLogo },
 ];
 
 const insuranceTabs = [
