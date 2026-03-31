@@ -24,8 +24,8 @@ const About = () => {
       <Navbar />
 
       <PremiumPageHeader
-        title="عن تري"
-        subtitle="شركة رقمية رائدة في مجال التأمين، تابعة للتعاونية للتأمين"
+        title="عن بي كير"
+        subtitle="المنصة الأذكى لمقارنة عروض التأمين في المملكة العربية السعودية"
         badge="تعرّف علينا"
         badgeIcon={<Shield className="w-3.5 h-3.5 text-cta" />}
       />
