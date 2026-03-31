@@ -476,7 +476,7 @@ const InsuranceRequest = () => {
                     </div>
 
                     {renderField({
-                      label: "رقم الجوال *",
+                      label: r.fields.phone,
                       icon: Phone,
                       placeholder: "05xxxxxxxx",
                       value: form.phone,
