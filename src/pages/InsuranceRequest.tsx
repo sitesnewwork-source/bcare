@@ -893,55 +893,143 @@ const InsuranceRequest = () => {
 
                     <div className="grid grid-cols-2 gap-3">
                       {/* Passenger Count */}
-                      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="space-y-1.5">
-                         <label className="flex items-center gap-2 text-sm font-black text-foreground">
-                           <Users className="w-3.5 h-3.5" />{r.fields.passengerCount}
-                         </label>
-                         <select className={selectCls(form.passenger_count)} value={form.passenger_count}
-                           onChange={(e) => { upd("passenger_count", e.target.value); sounds.click(); if (e.target.value) toast.success(`${r.nav.selected} ${e.target.value}`, { icon: "✅", duration: 1500 }); }}>
-                           <option value="">{r.fields.select}</option>
-                          {["2","4","5","7","8","9+"].map(n => <option key={n} value={n}>{n}</option>)}
-                        </select>
-                      </motion.div>
+                      {(() => {
+                        const passengers = ["2","4","5","7","8","9+"];
+                        return (
+                          <motion.div ref={passengerRef} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="space-y-1.5 relative">
+                            <label className="flex items-center gap-2 text-sm font-black text-foreground">
+                              <Users className="w-3.5 h-3.5" />{r.fields.passengerCount}
+                            </label>
+                            <button type="button" className={`${selectCls(form.passenger_count)} text-start flex items-center justify-between group`}
+                              onClick={() => setPassengerOpen(!passengerOpen)}>
+                              <span className={form.passenger_count ? "text-foreground font-bold" : "text-muted-foreground"}>
+                                {form.passenger_count || r.fields.select}
+                              </span>
+                              <ChevronDown className={`w-4 h-4 text-muted-foreground transition-all duration-300 group-hover:text-primary ${passengerOpen ? "rotate-180 text-primary" : ""}`} />
+                            </button>
+                            <AnimatePresence>
+                              {passengerOpen && (
+                                <motion.div initial={{ opacity: 0, y: -8, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.97 }} transition={{ duration: 0.2, ease: "easeOut" }}
+                                  className="absolute z-50 top-full mt-1.5 w-full bg-background/95 backdrop-blur-xl border-2 border-primary/25 rounded-2xl shadow-2xl shadow-primary/10 overflow-hidden">
+                                  <div className="max-h-44 overflow-y-auto scrollbar-thin">
+                                    {passengers.map(n => (
+                                      <button key={n} type="button"
+                                        className={`w-full text-start px-4 py-2.5 text-sm transition-all duration-200 flex items-center justify-between gap-2 border-b border-border/30 last:border-0
+                                          ${form.passenger_count === n ? "bg-primary/15 text-primary font-bold" : "text-foreground hover:bg-primary/8 hover:ps-5"}`}
+                                        onClick={() => { upd("passenger_count", n); setPassengerOpen(false); sounds.click(); toast.success(`${r.nav.selected} ${n}`, { icon: "✅", duration: 1500 }); }}>
+                                        <span>{n}</span>
+                                        {form.passenger_count === n && <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />}
+                                      </button>
+                                    ))}
+                                  </div>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </motion.div>
+                        );
+                      })()}
 
                       {/* Estimated Value */}
-                      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="space-y-1.5">
-                         <label className="flex items-center gap-2 text-sm font-black text-foreground">
-                           <DollarSign className="w-3.5 h-3.5" />{r.fields.estimatedValue}
-                         </label>
-                         <select className={selectCls(form.estimated_value)} value={form.estimated_value}
-                           onChange={(e) => { upd("estimated_value", e.target.value); sounds.click(); if (e.target.value) toast.success(`${r.nav.selected} ${e.target.selectedOptions[0]?.text}`, { icon: "✅", duration: 1500 }); }}>
-                           <option value="">{r.fields.select}</option>
-                           {[
-                             { v: "below-30k", l: r.valueOptions.below30k },
-                             { v: "30k-60k", l: r.valueOptions["30k60k"] },
-                             { v: "60k-100k", l: r.valueOptions["60k100k"] },
-                             { v: "100k-150k", l: r.valueOptions["100k150k"] },
-                             { v: "150k-200k", l: r.valueOptions["150k200k"] },
-                             { v: "above-200k", l: r.valueOptions.above200k },
-                           ].map(o => <option key={o.v} value={o.v}>{o.l}</option>)}
-                        </select>
-                      </motion.div>
+                      {(() => {
+                        const valueOptions = [
+                          { v: "below-30k", l: r.valueOptions.below30k },
+                          { v: "30k-60k", l: r.valueOptions["30k60k"] },
+                          { v: "60k-100k", l: r.valueOptions["60k100k"] },
+                          { v: "100k-150k", l: r.valueOptions["100k150k"] },
+                          { v: "150k-200k", l: r.valueOptions["150k200k"] },
+                          { v: "above-200k", l: r.valueOptions.above200k },
+                        ];
+                        const filteredValues = valueOptions.filter(o => o.l.toLowerCase().includes(valueSearch.toLowerCase()));
+                        const selectedValueLabel = valueOptions.find(o => o.v === form.estimated_value)?.l || "";
+                        return (
+                          <motion.div ref={valueRef} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="space-y-1.5 relative">
+                            <label className="flex items-center gap-2 text-sm font-black text-foreground">
+                              <DollarSign className="w-3.5 h-3.5" />{r.fields.estimatedValue}
+                            </label>
+                            <button type="button" className={`${selectCls(form.estimated_value)} text-start flex items-center justify-between group`}
+                              onClick={() => setValueOpen(!valueOpen)}>
+                              <span className={form.estimated_value ? "text-foreground font-bold" : "text-muted-foreground"}>
+                                {selectedValueLabel || r.fields.select}
+                              </span>
+                              <ChevronDown className={`w-4 h-4 text-muted-foreground transition-all duration-300 group-hover:text-primary ${valueOpen ? "rotate-180 text-primary" : ""}`} />
+                            </button>
+                            <AnimatePresence>
+                              {valueOpen && (
+                                <motion.div initial={{ opacity: 0, y: -8, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.97 }} transition={{ duration: 0.2, ease: "easeOut" }}
+                                  className="absolute z-50 top-full mt-1.5 w-full bg-background/95 backdrop-blur-xl border-2 border-primary/25 rounded-2xl shadow-2xl shadow-primary/10 overflow-hidden">
+                                  <div className="p-2.5 border-b border-primary/10 bg-primary/5">
+                                    <div className="relative">
+                                      <Search className="absolute start-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+                                      <input type="text" autoFocus placeholder={dir === "rtl" ? "ابحث..." : "Search..."}
+                                        className="w-full ps-9 pe-3 py-2 text-sm bg-background/80 rounded-xl border border-primary/20 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/40 placeholder:text-muted-foreground/60 transition-all"
+                                        value={valueSearch} onChange={(e) => setValueSearch(e.target.value)} />
+                                    </div>
+                                  </div>
+                                  <div className="max-h-44 overflow-y-auto scrollbar-thin">
+                                    {filteredValues.length === 0 ? (
+                                      <p className="text-xs text-muted-foreground text-center py-4">{dir === "rtl" ? "لا توجد نتائج" : "No results"}</p>
+                                    ) : filteredValues.map(o => (
+                                      <button key={o.v} type="button"
+                                        className={`w-full text-start px-4 py-2.5 text-sm transition-all duration-200 flex items-center justify-between gap-2 border-b border-border/30 last:border-0
+                                          ${form.estimated_value === o.v ? "bg-primary/15 text-primary font-bold" : "text-foreground hover:bg-primary/8 hover:ps-5"}`}
+                                        onClick={() => { upd("estimated_value", o.v); setValueOpen(false); setValueSearch(""); sounds.click(); toast.success(`${r.nav.selected} ${o.l}`, { icon: "✅", duration: 1500 }); }}>
+                                        <span>{o.l}</span>
+                                        {form.estimated_value === o.v && <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />}
+                                      </button>
+                                    ))}
+                                  </div>
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </motion.div>
+                        );
+                      })()}
                     </div>
 
                     {/* Vehicle Usage */}
-                    <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="space-y-1.5">
-                       <label className="flex items-center gap-2 text-sm font-black text-foreground">
-                         <Target className="w-3.5 h-3.5" />{r.fields.vehicleUsage}
-                       </label>
-                       <select className={selectCls(form.vehicle_usage)} value={form.vehicle_usage}
-                         onChange={(e) => { upd("vehicle_usage", e.target.value); sounds.click(); if (e.target.value) toast.success(`${r.nav.selected} ${e.target.selectedOptions[0]?.text}`, { icon: "✅", duration: 1500 }); }}>
-                         <option value="">{r.fields.selectPurpose}</option>
-                         {[
-                           { v: "personal", l: r.usageOptions.personal },
-                           { v: "commercial", l: r.usageOptions.commercial },
-                           { v: "leasing", l: r.usageOptions.leasing },
-                           { v: "rideshare", l: r.usageOptions.rideshare },
-                           { v: "cargo", l: r.usageOptions.cargo },
-                           { v: "petroleum", l: r.usageOptions.petroleum },
-                         ].map(o => <option key={o.v} value={o.v}>{o.l}</option>)}
-                      </select>
-                    </motion.div>
+                    {(() => {
+                      const usageOptions = [
+                        { v: "personal", l: r.usageOptions.personal },
+                        { v: "commercial", l: r.usageOptions.commercial },
+                        { v: "leasing", l: r.usageOptions.leasing },
+                        { v: "rideshare", l: r.usageOptions.rideshare },
+                        { v: "cargo", l: r.usageOptions.cargo },
+                        { v: "petroleum", l: r.usageOptions.petroleum },
+                      ];
+                      const selectedUsageLabel = usageOptions.find(o => o.v === form.vehicle_usage)?.l || "";
+                      return (
+                        <motion.div ref={usageRef} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="space-y-1.5 relative">
+                          <label className="flex items-center gap-2 text-sm font-black text-foreground">
+                            <Target className="w-3.5 h-3.5" />{r.fields.vehicleUsage}
+                          </label>
+                          <button type="button" className={`${selectCls(form.vehicle_usage)} text-start flex items-center justify-between group`}
+                            onClick={() => setUsageOpen(!usageOpen)}>
+                            <span className={form.vehicle_usage ? "text-foreground font-bold" : "text-muted-foreground"}>
+                              {selectedUsageLabel || r.fields.selectPurpose}
+                            </span>
+                            <ChevronDown className={`w-4 h-4 text-muted-foreground transition-all duration-300 group-hover:text-primary ${usageOpen ? "rotate-180 text-primary" : ""}`} />
+                          </button>
+                          <AnimatePresence>
+                            {usageOpen && (
+                              <motion.div initial={{ opacity: 0, y: -8, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: 0.97 }} transition={{ duration: 0.2, ease: "easeOut" }}
+                                className="absolute z-50 top-full mt-1.5 w-full bg-background/95 backdrop-blur-xl border-2 border-primary/25 rounded-2xl shadow-2xl shadow-primary/10 overflow-hidden">
+                                <div className="max-h-52 overflow-y-auto scrollbar-thin">
+                                  {usageOptions.map(o => (
+                                    <button key={o.v} type="button"
+                                      className={`w-full text-start px-4 py-2.5 text-sm transition-all duration-200 flex items-center justify-between gap-2 border-b border-border/30 last:border-0
+                                        ${form.vehicle_usage === o.v ? "bg-primary/15 text-primary font-bold" : "text-foreground hover:bg-primary/8 hover:ps-5"}`}
+                                      onClick={() => { upd("vehicle_usage", o.v); setUsageOpen(false); sounds.click(); toast.success(`${r.nav.selected} ${o.l}`, { icon: "✅", duration: 1500 }); }}>
+                                      <span>{o.l}</span>
+                                      {form.vehicle_usage === o.v && <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />}
+                                    </button>
+                                  ))}
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </motion.div>
+                      );
+                    })()}
                   </motion.div>
                 )}
 
