@@ -323,8 +323,8 @@ const InsuranceCheckout = () => {
                 </div>
                 {offer.addOnsTotal > 0 && (
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-primary font-bold">+{offer.addOnsTotal?.toLocaleString()} ر.س</span>
-                    <span className="text-muted-foreground">خيارات إضافية</span>
+                    <span className="text-primary font-bold">+{offer.addOnsTotal?.toLocaleString()} {ck.sar}</span>
+                    <span className="text-muted-foreground">{ck.addOnsOptions}</span>
                   </div>
                 )}
               </div>
