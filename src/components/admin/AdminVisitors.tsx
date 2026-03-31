@@ -1009,6 +1009,28 @@ const AdminVisitors = () => {
                     {f.label} ({f.count})
                   </button>
                 ))}
+                {favoriteCount > 0 && (
+                  <button
+                    onClick={() => setStatusFilter(statusFilter === "favorites" ? "all" : "favorites")}
+                    className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-medium transition-all ${
+                      statusFilter === "favorites" ? "bg-amber-400/20 text-amber-600 ring-1 ring-amber-400" : "bg-muted/60 text-muted-foreground hover:bg-muted"
+                    }`}
+                  >
+                    <Star className={`w-2.5 h-2.5 ${statusFilter === "favorites" ? "fill-amber-400 text-amber-400" : ""}`} />
+                    مفضل ({favoriteCount})
+                  </button>
+                )}
+                {deletedCount > 0 && (
+                  <button
+                    onClick={() => setStatusFilter(statusFilter === "deleted" ? "all" : "deleted")}
+                    className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-medium transition-all ${
+                      statusFilter === "deleted" ? "bg-destructive/20 text-destructive ring-1 ring-destructive" : "bg-muted/60 text-muted-foreground hover:bg-muted"
+                    }`}
+                  >
+                    <Trash2 className="w-2.5 h-2.5" />
+                    محذوفين ({deletedCount})
+                  </button>
+                )}
               </div>
 
               {/* Secondary filters row: pages dropdown + sort */}
