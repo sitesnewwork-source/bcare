@@ -281,7 +281,7 @@ const InsurancePayment = () => {
                                 exit={{ opacity: 0, y: -6 }}
                                 className="mt-2 text-[11px] font-medium text-destructive"
                               >
-                                تأكد من إدخال رقم بطاقة صحيح.
+                                {p.cardNumberError}
                               </motion.p>
                             )}
                           </AnimatePresence>
