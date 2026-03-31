@@ -1536,6 +1536,47 @@ const AdminVisitors = () => {
                   </div>
                 </div>
 
+                {/* Session duration & tags */}
+                <div className="flex items-center gap-2 flex-wrap pb-3 border-b border-border">
+                  <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-muted/30 rounded-lg">
+                    <Clock className="w-3.5 h-3.5 text-primary" />
+                    <div>
+                      <p className="text-[9px] text-muted-foreground">مدة الجلسة</p>
+                      <p className="text-xs font-bold text-foreground">{getSessionDuration(selectedVisitor.created_at, selectedVisitor.last_seen_at)}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-muted/30 rounded-lg">
+                    <Timer className="w-3.5 h-3.5 text-primary" />
+                    <div>
+                      <p className="text-[9px] text-muted-foreground">أول زيارة</p>
+                      <p className="text-xs font-bold text-foreground">{formatDateTime(selectedVisitor.created_at)}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Visitor tags */}
+                <div className="pb-3 border-b border-border space-y-2">
+                  <p className="text-[11px] font-bold text-foreground flex items-center gap-1.5"><Tag className="w-3.5 h-3.5 text-primary" />تصنيف الزائر</p>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    {VISITOR_TAGS.map(tag => {
+                      const isActive = (selectedVisitor.tags || []).includes(tag.key);
+                      return (
+                        <button
+                          key={tag.key}
+                          onClick={() => toggleVisitorTag(selectedVisitor.id, tag.key)}
+                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold border transition-all ${
+                            isActive ? tag.color + " ring-1" : "bg-muted/30 text-muted-foreground border-border hover:bg-muted/50"
+                          }`}
+                        >
+                          <Tag className="w-3 h-3" />
+                          {tag.label}
+                          {isActive && <Check className="w-3 h-3" />}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
                 {/* Action buttons */}
                 <div className="flex items-center gap-1.5 pb-3 border-b border-border">
                   <Button onClick={() => toggleFavorite(selectedVisitor.id)} variant="outline" className={`gap-1 text-[11px] px-2 h-8 ${selectedVisitor.is_favorite ? "text-amber-500 border-amber-500/30 bg-amber-500/5" : ""}`} size="sm">
