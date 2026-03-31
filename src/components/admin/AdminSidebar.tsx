@@ -67,7 +67,7 @@ const AdminSidebar = ({ activeTab, setActiveTab, pendingCounts = {} }: Props) =>
         ${collapsed ? "md:w-16 w-64" : "w-64 md:w-60"}
       `}>
         {/* Header */}
-        <div className="p-3 flex items-center justify-between border-b border-white/10">
+        <div className="p-3 flex items-center justify-between border-b border-border">
           {!collapsed && (
             <Link to="/" className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-cta flex items-center justify-center">
