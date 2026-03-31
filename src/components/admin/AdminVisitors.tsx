@@ -463,6 +463,14 @@ const AdminVisitors = () => {
       .eq("order_id", orderId)
       .is("resolved_at", null);
     toast.success("تمت الموافقة على المرحلة");
+    const approvedOrder = linkedOrders.find(o => o.id === orderId);
+    if (approvedOrder?.visitor_session_id) {
+      const matchedVisitor = visitors.find(v => v.session_id === approvedOrder.visitor_session_id);
+      if (matchedVisitor && approvedOrder.current_stage) {
+        setLastResolvedMap(prev => ({ ...prev, [matchedVisitor.id]: { stage: approvedOrder.current_stage!, status: "approved" } }));
+        setPendingStageMap(prev => { const n = { ...prev }; delete n[matchedVisitor.id]; return n; });
+      }
+    }
     setLinkedOrders(prev => prev.map(o => o.id === orderId ? { ...o, stage_status: "approved", nafath_number: nafathNum || o.nafath_number } : o));
     setStageEvents(prev => prev.map(event => event.order_id === orderId && !event.resolved_at ? { ...event, status: "approved", resolved_at: new Date().toISOString() } : event));
     setNafathNumberInputs(prev => {
