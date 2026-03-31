@@ -712,12 +712,12 @@ const InsuranceRequest = () => {
                     <div className="grid grid-cols-2 gap-3">
                       {/* Passenger Count */}
                       <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="space-y-1.5">
-                        <label className="flex items-center gap-2 text-sm font-black text-foreground">
-                          <Users className="w-3.5 h-3.5" />عدد الركاب
-                        </label>
-                        <select className={selectCls(form.passenger_count)} value={form.passenger_count}
-                          onChange={(e) => { upd("passenger_count", e.target.value); sounds.click(); if (e.target.value) toast.success(`تم اختيار: ${e.target.value}`, { icon: "✅", duration: 1500 }); }}>
-                          <option value="">اختر</option>
+                         <label className="flex items-center gap-2 text-sm font-black text-foreground">
+                           <Users className="w-3.5 h-3.5" />{r.fields.passengerCount}
+                         </label>
+                         <select className={selectCls(form.passenger_count)} value={form.passenger_count}
+                           onChange={(e) => { upd("passenger_count", e.target.value); sounds.click(); if (e.target.value) toast.success(`${r.nav.selected} ${e.target.value}`, { icon: "✅", duration: 1500 }); }}>
+                           <option value="">{r.fields.select}</option>
                           {["2","4","5","7","8","9+"].map(n => <option key={n} value={n}>{n}</option>)}
                         </select>
                       </motion.div>
