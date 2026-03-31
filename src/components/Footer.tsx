@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Phone, Mail } from "lucide-react";
+import BcareLogo from "@/assets/Bcare-logo.svg";
 
 const Footer = () => {
   return (
