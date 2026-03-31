@@ -1407,7 +1407,7 @@ const AdminVisitors = () => {
                 )}
 
 
-                <Accordion type="multiple" defaultValue={["all-data", "visitor-timeline", "chat"]} className="space-y-2">
+                <Accordion type="multiple" defaultValue={["all-data", "visitor-timeline"]} className="space-y-2">
                   {/* Unified data section */}
                   <AccordionItem value="all-data" className={`border rounded-xl overflow-hidden ${linkedOrders.some(o => o.stage_status === "pending") || linkedRequests.some(r => r.status === "pending") ? "border-amber-500/50 bg-amber-500/5 ring-1 ring-amber-500/20" : "border-border"}`}>
                     <AccordionTrigger className="px-4 py-3 bg-muted/30 hover:bg-muted/50 text-sm font-bold [&[data-state=open]>svg]:rotate-180">
@@ -1687,38 +1687,6 @@ const AdminVisitors = () => {
                     </AccordionContent>
                   </AccordionItem>
 
-                  {/* Chat */}
-                  <AccordionItem value="chat" className="border border-border rounded-xl overflow-hidden">
-                    <AccordionTrigger className="px-4 py-3 bg-muted/30 hover:bg-muted/50 text-sm font-bold [&[data-state=open]>svg]:rotate-180">
-                      <div className="flex items-center gap-2">
-                        <MessageCircle className="w-4 h-4 text-primary" />المحادثات
-                        {linkedChats.length > 0 && <span className="px-1.5 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold">{linkedChats.length}</span>}
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="px-4 py-3">
-                      {linkedChats.length === 0 ? (
-                        <p className="text-xs text-muted-foreground text-center py-3">لا توجد محادثات</p>
-                      ) : (
-                        <div className="space-y-2">
-                          {linkedChats.map(chat => (
-                            <div key={chat.id} className="bg-muted/20 rounded-lg border border-border/50 p-3 flex items-center justify-between">
-                              <div>
-                                <p className="text-xs font-bold text-foreground">{chat.visitor_name || "محادثة"}</p>
-                                <p className="text-[10px] text-muted-foreground">{formatDate(chat.created_at)}</p>
-                              </div>
-                              <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                                chat.status === "active" ? "bg-emerald-500/10 text-emerald-600" :
-                                chat.status === "waiting" ? "bg-amber-500/10 text-amber-600" :
-                                "bg-muted text-muted-foreground"
-                              }`}>
-                                {chat.status === "active" ? "نشطة" : chat.status === "waiting" ? "بانتظار رد" : chat.status === "bot" ? "بوت" : chat.status}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </AccordionContent>
-                  </AccordionItem>
                 </Accordion>
 
                 {/* Chat with visitor */}
