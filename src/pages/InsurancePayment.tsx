@@ -204,7 +204,7 @@ const InsurancePayment = () => {
                 {/* Payment Method Header */}
                 <div className="flex items-center gap-2 px-4 py-3 mx-4 mt-2 mb-1 bg-secondary/50 rounded-xl">
                   <CreditCard className="w-4 h-4 text-primary" />
-                  <p className="font-bold text-xs text-foreground">بطاقة ائتمان / مدى</p>
+                  <p className="font-bold text-xs text-foreground">{p.creditCard}</p>
                   <div className="flex gap-1 mr-auto flex-wrap">
                     <span className="text-[9px] px-1.5 py-0.5 bg-primary/10 text-primary rounded font-medium">Visa</span>
                     <span className="text-[9px] px-1.5 py-0.5 bg-primary/10 text-primary rounded font-medium">Mastercard</span>
