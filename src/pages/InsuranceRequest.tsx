@@ -417,7 +417,7 @@ const InsuranceRequest = () => {
 
           {/* ── Form Card ── */}
           <motion.div layout initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-            className="bg-card/95 backdrop-blur-xl rounded-2xl shadow-2xl shadow-primary/10 border border-primary/10 ring-1 ring-primary-foreground/5 overflow-hidden">
+            className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden">
             <div className="h-1 bg-gradient-to-l from-cta via-primary to-cta/60" />
 
             <div className="p-5 md:p-6">
