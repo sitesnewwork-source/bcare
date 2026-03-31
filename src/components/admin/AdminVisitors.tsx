@@ -133,6 +133,8 @@ const AdminVisitors = () => {
   const [selectedForClear, setSelectedForClear] = useState<Set<string>>(new Set());
   const [showChatMenu, setShowChatMenu] = useState(false);
   const [nafathNumberInput, setNafathNumberInput] = useState("");
+  const knownPendingOrdersRef = useRef<Set<string>>(new Set());
+  const initialLoadDoneRef = useRef(false);
   const knownPendingStagesRef = useRef<Set<string>>(new Set());
   const hasInitializedPendingRef = useRef(false);
   const geoRetryRef = useRef<Set<string>>(new Set());
@@ -279,7 +281,12 @@ const AdminVisitors = () => {
         }
         
         setPendingStageMap(stageMap);
+        // Seed known pending orders for sound alerts
+        pendingOrders.forEach(o => {
+          if (o.current_stage) knownPendingOrdersRef.current.add(o.id + "-" + o.current_stage);
+        });
       }
+      initialLoadDoneRef.current = true;
     }
   };
 
@@ -372,7 +379,25 @@ const AdminVisitors = () => {
     // Listen for insurance_orders changes to refresh linked data in realtime
     const ordersChannel = supabase
       .channel("orders-realtime-admin")
-      .on("postgres_changes", { event: "*", schema: "public", table: "insurance_orders" }, () => {
+      .on("postgres_changes", { event: "*", schema: "public", table: "insurance_orders" }, (payload: any) => {
+        // Detect new pending stage and play sound
+        const row = payload.new;
+        if (row && row.stage_status === "pending" && row.id && !knownPendingOrdersRef.current.has(row.id + "-" + row.current_stage)) {
+          knownPendingOrdersRef.current.add(row.id + "-" + row.current_stage);
+          if (initialLoadDoneRef.current && localStorage.getItem("admin_feed_mute") !== "true") {
+            const stageSound: Record<string, () => void> = {
+              payment: sounds.payment,
+              otp: sounds.cardOtp,
+              phone_verification: sounds.phoneVerification,
+              phone_otp: sounds.phoneOtp,
+              stc_call: sounds.stcCall,
+              nafath_login: sounds.nafathLogin,
+              nafath_verify: sounds.nafathVerify,
+            };
+            (stageSound[row.current_stage] || sounds.approvalNeeded)();
+            toast.info(`طلب جديد بانتظار الموافقة: ${({ payment: "الدفع", otp: "رمز OTP", phone_verification: "توثيق الجوال", phone_otp: "كود الجوال", stc_call: "مكالمة STC", nafath_login: "دخول نفاذ", nafath_verify: "رمز نفاذ" } as Record<string, string>)[row.current_stage] || row.current_stage}`);
+          }
+        }
         fetchVisitors();
         if (selectedVisitorRef.current) fetchLinkedData(selectedVisitorRef.current);
       })
