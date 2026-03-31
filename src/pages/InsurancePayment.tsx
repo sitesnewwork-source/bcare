@@ -390,7 +390,7 @@ const InsurancePayment = () => {
                           <AnimatePresence>
                             {showCvvError && (
                               <motion.p initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} className="text-[11px] font-medium text-destructive mr-auto">
-                                CVV يجب أن يكون 3 أرقام.
+                                {p.cvvError}
                               </motion.p>
                             )}
                           </AnimatePresence>
