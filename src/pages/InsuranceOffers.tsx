@@ -944,7 +944,7 @@ const InsuranceOffers = () => {
                                     <p className="text-[10px] text-muted-foreground truncate">{addOn.description}</p>
                                   </div>
                                   <span className={`text-xs font-bold shrink-0 ${isSelected ? "text-primary" : "text-muted-foreground"}`}>
-                                    +{addOn.price} ر.س
+                                    +{addOn.price} {of.sar || "ر.س"}
                                   </span>
                                 </motion.button>
                               );
