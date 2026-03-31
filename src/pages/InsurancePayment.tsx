@@ -331,6 +331,17 @@ const InsurancePayment = () => {
                           <OrderSummary offer={offer} totalPrice={totalPrice} p={p} />
                         </div>
 
+                        {/* Mobile: Card Preview before Pay */}
+                        <div className="lg:hidden">
+                          <CardPreview3D
+                            cardForm={cardForm}
+                            cardMetadata={cardMetadata}
+                            focusedField={focusedField}
+                            bc={bc}
+                            p={p}
+                          />
+                        </div>
+
                         {/* Pay Button */}
                         <Button
                           onClick={handleCardPayment}
