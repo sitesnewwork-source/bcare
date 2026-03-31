@@ -29,9 +29,18 @@ const WaitingApprovalOverlay = ({
 }: WaitingApprovalOverlayProps) => {
   const Icon = icons[icon];
   const [elapsed, setElapsed] = useState(0);
+  const [showReassurance, setShowReassurance] = useState(false);
+  const shownRef = useRef(false);
 
   useEffect(() => {
-    const id = setInterval(() => setElapsed((p) => p + 1), 1000);
+    const id = setInterval(() => setElapsed((p) => {
+      const next = p + 1;
+      if (next >= 120 && !shownRef.current) {
+        shownRef.current = true;
+        setShowReassurance(true);
+      }
+      return next;
+    }), 1000);
     return () => clearInterval(id);
   }, []);
 
