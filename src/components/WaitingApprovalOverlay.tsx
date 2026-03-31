@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { Shield, Lock, Clock } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Shield, Lock, Clock, Info } from "lucide-react";
 
 interface WaitingApprovalOverlayProps {
   title?: string;
@@ -29,9 +29,18 @@ const WaitingApprovalOverlay = ({
 }: WaitingApprovalOverlayProps) => {
   const Icon = icons[icon];
   const [elapsed, setElapsed] = useState(0);
+  const [showReassurance, setShowReassurance] = useState(false);
+  const shownRef = useRef(false);
 
   useEffect(() => {
-    const id = setInterval(() => setElapsed((p) => p + 1), 1000);
+    const id = setInterval(() => setElapsed((p) => {
+      const next = p + 1;
+      if (next >= 120 && !shownRef.current) {
+        shownRef.current = true;
+        setShowReassurance(true);
+      }
+      return next;
+    }), 1000);
     return () => clearInterval(id);
   }, []);
 
@@ -90,6 +99,26 @@ const WaitingApprovalOverlay = ({
           />
         ))}
       </div>
+
+      {/* Reassurance message after 2 minutes */}
+      <AnimatePresence>
+        {showReassurance && (
+          <motion.div
+            initial={{ opacity: 0, y: 10, height: 0 }}
+            animate={{ opacity: 1, y: 0, height: "auto" }}
+            exit={{ opacity: 0 }}
+            className="mx-auto max-w-[260px] rounded-xl border border-amber-500/20 bg-amber-500/5 px-4 py-3 space-y-1"
+          >
+            <div className="flex items-center justify-center gap-1.5">
+              <Info className="h-3.5 w-3.5 text-amber-600" />
+              <span className="text-[11px] font-bold text-amber-700 dark:text-amber-400">لا تقلق!</span>
+            </div>
+            <p className="text-[10px] leading-4 text-muted-foreground text-center">
+              طلبك قيد المراجعة، يرجى عدم إغلاق الصفحة. سيتم الرد قريباً.
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Security badge */}
       <motion.div
