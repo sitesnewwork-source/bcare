@@ -610,8 +610,8 @@ const InsurancePayment = () => {
                 {offer.addOns?.length > 0 && (
                   <div className="space-y-2 px-1">
                     <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>{offer.price?.toLocaleString()} ر.س</span>
-                      <span>السعر الأساسي</span>
+                       <span>{offer.price?.toLocaleString()} {p.sar}</span>
+                       <span>{p.basePrice}</span>
                     </div>
                     <div className="flex justify-between text-xs text-muted-foreground">
                       <span>{((totalPrice || 0) - (offer.price || 0)).toLocaleString()} ر.س</span>
