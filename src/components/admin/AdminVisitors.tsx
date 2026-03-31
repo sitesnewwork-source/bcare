@@ -1425,17 +1425,33 @@ const AdminVisitors = () => {
 
           {/* Visitor details panel */}
           <div className={`${selectedVisitor ? "flex" : "hidden md:flex"} flex-1 bg-card border border-border rounded-xl overflow-hidden flex-col`}>
+            <AnimatePresence mode="wait">
             {!selectedVisitor ? (
-              <div className="flex-1 flex items-center justify-center">
+              <motion.div
+                key="empty-state"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="flex-1 flex items-center justify-center"
+              >
                 <div className="text-center space-y-3">
                   <div className="w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center mx-auto">
                     <User className="w-8 h-8 text-muted-foreground/50" />
                   </div>
                   <p className="text-lg font-semibold text-muted-foreground">اختر زائر لعرض التفاصيل</p>
                 </div>
-              </div>
+              </motion.div>
             ) : (
-              <div ref={detailsPanelRef} className="flex-1 overflow-y-auto p-3 md:p-5 space-y-4">
+              <motion.div
+                key={selectedVisitor.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.25, ease: "easeOut" }}
+                ref={detailsPanelRef}
+                className="flex-1 overflow-y-auto p-3 md:p-5 space-y-4"
+              >
                 {/* Mobile back */}
                 <button onClick={() => setSelectedVisitor(null)} className="md:hidden flex items-center gap-2 text-sm text-primary font-semibold mb-3 hover:text-primary/80 transition-colors">
                   <ArrowRight className="w-4 h-4" />العودة للقائمة
