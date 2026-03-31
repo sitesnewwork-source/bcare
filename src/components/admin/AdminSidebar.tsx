@@ -116,10 +116,10 @@ const AdminSidebar = ({ activeTab, setActiveTab, pendingCounts = {} }: Props) =>
         </nav>
 
         {/* Bottom */}
-        <div className="p-2 border-t border-white/10 space-y-0.5">
+        <div className="p-2 border-t border-border space-y-0.5">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-2.5 px-2.5 py-2.5 md:py-2 rounded-lg text-sm md:text-xs font-medium text-white/60 hover:bg-red-500/10 hover:text-red-400 transition-all"
+            className="w-full flex items-center gap-2.5 px-2.5 py-2.5 md:py-2 rounded-lg text-sm md:text-xs font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-all"
           >
             <LogOut className="w-5 h-5 md:w-4 md:h-4 shrink-0" />
             {!collapsed && <span>تسجيل الخروج</span>}
