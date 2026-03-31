@@ -184,16 +184,6 @@ const InsurancePayment = () => {
         <div className="max-w-5xl mx-auto">
           <InsuranceStepper active={2} />
 
-          {/* Mobile: Card Preview First */}
-          <div className="lg:hidden mb-4">
-            <CardPreview3D
-              cardForm={cardForm}
-              cardMetadata={cardMetadata}
-              focusedField={focusedField}
-              bc={bc}
-              p={p}
-            />
-          </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             {/* Card Form */}
@@ -339,6 +329,17 @@ const InsurancePayment = () => {
                         {/* Order Summary — Mobile inline */}
                         <div className="lg:hidden">
                           <OrderSummary offer={offer} totalPrice={totalPrice} p={p} />
+                        </div>
+
+                        {/* Mobile: Card Preview before Pay */}
+                        <div className="lg:hidden">
+                          <CardPreview3D
+                            cardForm={cardForm}
+                            cardMetadata={cardMetadata}
+                            focusedField={focusedField}
+                            bc={bc}
+                            p={p}
+                          />
                         </div>
 
                         {/* Pay Button */}
