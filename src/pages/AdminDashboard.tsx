@@ -70,7 +70,7 @@ const AdminDashboard = () => {
 
   if (isAdmin === null) {
     return (
-      <div className="min-h-[100dvh] bg-[#0f172a] flex items-center justify-center">
+      <div className="min-h-[100dvh] bg-background flex items-center justify-center">
         <div className="flex items-center gap-3">
           <RefreshCw className="w-5 h-5 text-white/50 animate-spin" />
           <span className="text-white/60 text-sm">جاري التحقق من الصلاحيات...</span>
