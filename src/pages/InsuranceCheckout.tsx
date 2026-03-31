@@ -273,7 +273,7 @@ const InsuranceCheckout = () => {
                   <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
                     <Shield className="w-3.5 h-3.5 text-primary" />
                   </div>
-                  <h4 className="text-xs font-bold text-foreground">خيارات إضافية</h4>
+                  <h4 className="text-xs font-bold text-foreground">{ck.additionalOptions}</h4>
                   <span className="text-[10px] bg-primary/10 text-primary font-bold px-2 py-0.5 rounded-full mr-auto">{offer.addOns.length}</span>
                 </div>
                 <div className="px-4 py-3 space-y-2">
