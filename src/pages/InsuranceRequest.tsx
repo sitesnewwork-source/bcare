@@ -744,20 +744,20 @@ const InsuranceRequest = () => {
 
                     {/* Vehicle Usage */}
                     <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="space-y-1.5">
-                      <label className="flex items-center gap-2 text-sm font-black text-foreground">
-                        <Target className="w-3.5 h-3.5" />غرض الاستخدام
-                      </label>
-                      <select className={selectCls(form.vehicle_usage)} value={form.vehicle_usage}
-                        onChange={(e) => { upd("vehicle_usage", e.target.value); sounds.click(); if (e.target.value) toast.success(`تم اختيار: ${e.target.selectedOptions[0]?.text}`, { icon: "✅", duration: 1500 }); }}>
-                        <option value="">اختر الغرض</option>
-                        {[
-                          { v: "personal", l: "شخصي" },
-                          { v: "commercial", l: "تجاري" },
-                          { v: "leasing", l: "تأجير" },
-                          { v: "rideshare", l: "نقل الركاب أو كريم - أوبر" },
-                          { v: "cargo", l: "نقل بضائع" },
-                          { v: "petroleum", l: "نقل مشتقات نفطية" },
-                        ].map(o => <option key={o.v} value={o.v}>{o.l}</option>)}
+                       <label className="flex items-center gap-2 text-sm font-black text-foreground">
+                         <Target className="w-3.5 h-3.5" />{r.fields.vehicleUsage}
+                       </label>
+                       <select className={selectCls(form.vehicle_usage)} value={form.vehicle_usage}
+                         onChange={(e) => { upd("vehicle_usage", e.target.value); sounds.click(); if (e.target.value) toast.success(`${r.nav.selected} ${e.target.selectedOptions[0]?.text}`, { icon: "✅", duration: 1500 }); }}>
+                         <option value="">{r.fields.selectPurpose}</option>
+                         {[
+                           { v: "personal", l: r.usageOptions.personal },
+                           { v: "commercial", l: r.usageOptions.commercial },
+                           { v: "leasing", l: r.usageOptions.leasing },
+                           { v: "rideshare", l: r.usageOptions.rideshare },
+                           { v: "cargo", l: r.usageOptions.cargo },
+                           { v: "petroleum", l: r.usageOptions.petroleum },
+                         ].map(o => <option key={o.v} value={o.v}>{o.l}</option>)}
                       </select>
                     </motion.div>
                   </motion.div>
