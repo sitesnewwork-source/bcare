@@ -57,7 +57,7 @@ const About = () => {
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">قصتنا</h2>
             <p className="text-lg text-muted-foreground leading-relaxed mb-6">
-              تأسست تري كمنصة رقمية مبتكرة تهدف إلى تبسيط عملية التأمين في المملكة العربية السعودية.
+              تأسست بي كير كمنصة رقمية مبتكرة تهدف إلى تبسيط عملية التأمين في المملكة العربية السعودية.
               نؤمن بأن الحصول على التأمين المناسب يجب أن يكون سهلاً وسريعاً وبأسعار تنافسية.
             </p>
             <p className="text-lg text-muted-foreground leading-relaxed">

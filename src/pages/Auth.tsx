@@ -68,7 +68,7 @@ const Auth = () => {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md relative z-10">
         {/* Logo */}
         <Link to="/" className="block text-center mb-8">
-          <span className="text-3xl font-bold text-primary-foreground">tree</span>
+          <span className="text-3xl font-bold text-primary-foreground"><span>B</span><span className="text-cta">Care</span></span>
         </Link>
 
         {/* Card */}

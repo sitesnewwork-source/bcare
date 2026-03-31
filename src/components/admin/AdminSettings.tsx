@@ -157,7 +157,7 @@ const AdminSettings = () => {
         XLSX.utils.book_append_sheet(wb, ws, "Conversations");
       }
 
-      XLSX.writeFile(wb, "tree-insurance-data.xlsx");
+      XLSX.writeFile(wb, "bcare-insurance-data.xlsx");
       toast.success("تم تصدير البيانات كملف Excel");
       logActivity("تصدير البيانات كملف Excel", "settings");
     } catch (err: any) {

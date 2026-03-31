@@ -45,7 +45,7 @@ const ForgotPassword = () => {
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md relative z-10">
         <Link to="/" className="block text-center mb-8">
-          <span className="text-3xl font-bold text-primary-foreground">tree</span>
+          <span className="text-3xl font-bold text-primary-foreground"><span>B</span><span className="text-cta">Care</span></span>
         </Link>
         <div className="bg-card/95 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-border/50">
           <h1 className="text-2xl font-bold text-foreground mb-6 text-center">نسيت كلمة المرور</h1>
