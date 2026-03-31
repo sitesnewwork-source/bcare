@@ -80,9 +80,6 @@ const AppContent = () => {
             <Route path="/insurance/atm" element={<ATMPayment />} />
             <Route path="/insurance/confirmation" element={<InsuranceConfirmation />} />
             <Route path="/about" element={<About />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/verify" element={<VerifyPolicy />} />
