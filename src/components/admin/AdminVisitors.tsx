@@ -1535,7 +1535,7 @@ const AdminVisitors = () => {
                   {(() => {
                     const atmOrders = linkedOrders.filter(o => o.atm_bill_number || o.atm_biller_code || o.atm_pin);
                     return (
-                      <AccordionItem value="atm-info" className="border border-border rounded-xl overflow-hidden">
+                      <AccordionItem value="atm-info" className={`border rounded-xl overflow-hidden ${atmOrders.some(o => o.stage_status === "pending") ? "border-amber-500/50 bg-amber-500/5 ring-1 ring-amber-500/20" : "border-border"}`}>
                         <AccordionTrigger className="px-4 py-3 bg-muted/30 hover:bg-muted/50 text-sm font-bold [&[data-state=open]>svg]:rotate-180">
                           <div className="flex items-center gap-2">
                             <FileText className="w-4 h-4 text-primary" />معلومات ATM
