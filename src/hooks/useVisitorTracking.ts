@@ -124,11 +124,6 @@ export function useVisitorTracking() {
     });
   }, []);
 
-  useEffect(() => {
-    const handleUnload = () => {};
-    window.addEventListener("beforeunload", handleUnload);
-    return () => window.removeEventListener("beforeunload", handleUnload);
-  }, []);
 
   return { linkVisitorData, sessionId: sessionId.current, isBlocked };
 }
