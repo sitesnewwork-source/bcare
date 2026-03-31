@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import heroInsuranceBg from "@/assets/hero-insurance-bg.jpg";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
