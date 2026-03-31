@@ -29,11 +29,8 @@ const Navbar = () => {
       <div className="section-container">
         <div className="flex items-center justify-between h-14 md:h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
-            <div className="flex items-center">
-              <span className="text-2xl font-extrabold text-primary">B</span>
-              <span className="text-2xl font-extrabold text-cta">Care</span>
-            </div>
+          <Link to="/" className="flex items-center">
+            <img src={BcareLogo} alt="BCare" className="h-8 md:h-9" />
           </Link>
 
           {/* Actions */}

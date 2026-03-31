@@ -10,9 +10,8 @@ const Footer = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
           {/* Logo & Contact */}
           <div className="col-span-2 md:col-span-1">
-            <div className="flex items-center gap-1 mb-4">
-              <span className="text-2xl font-extrabold text-primary-foreground">B</span>
-              <span className="text-2xl font-extrabold text-cta">Care</span>
+            <div className="mb-4">
+              <img src={BcareLogo} alt="BCare" className="h-9 brightness-0 invert" />
             </div>
             <div className="flex items-center gap-2 mb-2">
               <Phone className="w-4 h-4 text-cta" />
