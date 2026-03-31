@@ -648,7 +648,7 @@ const InsuranceOffers = () => {
             transition={{ delay: 1 }}
             className="text-xs text-primary-foreground/40 font-medium"
           >
-            نبحث لك في أكثر من ١٥ شركة تأمين معتمدة
+            {of.searchingIn}
           </motion.p>
         </div>
       </div>
