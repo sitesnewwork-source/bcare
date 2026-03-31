@@ -71,7 +71,7 @@ const AdminSettings = () => {
 
       // Use default font (Helvetica) - works for LTR content
       doc.setFontSize(18);
-      doc.text("Tree Insurance - Data Export", 14, 20);
+      doc.text("BCare Insurance - Data Export", 14, 20);
       doc.setFontSize(10);
       doc.text(`Export Date: ${new Date().toLocaleDateString("en-US")}`, 14, 28);
 
