@@ -104,7 +104,7 @@ const InsuranceRequest = () => {
         return null;
       case "full_name":
         if (!v) return r.validation.required;
-        if (v.trim().split(/\s+/).length < 2) return lang === "ar" ? "يجب إدخال مقطعين على الأقل (الاسم الأول واسم العائلة)" : "Enter at least first and last name";
+        if (v.trim().split(/\s+/).length < 2) return dir === "rtl" ? "يجب إدخال مقطعين على الأقل (الاسم الأول واسم العائلة)" : "Enter at least first and last name";
         return null;
       case "phone":
         if (!v) return r.validation.required;
