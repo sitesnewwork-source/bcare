@@ -1096,11 +1096,6 @@ const AdminVisitors = () => {
                                 ينتظر الرد
                               </span>
                             )}
-                            {!pendingStage && !visitor.is_blocked && visitor.is_online && (() => {
-                              // Show last resolved stage status from linked orders if available
-                              // This is handled in the stage indicator below
-                              return null;
-                            })()}
                           </div>
                           {/* Stage indicator badge */}
                           {pendingStage && !visitor.is_blocked && (() => {
