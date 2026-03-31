@@ -189,12 +189,12 @@ const InsuranceCheckout = () => {
   }
 
   return (
-    <div className="min-h-[100dvh] bg-background" dir="rtl">
+    <div className="min-h-[100dvh] bg-background" dir={dir}>
       <Navbar />
 
       <PremiumPageHeader
-        title="ملخص الطلب"
-        badge="مراجعة الطلب قبل الدفع"
+        title={ck.title}
+        badge={ck.badge}
         badgeIcon={<ShoppingCart className="w-3.5 h-3.5 text-cta" />}
         compact
       />
