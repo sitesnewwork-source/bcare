@@ -383,7 +383,7 @@ const InsurancePayment = () => {
                           <AnimatePresence>
                             {isExpiryExpired && (
                               <motion.p initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} className="text-[11px] font-medium text-destructive">
-                                تاريخ البطاقة منتهي الصلاحية.
+                                {p.expiryExpired}
                               </motion.p>
                             )}
                           </AnimatePresence>
