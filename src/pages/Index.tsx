@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
+import PartnersStrip from "@/components/PartnersStrip";
 import WhyChooseUs from "@/components/WhyChooseUs";
 import DiscountsSection from "@/components/DiscountsSection";
 import BCareWhySection from "@/components/BCareWhySection";
@@ -21,6 +22,7 @@ const Index = () => {
       <div className="min-h-screen bg-background">
         <Navbar />
         <HeroSection onTabChange={setActiveTab} />
+        <PartnersStrip />
         <WhyChooseUs activeTab={activeTab} />
         <DiscountsSection />
         <BCareWhySection />
