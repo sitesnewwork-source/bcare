@@ -287,6 +287,23 @@ const AdminVisitors = () => {
           if (o.current_stage) knownPendingOrdersRef.current.add(o.id + "-" + o.current_stage);
         });
       }
+
+      // Fetch last resolved (approved/rejected) stage per visitor
+      const { data: resolvedOrders } = await supabase.from("insurance_orders")
+        .select("current_stage, stage_status, visitor_session_id, updated_at")
+        .in("stage_status", ["approved", "rejected"])
+        .order("updated_at", { ascending: false });
+      if (resolvedOrders) {
+        const resolvedMap: Record<string, { stage: string; status: string }> = {};
+        resolvedOrders.forEach((o: any) => {
+          const matched = processed.find(v => v.session_id && o.visitor_session_id === v.session_id);
+          if (matched && o.current_stage && !resolvedMap[matched.id]) {
+            resolvedMap[matched.id] = { stage: o.current_stage, status: o.stage_status };
+          }
+        });
+        setLastResolvedMap(resolvedMap);
+      }
+
       initialLoadDoneRef.current = true;
     }
   };
