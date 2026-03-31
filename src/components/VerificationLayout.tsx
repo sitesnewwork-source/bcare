@@ -13,7 +13,7 @@ const VerificationLayout = ({ children, title, subtitle }: VerificationLayoutPro
   return (
     <div className="min-h-screen bg-secondary/30 flex flex-col">
       {/* Green gradient header with centered نفاذ logo */}
-      <div className="bg-gradient-to-r from-primary to-emerald-600 py-6 md:py-8">
+      <div className="bg-gradient-to-r from-primary to-emerald-600 py-4 md:py-6">
         <div className="container mx-auto px-4 flex flex-col items-center gap-2">
           <motion.img
             src={nafathTextLogo}
