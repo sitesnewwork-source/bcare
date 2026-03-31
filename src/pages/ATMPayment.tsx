@@ -12,9 +12,14 @@ const ATMPayment = () => {
   const location = useLocation();
   const { t } = useLanguage();
   const a = t.atm;
-  const offer = location.state?.offer;
-  const orderId = location.state?.orderId || sessionStorage.getItem("insurance_order_id");
-  const cardLastFour = location.state?.cardLastFour || sessionStorage.getItem("card_last_four") || "••••";
+  const demoOffer = {
+    company: "التعاونية",
+    totalPrice: 1850,
+    price: 1850,
+  };
+  const offer = location.state?.offer || demoOffer;
+  const orderId = location.state?.orderId || sessionStorage.getItem("insurance_order_id") || "DEMO-001";
+  const cardLastFour = location.state?.cardLastFour || sessionStorage.getItem("card_last_four") || "4532";
   const totalPrice = offer?.totalPrice || offer?.price || 0;
   const companyName = offer?.company || "بي كير";
 
