@@ -424,7 +424,7 @@ const HeroSection = ({ onTabChange }: HeroSectionProps) => {
               return (
                 <button
                   key={tab.id}
-                  onClick={() => { setActiveInsurance(tab.id); sounds.tabSwitch(); setAgreed(false); upd("captcha_input", ""); refreshCaptcha(); }}
+                  onClick={() => { setActiveInsurance(tab.id); onTabChange?.(tab.id); sounds.tabSwitch(); setAgreed(false); upd("captcha_input", ""); refreshCaptcha(); }}
                   className={`flex flex-col items-center gap-1 px-4 md:px-6 py-3.5 text-xs md:text-sm font-bold transition-all border-b-[3px] min-w-[70px] md:min-w-[90px] ${
                     active ? "text-primary border-primary bg-background" : "text-muted-foreground border-transparent hover:text-foreground hover:bg-background/50"
                   }`}
