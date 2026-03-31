@@ -824,7 +824,7 @@ const InsuranceRequest = () => {
                     {/* Policy start date */}
                     {(() => { const policyFilled = !!(form.policy_day && form.policy_month && form.policy_year);
                       const policyDateStr = policyFilled ? `${form.policy_year}-${form.policy_month.padStart(2,"0")}-${form.policy_day.padStart(2,"0")}` : "";
-                      const policyError = touched["policy_start_date"] ? (!policyFilled ? "مطلوب" : new Date(policyDateStr) < new Date(new Date().toDateString()) ? "لا يمكن اختيار تاريخ في الماضي" : null) : null;
+                      const policyError = touched["policy_start_date"] ? (!policyFilled ? r.validation.required : new Date(policyDateStr) < new Date(new Date().toDateString()) ? r.validation.pastDate : null) : null;
                       const policyValid = !!(policyFilled && !policyError && touched["policy_start_date"]);
                       return (
                     <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="space-y-1.5">
