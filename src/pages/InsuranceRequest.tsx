@@ -1004,7 +1004,7 @@ const InsuranceRequest = () => {
               <div className="flex items-center justify-between mt-6 pt-5 border-t border-primary/10">
                 {step > 1 ? (
                   <Button variant="ghost" onClick={prev} className="rounded-xl gap-2 text-muted-foreground font-bold hover:bg-primary/5">
-                    <ArrowLeft className="w-4 h-4" /> السابق
+                    <ArrowLeft className="w-4 h-4" /> {r.nav.previous}
                   </Button>
                 ) : <div />}
 
