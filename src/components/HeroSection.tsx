@@ -316,7 +316,16 @@ const HeroSection = ({ onTabChange }: HeroSectionProps) => {
 
   return (
     <section className="relative">
-      <div className="gradient-hero relative overflow-hidden">
+      <div className="relative overflow-hidden">
+        {/* Hummer car background image */}
+        <img
+          src={heroInsuranceBg}
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover"
+          loading="eager"
+        />
+        {/* Overlay gradient */}
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/80 via-primary/70 to-primary/90" />
         <div className="absolute inset-0 pointer-events-none opacity-10">
           <svg className="absolute top-8 right-8 w-64 h-64 text-primary-foreground" viewBox="0 0 200 200" fill="currentColor">
             <circle cx="100" cy="100" r="80" fillOpacity="0.15" />
