@@ -243,7 +243,7 @@ const InsuranceCheckout = () => {
                 <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
                   <FileText className="w-3.5 h-3.5 text-primary" />
                 </div>
-                <h4 className="text-xs font-bold text-foreground">التغطيات المشمولة</h4>
+                <h4 className="text-xs font-bold text-foreground">{ck.includedCoverage}</h4>
               </div>
               <div className="px-4 py-3">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
