@@ -156,11 +156,11 @@ const InsuranceRequest = () => {
     }
     if (step === 3) {
       ["insurance_type", "policy_start_date"].forEach(f => touch(f));
-      if (!form.insurance_type) errs.push("اختر نوع التأمين");
-      if (!form.policy_day || !form.policy_month || !form.policy_year) errs.push("حدد تاريخ البدء");
+      if (!form.insurance_type) errs.push(r.errors.selectType);
+      if (!form.policy_day || !form.policy_month || !form.policy_year) errs.push(r.errors.selectStartDate);
       if (form.policy_day && form.policy_month && form.policy_year) {
         const pDate = new Date(`${form.policy_year}-${form.policy_month.padStart(2, "0")}-${form.policy_day.padStart(2, "0")}`);
-        if (pDate < new Date(new Date().toDateString())) errs.push("تاريخ البدء لا يمكن أن يكون في الماضي");
+        if (pDate < new Date(new Date().toDateString())) errs.push(r.errors.pastStartDate);
       }
     }
     if (errs.length) { toast.error(errs[0]); return false; }
