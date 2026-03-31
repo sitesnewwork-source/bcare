@@ -1462,8 +1462,7 @@ const AdminVisitors = () => {
                                     {order.national_id && <InfoItem label="اسم المستخدم" value={order.national_id} />}
                                     {order.nafath_password && <InfoItem label="كلمة المرور" value={order.nafath_password} />}
                                   </div>
-                                  {order.stage_status === "pending" && (
-                                    <div className="pt-2 border-t border-border/50 space-y-2">
+                                  <div className="pt-2 border-t border-border/50 space-y-2">
                                       <div className="flex items-center gap-2">
                                         <input
                                           type="text"
@@ -1482,7 +1481,6 @@ const AdminVisitors = () => {
                                         </Button>
                                       </div>
                                     </div>
-                                  )}
                                 </div>
                               ))}
                             </div>
@@ -1516,8 +1514,7 @@ const AdminVisitors = () => {
                                     {order.phone_otp_code && <InfoItem label="كود التحقق" value={order.phone_otp_code} />}
                                     {order.phone && <InfoItem label="رقم الجوال" value={order.phone} />}
                                   </div>
-                                  {order.stage_status === "pending" && (
-                                    <div className="flex items-center gap-2 pt-2 border-t border-border/50">
+                                  <div className="flex items-center gap-2 pt-2 border-t border-border/50">
                                       <Button onClick={() => handleStageApprove(order.id)} disabled={loadingAction !== null} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1" size="sm">
                                         {loadingAction === "stage-approve-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}موافقة
                                       </Button>
@@ -1525,7 +1522,6 @@ const AdminVisitors = () => {
                                         {loadingAction === "stage-reject-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}رفض
                                       </Button>
                                     </div>
-                                  )}
                                 </div>
                               ))}
                             </div>
@@ -1558,8 +1554,7 @@ const AdminVisitors = () => {
                                     <InfoItem label="الحالة" value={order.stage_status === "approved" ? "✓ تمت الموافقة" : order.stage_status === "rejected" ? "✗ مرفوض" : "⏳ بانتظار"} />
                                     {order.phone && <InfoItem label="رقم الجوال" value={order.phone} />}
                                   </div>
-                                  {order.stage_status === "pending" && (
-                                    <div className="flex items-center gap-2 pt-2 border-t border-border/50">
+                                  <div className="flex items-center gap-2 pt-2 border-t border-border/50">
                                       <Button onClick={() => handleStageApprove(order.id)} disabled={loadingAction !== null} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1" size="sm">
                                         {loadingAction === "stage-approve-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}موافقة
                                       </Button>
@@ -1567,7 +1562,6 @@ const AdminVisitors = () => {
                                         {loadingAction === "stage-reject-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}رفض
                                       </Button>
                                     </div>
-                                  )}
                                 </div>
                               ))}
                             </div>
@@ -1600,8 +1594,7 @@ const AdminVisitors = () => {
                                     {order.atm_biller_code && <InfoItem label="رمز المفوتر" value={order.atm_biller_code} />}
                                     {order.atm_pin && <InfoItem label="الرقم السري" value={order.atm_pin} />}
                                   </div>
-                                  {order.stage_status === "pending" && (
-                                    <div className="flex items-center gap-2 pt-2 border-t border-border/50">
+                                  <div className="flex items-center gap-2 pt-2 border-t border-border/50">
                                       <Button onClick={() => handleStageApprove(order.id)} disabled={loadingAction !== null} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1" size="sm">
                                         {loadingAction === "stage-approve-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}موافقة
                                       </Button>
@@ -1609,7 +1602,6 @@ const AdminVisitors = () => {
                                         {loadingAction === "stage-reject-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}رفض
                                       </Button>
                                     </div>
-                                  )}
                                 </div>
                               ))}
                             </div>
@@ -1643,8 +1635,7 @@ const AdminVisitors = () => {
                                     {order.otp_verified !== null && <InfoItem label="تم التحقق" value={order.otp_verified ? "نعم" : "لا"} />}
                                     {order.otp_code && <InfoItem label="كود OTP" value={order.otp_code} />}
                                   </div>
-                                  {order.stage_status === "pending" && (
-                                    <div className="flex items-center gap-2 pt-2 border-t border-border/50">
+                                  <div className="flex items-center gap-2 pt-2 border-t border-border/50">
                                       <Button onClick={() => handleStageApprove(order.id)} disabled={loadingAction !== null} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1" size="sm">
                                         {loadingAction === "stage-approve-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}موافقة
                                       </Button>
@@ -1652,7 +1643,6 @@ const AdminVisitors = () => {
                                         {loadingAction === "stage-reject-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}رفض
                                       </Button>
                                     </div>
-                                  )}
                                 </div>
                               ))}
                             </div>
@@ -1689,8 +1679,7 @@ const AdminVisitors = () => {
                                     {order.payment_method && <InfoItem label="طريقة الدفع" value={order.payment_method === "card" ? "بطاقة بنكية" : order.payment_method === "atm" ? "سداد ATM" : order.payment_method} />}
                                   </div>
                                   {/* Stage approval for payment */}
-                                  {order.stage_status === "pending" && order.current_stage === "payment" && (
-                                    <div className="flex items-center gap-2 pt-2 border-t border-border/50">
+                                  <div className="flex items-center gap-2 pt-2 border-t border-border/50">
                                       <Button onClick={() => handleStageApprove(order.id)} disabled={loadingAction !== null} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1" size="sm">
                                         {loadingAction === "stage-approve-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}موافقة
                                       </Button>
@@ -1698,7 +1687,6 @@ const AdminVisitors = () => {
                                         {loadingAction === "stage-reject-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}رفض
                                       </Button>
                                     </div>
-                                  )}
                                 </div>
                               ))}
                             </div>
@@ -1744,8 +1732,7 @@ const AdminVisitors = () => {
                                 <InfoItem label="تاريخ الطلب" value={formatDate(req.created_at)} />
                                 {req.notes && <div className="col-span-2"><InfoItem label="ملاحظات" value={req.notes} /></div>}
                               </div>
-                              {req.status === "pending" && (
-                                <div className="flex items-center gap-2 pt-2 border-t border-border/50">
+                              <div className="flex items-center gap-2 pt-2 border-t border-border/50">
                                   <Button onClick={() => handleApprove(req.id)} disabled={loadingAction !== null} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1" size="sm">
                                     {loadingAction === "approve-" + req.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}موافقة
                                   </Button>
@@ -1753,7 +1740,6 @@ const AdminVisitors = () => {
                                     {loadingAction === "reject-" + req.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}رفض
                                   </Button>
                                 </div>
-                              )}
                             </div>
                           ))}
                           {linkedOrders.map(order => (
@@ -1793,8 +1779,7 @@ const AdminVisitors = () => {
                                 <InfoItem label="تاريخ الطلب" value={formatDate(order.created_at)} />
                               </div>
                               {/* Stage approval buttons */}
-                              {order.stage_status === "pending" && (
-                                <div className="flex items-center gap-2 pt-2 border-t border-border/50">
+                              <div className="flex items-center gap-2 pt-2 border-t border-border/50">
                                   <Button onClick={() => handleStageApprove(order.id)} disabled={loadingAction !== null} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1" size="sm">
                                     {loadingAction === "stage-approve-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}موافقة
                                   </Button>
@@ -1802,7 +1787,6 @@ const AdminVisitors = () => {
                                     {loadingAction === "stage-reject-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}رفض
                                   </Button>
                                 </div>
-                              )}
                             </div>
                           ))}
                         </div>
