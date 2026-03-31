@@ -14,7 +14,8 @@ import AdminSettings from "@/components/admin/AdminSettings";
 import AdminVisitors from "@/components/admin/AdminVisitors";
 import AdminLiveFeed from "@/components/admin/AdminLiveFeed";
 import PullToRefresh from "@/components/PullToRefresh";
-import { Search, RefreshCw, Activity, VolumeX } from "lucide-react";
+import { Search, RefreshCw, Activity, VolumeX, Sun, Moon } from "lucide-react";
+import { useTheme } from "@/hooks/useTheme";
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("visitors");
@@ -27,6 +28,7 @@ const AdminDashboard = () => {
   const [liveFeedOpen, setLiveFeedOpen] = useState(false);
   const [liveFeedCount, setLiveFeedCount] = useState(0);
   const [isMuted, setIsMuted] = useState(() => localStorage.getItem("admin_feed_mute") === "true");
+  const { theme, toggleTheme } = useTheme();
 
   // Listen for mute changes from LiveFeed settings
   useEffect(() => {
@@ -68,7 +70,7 @@ const AdminDashboard = () => {
 
   if (isAdmin === null) {
     return (
-      <div className="min-h-[100dvh] bg-[#0f172a] flex items-center justify-center">
+      <div className="min-h-[100dvh] bg-background flex items-center justify-center">
         <div className="flex items-center gap-3">
           <RefreshCw className="w-5 h-5 text-white/50 animate-spin" />
           <span className="text-white/60 text-sm">جاري التحقق من الصلاحيات...</span>
@@ -98,6 +100,17 @@ const AdminDashboard = () => {
           </div>
 
           <div className="flex items-center gap-0.5 md:gap-1">
+            <button
+              onClick={toggleTheme}
+              className="p-1.5 rounded-lg hover:bg-secondary/70 transition-colors"
+              title={theme === "dark" ? "الوضع الفاتح" : "الوضع الداكن"}
+            >
+              {theme === "dark" ? (
+                <Sun className="w-4 h-4 text-cta" />
+              ) : (
+                <Moon className="w-4 h-4 text-muted-foreground" />
+              )}
+            </button>
             {isMuted && (
               <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-destructive/10 text-destructive" title="الصوت مكتوم">
                 <VolumeX className="w-3 h-3" />

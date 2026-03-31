@@ -60,14 +60,14 @@ const AdminSidebar = ({ activeTab, setActiveTab, pendingCounts = {} }: Props) =>
 
       {/* Sidebar */}
       <aside className={`
-        bg-[#1e293b] text-white flex flex-col transition-all duration-300 z-[80]
+        bg-card border-l border-border text-foreground flex flex-col transition-all duration-300 z-[80]
         ${/* Mobile */""} 
         fixed md:relative inset-y-0 right-0
         ${mobileOpen ? "translate-x-0" : "translate-x-full md:translate-x-0"}
         ${collapsed ? "md:w-16 w-64" : "w-64 md:w-60"}
       `}>
         {/* Header */}
-        <div className="p-3 flex items-center justify-between border-b border-white/10">
+        <div className="p-3 flex items-center justify-between border-b border-border">
           {!collapsed && (
             <Link to="/" className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-cta flex items-center justify-center">
@@ -77,10 +77,10 @@ const AdminSidebar = ({ activeTab, setActiveTab, pendingCounts = {} }: Props) =>
             </Link>
           )}
           <div className="flex items-center gap-1">
-            <button onClick={() => setMobileOpen(false)} className="md:hidden text-white/50 hover:text-white p-1.5 rounded-lg hover:bg-white/5">
+            <button onClick={() => setMobileOpen(false)} className="md:hidden text-muted-foreground hover:text-foreground p-1.5 rounded-lg hover:bg-secondary">
               <X className="w-4 h-4" />
             </button>
-            <button onClick={() => setCollapsed(!collapsed)} className="hidden md:block text-white/50 hover:text-white p-1.5 rounded-lg hover:bg-white/5">
+            <button onClick={() => setCollapsed(!collapsed)} className="hidden md:block text-muted-foreground hover:text-foreground p-1.5 rounded-lg hover:bg-secondary">
               <ChevronRight className={`w-4 h-4 transition-transform ${collapsed ? "" : "rotate-180"}`} />
             </button>
           </div>
@@ -88,11 +88,11 @@ const AdminSidebar = ({ activeTab, setActiveTab, pendingCounts = {} }: Props) =>
 
         {/* Status bar */}
         {!collapsed && (
-          <div className="px-3 py-2 border-b border-white/10">
+          <div className="px-3 py-2 border-b border-border">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-[10px] text-white/60">الموقع يعمل</span>
-              <Globe className="w-3 h-3 text-white/40 mr-auto" />
+              <span className="text-[10px] text-muted-foreground">الموقع يعمل</span>
+              <Globe className="w-3 h-3 text-muted-foreground/60 mr-auto" />
             </div>
           </div>
         )}
@@ -105,8 +105,8 @@ const AdminSidebar = ({ activeTab, setActiveTab, pendingCounts = {} }: Props) =>
                 onClick={() => handleTabClick(item.id)}
                 className={`w-full flex items-center gap-2.5 px-2.5 py-2.5 md:py-2 rounded-lg text-sm md:text-xs font-medium transition-all ${
                   activeTab === item.id
-                    ? "bg-cta text-white shadow-sm shadow-cta/20"
-                    : "text-white/60 hover:bg-white/5 hover:text-white"
+                    ? "bg-cta text-cta-foreground shadow-sm shadow-cta/20"
+                    : "text-muted-foreground hover:bg-secondary hover:text-foreground"
                 }`}
               >
                 <item.icon className="w-5 h-5 md:w-4 md:h-4 shrink-0" />
@@ -116,10 +116,10 @@ const AdminSidebar = ({ activeTab, setActiveTab, pendingCounts = {} }: Props) =>
         </nav>
 
         {/* Bottom */}
-        <div className="p-2 border-t border-white/10 space-y-0.5">
+        <div className="p-2 border-t border-border space-y-0.5">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-2.5 px-2.5 py-2.5 md:py-2 rounded-lg text-sm md:text-xs font-medium text-white/60 hover:bg-red-500/10 hover:text-red-400 transition-all"
+            className="w-full flex items-center gap-2.5 px-2.5 py-2.5 md:py-2 rounded-lg text-sm md:text-xs font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-all"
           >
             <LogOut className="w-5 h-5 md:w-4 md:h-4 shrink-0" />
             {!collapsed && <span>تسجيل الخروج</span>}
