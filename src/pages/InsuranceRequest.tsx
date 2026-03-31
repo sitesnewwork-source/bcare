@@ -917,7 +917,7 @@ const InsuranceRequest = () => {
                         <span className="w-6 h-6 rounded-lg bg-primary/10 flex items-center justify-center">
                           <FileText className="w-3.5 h-3.5 text-primary" />
                         </span>
-                        ملخص البيانات
+                         {r.summary.title}
                       </h4>
 
                       {/* بيانات المالك */}
