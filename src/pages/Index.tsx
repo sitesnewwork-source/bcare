@@ -29,6 +29,7 @@ const Index = () => {
         
         <StatsSection />
         <TestimonialsSection />
+        <AchievementsSection />
         <BCareWhySection />
         <Footer />
       </div>
