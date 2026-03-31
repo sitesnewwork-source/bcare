@@ -625,7 +625,7 @@ const InsuranceRequest = () => {
                           onChange={(e) => { touch("vehicle_make"); upd("vehicle_make", e.target.value); upd("vehicle_model", ""); sounds.click(); if (e.target.value) { const label = e.target.selectedOptions[0]?.text; toast.success(`${r.nav.selected} ${label}`, { icon: "✅", duration: 1500 }); } }}>
                           <option value="">{r.fields.selectCompany}</option>
                           {r.manufacturers.map((c: string, i: number) =>
-                            <option key={i} value={["toyota","hyundai","kia","nissan","chevrolet","ford","honda","mazda","bmw","mercedes","lexus","other"][i]}>{c}</option>
+                            <option key={i} value={["toyota","hyundai","kia","nissan","chevrolet","ford","honda","mazda","bmw","mercedes","lexus","jeep","genesis","audi","volkswagen","gmc","mitsubishi","dodge","cadillac","landrover","porsche","other"][i]}>{c}</option>
                           )}
                         </select>
                       </motion.div>
