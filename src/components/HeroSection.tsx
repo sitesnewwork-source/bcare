@@ -21,6 +21,7 @@ const partnerLogos = [
   { key: "bupa", name: "بوبا", src: "/logos/bupa.svg" },
 ];
 
+const insuranceTabs = [
   { id: "vehicles", label: "مركبات", icon: Car },
   { id: "medical", label: "طبي", icon: Heart },
   { id: "malpractice", label: "اخطاء طبية", icon: Stethoscope },
