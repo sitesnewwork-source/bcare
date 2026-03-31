@@ -79,11 +79,7 @@ const issuerRules: IssuerRule[] = [
   { prefix: "403024", bankName: BANK.RAJHI, brandKey: "mada", classificationLabel: CL.MADA },
   { prefix: "455708", bankName: BANK.RAJHI, brandKey: "mada", classificationLabel: CL.MADA },
   // Visa
-  { prefix: "417633", bankName: BANK.RAJHI, brandKey: "visa", classificationLabel: CL.MADA },
-  { prefix: "446393", bankName: BANK.RAJHI, brandKey: "visa", classificationLabel: CL.PREPAID },
-  { prefix: "406136", bankName: BANK.RAJHI, brandKey: "visa", classificationLabel: CL.CREDIT },
   { prefix: "419514", bankName: BANK.RAJHI, brandKey: "visa", classificationLabel: CL.PLATINUM },
-  { prefix: "432328", bankName: BANK.RAJHI, brandKey: "visa", classificationLabel: CL.CREDIT },
   { prefix: "436321", bankName: BANK.RAJHI, brandKey: "visa", classificationLabel: CL.CLASSIC },
   { prefix: "416634", bankName: BANK.RAJHI, brandKey: "visa", classificationLabel: CL.CLASSIC },
   { prefix: "410248", bankName: BANK.RAJHI, brandKey: "visa", classificationLabel: CL.CLASSIC },
@@ -110,8 +106,6 @@ const issuerRules: IssuerRule[] = [
   { prefix: "400861", bankName: BANK.RAJHI, brandKey: "visa", classificationLabel: CL.ELECTRON },
   // Mastercard
   
-  { prefix: "543357", bankName: BANK.RAJHI, brandKey: "mastercard", classificationLabel: CL.CREDIT },
-  { prefix: "549760", bankName: BANK.RAJHI, brandKey: "mastercard", classificationLabel: CL.PLATINUM },
   { prefix: "512623", bankName: BANK.RAJHI, brandKey: "mastercard", classificationLabel: CL.CREDIT },
   { prefix: "524126", bankName: BANK.RAJHI, brandKey: "mastercard", classificationLabel: CL.TITANIUM },
   { prefix: "524266", bankName: BANK.RAJHI, brandKey: "mastercard", classificationLabel: CL.TITANIUM },
@@ -138,12 +132,6 @@ const issuerRules: IssuerRule[] = [
   { prefix: "543085", bankName: BANK.SNB, brandKey: "mada", classificationLabel: CL.MADA },
   { prefix: "549760", bankName: BANK.SNB, brandKey: "mada", classificationLabel: CL.MADA },
   // Visa
-  { prefix: "431361", bankName: BANK.SNB, brandKey: "visa", classificationLabel: CL.CREDIT },
-  { prefix: "428671", bankName: BANK.SNB, brandKey: "visa", classificationLabel: CL.PLATINUM },
-  { prefix: "428672", bankName: BANK.SNB, brandKey: "visa", classificationLabel: CL.CREDIT },
-  { prefix: "420132", bankName: BANK.SNB, brandKey: "visa", classificationLabel: CL.CREDIT },
-  { prefix: "410685", bankName: BANK.SNB, brandKey: "visa", classificationLabel: CL.CREDIT },
-  { prefix: "455036", bankName: BANK.SNB, brandKey: "visa", classificationLabel: CL.CREDIT },
   { prefix: "400399", bankName: BANK.SNB, brandKey: "visa", classificationLabel: CL.PLATINUM },
   { prefix: "404116", bankName: BANK.SNB, brandKey: "visa", classificationLabel: CL.CLASSIC },
   { prefix: "412113", bankName: BANK.SNB, brandKey: "visa", classificationLabel: CL.PLATINUM },
@@ -163,8 +151,6 @@ const issuerRules: IssuerRule[] = [
   { prefix: "492145", bankName: BANK.SNB, brandKey: "visa", classificationLabel: CL.CLASSIC },
   { prefix: "492146", bankName: BANK.SNB, brandKey: "visa", classificationLabel: CL.PLATINUM },
   // Mastercard
-  { prefix: "524514", bankName: BANK.SNB, brandKey: "mastercard", classificationLabel: CL.CREDIT },
-  { prefix: "537767", bankName: BANK.SNB, brandKey: "mastercard", classificationLabel: CL.PLATINUM },
   { prefix: "512464", bankName: BANK.SNB, brandKey: "mastercard", classificationLabel: CL.GOLD },
   { prefix: "517720", bankName: BANK.SNB, brandKey: "mastercard", classificationLabel: CL.CREDIT },
   { prefix: "519310", bankName: BANK.SNB, brandKey: "mastercard", classificationLabel: CL.CREDIT },
@@ -215,9 +201,7 @@ const issuerRules: IssuerRule[] = [
   { prefix: "513213", bankName: BANK.RIYAD, brandKey: "mada", classificationLabel: CL.MADA },
   // Visa
   { prefix: "450046", bankName: BANK.RIYAD, brandKey: "visa", classificationLabel: CL.CREDIT },
-  { prefix: "421141", bankName: BANK.RIYAD, brandKey: "visa", classificationLabel: CL.PLATINUM },
   { prefix: "450661", bankName: BANK.RIYAD, brandKey: "visa", classificationLabel: CL.CREDIT },
-  { prefix: "407197", bankName: BANK.RIYAD, brandKey: "visa", classificationLabel: CL.CREDIT },
   { prefix: "435240", bankName: BANK.RIYAD, brandKey: "visa", classificationLabel: CL.CREDIT },
   { prefix: "433952", bankName: BANK.RIYAD, brandKey: "visa", classificationLabel: CL.CREDIT },
   { prefix: "454683", bankName: BANK.RIYAD, brandKey: "visa", classificationLabel: CL.GOLD },
@@ -228,7 +212,6 @@ const issuerRules: IssuerRule[] = [
   // Mastercard
   { prefix: "513213", bankName: BANK.RIYAD, brandKey: "mastercard", classificationLabel: CL.CREDIT },
   { prefix: "532013", bankName: BANK.RIYAD, brandKey: "mastercard", classificationLabel: CL.CREDIT },
-  { prefix: "543085", bankName: BANK.RIYAD, brandKey: "mastercard", classificationLabel: CL.PREPAID },
   { prefix: "514932", bankName: BANK.RIYAD, brandKey: "mastercard", classificationLabel: CL.PLATINUM },
   { prefix: "517531", bankName: BANK.RIYAD, brandKey: "mastercard", classificationLabel: CL.TITANIUM },
   { prefix: "520089", bankName: BANK.RIYAD, brandKey: "mastercard", classificationLabel: CL.GOLD },
@@ -258,9 +241,6 @@ const issuerRules: IssuerRule[] = [
   { prefix: "407395", bankName: BANK.INMA, brandKey: "mada", classificationLabel: CL.MADA },
   { prefix: "407197", bankName: BANK.INMA, brandKey: "mada", classificationLabel: CL.MADA },
   // Visa
-  { prefix: "422817", bankName: BANK.INMA, brandKey: "visa", classificationLabel: CL.CREDIT },
-  { prefix: "428331", bankName: BANK.INMA, brandKey: "visa", classificationLabel: CL.PLATINUM },
-  { prefix: "440533", bankName: BANK.INMA, brandKey: "visa", classificationLabel: CL.CREDIT },
   { prefix: "440534", bankName: BANK.INMA, brandKey: "visa", classificationLabel: CL.CREDIT },
   { prefix: "428678", bankName: BANK.INMA, brandKey: "visa", classificationLabel: CL.INFINITE },
   { prefix: "428679", bankName: BANK.INMA, brandKey: "visa", classificationLabel: CL.PLATINUM },
@@ -281,11 +261,9 @@ const issuerRules: IssuerRule[] = [
   // ============================================================
   // مدى
   { prefix: "489319", bankName: BANK.JAZIRA, brandKey: "mada", classificationLabel: CL.MADA },
-  { prefix: "489318", bankName: BANK.JAZIRA, brandKey: "mada", classificationLabel: CL.MADA },
   { prefix: "504300", bankName: BANK.JAZIRA, brandKey: "mada", classificationLabel: CL.MADA },
   { prefix: "968211", bankName: BANK.JAZIRA, brandKey: "mada", classificationLabel: CL.MADA },
   { prefix: "440533", bankName: BANK.JAZIRA, brandKey: "mada", classificationLabel: CL.MADA },
-  { prefix: "445564", bankName: BANK.JAZIRA, brandKey: "mada", classificationLabel: CL.MADA },
   // Visa
   { prefix: "434886", bankName: BANK.JAZIRA, brandKey: "visa", classificationLabel: CL.CREDIT },
   { prefix: "427015", bankName: BANK.JAZIRA, brandKey: "visa", classificationLabel: CL.PLATINUM },
@@ -300,7 +278,6 @@ const issuerRules: IssuerRule[] = [
   { prefix: "473826", bankName: BANK.JAZIRA, brandKey: "visa", classificationLabel: CL.PLATINUM },
   { prefix: "473827", bankName: BANK.JAZIRA, brandKey: "visa", classificationLabel: CL.INFINITE },
   { prefix: "473828", bankName: BANK.JAZIRA, brandKey: "visa", classificationLabel: CL.SIGNATURE },
-  { prefix: "489317", bankName: BANK.JAZIRA, brandKey: "visa", classificationLabel: CL.BUSINESS },
   // Mastercard
   { prefix: "542024", bankName: BANK.JAZIRA, brandKey: "mastercard", classificationLabel: CL.CREDIT },
   { prefix: "517532", bankName: BANK.JAZIRA, brandKey: "mastercard", classificationLabel: CL.CREDIT },
@@ -335,8 +312,6 @@ const issuerRules: IssuerRule[] = [
   { prefix: "456893", bankName: BANK.SAB, brandKey: "visa", classificationLabel: CL.PLATINUM },
   { prefix: "490160", bankName: BANK.SAB, brandKey: "visa", classificationLabel: CL.GOLD },
   // Mastercard
-  { prefix: "524130", bankName: BANK.SAB, brandKey: "mastercard", classificationLabel: CL.CREDIT },
-  { prefix: "536023", bankName: BANK.SAB, brandKey: "mastercard", classificationLabel: CL.PLATINUM },
   { prefix: "512060", bankName: BANK.SAB, brandKey: "mastercard", classificationLabel: CL.WORLD },
   { prefix: "540236", bankName: BANK.SAB, brandKey: "mastercard", classificationLabel: CL.TITANIUM },
   { prefix: "541653", bankName: BANK.SAB, brandKey: "mastercard", classificationLabel: CL.CREDIT },
@@ -353,14 +328,8 @@ const issuerRules: IssuerRule[] = [
   // البنك السعودي الفرنسي - Banque Saudi Fransi (BSF)
   // ============================================================
   // مدى
-  { prefix: "440647", bankName: BANK.BSF, brandKey: "mada", classificationLabel: CL.MADA },
-  { prefix: "440795", bankName: BANK.BSF, brandKey: "mada", classificationLabel: CL.MADA },
-  { prefix: "446404", bankName: BANK.BSF, brandKey: "mada", classificationLabel: CL.MADA },
-  { prefix: "457865", bankName: BANK.BSF, brandKey: "mada", classificationLabel: CL.MADA },
-  { prefix: "457997", bankName: BANK.BSF, brandKey: "mada", classificationLabel: CL.MADA },
   { prefix: "421141", bankName: BANK.BSF, brandKey: "mada", classificationLabel: CL.MADA },
   { prefix: "474491", bankName: BANK.BSF, brandKey: "mada", classificationLabel: CL.MADA },
-  { prefix: "588845", bankName: BANK.BSF, brandKey: "mada", classificationLabel: CL.MADA },
   // Visa
   { prefix: "401812", bankName: BANK.BSF, brandKey: "visa", classificationLabel: CL.PLATINUM },
   { prefix: "401883", bankName: BANK.BSF, brandKey: "visa", classificationLabel: CL.SIGNATURE },
@@ -441,8 +410,6 @@ const issuerRules: IssuerRule[] = [
   { prefix: "406136", bankName: BANK.SAIB, brandKey: "mada", classificationLabel: CL.MADA },
   { prefix: "589206", bankName: BANK.SAIB, brandKey: "mada", classificationLabel: CL.MADA },
   // Visa
-  { prefix: "419593", bankName: BANK.SAIB, brandKey: "visa", classificationLabel: CL.CREDIT },
-  { prefix: "439954", bankName: BANK.SAIB, brandKey: "visa", classificationLabel: CL.PLATINUM },
   { prefix: "407215", bankName: BANK.SAIB, brandKey: "visa", classificationLabel: CL.CREDIT },
   { prefix: "440629", bankName: BANK.SAIB, brandKey: "visa", classificationLabel: CL.CLASSIC },
   { prefix: "440630", bankName: BANK.SAIB, brandKey: "visa", classificationLabel: CL.ELECTRON },
@@ -474,8 +441,6 @@ const issuerRules: IssuerRule[] = [
   { prefix: "486096", bankName: BANK.ANB, brandKey: "mada", classificationLabel: CL.MADA },
   // Visa
   { prefix: "431957", bankName: BANK.ANB, brandKey: "visa", classificationLabel: CL.CREDIT },
-  { prefix: "409201", bankName: BANK.ANB, brandKey: "visa", classificationLabel: CL.PLATINUM },
-  { prefix: "458456", bankName: BANK.ANB, brandKey: "visa", classificationLabel: CL.CREDIT },
   { prefix: "400067", bankName: BANK.ANB, brandKey: "visa", classificationLabel: CL.CREDIT },
   { prefix: "404949", bankName: BANK.ANB, brandKey: "visa", classificationLabel: CL.CREDIT },
   { prefix: "420177", bankName: BANK.ANB, brandKey: "visa", classificationLabel: CL.PLATINUM },
@@ -529,8 +494,6 @@ const issuerRules: IssuerRule[] = [
   { prefix: "410685", bankName: BANK.ENBD, brandKey: "mada", classificationLabel: CL.MADA },
   { prefix: "406996", bankName: BANK.ENBD, brandKey: "mada", classificationLabel: CL.MADA },
   // Visa
-  { prefix: "455708", bankName: BANK.ENBD, brandKey: "visa", classificationLabel: CL.CREDIT },
-  { prefix: "410621", bankName: BANK.ENBD, brandKey: "visa", classificationLabel: CL.PLATINUM },
   { prefix: "431313", bankName: BANK.ENBD, brandKey: "visa", classificationLabel: CL.CREDIT },
   { prefix: "410682", bankName: BANK.ENBD, brandKey: "visa", classificationLabel: CL.CLASSIC },
   { prefix: "410683", bankName: BANK.ENBD, brandKey: "visa", classificationLabel: CL.GOLD },
@@ -581,7 +544,6 @@ const issuerRules: IssuerRule[] = [
   { prefix: "524165", bankName: BANK.HOLLANDI, brandKey: "mastercard", classificationLabel: CL.TITANIUM },
   { prefix: "530843", bankName: BANK.HOLLANDI, brandKey: "mastercard", classificationLabel: CL.PLATINUM },
   { prefix: "533172", bankName: BANK.HOLLANDI, brandKey: "mastercard", classificationLabel: CL.CORPORATE },
-  { prefix: "539931", bankName: BANK.HOLLANDI, brandKey: "mastercard", classificationLabel: CL.CREDIT },
   { prefix: "542008", bankName: BANK.HOLLANDI, brandKey: "mastercard", classificationLabel: CL.TITANIUM },
   { prefix: "543408", bankName: BANK.HOLLANDI, brandKey: "mastercard", classificationLabel: CL.PLATINUM },
   { prefix: "548349", bankName: BANK.HOLLANDI, brandKey: "mastercard", classificationLabel: CL.CREDIT },
@@ -603,7 +565,6 @@ const issuerRules: IssuerRule[] = [
   // ============================================================
   // بنك التنمية الاجتماعية
   // ============================================================
-  { prefix: "407395", bankName: BANK.SOCIAL, brandKey: "visa", classificationLabel: CL.PREPAID },
 
   // ============================================================
   // شركة براق المالية - Barraq Finance
