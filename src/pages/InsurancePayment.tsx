@@ -287,7 +287,7 @@ const InsurancePayment = () => {
                           </AnimatePresence>
 
                           <p className="mt-2 text-[11px] text-muted-foreground">
-                            يتم التعرف تلقائيًا على بيانات البطاقة من أول أرقام يتم إدخالها.
+                            {p.cardAutoDetect}
                           </p>
                         </div>
 
