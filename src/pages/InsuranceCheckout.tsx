@@ -368,7 +368,7 @@ const InsuranceCheckout = () => {
                 className="rounded-xl py-4 gap-1.5 text-xs"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
-                العودة للعروض
+                {ck.backToOffers}
               </Button>
             </div>
           </motion.div>
