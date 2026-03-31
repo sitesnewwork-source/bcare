@@ -1094,7 +1094,10 @@ const AdminVisitors = () => {
                   {PAGE_GROUPS.map(group => {
                     const groupCount = visitors.filter(v => group.pages.some(p => p.value === v.current_page)).length;
                     return (
-                      <optgroup key={group.group} label={`── ${group.group} (${groupCount}) ──`}>
+                      <optgroup key={group.group} label={`── ${group.group} ──`}>
+                        <option value={`group:${group.group}`} style={{ fontWeight: 700 }}>
+                          📁 كل {group.group} ({groupCount})
+                        </option>
                         {group.pages.map(p => {
                           const count = visitors.filter(v => v.current_page === p.value).length;
                           return (
