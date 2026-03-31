@@ -12,6 +12,7 @@ const insertStageEvent = async (
   visitorSessionId: string | null,
   payload?: Record<string, any>
 ) => {
+  ensureVisitorSessionHeader();
   await (supabase as any)
     .from("insurance_order_stage_events")
     .insert({
