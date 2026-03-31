@@ -364,8 +364,9 @@ const HeroSection = ({ onTabChange }: HeroSectionProps) => {
       </div>
 
       <div className="section-container relative z-20 -mt-6">
-        <div className="bg-card rounded-t-2xl shadow-xl border border-border overflow-hidden max-w-4xl mx-auto">
-          <div className="flex items-center justify-center border-b border-border bg-muted/30">
+        <div className="bg-card/95 backdrop-blur-sm rounded-2xl shadow-2xl shadow-primary/10 border border-border/50 overflow-hidden max-w-4xl mx-auto">
+          {/* Tabs with pill-style design */}
+          <div className="flex items-center justify-center gap-1 p-2 bg-muted/20 border-b border-border/40">
             {insuranceTabs.map((tab) => {
               const Icon = tabIcons[tab.id as keyof typeof tabIcons];
               const active = activeInsurance === tab.id;
@@ -373,18 +374,20 @@ const HeroSection = ({ onTabChange }: HeroSectionProps) => {
                 <button
                   key={tab.id}
                   onClick={() => { setActiveInsurance(tab.id); onTabChange?.(tab.id); sounds.tabSwitch(); setAgreed(false); upd("captcha_input", ""); refreshCaptcha(); }}
-                  className={`flex flex-col items-center gap-1 px-4 md:px-6 py-3.5 text-xs md:text-sm font-bold transition-all border-b-[3px] min-w-[70px] md:min-w-[90px] ${
-                    active ? "text-primary border-primary bg-background" : "text-muted-foreground border-transparent hover:text-foreground hover:bg-background/50"
+                  className={`flex flex-col items-center gap-1 px-3 md:px-5 py-2.5 text-[10px] md:text-xs font-bold transition-all duration-300 rounded-xl min-w-[60px] md:min-w-[80px] ${
+                    active
+                      ? "text-primary-foreground bg-primary shadow-lg shadow-primary/25 scale-[1.02]"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                   }`}
                 >
-                  <Icon className={`w-5 h-5 md:w-6 md:h-6 ${active ? "text-primary" : ""}`} />
+                  <Icon className={`w-4 h-4 md:w-5 md:h-5 ${active ? "text-primary-foreground" : ""}`} />
                   <span>{tab.label}</span>
                 </button>
               );
             })}
           </div>
 
-          <div className="p-6 md:p-8 bg-card">
+          <div className="p-5 md:p-7 bg-card">
             <AnimatePresence mode="wait">
               {formRenderers[activeInsurance]()}
             </AnimatePresence>
