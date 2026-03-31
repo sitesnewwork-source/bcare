@@ -181,5 +181,6 @@ const ATMPayment = () => {
       </div>
     </div>
   );
+};
 
 export default ATMPayment;
