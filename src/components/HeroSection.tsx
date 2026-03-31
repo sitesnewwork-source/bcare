@@ -54,7 +54,11 @@ const heroContent: Record<string, { title: string; subtitle: string }> = {
 
 const captchaColors = ["#FF6B6B", "#4ECDC4", "#FFE66D", "#A78BFA", "#FB923C", "#34D399", "#F472B6", "#60A5FA"];
 
-const HeroSection = () => {
+interface HeroSectionProps {
+  onTabChange?: (tab: string) => void;
+}
+
+const HeroSection = ({ onTabChange }: HeroSectionProps) => {
   const [activeInsurance, setActiveInsurance] = useState("vehicles");
   const [purposeType, setPurposeType] = useState<"new" | "transfer">("new");
   const [registrationType, setRegistrationType] = useState<"form" | "customs">("form");
