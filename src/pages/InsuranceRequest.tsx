@@ -12,7 +12,7 @@ import { sounds } from "@/lib/sounds";
 import { vehicleModels } from "@/lib/vehicleModels";
 import {
   Car, User, CreditCard, Calendar, Phone, FileText,
-  Shield, CheckCircle2, AlertCircle, ArrowRight, ArrowLeft, Hash, Type, Truck, Sparkles,
+  Shield, CheckCircle2, AlertCircle, ArrowRight, ArrowLeft, Hash, Type, Truck, Sparkles, ChevronDown,
   Loader2, Users, Target, DollarSign, Wrench, Camera, Upload, X, Image
 } from "lucide-react";
 import { useRef } from "react";
