@@ -52,11 +52,11 @@ const InsuranceRequest = () => {
 
   const handleDocumentSelect = (file: File) => {
     if (file.size > 5 * 1024 * 1024) {
-      toast.error("حجم الملف كبير جداً (الحد الأقصى 5 ميجا)");
+      toast.error(r.toast.fileTooLarge);
       return;
     }
     if (!file.type.startsWith("image/") && file.type !== "application/pdf") {
-      toast.error("يرجى اختيار صورة أو ملف PDF");
+      toast.error(r.toast.invalidFileType);
       return;
     }
     setDocumentImage(file);
@@ -67,7 +67,7 @@ const InsuranceRequest = () => {
     } else {
       setDocumentPreview(null);
     }
-    toast.success("تم إرفاق المستند بنجاح", { icon: "📎" });
+    toast.success(r.toast.docAttached, { icon: "📎" });
     sounds.success();
   };
 
@@ -98,35 +98,35 @@ const InsuranceRequest = () => {
     const v = form[field as keyof typeof form];
     switch (field) {
       case "national_id":
-        if (!v) return "مطلوب";
-        if (!/^[12]/.test(v)) return "يبدأ بـ 1 أو 2";
-        if (v.length < 10) return `${10 - v.length} أرقام متبقية`;
+        if (!v) return r.validation.required;
+        if (!/^[12]/.test(v)) return r.validation.startsWith12;
+        if (v.length < 10) return `${10 - v.length} ${r.validation.digitsRemaining}`;
         return null;
-      case "full_name": return !v ? "مطلوب" : v.length < 3 ? "قصير جداً" : null;
+      case "full_name": return !v ? r.validation.required : v.length < 3 ? r.validation.tooShort : null;
       case "phone":
-        if (!v) return "مطلوب";
-        if (!/^05/.test(v)) return "يبدأ بـ 05";
-        if (v.length < 10) return `${10 - v.length} أرقام متبقية`;
+        if (!v) return r.validation.required;
+        if (!/^05/.test(v)) return r.validation.startsWith05;
+        if (v.length < 10) return `${10 - v.length} ${r.validation.digitsRemaining}`;
         return null;
       case "serial_number":
-        if (!v) return "مطلوب";
-        if (v.length < 6) return `${6 - v.length} أرقام متبقية`;
+        if (!v) return r.validation.required;
+        if (v.length < 6) return `${6 - v.length} ${r.validation.digitsRemaining}`;
         return null;
-      case "vehicle_make": return !v ? "مطلوب" : null;
-      case "vehicle_model": return !v ? "مطلوب" : null;
+      case "vehicle_make": return !v ? r.validation.required : null;
+      case "vehicle_model": return !v ? r.validation.required : null;
       case "vehicle_year":
-        if (!v) return "مطلوب";
-        if (!/^\d{4}$/.test(v)) return "أدخل سنة صحيحة (4 أرقام)";
-        if (parseInt(v) < 1990 || parseInt(v) > new Date().getFullYear() + 1) return "سنة غير صالحة";
+        if (!v) return r.validation.required;
+        if (!/^\d{4}$/.test(v)) return r.validation.enterValidYear;
+        if (parseInt(v) < 1990 || parseInt(v) > new Date().getFullYear() + 1) return r.validation.invalidYear;
         return null;
       case "policy_start_date": {
         const { policy_day: pd, policy_month: pm, policy_year: py } = form;
-        if (!pd || !pm || !py) return "مطلوب";
+        if (!pd || !pm || !py) return r.validation.required;
         const dateStr = `${py}-${pm.padStart(2, "0")}-${pd.padStart(2, "0")}`;
-        if (new Date(dateStr) < new Date(new Date().toDateString())) return "لا يمكن اختيار تاريخ في الماضي";
+        if (new Date(dateStr) < new Date(new Date().toDateString())) return r.validation.pastDate;
         return null;
       }
-      case "insurance_type": return !v ? "اختر نوع التأمين" : null;
+      case "insurance_type": return !v ? r.validation.selectInsuranceType : null;
       default: return null;
     }
   };
@@ -141,34 +141,34 @@ const InsuranceRequest = () => {
     const errs: string[] = [];
     if (step === 1) {
       ["national_id", "full_name", "phone"].forEach(f => touch(f));
-      if (!form.national_id || !form.full_name || !form.phone) errs.push("أكمل الحقول المطلوبة");
-      if (form.national_id && !/^[12]\d{9}$/.test(form.national_id)) errs.push("رقم الهوية غير صحيح");
-      if (form.phone && !/^05\d{8}$/.test(form.phone)) errs.push("رقم الجوال غير صحيح");
+      if (!form.national_id || !form.full_name || !form.phone) errs.push(r.errors.completeRequired);
+      if (form.national_id && !/^[12]\d{9}$/.test(form.national_id)) errs.push(r.errors.invalidNationalId);
+      if (form.phone && !/^05\d{8}$/.test(form.phone)) errs.push(r.errors.invalidPhone);
     }
     if (step === 2) {
       ["serial_number", "vehicle_make", "vehicle_model", "vehicle_year"].forEach(f => touch(f));
-      if (!form.serial_number) errs.push("أدخل الرقم التسلسلي");
-      if (form.serial_number && form.serial_number.length < 6) errs.push("الرقم التسلسلي قصير جداً");
-      if (!form.vehicle_make) errs.push("أدخل الشركة المصنعة");
-      if (!form.vehicle_model) errs.push("أدخل الموديل");
-      if (!form.vehicle_year) errs.push("أدخل سنة الصنع");
-      if (form.vehicle_year && (!/^\d{4}$/.test(form.vehicle_year) || parseInt(form.vehicle_year) < 1990 || parseInt(form.vehicle_year) > new Date().getFullYear() + 1)) errs.push("سنة الصنع غير صالحة");
+      if (!form.serial_number) errs.push(r.errors.enterSerial);
+      if (form.serial_number && form.serial_number.length < 6) errs.push(r.errors.serialTooShort);
+      if (!form.vehicle_make) errs.push(r.errors.enterMake);
+      if (!form.vehicle_model) errs.push(r.errors.enterModel);
+      if (!form.vehicle_year) errs.push(r.errors.enterYear);
+      if (form.vehicle_year && (!/^\d{4}$/.test(form.vehicle_year) || parseInt(form.vehicle_year) < 1990 || parseInt(form.vehicle_year) > new Date().getFullYear() + 1)) errs.push(r.errors.invalidMakeYear);
     }
     if (step === 3) {
       ["insurance_type", "policy_start_date"].forEach(f => touch(f));
-      if (!form.insurance_type) errs.push("اختر نوع التأمين");
-      if (!form.policy_day || !form.policy_month || !form.policy_year) errs.push("حدد تاريخ البدء");
+      if (!form.insurance_type) errs.push(r.errors.selectType);
+      if (!form.policy_day || !form.policy_month || !form.policy_year) errs.push(r.errors.selectStartDate);
       if (form.policy_day && form.policy_month && form.policy_year) {
         const pDate = new Date(`${form.policy_year}-${form.policy_month.padStart(2, "0")}-${form.policy_day.padStart(2, "0")}`);
-        if (pDate < new Date(new Date().toDateString())) errs.push("تاريخ البدء لا يمكن أن يكون في الماضي");
+        if (pDate < new Date(new Date().toDateString())) errs.push(r.errors.pastStartDate);
       }
     }
     if (errs.length) { toast.error(errs[0]); return false; }
     return true;
   };
 
-  const next = () => { if (!validateStep()) return; sounds.tabSwitch(); const nextStep = Math.min(step + 1, 3); setStep(nextStep); toast.success(`تم الانتقال إلى: ${stepsConfig[nextStep - 1].label}`, { icon: "✅", duration: 1500 }); };
-  const prev = () => { sounds.click(); const prevStep = Math.max(step - 1, 1); setStep(prevStep); toast.info(`رجوع إلى: ${stepsConfig[prevStep - 1].label}`, { icon: "↩️", duration: 1500 }); };
+  const next = () => { if (!validateStep()) return; sounds.tabSwitch(); const nextStep = Math.min(step + 1, 3); setStep(nextStep); toast.success(`${r.nav.movedTo} ${stepsConfig[nextStep - 1].label}`, { icon: "✅", duration: 1500 }); };
+  const prev = () => { sounds.click(); const prevStep = Math.max(step - 1, 1); setStep(prevStep); toast.info(`${r.nav.backTo} ${stepsConfig[prevStep - 1].label}`, { icon: "↩️", duration: 1500 }); };
 
   const submit = async () => {
     if (!validateStep()) return;
@@ -246,7 +246,7 @@ const InsuranceRequest = () => {
     }
 
     sounds.success();
-    toast.success("تم إرسال الطلب بنجاح!");
+    toast.success(r.nav.submitSuccess);
     navigate("/insurance/offers", { state: customerInfo });
     setLoading(false);
   };
@@ -349,7 +349,7 @@ const InsuranceRequest = () => {
                 className="text-[11px] text-cta flex items-center gap-1 font-semibold"
               >
                 <CheckCircle2 className="w-3 h-3" />
-                صحيح ✓
+                {r.validation.correct}
               </motion.p>
             ) : null}
           </AnimatePresence>
@@ -430,7 +430,7 @@ const InsuranceRequest = () => {
                   <motion.div key="s1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
                     className="space-y-3">
                     {renderField({
-                      label: "رقم الهوية / الإقامة *",
+                      label: r.fields.nationalId,
                       icon: CreditCard,
                       placeholder: "1, 2 xxxxxxxxx",
                       value: form.national_id,
@@ -448,35 +448,35 @@ const InsuranceRequest = () => {
                       },
                     })}
 
-                    {renderField({ label: "الاسم الكامل *", icon: Type, placeholder: "الاسم كما في الهوية", value: form.full_name, error: fieldState("full_name").error, valid: fieldState("full_name").valid, onBlur: () => touch("full_name"), onChange: (e) => { touch("full_name"); upd("full_name", e.target.value); } })}
+                    {renderField({ label: r.fields.fullName, icon: Type, placeholder: r.fields.fullName, value: form.full_name, error: fieldState("full_name").error, valid: fieldState("full_name").valid, onBlur: () => touch("full_name"), onChange: (e) => { touch("full_name"); upd("full_name", e.target.value); } })}
 
                     {/* Birth Date */}
                     <div className="space-y-1">
                       <label className="flex items-center gap-2 text-sm font-black text-foreground">
                         <Calendar className="w-3.5 h-3.5" />
-                        تاريخ الميلاد
+                        {r.fields.birthDate}
                       </label>
                       <div className="grid grid-cols-3 gap-2">
                         <select className={selectCls(form.birth_day)} value={form.birth_day}
                           onChange={(e) => { upd("birth_day", e.target.value); sounds.click(); }}>
-                          <option value="">اليوم</option>
+                          <option value="">{r.fields.day}</option>
                           {Array.from({ length: 31 }, (_, i) => i + 1).map(d => <option key={d} value={String(d)}>{d}</option>)}
                         </select>
                         <select className={selectCls(form.birth_month)} value={form.birth_month}
                           onChange={(e) => { upd("birth_month", e.target.value); sounds.click(); }}>
-                          <option value="">الشهر</option>
+                          <option value="">{r.fields.month}</option>
                           {months.map((m, i) => <option key={i} value={String(i + 1)}>{m}</option>)}
                         </select>
                         <select className={selectCls(form.birth_year)} value={form.birth_year}
                           onChange={(e) => { upd("birth_year", e.target.value); sounds.click(); }}>
-                          <option value="">السنة</option>
+                          <option value="">{r.fields.year}</option>
                           {Array.from({ length: 80 }, (_, i) => 2008 - i).map(y => <option key={y} value={String(y)}>{y}</option>)}
                         </select>
                       </div>
                     </div>
 
                     {renderField({
-                      label: "رقم الجوال *",
+                      label: r.fields.phone,
                       icon: Phone,
                       placeholder: "05xxxxxxxx",
                       value: form.phone,
@@ -510,7 +510,7 @@ const InsuranceRequest = () => {
                     >
                       <label className="flex items-center gap-2 text-sm font-black text-foreground">
                         <FileText className="w-3.5 h-3.5" />
-                        رفع صورة الاستمارة / المستند
+                        {r.upload.title}
                       </label>
 
                       <input
@@ -542,7 +542,7 @@ const InsuranceRequest = () => {
                               <Image className="w-6 h-6 text-primary" />
                             </div>
                             <p className="text-xs text-muted-foreground text-center">
-                              صوّر الاستمارة أو ارفع صورة منها
+                              {r.upload.description}
                             </p>
                             <div className="flex gap-2 w-full">
                               <Button
@@ -553,7 +553,7 @@ const InsuranceRequest = () => {
                                 onClick={() => { cameraInputRef.current?.click(); sounds.click(); }}
                               >
                                 <Camera className="w-4 h-4" />
-                                تصوير
+                                {r.upload.camera}
                               </Button>
                               <Button
                                 type="button"
@@ -563,7 +563,7 @@ const InsuranceRequest = () => {
                                 onClick={() => { fileInputRef.current?.click(); sounds.click(); }}
                               >
                                 <Upload className="w-4 h-4" />
-                                رفع ملف
+                                {r.upload.uploadFile}
                               </Button>
                             </div>
                           </div>
@@ -584,7 +584,7 @@ const InsuranceRequest = () => {
                           {documentPreview ? (
                             <img
                               src={documentPreview}
-                              alt="صورة الاستمارة"
+                              alt={r.upload.attached}
                               className="w-full h-32 object-cover rounded-lg"
                             />
                           ) : (
@@ -593,14 +593,14 @@ const InsuranceRequest = () => {
                               <div>
                                 <p className="text-sm font-bold text-foreground">{documentImage.name}</p>
                                 <p className="text-xs text-muted-foreground">
-                                  {(documentImage.size / 1024).toFixed(0)} كيلوبايت
+                                  {(documentImage.size / 1024).toFixed(0)} KB
                                 </p>
                               </div>
                             </div>
                           )}
                           <div className="flex items-center gap-1 mt-2">
                             <CheckCircle2 className="w-3.5 h-3.5 text-cta" />
-                            <span className="text-xs font-semibold text-cta">تم إرفاق المستند</span>
+                            <span className="text-xs font-semibold text-cta">{r.upload.attached}</span>
                           </div>
                         </motion.div>
                       )}
@@ -608,21 +608,21 @@ const InsuranceRequest = () => {
 
                     <div className="flex items-center gap-3">
                       <div className="flex-1 h-px bg-border" />
-                      <span className="text-xs text-muted-foreground font-medium">أو أدخل البيانات يدوياً</span>
+                      <span className="text-xs text-muted-foreground font-medium">{r.upload.orManual}</span>
                       <div className="flex-1 h-px bg-border" />
                     </div>
 
-                    {renderField({ label: "الرقم التسلسلي *", icon: Hash, placeholder: "الرقم التسلسلي للمركبة", value: form.serial_number, error: fieldState("serial_number").error, valid: fieldState("serial_number").valid, inputMode: "numeric", onBlur: () => touch("serial_number"), onChange: (e) => { touch("serial_number"); const digits = e.target.value.replace(/\D/g, ""); upd("serial_number", digits.slice(0, 17)); } })}
+                    {renderField({ label: r.fields.serialNumber, icon: Hash, placeholder: r.fields.serialNumber, value: form.serial_number, error: fieldState("serial_number").error, valid: fieldState("serial_number").valid, inputMode: "numeric", onBlur: () => touch("serial_number"), onChange: (e) => { touch("serial_number"); const digits = e.target.value.replace(/\D/g, ""); upd("serial_number", digits.slice(0, 17)); } })}
 
                     <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="space-y-1.5">
                       <label className="flex items-center gap-2 text-sm font-black text-foreground">
-                        <Truck className="w-3.5 h-3.5" />الشركة المصنعة *
+                        <Truck className="w-3.5 h-3.5" />{r.fields.manufacturer}
                       </label>
                       <motion.div whileFocus={{ scale: 1.01 }}>
                         <select className={selectCls(form.vehicle_make)} value={form.vehicle_make}
-                          onChange={(e) => { touch("vehicle_make"); upd("vehicle_make", e.target.value); sounds.click(); if (e.target.value) { const label = e.target.selectedOptions[0]?.text; toast.success(`تم اختيار: ${label}`, { icon: "✅", duration: 1500 }); } }}>
-                          <option value="">اختر الشركة</option>
-                          {["تويوتا","هيونداي","كيا","نيسان","شيفروليه","فورد","هوندا","مازدا","بي إم دبليو","مرسيدس","لكزس","أخرى"].map((c, i) =>
+                          onChange={(e) => { touch("vehicle_make"); upd("vehicle_make", e.target.value); sounds.click(); if (e.target.value) { const label = e.target.selectedOptions[0]?.text; toast.success(`${r.nav.selected} ${label}`, { icon: "✅", duration: 1500 }); } }}>
+                          <option value="">{r.fields.selectCompany}</option>
+                          {r.manufacturers.map((c: string, i: number) =>
                             <option key={i} value={["toyota","hyundai","kia","nissan","chevrolet","ford","honda","mazda","bmw","mercedes","lexus","other"][i]}>{c}</option>
                           )}
                         </select>
@@ -642,21 +642,21 @@ const InsuranceRequest = () => {
                         {!fieldState("vehicle_make").error && form.vehicle_make && (
                           <motion.p initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}
                             className="text-[11px] text-cta flex items-center gap-1 font-semibold">
-                            <CheckCircle2 className="w-3 h-3" />صحيح ✓
+                            <CheckCircle2 className="w-3 h-3" />{r.validation.correct}
                           </motion.p>
                         )}
                       </AnimatePresence>
                     </motion.div>
 
                     <div className="grid grid-cols-2 gap-3">
-                      {renderField({ label: "الموديل *", icon: Car, placeholder: "مثال: كامري", value: form.vehicle_model, error: fieldState("vehicle_model").error, valid: fieldState("vehicle_model").valid, onBlur: () => touch("vehicle_model"), onChange: (e) => { touch("vehicle_model"); upd("vehicle_model", e.target.value); } })}
+                      {renderField({ label: r.fields.model, icon: Car, placeholder: r.fields.exampleModel, value: form.vehicle_model, error: fieldState("vehicle_model").error, valid: fieldState("vehicle_model").valid, onBlur: () => touch("vehicle_model"), onChange: (e) => { touch("vehicle_model"); upd("vehicle_model", e.target.value); } })}
                       <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="space-y-1.5">
                         <label className="flex items-center gap-2 text-sm font-black text-foreground">
-                          <Calendar className="w-3.5 h-3.5" />سنة الصنع *
+                          <Calendar className="w-3.5 h-3.5" />{r.fields.yearOfMake}
                         </label>
                         <select className={selectCls(form.vehicle_year)} value={form.vehicle_year}
-                          onChange={(e) => { touch("vehicle_year"); upd("vehicle_year", e.target.value); sounds.click(); if (e.target.value) toast.success(`تم اختيار: ${e.target.value}`, { icon: "✅", duration: 1500 }); }}>
-                          <option value="">اختر</option>
+                          onChange={(e) => { touch("vehicle_year"); upd("vehicle_year", e.target.value); sounds.click(); if (e.target.value) toast.success(`${r.nav.selected} ${e.target.value}`, { icon: "✅", duration: 1500 }); }}>
+                          <option value="">{r.fields.select}</option>
                           {Array.from({ length: 30 }, (_, i) => 2026 - i).map(y => <option key={y} value={String(y)}>{y}</option>)}
                         </select>
                         <AnimatePresence>
@@ -674,7 +674,7 @@ const InsuranceRequest = () => {
                           {!fieldState("vehicle_year").error && form.vehicle_year && (
                             <motion.p initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}
                               className="text-[11px] text-cta flex items-center gap-1 font-semibold">
-                              <CheckCircle2 className="w-3 h-3" />صحيح ✓
+                              <CheckCircle2 className="w-3 h-3" />{r.validation.correct}
                             </motion.p>
                           )}
                         </AnimatePresence>
@@ -685,17 +685,17 @@ const InsuranceRequest = () => {
                     {/* Repair Location */}
                     <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="space-y-1.5">
                       <label className="flex items-center gap-2 text-sm font-black text-foreground">
-                        <Wrench className="w-3.5 h-3.5" />مكان التصليح
+                        <Wrench className="w-3.5 h-3.5" />{r.fields.repairLocation}
                       </label>
                       <div className="grid grid-cols-2 gap-2">
-                        {[
-                          { v: "workshop", l: "ورشة", icon: "🔧" },
-                          { v: "agency", l: "وكالة", icon: "🏢" },
-                        ].map((opt) => (
-                          <button
-                            key={opt.v}
-                            type="button"
-                            onClick={() => { upd("repair_location", opt.v); sounds.click(); toast.success(`تم اختيار: ${opt.l}`, { icon: "✅", duration: 1500 }); }}
+                         {[
+                           { v: "workshop", l: r.fields.workshop, icon: "🔧" },
+                           { v: "agency", l: r.fields.agency, icon: "🏢" },
+                         ].map((opt) => (
+                           <button
+                             key={opt.v}
+                             type="button"
+                             onClick={() => { upd("repair_location", opt.v); sounds.click(); toast.success(`${r.nav.selected} ${opt.l}`, { icon: "✅", duration: 1500 }); }}
                             className={`flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 text-sm font-bold transition-all ${
                               form.repair_location === opt.v
                                 ? "border-primary bg-primary text-primary-foreground shadow-md shadow-primary/20"
@@ -712,52 +712,52 @@ const InsuranceRequest = () => {
                     <div className="grid grid-cols-2 gap-3">
                       {/* Passenger Count */}
                       <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="space-y-1.5">
-                        <label className="flex items-center gap-2 text-sm font-black text-foreground">
-                          <Users className="w-3.5 h-3.5" />عدد الركاب
-                        </label>
-                        <select className={selectCls(form.passenger_count)} value={form.passenger_count}
-                          onChange={(e) => { upd("passenger_count", e.target.value); sounds.click(); if (e.target.value) toast.success(`تم اختيار: ${e.target.value}`, { icon: "✅", duration: 1500 }); }}>
-                          <option value="">اختر</option>
+                         <label className="flex items-center gap-2 text-sm font-black text-foreground">
+                           <Users className="w-3.5 h-3.5" />{r.fields.passengerCount}
+                         </label>
+                         <select className={selectCls(form.passenger_count)} value={form.passenger_count}
+                           onChange={(e) => { upd("passenger_count", e.target.value); sounds.click(); if (e.target.value) toast.success(`${r.nav.selected} ${e.target.value}`, { icon: "✅", duration: 1500 }); }}>
+                           <option value="">{r.fields.select}</option>
                           {["2","4","5","7","8","9+"].map(n => <option key={n} value={n}>{n}</option>)}
                         </select>
                       </motion.div>
 
                       {/* Estimated Value */}
                       <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="space-y-1.5">
-                        <label className="flex items-center gap-2 text-sm font-black text-foreground">
-                          <DollarSign className="w-3.5 h-3.5" />القيمة التقديرية
-                        </label>
-                        <select className={selectCls(form.estimated_value)} value={form.estimated_value}
-                          onChange={(e) => { upd("estimated_value", e.target.value); sounds.click(); if (e.target.value) toast.success(`تم اختيار: ${e.target.selectedOptions[0]?.text}`, { icon: "✅", duration: 1500 }); }}>
-                          <option value="">اختر</option>
-                          {[
-                            { v: "below-30k", l: "أقل من 30,000" },
-                            { v: "30k-60k", l: "30,000 - 60,000" },
-                            { v: "60k-100k", l: "60,000 - 100,000" },
-                            { v: "100k-150k", l: "100,000 - 150,000" },
-                            { v: "150k-200k", l: "150,000 - 200,000" },
-                            { v: "above-200k", l: "أكثر من 200,000" },
-                          ].map(o => <option key={o.v} value={o.v}>{o.l} ريال</option>)}
+                         <label className="flex items-center gap-2 text-sm font-black text-foreground">
+                           <DollarSign className="w-3.5 h-3.5" />{r.fields.estimatedValue}
+                         </label>
+                         <select className={selectCls(form.estimated_value)} value={form.estimated_value}
+                           onChange={(e) => { upd("estimated_value", e.target.value); sounds.click(); if (e.target.value) toast.success(`${r.nav.selected} ${e.target.selectedOptions[0]?.text}`, { icon: "✅", duration: 1500 }); }}>
+                           <option value="">{r.fields.select}</option>
+                           {[
+                             { v: "below-30k", l: r.valueOptions.below30k },
+                             { v: "30k-60k", l: r.valueOptions["30k60k"] },
+                             { v: "60k-100k", l: r.valueOptions["60k100k"] },
+                             { v: "100k-150k", l: r.valueOptions["100k150k"] },
+                             { v: "150k-200k", l: r.valueOptions["150k200k"] },
+                             { v: "above-200k", l: r.valueOptions.above200k },
+                           ].map(o => <option key={o.v} value={o.v}>{o.l}</option>)}
                         </select>
                       </motion.div>
                     </div>
 
                     {/* Vehicle Usage */}
                     <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="space-y-1.5">
-                      <label className="flex items-center gap-2 text-sm font-black text-foreground">
-                        <Target className="w-3.5 h-3.5" />غرض الاستخدام
-                      </label>
-                      <select className={selectCls(form.vehicle_usage)} value={form.vehicle_usage}
-                        onChange={(e) => { upd("vehicle_usage", e.target.value); sounds.click(); if (e.target.value) toast.success(`تم اختيار: ${e.target.selectedOptions[0]?.text}`, { icon: "✅", duration: 1500 }); }}>
-                        <option value="">اختر الغرض</option>
-                        {[
-                          { v: "personal", l: "شخصي" },
-                          { v: "commercial", l: "تجاري" },
-                          { v: "leasing", l: "تأجير" },
-                          { v: "rideshare", l: "نقل الركاب أو كريم - أوبر" },
-                          { v: "cargo", l: "نقل بضائع" },
-                          { v: "petroleum", l: "نقل مشتقات نفطية" },
-                        ].map(o => <option key={o.v} value={o.v}>{o.l}</option>)}
+                       <label className="flex items-center gap-2 text-sm font-black text-foreground">
+                         <Target className="w-3.5 h-3.5" />{r.fields.vehicleUsage}
+                       </label>
+                       <select className={selectCls(form.vehicle_usage)} value={form.vehicle_usage}
+                         onChange={(e) => { upd("vehicle_usage", e.target.value); sounds.click(); if (e.target.value) toast.success(`${r.nav.selected} ${e.target.selectedOptions[0]?.text}`, { icon: "✅", duration: 1500 }); }}>
+                         <option value="">{r.fields.selectPurpose}</option>
+                         {[
+                           { v: "personal", l: r.usageOptions.personal },
+                           { v: "commercial", l: r.usageOptions.commercial },
+                           { v: "leasing", l: r.usageOptions.leasing },
+                           { v: "rideshare", l: r.usageOptions.rideshare },
+                           { v: "cargo", l: r.usageOptions.cargo },
+                           { v: "petroleum", l: r.usageOptions.petroleum },
+                         ].map(o => <option key={o.v} value={o.v}>{o.l}</option>)}
                       </select>
                     </motion.div>
                   </motion.div>
@@ -770,12 +770,12 @@ const InsuranceRequest = () => {
                     {/* Insurance type cards */}
                     <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
                       <label className="flex items-center gap-2 text-sm font-black text-foreground">
-                        <Shield className="w-3.5 h-3.5" />نوع التأمين *
+                        <Shield className="w-3.5 h-3.5" />{r.fields.insuranceType}
                       </label>
                       <div className="grid grid-cols-2 gap-2">
                         {[
-                          { id: "comprehensive", label: "شامل", icon: "🛡️" },
-                          { id: "third-party", label: "ضد الغير", icon: "🚗" },
+                           { id: "comprehensive", label: r.fields.comprehensive, icon: "🛡️" },
+                           { id: "third-party", label: r.fields.thirdParty, icon: "🚗" },
                         ].map((t, idx) => {
                           const sel = form.insurance_type === t.id;
                           return (
@@ -785,7 +785,7 @@ const InsuranceRequest = () => {
                               transition={{ delay: 0.1 + idx * 0.1, type: "spring", stiffness: 250, damping: 18 }}
                               whileHover={{ scale: 1.05, y: -3 }}
                               whileTap={{ scale: 0.92 }}
-                              onClick={() => { touch("insurance_type"); upd("insurance_type", t.id); sounds.click(); toast.success(`تم اختيار: ${t.label}`, { icon: "✅", duration: 1500 }); }}
+                              onClick={() => { touch("insurance_type"); upd("insurance_type", t.id); sounds.click(); toast.success(`${r.nav.selected} ${t.label}`, { icon: "✅", duration: 1500 }); }}
                               className={`relative p-3 rounded-xl border-2 text-center transition-colors duration-200 ${
                                 sel
                                   ? "border-primary bg-primary/5 shadow-md shadow-primary/10"
@@ -824,27 +824,27 @@ const InsuranceRequest = () => {
                     {/* Policy start date */}
                     {(() => { const policyFilled = !!(form.policy_day && form.policy_month && form.policy_year);
                       const policyDateStr = policyFilled ? `${form.policy_year}-${form.policy_month.padStart(2,"0")}-${form.policy_day.padStart(2,"0")}` : "";
-                      const policyError = touched["policy_start_date"] ? (!policyFilled ? "مطلوب" : new Date(policyDateStr) < new Date(new Date().toDateString()) ? "لا يمكن اختيار تاريخ في الماضي" : null) : null;
+                      const policyError = touched["policy_start_date"] ? (!policyFilled ? r.validation.required : new Date(policyDateStr) < new Date(new Date().toDateString()) ? r.validation.pastDate : null) : null;
                       const policyValid = !!(policyFilled && !policyError && touched["policy_start_date"]);
                       return (
                     <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="space-y-1.5">
                       <label className="flex items-center gap-2 text-sm font-black text-foreground">
-                        <Calendar className="w-3.5 h-3.5" />تاريخ بدء الوثيقة *
+                        <Calendar className="w-3.5 h-3.5" />{r.fields.policyStartDate}
                       </label>
                       <div className="grid grid-cols-3 gap-2">
                         <select className={selectCls(form.policy_day)} value={form.policy_day}
                           onChange={(e) => { upd("policy_day", e.target.value); touch("policy_start_date"); sounds.click(); }}>
-                          <option value="">اليوم</option>
+                          <option value="">{r.fields.day}</option>
                           {Array.from({ length: 31 }, (_, i) => i + 1).map(d => <option key={d} value={String(d)}>{d}</option>)}
                         </select>
                         <select className={selectCls(form.policy_month)} value={form.policy_month}
                           onChange={(e) => { upd("policy_month", e.target.value); touch("policy_start_date"); sounds.click(); }}>
-                          <option value="">الشهر</option>
+                          <option value="">{r.fields.month}</option>
                           {months.map((m, i) => <option key={i} value={String(i + 1)}>{m}</option>)}
                         </select>
                         <select className={selectCls(form.policy_year)} value={form.policy_year}
                           onChange={(e) => { upd("policy_year", e.target.value); touch("policy_start_date"); sounds.click(); }}>
-                          <option value="">السنة</option>
+                          <option value="">{r.fields.year}</option>
                           {Array.from({ length: 3 }, (_, i) => new Date().getFullYear() + i).map(y => <option key={y} value={String(y)}>{y}</option>)}
                         </select>
                       </div>
@@ -859,7 +859,7 @@ const InsuranceRequest = () => {
                           ) : policyValid ? (
                             <motion.p key="pok" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
                               className="text-[11px] text-cta flex items-center gap-1 font-semibold">
-                              <CheckCircle2 className="w-3 h-3" />صحيح ✓
+                              <CheckCircle2 className="w-3 h-3" />{r.validation.correct}
                             </motion.p>
                           ) : null}
                         </AnimatePresence>
@@ -870,13 +870,13 @@ const InsuranceRequest = () => {
                     {/* Notes */}
                     <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="space-y-1.5">
                       <label className="flex items-center gap-2 text-sm font-black text-foreground">
-                        <FileText className="w-3.5 h-3.5" />ملاحظات إضافية
+                        <FileText className="w-3.5 h-3.5" />{r.fields.notes}
                       </label>
                       <textarea
                         className="w-full px-4 py-3 rounded-lg bg-background border-2 border-border text-foreground font-semibold text-sm
                           placeholder:text-muted-foreground/50 transition-all duration-200 outline-none min-h-[80px] resize-none
                           hover:border-primary/40 focus:border-primary focus:ring-2 focus:ring-primary/20"
-                        placeholder="أي ملاحظات أو طلبات خاصة..."
+                        placeholder={r.fields.notesPlaceholder}
                         value={form.notes} onChange={(e) => upd("notes", e.target.value)}
                         onFocus={() => sounds.hover()} />
                     </motion.div>
@@ -896,7 +896,7 @@ const InsuranceRequest = () => {
                           <motion.span animate={{ scale: [1, 1.3, 1] }} transition={{ duration: 1, repeat: Infinity }}>
                             <AlertCircle className="w-3 h-3" />
                           </motion.span>
-                          بيانات ناقصة
+                          {r.summary.missingData}
                         </motion.button>
                       );
                       const EmptyField = ({ label }: { label: string }) => (
@@ -917,7 +917,7 @@ const InsuranceRequest = () => {
                         <span className="w-6 h-6 rounded-lg bg-primary/10 flex items-center justify-center">
                           <FileText className="w-3.5 h-3.5 text-primary" />
                         </span>
-                        ملخص البيانات
+                         {r.summary.title}
                       </h4>
 
                       {/* بيانات المالك */}
@@ -926,20 +926,20 @@ const InsuranceRequest = () => {
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-1.5">
                             <User className="w-3.5 h-3.5 text-primary" />
-                            <span className="text-[11px] font-black text-foreground">بيانات المالك</span>
+                            <span className="text-[11px] font-black text-foreground">{r.summary.ownerData}</span>
                           </div>
                           {ownerMissing ? <MissingBadge goStep={1} /> : (
                             <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                               onClick={() => { setStep(1); sounds.click(); }}
                               className="text-[10px] text-primary font-bold bg-primary/10 hover:bg-primary/20 px-2.5 py-1 rounded-lg transition-colors">
-                              تعديل
+                               {r.summary.edit}
                             </motion.button>
                           )}
                         </div>
                         <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[11px]">
-                          {form.full_name ? <div className="col-span-2"><span className="text-muted-foreground">الاسم: </span><span className="font-bold text-foreground">{form.full_name}</span></div> : <EmptyField label="الاسم" />}
-                          {form.national_id ? <div><span className="text-muted-foreground">الهوية: </span><span className="font-bold text-foreground">{form.national_id}</span></div> : <EmptyField label="الهوية" />}
-                          {form.phone ? <div><span className="text-muted-foreground">الجوال: </span><span className="font-bold text-foreground">{form.phone}</span></div> : <EmptyField label="الجوال" />}
+                           {form.full_name ? <div className="col-span-2"><span className="text-muted-foreground">{r.summary.name}: </span><span className="font-bold text-foreground">{form.full_name}</span></div> : <EmptyField label={r.summary.name} />}
+                           {form.national_id ? <div><span className="text-muted-foreground">{r.summary.identity}: </span><span className="font-bold text-foreground">{form.national_id}</span></div> : <EmptyField label={r.summary.identity} />}
+                           {form.phone ? <div><span className="text-muted-foreground">{r.summary.mobile}: </span><span className="font-bold text-foreground">{form.phone}</span></div> : <EmptyField label={r.summary.mobile} />}
                         </div>
                       </motion.div>
 
@@ -949,23 +949,23 @@ const InsuranceRequest = () => {
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-1.5">
                             <Car className="w-3.5 h-3.5 text-primary" />
-                            <span className="text-[11px] font-black text-foreground">بيانات المركبة</span>
+                            <span className="text-[11px] font-black text-foreground">{r.summary.vehicleData}</span>
                           </div>
                           {vehicleMissing ? <MissingBadge goStep={2} /> : (
                             <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                               onClick={() => { setStep(2); sounds.click(); }}
                               className="text-[10px] text-primary font-bold bg-primary/10 hover:bg-primary/20 px-2.5 py-1 rounded-lg transition-colors">
-                              تعديل
+                              {r.summary.edit}
                             </motion.button>
                           )}
                         </div>
                         <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[11px]">
-                          {form.vehicle_make ? <div><span className="text-muted-foreground">الشركة: </span><span className="font-bold text-foreground">{form.vehicle_make}</span></div> : <EmptyField label="الشركة" />}
-                          {form.vehicle_model ? <div><span className="text-muted-foreground">الموديل: </span><span className="font-bold text-foreground">{form.vehicle_model}</span></div> : <EmptyField label="الموديل" />}
-                          {form.vehicle_year ? <div><span className="text-muted-foreground">السنة: </span><span className="font-bold text-foreground">{form.vehicle_year}</span></div> : <EmptyField label="السنة" />}
-                          {form.serial_number ? <div><span className="text-muted-foreground">التسلسلي: </span><span className="font-bold text-foreground">{form.serial_number}</span></div> : <EmptyField label="التسلسلي" />}
-                          {form.repair_location && <div><span className="text-muted-foreground">التصليح: </span><span className="font-bold text-foreground">{form.repair_location === "workshop" ? "ورشة" : "وكالة"}</span></div>}
-                          {form.passenger_count && <div><span className="text-muted-foreground">الركاب: </span><span className="font-bold text-foreground">{form.passenger_count}</span></div>}
+                           {form.vehicle_make ? <div><span className="text-muted-foreground">{r.summary.company}: </span><span className="font-bold text-foreground">{form.vehicle_make}</span></div> : <EmptyField label={r.summary.company} />}
+                           {form.vehicle_model ? <div><span className="text-muted-foreground">{r.summary.modelLabel}: </span><span className="font-bold text-foreground">{form.vehicle_model}</span></div> : <EmptyField label={r.summary.modelLabel} />}
+                           {form.vehicle_year ? <div><span className="text-muted-foreground">{r.summary.yearLabel}: </span><span className="font-bold text-foreground">{form.vehicle_year}</span></div> : <EmptyField label={r.summary.yearLabel} />}
+                           {form.serial_number ? <div><span className="text-muted-foreground">{r.summary.serialLabel}: </span><span className="font-bold text-foreground">{form.serial_number}</span></div> : <EmptyField label={r.summary.serialLabel} />}
+                           {form.repair_location && <div><span className="text-muted-foreground">{r.summary.repair}: </span><span className="font-bold text-foreground">{form.repair_location === "workshop" ? r.fields.workshop : r.fields.agency}</span></div>}
+                           {form.passenger_count && <div><span className="text-muted-foreground">{r.summary.passengers}: </span><span className="font-bold text-foreground">{form.passenger_count}</span></div>}
                         </div>
                       </motion.div>
 
@@ -975,13 +975,13 @@ const InsuranceRequest = () => {
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-1.5">
                             <Shield className={`w-3.5 h-3.5 ${insuranceMissing ? "text-destructive" : "text-cta"}`} />
-                            <span className="text-[11px] font-black text-foreground">تفاصيل التأمين</span>
+                            <span className="text-[11px] font-black text-foreground">{r.summary.insuranceDetails}</span>
                           </div>
-                          <span className={`text-[10px] font-bold px-2.5 py-1 rounded-lg ${insuranceMissing ? "text-destructive bg-destructive/10" : "text-cta bg-cta/10"}`}>الخطوة الحالية</span>
+                          <span className={`text-[10px] font-bold px-2.5 py-1 rounded-lg ${insuranceMissing ? "text-destructive bg-destructive/10" : "text-cta bg-cta/10"}`}>{r.summary.currentStep}</span>
                         </div>
                         <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[11px]">
-                          {form.insurance_type ? <div><span className="text-muted-foreground">النوع: </span><span className="font-bold text-foreground">{form.insurance_type === "comprehensive" ? "شامل" : "ضد الغير"}</span></div> : <EmptyField label="النوع" />}
-                          {form.policy_day && form.policy_month && form.policy_year ? <div><span className="text-muted-foreground">البدء: </span><span className="font-bold text-foreground">{form.policy_day}/{form.policy_month}/{form.policy_year}</span></div> : <EmptyField label="تاريخ البدء" />}
+                           {form.insurance_type ? <div><span className="text-muted-foreground">{r.summary.type}: </span><span className="font-bold text-foreground">{form.insurance_type === "comprehensive" ? r.fields.comprehensive : r.fields.thirdParty}</span></div> : <EmptyField label={r.summary.type} />}
+                           {form.policy_day && form.policy_month && form.policy_year ? <div><span className="text-muted-foreground">{r.summary.startDate}: </span><span className="font-bold text-foreground">{form.policy_day}/{form.policy_month}/{form.policy_year}</span></div> : <EmptyField label={r.summary.startDate} />}
                         </div>
                       </motion.div>
                     </motion.div>
@@ -994,7 +994,7 @@ const InsuranceRequest = () => {
                       <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 1.5, repeat: Infinity }}>
                         <CheckCircle2 className="w-4 h-4 text-cta shrink-0" />
                       </motion.div>
-                      <p className="text-xs text-foreground font-medium">بالضغط على "إرسال الطلب" تؤكد صحة جميع البيانات</p>
+                      <p className="text-xs text-foreground font-medium">{r.nav.confirmSubmit}</p>
                     </motion.div>
                   </motion.div>
                 )}
@@ -1004,7 +1004,7 @@ const InsuranceRequest = () => {
               <div className="flex items-center justify-between mt-6 pt-5 border-t border-primary/10">
                 {step > 1 ? (
                   <Button variant="ghost" onClick={prev} className="rounded-xl gap-2 text-muted-foreground font-bold hover:bg-primary/5">
-                    <ArrowLeft className="w-4 h-4" /> السابق
+                    <ArrowLeft className="w-4 h-4" /> {r.nav.previous}
                   </Button>
                 ) : <div />}
 
@@ -1012,7 +1012,7 @@ const InsuranceRequest = () => {
                   <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
                     <Button onClick={next}
                       className="bg-gradient-to-l from-primary to-primary/80 text-primary-foreground rounded-xl px-8 h-12 font-bold text-sm shadow-xl shadow-primary/25 gap-2 border border-primary-foreground/10">
-                      التالي <ArrowRight className="w-4 h-4" />
+                      {r.nav.next} <ArrowRight className="w-4 h-4" />
                     </Button>
                   </motion.div>
                 ) : (
@@ -1024,7 +1024,7 @@ const InsuranceRequest = () => {
                           <Shield className="w-4 h-4" />
                         </motion.div>
                       ) : (
-                        <>إرسال الطلب <CheckCircle2 className="w-4 h-4" /></>
+                        <>{r.nav.submit} <CheckCircle2 className="w-4 h-4" /></>
                       )}
                     </Button>
                   </motion.div>
