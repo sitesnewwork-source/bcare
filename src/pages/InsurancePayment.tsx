@@ -184,6 +184,10 @@ const InsurancePayment = () => {
         <div className="max-w-5xl mx-auto">
           <InsuranceStepper active={2} />
 
+          {/* Mobile: Order Summary at top */}
+          <div className="lg:hidden mb-4">
+            <OrderSummary offer={offer} totalPrice={totalPrice} p={p} />
+          </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             {/* Card Form */}
