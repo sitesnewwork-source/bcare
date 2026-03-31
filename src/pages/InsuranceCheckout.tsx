@@ -562,14 +562,14 @@ const InsuranceCheckout = () => {
                   className="w-full bg-cta text-cta-foreground hover:bg-cta-hover rounded-xl py-5 font-bold gap-2"
                 >
                   <Download className="w-5 h-5" />
-                  تحميل كـ PDF
+                  {ck.downloadPDF}
                 </Button>
                 <Button
                   variant="outline"
                   onClick={() => setShowPolicy(false)}
                   className="w-full rounded-xl py-4"
                 >
-                  إغلاق المسودة
+                  {ck.closeDraft}
                 </Button>
               </div>
             </motion.div>
