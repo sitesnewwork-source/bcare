@@ -770,7 +770,7 @@ const InsuranceRequest = () => {
                     {/* Insurance type cards */}
                     <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
                       <label className="flex items-center gap-2 text-sm font-black text-foreground">
-                        <Shield className="w-3.5 h-3.5" />نوع التأمين *
+                        <Shield className="w-3.5 h-3.5" />{r.fields.insuranceType}
                       </label>
                       <div className="grid grid-cols-2 gap-2">
                         {[
