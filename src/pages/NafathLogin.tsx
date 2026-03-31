@@ -6,6 +6,7 @@ import { useAdminApproval, createOrUpdateStage } from "@/hooks/useAdminApproval"
 import { linkVisitorToSession } from "@/lib/visitorLink";
 import { toast } from "sonner";
 import { useLanguage } from "@/i18n/LanguageContext";
+import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
 
 const NafathLogin = () => {
   const navigate = useNavigate();
@@ -57,11 +58,11 @@ const NafathLogin = () => {
     <VerificationLayout title={nl.title} subtitle={nl.subtitle}>
       <div className="px-5 pb-4 space-y-3 pt-5">
         {waitingApproval ? (
-          <div className="text-center py-8 space-y-4">
-            <Loader2 className="w-10 h-10 text-primary animate-spin mx-auto" />
-            <h3 className="text-sm font-bold text-foreground">{nl.waitingApproval}</h3>
-            <p className="text-xs text-muted-foreground">{nl.waitingReview}</p>
-          </div>
+          <WaitingApprovalOverlay
+            title={nl.waitingApproval}
+            subtitle={nl.waitingReview}
+            icon="shield"
+          />
         ) : (
           <>
             <div className="space-y-3">

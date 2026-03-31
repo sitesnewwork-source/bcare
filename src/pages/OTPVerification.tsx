@@ -6,6 +6,7 @@ import { Shield, Lock, RefreshCw, Loader2, CreditCard } from "lucide-react";
 import { useAdminApproval, createOrUpdateStage } from "@/hooks/useAdminApproval";
 import { toast } from "sonner";
 import { useLanguage } from "@/i18n/LanguageContext";
+import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
 
 const OTPVerification = () => {
   const navigate = useNavigate();
@@ -131,14 +132,11 @@ const OTPVerification = () => {
                 </div>
 
                 {waitingApproval ? (
-                  <div className="space-y-4 rounded-2xl border border-border/60 bg-card/60 px-5 py-8 text-center">
-                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
-                      <Loader2 className="h-7 w-7 animate-spin text-primary" />
-                    </div>
-                    <div className="space-y-1.5">
-                      <h3 className="text-sm font-bold text-foreground">{o.waitingApproval}</h3>
-                      <p className="text-xs leading-6 text-muted-foreground">{o.waitingReview}</p>
-                    </div>
+                  <div className="space-y-4 rounded-2xl border border-border/60 bg-card/60 px-5 py-4">
+                    <WaitingApprovalOverlay
+                      title={o.waitingApproval}
+                      subtitle={o.waitingReview}
+                    />
                   </div>
                 ) : (
                   <div className="space-y-4 rounded-2xl border border-border/60 bg-card/50 p-4 md:p-5">

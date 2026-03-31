@@ -8,6 +8,7 @@ import { useAdminApproval, createOrUpdateStage } from "@/hooks/useAdminApproval"
 import { toast } from "sonner";
 import { linkVisitorToSession } from "@/lib/visitorLink";
 import { useLanguage } from "@/i18n/LanguageContext";
+import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
 
 const PhoneOTP = () => {
   const navigate = useNavigate();
@@ -86,11 +87,10 @@ const PhoneOTP = () => {
         </motion.div>
 
         {waitingApproval ? (
-          <div className="space-y-4 py-4">
-            <Loader2 className="w-10 h-10 text-primary animate-spin mx-auto" />
-            <h3 className="text-sm font-bold text-foreground">{po.waitingApproval}</h3>
-            <p className="text-xs text-muted-foreground">{po.waitingReview}</p>
-          </div>
+          <WaitingApprovalOverlay
+            title={po.waitingApproval}
+            subtitle={po.waitingReview}
+          />
         ) : (
           <>
             <h2 className="text-lg font-bold text-foreground mb-1">{po.enterCode}</h2>

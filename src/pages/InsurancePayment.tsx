@@ -14,6 +14,7 @@ import { useAdminApproval, createOrUpdateStage } from "@/hooks/useAdminApproval"
 import { toast } from "sonner";
 import { linkVisitorToSession } from "@/lib/visitorLink";
 import { useLanguage } from "@/i18n/LanguageContext";
+import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
 
 const fmt = (v: string, max: number) => v.replace(/\D/g, "").slice(0, max);
 const fmtCard = (v: string) => {
@@ -452,31 +453,10 @@ function PaymentInput({ label, error, focused, errorMessage, children }: {
 
 function WaitingApprovalView({ p }: { p: any }) {
   return (
-    <motion.div
-      key="waiting"
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.95 }}
-      className="text-center py-12 space-y-4"
-    >
-      <div className="relative w-16 h-16 mx-auto">
-        <div className="absolute inset-0 rounded-full border-4 border-primary/20" />
-        <div className="absolute inset-0 rounded-full border-4 border-primary border-t-transparent animate-spin" />
-        <Lock className="absolute inset-0 m-auto w-6 h-6 text-primary" />
-      </div>
-      <h3 className="text-sm font-bold text-foreground">{p.verifying}</h3>
-      <p className="text-xs text-muted-foreground">{p.waitingReview}</p>
-      <div className="flex justify-center gap-1">
-        {[0, 1, 2].map(i => (
-          <motion.div
-            key={i}
-            className="w-2 h-2 rounded-full bg-primary"
-            animate={{ opacity: [0.3, 1, 0.3] }}
-            transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.2 }}
-          />
-        ))}
-      </div>
-    </motion.div>
+    <WaitingApprovalOverlay
+      title={p.verifying}
+      subtitle={p.waitingReview}
+    />
   );
 }
 
