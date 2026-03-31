@@ -133,6 +133,8 @@ const AdminVisitors = () => {
   const [selectedForClear, setSelectedForClear] = useState<Set<string>>(new Set());
   const [showChatMenu, setShowChatMenu] = useState(false);
   const [nafathNumberInput, setNafathNumberInput] = useState("");
+  const knownPendingOrdersRef = useRef<Set<string>>(new Set());
+  const initialLoadDoneRef = useRef(false);
   const knownPendingStagesRef = useRef<Set<string>>(new Set());
   const hasInitializedPendingRef = useRef(false);
   const geoRetryRef = useRef<Set<string>>(new Set());
