@@ -1080,14 +1080,30 @@ const AdminVisitors = () => {
                   className="h-7 text-[10px] bg-background border border-border rounded-lg px-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary flex-1 min-w-[100px]"
                 >
                   <option value="">كل الصفحات</option>
-                  {uniquePages.map(p => {
-                    const visitorCount = visitors.filter(v => v.current_page === p.value).length;
-                    return (
-                      <option key={p.value} value={p.value}>
-                        {p.label} {visitorCount > 0 ? `(${visitorCount})` : ""}
-                      </option>
-                    );
-                  })}
+                  {PAGE_GROUPS.map(group => (
+                    <optgroup key={group.group} label={`── ${group.group} ──`}>
+                      {group.pages.map(p => {
+                        const count = visitors.filter(v => v.current_page === p.value).length;
+                        return (
+                          <option key={p.value} value={p.value}>
+                            {p.label} {count > 0 ? `(${count})` : ""}
+                          </option>
+                        );
+                      })}
+                    </optgroup>
+                  ))}
+                  {uniqueDynamic.length > 0 && (
+                    <optgroup label="── أخرى ──">
+                      {uniqueDynamic.map(p => {
+                        const count = visitors.filter(v => v.current_page === p.value).length;
+                        return (
+                          <option key={p.value} value={p.value}>
+                            {p.label} {count > 0 ? `(${count})` : ""}
+                          </option>
+                        );
+                      })}
+                    </optgroup>
+                  )}
                 </select>
                 <select
                   value={sortBy}
