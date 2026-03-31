@@ -127,10 +127,12 @@ const ChatWidget = () => {
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
 
-    await supabase.from("chat_messages").insert({
-      conversation_id: conversationId,
-      sender_type: "visitor",
-      content: userMsg.content,
+    const token = sessionStorage.getItem("chat_session_token") || "";
+    await supabase.rpc("send_chat_message", {
+      p_session_token: token,
+      p_conversation_id: conversationId,
+      p_content: userMsg.content,
+      p_sender_type: "visitor",
     });
 
     if (mode === "bot") {
