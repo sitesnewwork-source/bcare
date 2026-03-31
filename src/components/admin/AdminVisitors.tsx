@@ -803,7 +803,18 @@ const AdminVisitors = () => {
     }
     if (countryFilter) filtered = filtered.filter(v => v.country === countryFilter);
     if (deviceFilter) filtered = filtered.filter(v => parseUserAgent(v.user_agent).device === deviceFilter);
-    if (pageFilter) filtered = filtered.filter(v => v.current_page === pageFilter);
+    if (pageFilter) {
+      if (pageFilter.startsWith("group:")) {
+        const groupName = pageFilter.slice(6);
+        const group = PAGE_GROUPS.find(g => g.group === groupName);
+        if (group) {
+          const groupValues = new Set(group.pages.map(p => p.value));
+          filtered = filtered.filter(v => v.current_page && groupValues.has(v.current_page));
+        }
+      } else {
+        filtered = filtered.filter(v => v.current_page === pageFilter);
+      }
+    }
     if (q) filtered = filtered.filter(v => (v.visitor_name || "").toLowerCase().includes(q) || (v.phone || "").includes(q) || v.session_id.toLowerCase().includes(q));
     if (sortBy === "duration") filtered = [...filtered].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
     else if (sortBy === "entry") filtered = [...filtered].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
@@ -1083,7 +1094,10 @@ const AdminVisitors = () => {
                   {PAGE_GROUPS.map(group => {
                     const groupCount = visitors.filter(v => group.pages.some(p => p.value === v.current_page)).length;
                     return (
-                      <optgroup key={group.group} label={`── ${group.group} (${groupCount}) ──`}>
+                      <optgroup key={group.group} label={`── ${group.group} ──`}>
+                        <option value={`group:${group.group}`} style={{ fontWeight: 700 }}>
+                          📁 كل {group.group} ({groupCount})
+                        </option>
                         {group.pages.map(p => {
                           const count = visitors.filter(v => v.current_page === p.value).length;
                           return (
