@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
+import { useLanguage } from "@/i18n/LanguageContext";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import PremiumPageHeader from "@/components/PremiumPageHeader";
