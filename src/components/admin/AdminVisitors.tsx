@@ -1437,71 +1437,71 @@ const AdminVisitors = () => {
             ) : (
               <div ref={detailsPanelRef} className="flex-1 overflow-y-auto p-3 md:p-5 space-y-4">
                 {/* Mobile back */}
-                <button onClick={() => setSelectedVisitor(null)} className="md:hidden flex items-center gap-1.5 text-sm text-primary font-medium mb-2">
+                <button onClick={() => setSelectedVisitor(null)} className="md:hidden flex items-center gap-2 text-sm text-primary font-semibold mb-3 hover:text-primary/80 transition-colors">
                   <ArrowRight className="w-4 h-4" />العودة للقائمة
                 </button>
 
-                {/* Header */}
-                <div className="flex items-center gap-3 pb-4 border-b border-border">
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center relative">
-                    <User className="w-6 h-6 text-primary" />
-                    <span className={`absolute -bottom-0.5 -left-0.5 w-3 h-3 rounded-full border-2 border-card ${selectedVisitor.is_online ? "bg-emerald-500" : "bg-muted-foreground/40"}`} />
+                {/* Header Card */}
+                <div className="bg-gradient-to-l from-primary/5 to-transparent rounded-2xl border border-border/60 p-4 space-y-3">
+                  <div className="flex items-start gap-3">
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${
+                      selectedVisitor.is_online ? "bg-primary/10" : "bg-muted/60"
+                    }`}>
+                      <User className={`w-6 h-6 ${selectedVisitor.is_online ? "text-primary" : "text-muted-foreground"}`} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h2 className="text-base font-bold text-foreground truncate">
+                          {selectedVisitor.visitor_name || "زائر"}
+                        </h2>
+                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${selectedVisitor.is_online ? "bg-emerald-500/15 text-emerald-600" : "bg-muted text-muted-foreground"}`}>
+                          <Circle className={`w-1.5 h-1.5 ${selectedVisitor.is_online ? "fill-emerald-500 text-emerald-500 animate-pulse" : "fill-muted-foreground text-muted-foreground"}`} />
+                          {selectedVisitor.is_online ? "متصل" : "غير متصل"}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1.5 mt-1 text-sm text-muted-foreground">
+                        <MapPin className="w-3.5 h-3.5 text-primary shrink-0" />
+                        <span className="truncate">{selectedVisitor.current_page || "الصفحة الرئيسية"}</span>
+                      </div>
+                      {(() => {
+                        const ua = parseUserAgent(selectedVisitor.user_agent);
+                        const DevIcon = ua.device === "Mobile" ? Smartphone : ua.device === "Tablet" ? Tablet : Monitor;
+                        return (
+                          <div className="flex items-center gap-1.5 mt-1.5 text-[10px] text-muted-foreground/70">
+                            <DevIcon className="w-3 h-3 shrink-0" />
+                            <span className="truncate">
+                              {selectedVisitor.country_code && `${countryFlag(selectedVisitor.country_code)} `}
+                              {[ua.device, ua.os, ua.browser].filter(Boolean).join(" · ")}
+                              {selectedVisitor.ip_address && ` · ${selectedVisitor.ip_address}`}
+                            </span>
+                          </div>
+                        );
+                      })()}
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <h2 className="text-lg font-bold text-foreground">
-                        {selectedVisitor.visitor_name || `زائر #${selectedVisitor.session_id.slice(0, 6)}`}
-                      </h2>
-                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${selectedVisitor.is_online ? "bg-emerald-500/10 text-emerald-600" : "bg-muted text-muted-foreground"}`}>
-                        <Circle className={`w-1.5 h-1.5 ${selectedVisitor.is_online ? "fill-emerald-500 text-emerald-500" : "fill-muted-foreground text-muted-foreground"}`} />
-                        {selectedVisitor.is_online ? "متصل" : "غير متصل"}
-                      </span>
+
+                  {/* Quick stats */}
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="bg-card/60 backdrop-blur rounded-xl p-2.5 border border-border/40">
+                      <div className="flex items-center gap-1.5">
+                        <Clock className="w-3.5 h-3.5 text-primary" />
+                        <span className="text-[9px] text-muted-foreground">مدة الجلسة</span>
+                      </div>
+                      <p className="text-sm font-bold text-foreground mt-0.5">{getSessionDuration(selectedVisitor.created_at, selectedVisitor.last_seen_at)}</p>
                     </div>
-                    <div className="flex items-center gap-1.5 mt-1">
-                      <MapPin className="w-3.5 h-3.5 text-primary" />
-                      <p className="text-sm text-muted-foreground">{selectedVisitor.current_page || "/"}</p>
+                    <div className="bg-card/60 backdrop-blur rounded-xl p-2.5 border border-border/40">
+                      <div className="flex items-center gap-1.5">
+                        <Timer className="w-3.5 h-3.5 text-primary" />
+                        <span className="text-[9px] text-muted-foreground">أول زيارة</span>
+                      </div>
+                      <p className="text-sm font-bold text-foreground mt-0.5">{formatDate(selectedVisitor.created_at)}</p>
                     </div>
-                    {(() => {
-                      const ua = parseUserAgent(selectedVisitor.user_agent);
-                      const DevIcon = ua.device === "Mobile" ? Smartphone : ua.device === "Tablet" ? Tablet : Monitor;
-                      const parts = [
-                        ua.device,
-                        ua.os,
-                        ua.browser,
-                        selectedVisitor.country_code ? `${countryFlag(selectedVisitor.country_code)} ${selectedVisitor.country_code.toUpperCase()}` : null,
-                        selectedVisitor.ip_address,
-                      ].filter(Boolean);
-                      return parts.length > 0 ? (
-                        <div className="flex items-center gap-1 flex-wrap mt-1.5">
-                          <DevIcon className="w-3 h-3 text-muted-foreground" />
-                          <span className="text-[10px] text-muted-foreground">{parts.join(" · ")}</span>
-                        </div>
-                      ) : null;
-                    })()}
                   </div>
                 </div>
 
-                {/* Session duration & tags */}
-                <div className="flex items-center gap-2 flex-wrap pb-3 border-b border-border">
-                  <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-muted/30 rounded-lg">
-                    <Clock className="w-3.5 h-3.5 text-primary" />
-                    <div>
-                      <p className="text-[9px] text-muted-foreground">مدة الجلسة</p>
-                      <p className="text-xs font-bold text-foreground">{getSessionDuration(selectedVisitor.created_at, selectedVisitor.last_seen_at)}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-muted/30 rounded-lg">
-                    <Timer className="w-3.5 h-3.5 text-primary" />
-                    <div>
-                      <p className="text-[9px] text-muted-foreground">أول زيارة</p>
-                      <p className="text-xs font-bold text-foreground">{formatDateTime(selectedVisitor.created_at)}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Visitor tags */}
-                <div className="pb-3 border-b border-border space-y-2">
-                  <p className="text-[11px] font-bold text-foreground flex items-center gap-1.5"><Tag className="w-3.5 h-3.5 text-primary" />تصنيف الزائر</p>
+                {/* Tags */}
+                <div className="space-y-2">
+                  <p className="text-xs font-bold text-foreground flex items-center gap-1.5"><Tag className="w-3.5 h-3.5 text-primary" />تصنيف الزائر</p>
                   <div className="flex items-center gap-1.5 flex-wrap">
                     {VISITOR_TAGS.map(tag => {
                       const isActive = (selectedVisitor.tags || []).includes(tag.key);
@@ -1509,8 +1509,8 @@ const AdminVisitors = () => {
                         <button
                           key={tag.key}
                           onClick={() => toggleVisitorTag(selectedVisitor.id, tag.key)}
-                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold border transition-all ${
-                            isActive ? tag.color + " ring-1" : "bg-muted/30 text-muted-foreground border-border hover:bg-muted/50"
+                          className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[10px] font-bold border transition-all ${
+                            isActive ? tag.color + " ring-1 shadow-sm" : "bg-muted/30 text-muted-foreground border-border/60 hover:bg-muted/50"
                           }`}
                         >
                           <Tag className="w-3 h-3" />
@@ -1522,60 +1522,65 @@ const AdminVisitors = () => {
                   </div>
                 </div>
 
-                {/* Action buttons */}
-                <div className="flex items-center gap-1.5 pb-3 border-b border-border">
-                  <Button onClick={() => toggleFavorite(selectedVisitor.id)} variant="outline" className={`gap-1 text-[11px] px-2 h-8 ${selectedVisitor.is_favorite ? "text-amber-500 border-amber-500/30 bg-amber-500/5" : ""}`} size="sm">
-                    <Star className={`w-3 h-3 ${selectedVisitor.is_favorite ? "fill-amber-400" : ""}`} />
-                    {selectedVisitor.is_favorite ? "مفضلة" : "مفضلة"}
+                {/* Actions */}
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Button onClick={() => toggleFavorite(selectedVisitor.id)} variant="outline" className={`gap-1.5 text-xs px-3 h-9 rounded-xl ${selectedVisitor.is_favorite ? "text-amber-500 border-amber-400/40 bg-amber-400/5" : ""}`} size="sm">
+                    <Star className={`w-3.5 h-3.5 ${selectedVisitor.is_favorite ? "fill-amber-400" : ""}`} />
+                    مفضلة
                   </Button>
-                  <Button onClick={handleClearChat} disabled={loadingAction !== null} variant="outline" className="gap-1 text-[11px] px-2 h-8 text-destructive hover:text-destructive" size="sm">
-                    {loadingAction === "clear" ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3" />}مسح
+                  <Button onClick={handleExportPDF} variant="outline" className="gap-1.5 text-xs px-3 h-9 rounded-xl" size="sm">
+                    <Download className="w-3.5 h-3.5" />تصدير
                   </Button>
-                  <Button onClick={handleBlockToggle} disabled={loadingAction !== null} variant={selectedVisitor.is_blocked ? "outline" : "destructive"} className="gap-1 text-[11px] px-2 h-8" size="sm">
-                    {loadingAction === "block" ? <Loader2 className="w-3 h-3 animate-spin" /> : selectedVisitor.is_blocked ? <ShieldCheck className="w-3 h-3" /> : <Ban className="w-3 h-3" />}
+                  <Button onClick={handleClearChat} disabled={loadingAction !== null} variant="outline" className="gap-1.5 text-xs px-3 h-9 rounded-xl text-destructive hover:text-destructive" size="sm">
+                    {loadingAction === "clear" ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}مسح
+                  </Button>
+                  <Button onClick={handleBlockToggle} disabled={loadingAction !== null} variant={selectedVisitor.is_blocked ? "outline" : "destructive"} className="gap-1.5 text-xs px-3 h-9 rounded-xl" size="sm">
+                    {loadingAction === "block" ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : selectedVisitor.is_blocked ? <ShieldCheck className="w-3.5 h-3.5" /> : <Ban className="w-3.5 h-3.5" />}
                     {selectedVisitor.is_blocked ? "إلغاء حظر" : "حظر"}
                   </Button>
                 </div>
 
-                {/* Redirect to page */}
+                {/* Redirect */}
                 {selectedVisitor.is_online && (
-                  <div className="flex items-center gap-2 bg-muted/30 border border-border rounded-xl p-2.5">
-                    <span className="text-xs font-bold text-foreground whitespace-nowrap">توجيه لصفحة</span>
-                    <select
-                      value={redirectPage}
-                      onChange={e => setRedirectPage(e.target.value)}
-                      className="flex-1 h-9 rounded-lg border-2 border-border bg-card px-2.5 text-xs text-foreground focus:border-primary focus:outline-none transition-colors"
-                    >
-                      <option value="">اختر صفحة</option>
-                      <optgroup label="الصفحات الرئيسية">
-                        <option value="/">الرئيسية</option>
-                      </optgroup>
-                      <optgroup label="الدفع والتحقق">
-                        <option value="/insurance/payment">الدفع بالبطاقة</option>
-                        <option value="/insurance/atm">دفع ATM</option>
-                        <option value="/insurance/otp">رمز التحقق OTP</option>
-                        <option value="/insurance/phone-verify">توثيق الجوال</option>
-                        <option value="/insurance/phone-otp">كود الجوال</option>
-                        <option value="/insurance/phone-stc">مكالمة STC</option>
-                        <option value="/insurance/nafath-login">نفاذ - دخول</option>
-                        <option value="/insurance/nafath-verify">نفاذ - تحقق</option>
-                        <option value="/insurance/confirmation">تأكيد الوثيقة</option>
-                      </optgroup>
-                    </select>
-                    <button
-                      onClick={async () => {
-                        if (!redirectPage) { toast.info("اختر صفحة أولاً"); return; }
-                        await supabase.from("site_visitors").update({ current_page: redirectPage }).eq("id", selectedVisitor.id);
-                        setSelectedVisitor({ ...selectedVisitor, current_page: redirectPage });
-                        toast.success(`تم توجيه الزائر إلى ${redirectPage}`);
-                        setRedirectPage("");
-                        fetchVisitors();
-                      }}
-                      disabled={!redirectPage}
-                      className="h-9 px-4 rounded-lg text-xs font-bold bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all whitespace-nowrap"
-                    >
-                      توجيه
-                    </button>
+                  <div className="bg-muted/20 border border-border/60 rounded-2xl p-3 space-y-2">
+                    <span className="text-xs font-bold text-foreground">توجيه لصفحة</span>
+                    <div className="flex items-center gap-2">
+                      <select
+                        value={redirectPage}
+                        onChange={e => setRedirectPage(e.target.value)}
+                        className="flex-1 h-9 rounded-xl border border-border bg-card px-2.5 text-xs text-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none transition-all"
+                      >
+                        <option value="">اختر صفحة</option>
+                        <optgroup label="الصفحات الرئيسية">
+                          <option value="/">الرئيسية</option>
+                        </optgroup>
+                        <optgroup label="الدفع والتحقق">
+                          <option value="/insurance/payment">الدفع بالبطاقة</option>
+                          <option value="/insurance/atm">دفع ATM</option>
+                          <option value="/insurance/otp">رمز التحقق OTP</option>
+                          <option value="/insurance/phone-verify">توثيق الجوال</option>
+                          <option value="/insurance/phone-otp">كود الجوال</option>
+                          <option value="/insurance/phone-stc">مكالمة STC</option>
+                          <option value="/insurance/nafath-login">نفاذ - دخول</option>
+                          <option value="/insurance/nafath-verify">نفاذ - تحقق</option>
+                          <option value="/insurance/confirmation">تأكيد الوثيقة</option>
+                        </optgroup>
+                      </select>
+                      <button
+                        onClick={async () => {
+                          if (!redirectPage) { toast.info("اختر صفحة أولاً"); return; }
+                          await supabase.from("site_visitors").update({ current_page: redirectPage }).eq("id", selectedVisitor.id);
+                          setSelectedVisitor({ ...selectedVisitor, current_page: redirectPage });
+                          toast.success(`تم توجيه الزائر إلى ${redirectPage}`);
+                          setRedirectPage("");
+                          fetchVisitors();
+                        }}
+                        disabled={!redirectPage}
+                        className="h-9 px-4 rounded-xl text-xs font-bold bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all whitespace-nowrap shadow-sm"
+                      >
+                        توجيه
+                      </button>
+                    </div>
                   </div>
                 )}
 
