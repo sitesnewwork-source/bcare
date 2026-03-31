@@ -500,6 +500,14 @@ const AdminVisitors = () => {
       .eq("order_id", orderId)
       .is("resolved_at", null);
     toast.success("تم رفض المرحلة");
+    const rejectedOrder = linkedOrders.find(o => o.id === orderId);
+    if (rejectedOrder?.visitor_session_id) {
+      const matchedVisitor = visitors.find(v => v.session_id === rejectedOrder.visitor_session_id);
+      if (matchedVisitor && rejectedOrder.current_stage) {
+        setLastResolvedMap(prev => ({ ...prev, [matchedVisitor.id]: { stage: rejectedOrder.current_stage!, status: "rejected" } }));
+        setPendingStageMap(prev => { const n = { ...prev }; delete n[matchedVisitor.id]; return n; });
+      }
+    }
     setLinkedOrders(prev => prev.map(o => o.id === orderId ? { ...o, stage_status: "rejected" } : o));
     setStageEvents(prev => prev.map(event => event.order_id === orderId && !event.resolved_at ? { ...event, status: "rejected", resolved_at: new Date().toISOString() } : event));
     setLoadingAction(null);
