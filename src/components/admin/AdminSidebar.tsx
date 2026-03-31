@@ -60,7 +60,7 @@ const AdminSidebar = ({ activeTab, setActiveTab, pendingCounts = {} }: Props) =>
 
       {/* Sidebar */}
       <aside className={`
-        bg-[#1e293b] text-white flex flex-col transition-all duration-300 z-[80]
+        bg-card border-l border-border text-foreground flex flex-col transition-all duration-300 z-[80]
         ${/* Mobile */""} 
         fixed md:relative inset-y-0 right-0
         ${mobileOpen ? "translate-x-0" : "translate-x-full md:translate-x-0"}
