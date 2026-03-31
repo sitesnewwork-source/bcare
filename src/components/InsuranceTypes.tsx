@@ -1,44 +1,31 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, X, Shield, Car, Zap } from "lucide-react";
-
-const coverageTypes = [
-  {
-    id: "comprehensive",
-    label: "التأمين الشامل",
-    icon: Shield,
-    title: "التأمين الشامل",
-    subtitle: "أعلى مستوى من الحماية لقيادة آمنة",
-    features: [
-      { text: "خدمات الحل الشامل للمطالبات", included: true },
-      { text: "المساعدة على الطريق مجانًا!", included: true },
-      { text: "تغطية ضد الكوارث الطبيعية (البرد والفيضانات)", included: true },
-      { text: "تغطية ضد الحريق", included: true },
-      { text: "شبكة واسعة النطاق", included: true },
-      { text: "جميع الخدمات في التأمين ضد الغير", included: true },
-    ],
-  },
-  {
-    id: "third-party",
-    label: "ضد الغير",
-    icon: Car,
-    title: "ضد الغير",
-    subtitle: "تأمين طرف ثالث يحميك ويحمي الغير ويفزع لك في المواقف الصعبة",
-    features: [
-      { text: "ضد الغير", included: true },
-      { text: "الحوادث الشخصية مجانًا!", included: true },
-      { text: "تغطية الاصطدام", included: true },
-      { text: "تغطية الإيذاء المتعمد و السرقة", included: false },
-      { text: "المساعدة على الطريق", included: false },
-      { text: "تغطية الزجاج والمحرك", included: false },
-      { text: "التغطية الخليجية", included: false },
-      { text: "سيارة بديلة", included: false },
-    ],
-  },
-];
+import { Check, X, Shield, Car } from "lucide-react";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 const InsuranceTypes = () => {
   const [activeType, setActiveType] = useState("comprehensive");
+  const { t, isRTL } = useLanguage();
+
+  const coverageTypes = [
+    {
+      id: "comprehensive",
+      label: t.insuranceTypes.comprehensive.label,
+      icon: Shield,
+      title: t.insuranceTypes.comprehensive.title,
+      subtitle: t.insuranceTypes.comprehensive.subtitle,
+      features: t.insuranceTypes.comprehensive.features,
+    },
+    {
+      id: "third-party",
+      label: t.insuranceTypes.thirdParty.label,
+      icon: Car,
+      title: t.insuranceTypes.thirdParty.title,
+      subtitle: t.insuranceTypes.thirdParty.subtitle,
+      features: t.insuranceTypes.thirdParty.features,
+    },
+  ];
+
   const activeCoverage = coverageTypes.find((c) => c.id === activeType)!;
 
   return (
@@ -50,13 +37,12 @@ const InsuranceTypes = () => {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          <p className="text-cta font-semibold mb-2">كمّل طريقك، سالم ومتطمّن ومأمّن!</p>
+          <p className="text-cta font-semibold mb-2">{t.insuranceTypes.tagline}</p>
           <h2 className="text-3xl lg:text-4xl font-bold text-foreground">
-            خيارات التغطية
+            {t.insuranceTypes.title}
           </h2>
         </motion.div>
 
-        {/* Tabs */}
         <div className="flex justify-center mb-10">
           <div className="flex bg-muted rounded-2xl p-1.5 gap-1">
             {coverageTypes.map((type) => (
@@ -76,7 +62,6 @@ const InsuranceTypes = () => {
           </div>
         </div>
 
-        {/* Content */}
         <AnimatePresence mode="wait">
           <motion.div
             key={activeType}
@@ -112,11 +97,7 @@ const InsuranceTypes = () => {
                         <X className="w-3.5 h-3.5 text-muted-foreground" />
                       </div>
                     )}
-                    <span
-                      className={`text-sm font-medium ${
-                        f.included ? "text-foreground" : "text-muted-foreground"
-                      }`}
-                    >
+                    <span className={`text-sm font-medium ${f.included ? "text-foreground" : "text-muted-foreground"}`}>
                       {f.text}
                     </span>
                   </div>

@@ -1,13 +1,12 @@
 import { motion } from "framer-motion";
-import { Settings, Plus, Sliders, Sparkles, Car, Shield } from "lucide-react";
+import { Settings, Plus, Sliders, Sparkles } from "lucide-react";
+import { useLanguage } from "@/i18n/LanguageContext";
 
-const features = [
-  { icon: Settings, label: "تخصيص التغطية", desc: "اختر التغطيات المناسبة" },
-  { icon: Sliders, label: "تحكم بالمبلغ", desc: "حدد مبلغ التحمل" },
-  { icon: Plus, label: "إضافات اختيارية", desc: "أضف مزايا حسب حاجتك" },
-];
+const icons = [Settings, Sliders, Plus];
 
 const CustomizableSection = () => {
+  const { t, isRTL } = useLanguage();
+
   return (
     <section className="py-20 lg:py-28 bg-secondary/50 relative overflow-hidden">
       <div className="absolute top-0 right-0 w-96 h-96 bg-primary/[0.03] rounded-full translate-x-1/2 -translate-y-1/2" />
@@ -16,14 +15,13 @@ const CustomizableSection = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Visual side */}
           <motion.div
-            initial={{ opacity: 0, x: -40 }}
+            initial={{ opacity: 0, x: isRTL ? -40 : 40 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ type: "spring", stiffness: 60 }}
             className="order-2 lg:order-1"
           >
             <div className="relative bg-primary rounded-3xl p-10 aspect-square flex items-center justify-center overflow-hidden">
-              {/* Animated decorative elements */}
               <motion.div
                 animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.3, 0.2] }}
                 transition={{ duration: 4, repeat: Infinity }}
@@ -49,22 +47,25 @@ const CustomizableSection = () => {
                 </motion.div>
 
                 <div className="flex justify-center gap-4">
-                  {features.map((f, i) => (
-                    <motion.div
-                      key={f.label}
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: 0.4 + i * 0.1 }}
-                      className="bg-primary-foreground/10 backdrop-blur-sm p-3 rounded-2xl border border-primary-foreground/10"
-                    >
-                      <f.icon className="w-6 h-6 text-cta" />
-                    </motion.div>
-                  ))}
+                  {t.customizable.features.map((f, i) => {
+                    const Icon = icons[i];
+                    return (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.4 + i * 0.1 }}
+                        className="bg-primary-foreground/10 backdrop-blur-sm p-3 rounded-2xl border border-primary-foreground/10"
+                      >
+                        <Icon className="w-6 h-6 text-cta" />
+                      </motion.div>
+                    );
+                  })}
                 </div>
 
                 <p className="text-primary-foreground/70 text-sm max-w-[220px] mx-auto">
-                  أضف إضافات وخصص تغطيتك حسب احتياجاتك
+                  {t.customizable.innerText}
                 </p>
               </div>
             </div>
@@ -72,42 +73,44 @@ const CustomizableSection = () => {
 
           {/* Text side */}
           <motion.div
-            initial={{ opacity: 0, x: 40 }}
+            initial={{ opacity: 0, x: isRTL ? 40 : -40 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ type: "spring", stiffness: 60 }}
-            className="order-1 lg:order-2 text-right"
+            className={`order-1 lg:order-2 ${isRTL ? "text-right" : "text-left"}`}
           >
             <span className="inline-block text-cta font-bold text-sm bg-cta/10 px-4 py-1.5 rounded-full mb-4">
-              مرونة كاملة
+              {t.customizable.badge}
             </span>
-            <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
-              مرن و قابل <br />للتخصيص
+            <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6 leading-tight whitespace-pre-line">
+              {t.customizable.title}
             </h2>
             <p className="text-lg text-muted-foreground leading-relaxed max-w-lg mb-8">
-              تخصيص تغطيتك حسب الحاجات. أضف إضافات اختيارية. نحن هنا لنتكيف معك.
+              {t.customizable.description}
             </p>
 
-            {/* Feature cards */}
             <div className="space-y-4">
-              {features.map((f, i) => (
-                <motion.div
-                  key={f.label}
-                  initial={{ opacity: 0, x: 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.2 + i * 0.1 }}
-                  className="flex items-center gap-4 bg-card rounded-xl p-4 border border-border hover:border-primary/20 hover:shadow-md transition-all group"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:shadow-lg transition-all duration-300">
-                    <f.icon className="w-6 h-6 text-primary group-hover:text-primary-foreground transition-colors duration-300" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-foreground text-sm">{f.label}</h4>
-                    <p className="text-xs text-muted-foreground">{f.desc}</p>
-                  </div>
-                </motion.div>
-              ))}
+              {t.customizable.features.map((f, i) => {
+                const Icon = icons[i];
+                return (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: isRTL ? 20 : -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.2 + i * 0.1 }}
+                    className="flex items-center gap-4 bg-card rounded-xl p-4 border border-border hover:border-primary/20 hover:shadow-md transition-all group"
+                  >
+                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:shadow-lg transition-all duration-300">
+                      <Icon className="w-6 h-6 text-primary group-hover:text-primary-foreground transition-colors duration-300" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-foreground text-sm">{f.label}</h4>
+                      <p className="text-xs text-muted-foreground">{f.desc}</p>
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
           </motion.div>
         </div>
