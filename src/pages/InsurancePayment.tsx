@@ -90,7 +90,7 @@ const InsurancePayment = () => {
 
   useEffect(() => {
     if (approvalStatus === "approved" && orderId) {
-      toast.success("تمت الموافقة على الدفع");
+      toast.success(p.paymentApproved);
       const expiry = `${cardForm.expiryMonth}/${cardForm.expiryYear}`;
       const cardInfo = {
         card_holder_name: cardForm.name,
