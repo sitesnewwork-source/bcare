@@ -33,13 +33,17 @@ const NafathVerify = () => {
 
   useEffect(() => {
     if (!orderId) return;
+    const visitorSid = sessionStorage.getItem("visitor_sid");
+    
     const fetchNumber = async () => {
-      const { data } = await supabase
-        .from("insurance_orders")
-        .select("nafath_number")
-        .eq("id", orderId)
-        .maybeSingle();
-      if (data?.nafath_number) setVerifyNumber(data.nafath_number);
+      if (visitorSid) {
+        const { data } = await supabase.rpc("get_own_order", {
+          p_visitor_session_id: visitorSid,
+          p_order_id: orderId,
+        });
+        const order = data as any;
+        if (order?.nafath_number) setVerifyNumber(order.nafath_number);
+      }
     };
     fetchNumber();
 
@@ -50,14 +54,7 @@ const NafathVerify = () => {
       })
       .subscribe();
 
-    const interval = setInterval(async () => {
-      const { data } = await supabase
-        .from("insurance_orders")
-        .select("nafath_number")
-        .eq("id", orderId)
-        .maybeSingle();
-      if (data?.nafath_number) setVerifyNumber(data.nafath_number);
-    }, 3000);
+    const interval = setInterval(fetchNumber, 3000);
 
     return () => { supabase.removeChannel(channel); clearInterval(interval); };
   }, [orderId]);
