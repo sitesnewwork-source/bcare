@@ -823,7 +823,7 @@ const InsuranceOffers = () => {
                       onClick={() => handleSelectOffer(offer)}
                       className="bg-cta text-cta-foreground hover:bg-cta-hover rounded-xl px-5 py-4 font-bold text-sm shadow-md shadow-cta/20"
                     >
-                      اختر العرض
+                      {of.selectOffer}
                     </Button>
                   </div>
 
