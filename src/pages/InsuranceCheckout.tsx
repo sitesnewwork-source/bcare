@@ -439,12 +439,12 @@ const InsuranceCheckout = () => {
                   <div className="space-y-1">
                     <h4 className="font-bold text-foreground text-xs flex items-center gap-1.5">
                       <User className="w-3.5 h-3.5 text-primary" />
-                      بيانات المؤمّن له
+                      {ck.insuredData}
                     </h4>
                     {[
-                      { label: "الاسم الكامل", value: customer.full_name },
-                      { label: "رقم الهوية", value: customer.national_id },
-                      { label: "رقم الجوال", value: customer.phone },
+                      { label: ck.fullName, value: customer.full_name },
+                      { label: ck.nationalId, value: customer.national_id },
+                      { label: ck.phoneNumber, value: customer.phone },
                     ].filter(item => item.value).map((item, i) => (
                       <div key={i} className="flex items-center justify-between py-1 border-b border-border/30 last:border-0">
                         <span className="text-xs font-medium text-foreground">{item.value}</span>
@@ -459,17 +459,17 @@ const InsuranceCheckout = () => {
                   <div className="space-y-1">
                     <h4 className="font-bold text-foreground text-xs flex items-center gap-1.5">
                       <Car className="w-3.5 h-3.5 text-primary" />
-                      بيانات المركبة
+                      {ck.vehicleData}
                     </h4>
                     {[
-                      { label: "الشركة المصنعة", value: customer.vehicle_make },
-                      { label: "الموديل", value: customer.vehicle_model },
-                      { label: "سنة الصنع", value: customer.vehicle_year },
-                      { label: "الرقم التسلسلي", value: customer.serial_number },
-                      { label: "عدد الركاب", value: customer.passenger_count },
-                      { label: "غرض الاستخدام", value: customer.vehicle_usage === "personal" ? "شخصي" : customer.vehicle_usage === "commercial" ? "تجاري" : customer.vehicle_usage },
-                      { label: "القيمة التقديرية", value: customer.estimated_value || null },
-                      { label: "مكان التصليح", value: customer.repair_location === "agency" ? "الوكالة" : customer.repair_location === "workshop" ? "ورشة" : customer.repair_location },
+                      { label: ck.manufacturer, value: customer.vehicle_make },
+                      { label: ck.model, value: customer.vehicle_model },
+                      { label: ck.yearOfMake, value: customer.vehicle_year },
+                      { label: ck.serialNumber, value: customer.serial_number },
+                      { label: ck.passengerCount, value: customer.passenger_count },
+                      { label: ck.vehicleUsage, value: customer.vehicle_usage === "personal" ? ck.personal : customer.vehicle_usage === "commercial" ? ck.commercial : customer.vehicle_usage },
+                      { label: ck.estimatedValue, value: customer.estimated_value || null },
+                      { label: ck.repairLocation, value: customer.repair_location === "agency" ? ck.agencyRepair : customer.repair_location === "workshop" ? ck.workshopRepair : customer.repair_location },
                     ].filter(item => item.value).map((item, i) => (
                       <div key={i} className="flex items-center justify-between py-1 border-b border-border/30 last:border-0">
                         <span className="text-xs font-medium text-foreground">{item.value}</span>
