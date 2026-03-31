@@ -14,7 +14,7 @@ const WhyChooseUs = ({ activeTab = "vehicles" }: WhyChooseUsProps) => {
   const content = t.whyChooseUs[tabKey] || t.whyChooseUs.vehicles;
 
   return (
-    <section className="py-16 lg:py-24 bg-background">
+    <section className="py-10 lg:py-14 bg-background">
       <div className="section-container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
