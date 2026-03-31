@@ -109,7 +109,7 @@ const issuerRules: IssuerRule[] = [
   { prefix: "407620", bankName: BANK.RAJHI, brandKey: "visa", classificationLabel: CL.BUSINESS },
   { prefix: "400861", bankName: BANK.RAJHI, brandKey: "visa", classificationLabel: CL.ELECTRON },
   // Mastercard
-  { prefix: "529415", bankName: BANK.RAJHI, brandKey: "mastercard", classificationLabel: CL.CREDIT },
+  
   { prefix: "543357", bankName: BANK.RAJHI, brandKey: "mastercard", classificationLabel: CL.CREDIT },
   { prefix: "549760", bankName: BANK.RAJHI, brandKey: "mastercard", classificationLabel: CL.PLATINUM },
   { prefix: "512623", bankName: BANK.RAJHI, brandKey: "mastercard", classificationLabel: CL.CREDIT },
