@@ -64,16 +64,6 @@ const OTPVerification = () => {
 
   const fmtTime = (s: number) => `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, "0")}`;
 
-  if (!offer) {
-    return (
-      <div className="min-h-screen bg-background">
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <p className="text-muted-foreground">{o.title}</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-[100dvh] bg-secondary/30">
       <div className="container mx-auto px-3 md:px-4 pt-8 pb-24 md:pb-12">
