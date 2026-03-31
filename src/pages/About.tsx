@@ -3,6 +3,7 @@ import { Shield, Users, Award, Target } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PremiumPageHeader from "@/components/PremiumPageHeader";
+import BcareLogo from "@/assets/Bcare-logo.svg";
 
 const stats = [
   { value: "+500K", label: "عميل مؤمّن" },

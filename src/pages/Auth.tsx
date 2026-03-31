@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Eye, EyeOff, Shield } from "lucide-react";
 import heroInsuranceBg from "@/assets/hero-insurance-bg.jpg";
+import BcareLogo from "@/assets/Bcare-logo.svg";
 import FloatingParticles from "@/components/FloatingParticles";
 
 const inputClasses =
@@ -68,7 +69,7 @@ const Auth = () => {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md relative z-10">
         {/* Logo */}
         <Link to="/" className="block text-center mb-8">
-          <span className="text-3xl font-bold text-primary-foreground"><span>B</span><span className="text-cta">Care</span></span>
+          <img src={BcareLogo} alt="BCare" className="h-10 mx-auto brightness-0 invert" />
         </Link>
 
         {/* Card */}
