@@ -3,6 +3,7 @@ import { MessageCircle, X, Send, Bot, User, Headphones } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 interface Message {
   id: string;
@@ -19,6 +20,8 @@ const ChatWidget = () => {
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [mode, setMode] = useState<"bot" | "agent">("bot");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { t, lang } = useLanguage();
+  const c = t.chat;
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -61,14 +64,13 @@ const ChatWidget = () => {
     if (convId) {
       setConversationId(convId as string);
       sessionStorage.setItem("chat_session_token", token);
-      // Link conversation to visitor via RPC
       const sid = sessionStorage.getItem("visitor_sid");
       if (sid) {
         await supabase.rpc("link_visitor_data", { p_session_id: sid });
       }
       const welcomeMsg: Message = {
         id: "welcome",
-        content: "مرحباً! 👋 أنا المساعد الذكي لبي كير BCare. كيف يمكنني مساعدتك اليوم؟\n\nيمكنك سؤالي عن:\n- أنواع التأمين المتاحة\n- كيفية تقديم طلب\n- تقديم مطالبة\n\nأو اطلب **التحدث مع موظف** للدعم المباشر.",
+        content: c.welcome,
         sender_type: "bot",
         created_at: new Date().toISOString(),
       };
@@ -100,7 +102,7 @@ const ChatWidget = () => {
 
       const transferMsg: Message = {
         id: `transfer-${Date.now()}`,
-        content: "تم تحويلك لفريق الدعم. سيتواصل معك أحد موظفينا قريباً... ⏳",
+        content: c.transferMsg,
         sender_type: "bot",
         created_at: new Date().toISOString(),
       };
@@ -147,12 +149,12 @@ const ChatWidget = () => {
         chatHistory.push({ role: "user", content: userMsg.content });
 
         const { data, error } = await supabase.functions.invoke("chat-ai", {
-          body: { messages: chatHistory },
+          body: { messages: chatHistory, lang },
         });
 
         if (error) throw error;
 
-        const reply = data?.reply || "عذراً، حدث خطأ.";
+        const reply = data?.reply || c.fallbackError;
 
         if (reply.includes("[TRANSFER_TO_AGENT]")) {
           await transferToAgent();
@@ -175,7 +177,7 @@ const ChatWidget = () => {
         console.error("Chat error:", err);
         const errMsg: Message = {
           id: `err-${Date.now()}`,
-          content: "عذراً، حدث خطأ. حاول مرة أخرى.",
+          content: c.errorMsg,
           sender_type: "bot",
           created_at: new Date().toISOString(),
         };
@@ -222,10 +224,10 @@ const ChatWidget = () => {
                 )}
                 <div>
                   <p className="font-bold text-sm">
-                    {mode === "bot" ? "المساعد الذكي" : "الدعم المباشر"}
+                    {mode === "bot" ? c.botTitle : c.agentTitle}
                   </p>
                   <p className="text-xs opacity-75">
-                    {mode === "bot" ? "متصل الآن" : "بانتظار موظف الدعم..."}
+                    {mode === "bot" ? c.botOnline : c.agentWaiting}
                   </p>
                 </div>
               </div>
@@ -234,7 +236,7 @@ const ChatWidget = () => {
                   <button
                     onClick={transferToAgent}
                     className="p-1.5 hover:bg-primary-foreground/10 rounded-lg transition-colors"
-                    title="التحدث مع موظف"
+                    title={c.connectAgent}
                   >
                     <Headphones className="w-4 h-4" />
                   </button>
@@ -296,7 +298,7 @@ const ChatWidget = () => {
                 <input
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder="اكتب رسالتك..."
+                  placeholder={c.placeholder}
                   className="flex-1 px-3 py-2 rounded-xl bg-secondary text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-1 focus:ring-primary/30"
                   disabled={loading}
                 />
