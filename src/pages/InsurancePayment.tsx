@@ -640,7 +640,7 @@ const InsurancePayment = () => {
             className="flex items-center justify-center gap-2 mx-auto mt-5 text-xs text-muted-foreground hover:text-primary transition-colors group"
           >
             <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
-            العودة لملخص الطلب
+            {p.backToSummary}
           </button>
         </div>
       </div>
