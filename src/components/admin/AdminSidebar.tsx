@@ -105,8 +105,8 @@ const AdminSidebar = ({ activeTab, setActiveTab, pendingCounts = {} }: Props) =>
                 onClick={() => handleTabClick(item.id)}
                 className={`w-full flex items-center gap-2.5 px-2.5 py-2.5 md:py-2 rounded-lg text-sm md:text-xs font-medium transition-all ${
                   activeTab === item.id
-                    ? "bg-cta text-white shadow-sm shadow-cta/20"
-                    : "text-white/60 hover:bg-white/5 hover:text-white"
+                    ? "bg-cta text-cta-foreground shadow-sm shadow-cta/20"
+                    : "text-muted-foreground hover:bg-secondary hover:text-foreground"
                 }`}
               >
                 <item.icon className="w-5 h-5 md:w-4 md:h-4 shrink-0" />
