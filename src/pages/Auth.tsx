@@ -19,7 +19,7 @@ const Auth = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [form, setForm] = useState({ email: "", password: "", full_name: "", phone: "" });
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, dir } = useLanguage();
   const a = t.auth;
 
   const handleSubmit = async (e: React.FormEvent) => {
