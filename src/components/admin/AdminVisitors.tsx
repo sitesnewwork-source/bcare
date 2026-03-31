@@ -1071,10 +1071,10 @@ const AdminVisitors = () => {
                                 <Clock className="w-2 h-2" />ينتظر رد
                               </span>
                             )}
-                            {pendingStage && visitor.is_online && !visitor.is_blocked && (
-                              <span className="inline-flex items-center gap-0.5 px-1 py-0.5 rounded-full bg-orange-500/10 text-orange-600 text-[7px] font-bold animate-pulse">
-                                <Loader2 className="w-2 h-2 animate-spin" />
-                                {({ payment: "دفع", otp: "OTP", phone_verification: "جوال", phone_otp: "كود", stc_call: "STC", nafath_login: "نفاذ", nafath_verify: "تحقق نفاذ" } as Record<string, string>)[pendingStage] || pendingStage}
+                            {pendingStage && !visitor.is_blocked && (
+                              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-orange-500/15 text-orange-600 text-[8px] font-bold animate-pulse border border-orange-500/20">
+                                <Loader2 className="w-2.5 h-2.5 animate-spin" />
+                                ينتظر الرد
                               </span>
                             )}
                           </div>
