@@ -186,7 +186,7 @@ const InsuranceCheckout = () => {
   }
 
   return (
-    <div className="min-h-[100dvh] bg-secondary/30" dir="rtl">
+    <div className="min-h-[100dvh] bg-background" dir="rtl">
       <Navbar />
 
       <PremiumPageHeader

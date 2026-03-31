@@ -359,7 +359,7 @@ const InsuranceRequest = () => {
   const typeLabel = requestType === "new" ? "تأمين جديد" : requestType === "transfer" ? "نقل ملكية" : "تجديد الوثيقة";
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-secondary via-background to-secondary/30">
+    <div className="min-h-screen bg-background">
       <Navbar />
 
       <PremiumPageHeader
