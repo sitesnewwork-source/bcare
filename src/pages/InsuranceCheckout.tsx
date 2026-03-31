@@ -360,7 +360,7 @@ const InsuranceCheckout = () => {
                 className="rounded-xl py-4 gap-1.5 border-primary/20 text-primary hover:bg-primary/5 text-xs"
               >
                 <Eye className="w-3.5 h-3.5" />
-                البوليصة المسودة
+                {ck.draftPolicy}
               </Button>
               <Button
                 variant="outline"
