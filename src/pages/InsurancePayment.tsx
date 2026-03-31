@@ -564,7 +564,7 @@ const InsurancePayment = () => {
                               {p.processing}
                             </span>
                           ) : (
-                            `ادفع ${totalPrice.toLocaleString()} ر.س`
+                            `${p.payAmount} ${totalPrice.toLocaleString()} ${p.sar}`
                           )}
                         </Button>
                       </motion.div>
