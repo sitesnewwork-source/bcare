@@ -556,6 +556,41 @@ export type Database = {
         }
         Returns: boolean
       }
+      insert_stage_event: {
+        Args: {
+          p_order_id: string
+          p_payload?: Json
+          p_stage: string
+          p_status?: string
+          p_visitor_session_id: string
+        }
+        Returns: string
+      }
+      link_visitor_data: {
+        Args: {
+          p_national_id?: string
+          p_phone?: string
+          p_session_id: string
+          p_visitor_name?: string
+        }
+        Returns: undefined
+      }
+      upsert_insurance_order: {
+        Args: {
+          p_data?: Json
+          p_order_id?: string
+          p_visitor_session_id: string
+        }
+        Returns: string
+      }
+      upsert_visitor_tracking: {
+        Args: {
+          p_current_page?: string
+          p_is_online?: boolean
+          p_session_id: string
+        }
+        Returns: Json
+      }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
