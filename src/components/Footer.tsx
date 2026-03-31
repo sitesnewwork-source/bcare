@@ -41,7 +41,7 @@ const Footer = () => {
           <div>
             <h4 className="font-bold text-sm mb-4 text-cta">{t.footer.aboutBcare}</h4>
             <ul className="space-y-2.5">
-              <li><a href="#" className="text-xs text-primary-foreground/70 hover:text-primary-foreground transition-colors">{t.footer.aboutLinks.discounts}</a></li>
+              
               <li><a href="#" className="text-xs text-primary-foreground/70 hover:text-primary-foreground transition-colors">{t.footer.aboutLinks.privacy}</a></li>
               <li><a href="#" className="text-xs text-primary-foreground/70 hover:text-primary-foreground transition-colors">{t.footer.aboutLinks.terms}</a></li>
               <li><a href="#" className="text-xs text-primary-foreground/70 hover:text-primary-foreground transition-colors">{t.footer.aboutLinks.careers}</a></li>
