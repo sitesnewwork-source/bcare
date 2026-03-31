@@ -510,7 +510,7 @@ const InsuranceRequest = () => {
                     >
                       <label className="flex items-center gap-2 text-sm font-black text-foreground">
                         <FileText className="w-3.5 h-3.5" />
-                        رفع صورة الاستمارة / المستند
+                        {r.upload.title}
                       </label>
 
                       <input
