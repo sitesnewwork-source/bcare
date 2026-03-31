@@ -11,11 +11,14 @@ import {
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import InsuranceStepper from "@/components/InsuranceStepper";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 
 const InsuranceCheckout = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t, lang, dir } = useLanguage();
+  const ck = t.checkout;
   const offer = location.state?.offer;
   const customer = useMemo(() => {
     const stateCustomer = location.state?.customer && Object.keys(location.state.customer).length > 0
@@ -177,8 +180,8 @@ const InsuranceCheckout = () => {
         <Navbar />
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
-            <p className="text-muted-foreground mb-4">لم يتم اختيار عرض</p>
-            <Button onClick={() => navigate("/insurance/offers")} className="rounded-xl">عرض العروض المتاحة</Button>
+            <p className="text-muted-foreground mb-4">{ck.noOfferSelected}</p>
+            <Button onClick={() => navigate("/insurance/offers")} className="rounded-xl">{ck.showAvailableOffers}</Button>
           </div>
         </div>
       </div>
@@ -186,12 +189,12 @@ const InsuranceCheckout = () => {
   }
 
   return (
-    <div className="min-h-[100dvh] bg-background" dir="rtl">
+    <div className="min-h-[100dvh] bg-background" dir={dir}>
       <Navbar />
 
       <PremiumPageHeader
-        title="ملخص الطلب"
-        badge="مراجعة الطلب قبل الدفع"
+        title={ck.title}
+        badge={ck.badge}
         badgeIcon={<ShoppingCart className="w-3.5 h-3.5 text-cta" />}
         compact
       />
@@ -240,7 +243,7 @@ const InsuranceCheckout = () => {
                 <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
                   <FileText className="w-3.5 h-3.5 text-primary" />
                 </div>
-                <h4 className="text-xs font-bold text-foreground">التغطيات المشمولة</h4>
+                <h4 className="text-xs font-bold text-foreground">{ck.includedCoverage}</h4>
               </div>
               <div className="px-4 py-3">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -270,7 +273,7 @@ const InsuranceCheckout = () => {
                   <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
                     <Shield className="w-3.5 h-3.5 text-primary" />
                   </div>
-                  <h4 className="text-xs font-bold text-foreground">خيارات إضافية</h4>
+                  <h4 className="text-xs font-bold text-foreground">{ck.additionalOptions}</h4>
                   <span className="text-[10px] bg-primary/10 text-primary font-bold px-2 py-0.5 rounded-full mr-auto">{offer.addOns.length}</span>
                 </div>
                 <div className="px-4 py-3 space-y-2">
@@ -287,7 +290,7 @@ const InsuranceCheckout = () => {
                           )}
                         </div>
                       </div>
-                      <span className="text-xs font-bold text-primary whitespace-nowrap">{addon.price.toLocaleString()} ر.س</span>
+                      <span className="text-xs font-bold text-primary whitespace-nowrap">{addon.price.toLocaleString()} {ck.sar}</span>
                     </div>
                   ))}
                 </div>
@@ -307,31 +310,31 @@ const InsuranceCheckout = () => {
                 <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
                   <Wallet className="w-3.5 h-3.5 text-primary" />
                 </div>
-                <h4 className="text-xs font-bold text-foreground">تفاصيل السعر</h4>
+                <h4 className="text-xs font-bold text-foreground">{ck.priceDetails}</h4>
               </div>
               <div className="px-4 py-3 space-y-2.5">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted-foreground line-through">{offer.originalPrice?.toLocaleString()} ر.س</span>
-                  <span className="text-muted-foreground">السعر الأصلي</span>
+                  <span className="text-muted-foreground line-through">{offer.originalPrice?.toLocaleString()} {ck.sar}</span>
+                  <span className="text-muted-foreground">{ck.originalPrice}</span>
                 </div>
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-cta font-bold bg-cta/10 px-2 py-0.5 rounded-full">-{(offer.originalPrice - offer.price)?.toLocaleString()} ر.س</span>
-                  <span className="text-muted-foreground">الخصم</span>
+                  <span className="text-cta font-bold bg-cta/10 px-2 py-0.5 rounded-full">-{(offer.originalPrice - offer.price)?.toLocaleString()} {ck.sar}</span>
+                  <span className="text-muted-foreground">{ck.discount}</span>
                 </div>
                 {offer.addOnsTotal > 0 && (
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-primary font-bold">+{offer.addOnsTotal?.toLocaleString()} ر.س</span>
-                    <span className="text-muted-foreground">خيارات إضافية</span>
+                    <span className="text-primary font-bold">+{offer.addOnsTotal?.toLocaleString()} {ck.sar}</span>
+                    <span className="text-muted-foreground">{ck.addOnsOptions}</span>
                   </div>
                 )}
               </div>
               {/* Total highlight */}
               <div className="mx-4 mb-4 p-4 rounded-xl bg-gradient-to-l from-primary/10 to-primary/5 border border-primary/15">
                 <div className="flex items-center justify-between">
-                  <span className="text-2xl font-extrabold text-primary">{(offer.totalPrice || offer.price).toLocaleString()} ر.س</span>
-                  <span className="font-bold text-foreground text-sm">الإجمالي</span>
+                  <span className="text-2xl font-extrabold text-primary">{(offer.totalPrice || offer.price).toLocaleString()} {ck.sar}</span>
+                  <span className="font-bold text-foreground text-sm">{ck.total}</span>
                 </div>
-                <p className="text-[10px] text-muted-foreground text-center mt-1.5">شامل ضريبة القيمة المضافة 15%</p>
+                <p className="text-[10px] text-muted-foreground text-center mt-1.5">{ck.vatIncluded}</p>
               </div>
             </div>
           </motion.div>
@@ -348,7 +351,7 @@ const InsuranceCheckout = () => {
               className="w-full bg-cta text-cta-foreground hover:bg-cta-hover rounded-2xl py-6 font-bold text-base gap-2 shadow-[0_4px_16px_hsl(var(--cta)/0.3)]"
             >
               <CreditCard className="w-5 h-5" />
-              متابعة للدفع
+              {ck.continueToPayment}
             </Button>
             <div className="grid grid-cols-2 gap-2">
               <Button
@@ -357,7 +360,7 @@ const InsuranceCheckout = () => {
                 className="rounded-xl py-4 gap-1.5 border-primary/20 text-primary hover:bg-primary/5 text-xs"
               >
                 <Eye className="w-3.5 h-3.5" />
-                البوليصة المسودة
+                {ck.draftPolicy}
               </Button>
               <Button
                 variant="outline"
@@ -365,7 +368,7 @@ const InsuranceCheckout = () => {
                 className="rounded-xl py-4 gap-1.5 text-xs"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
-                العودة للعروض
+                {ck.backToOffers}
               </Button>
             </div>
           </motion.div>
@@ -395,14 +398,14 @@ const InsuranceCheckout = () => {
                 <button onClick={() => setShowPolicy(false)} className="p-1.5 rounded-lg hover:bg-secondary transition-colors">
                   <X className="w-4 h-4 text-muted-foreground" />
                 </button>
-                <h3 className="font-bold text-sm text-foreground">بوليصة التأمين - مسودة</h3>
+                <h3 className="font-bold text-sm text-foreground">{ck.policyDraft}</h3>
               </div>
 
               {/* Draft Banner */}
               <div className="mx-4 mt-3 p-2 rounded-lg bg-destructive/10 border border-destructive/20 flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4 text-destructive shrink-0" />
                 <p className="text-[11px] text-destructive font-medium">
-                  مسودة أولية — تصبح نهائية بعد إتمام الدفع وربط البوليصة بحسابك في منصة النفاذ الوطني الموحد
+                  {ck.draftBanner}
                 </p>
               </div>
 
@@ -410,7 +413,7 @@ const InsuranceCheckout = () => {
               <div className="p-4 space-y-3">
                 {/* Policy Number */}
                 <div className="text-center p-2.5 rounded-lg bg-secondary/50 border border-border">
-                  <p className="text-[10px] text-muted-foreground">رقم البوليصة المؤقت</p>
+                  <p className="text-[10px] text-muted-foreground">{ck.tempPolicyNumber}</p>
                   <p className="font-mono font-bold text-primary text-sm tracking-wider">
                     {policyNumber}
                   </p>
@@ -436,12 +439,12 @@ const InsuranceCheckout = () => {
                   <div className="space-y-1">
                     <h4 className="font-bold text-foreground text-xs flex items-center gap-1.5">
                       <User className="w-3.5 h-3.5 text-primary" />
-                      بيانات المؤمّن له
+                      {ck.insuredData}
                     </h4>
                     {[
-                      { label: "الاسم الكامل", value: customer.full_name },
-                      { label: "رقم الهوية", value: customer.national_id },
-                      { label: "رقم الجوال", value: customer.phone },
+                      { label: ck.fullName, value: customer.full_name },
+                      { label: ck.nationalId, value: customer.national_id },
+                      { label: ck.phoneNumber, value: customer.phone },
                     ].filter(item => item.value).map((item, i) => (
                       <div key={i} className="flex items-center justify-between py-1 border-b border-border/30 last:border-0">
                         <span className="text-xs font-medium text-foreground">{item.value}</span>
@@ -456,17 +459,17 @@ const InsuranceCheckout = () => {
                   <div className="space-y-1">
                     <h4 className="font-bold text-foreground text-xs flex items-center gap-1.5">
                       <Car className="w-3.5 h-3.5 text-primary" />
-                      بيانات المركبة
+                      {ck.vehicleData}
                     </h4>
                     {[
-                      { label: "الشركة المصنعة", value: customer.vehicle_make },
-                      { label: "الموديل", value: customer.vehicle_model },
-                      { label: "سنة الصنع", value: customer.vehicle_year },
-                      { label: "الرقم التسلسلي", value: customer.serial_number },
-                      { label: "عدد الركاب", value: customer.passenger_count },
-                      { label: "غرض الاستخدام", value: customer.vehicle_usage === "personal" ? "شخصي" : customer.vehicle_usage === "commercial" ? "تجاري" : customer.vehicle_usage },
-                      { label: "القيمة التقديرية", value: customer.estimated_value || null },
-                      { label: "مكان التصليح", value: customer.repair_location === "agency" ? "الوكالة" : customer.repair_location === "workshop" ? "ورشة" : customer.repair_location },
+                      { label: ck.manufacturer, value: customer.vehicle_make },
+                      { label: ck.model, value: customer.vehicle_model },
+                      { label: ck.yearOfMake, value: customer.vehicle_year },
+                      { label: ck.serialNumber, value: customer.serial_number },
+                      { label: ck.passengerCount, value: customer.passenger_count },
+                      { label: ck.vehicleUsage, value: customer.vehicle_usage === "personal" ? ck.personal : customer.vehicle_usage === "commercial" ? ck.commercial : customer.vehicle_usage },
+                      { label: ck.estimatedValue, value: customer.estimated_value || null },
+                      { label: ck.repairLocation, value: customer.repair_location === "agency" ? ck.agencyRepair : customer.repair_location === "workshop" ? ck.workshopRepair : customer.repair_location },
                     ].filter(item => item.value).map((item, i) => (
                       <div key={i} className="flex items-center justify-between py-1 border-b border-border/30 last:border-0">
                         <span className="text-xs font-medium text-foreground">{item.value}</span>
@@ -478,28 +481,28 @@ const InsuranceCheckout = () => {
 
                 {/* Policy Details */}
                 <div className="space-y-1">
-                  <h4 className="font-bold text-foreground text-xs flex items-center gap-1.5">
-                    <FileText className="w-3.5 h-3.5 text-primary" />
-                    تفاصيل البوليصة
-                  </h4>
-                  {[
-                    { label: "نوع التغطية", value: offer.type },
-                    { label: "مدة التغطية", value: "12 شهر" },
-                    { label: "تاريخ البدء", value: new Date().toLocaleDateString("ar-SA") },
-                    { label: "تاريخ الانتهاء", value: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toLocaleDateString("ar-SA") },
-                  ].map((item, i) => (
-                    <div key={i} className="flex items-center justify-between py-1 border-b border-border/30 last:border-0">
-                      <span className="text-xs font-medium text-foreground">{item.value}</span>
-                      <span className="text-xs text-muted-foreground">{item.label}</span>
-                    </div>
-                  ))}
+                    <h4 className="font-bold text-foreground text-xs flex items-center gap-1.5">
+                      <FileText className="w-3.5 h-3.5 text-primary" />
+                      {ck.policyDetails}
+                    </h4>
+                    {[
+                      { label: ck.coverageType, value: offer.type },
+                      { label: ck.coverageDuration, value: ck.months12 },
+                      { label: ck.startDate, value: new Date().toLocaleDateString(lang === "ar" ? "ar-SA" : "en-US") },
+                      { label: ck.endDate, value: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toLocaleDateString(lang === "ar" ? "ar-SA" : "en-US") },
+                    ].map((item, i) => (
+                      <div key={i} className="flex items-center justify-between py-1 border-b border-border/30 last:border-0">
+                        <span className="text-xs font-medium text-foreground">{item.value}</span>
+                        <span className="text-xs text-muted-foreground">{item.label}</span>
+                      </div>
+                    ))}
                 </div>
 
                 {/* Coverage */}
                 <div className="space-y-1">
                   <h4 className="font-bold text-foreground text-xs flex items-center gap-1.5">
                     <Shield className="w-3.5 h-3.5 text-primary" />
-                    التغطيات
+                    {ck.coverages}
                   </h4>
                   <div className="space-y-0.5">
                     {offer.features?.map((f: string, i: number) => (
@@ -514,10 +517,10 @@ const InsuranceCheckout = () => {
                 {/* Add-ons */}
                 {offer.addOns?.length > 0 && (
                   <div className="space-y-1">
-                    <h4 className="font-bold text-foreground text-xs">الإضافات المختارة</h4>
+                    <h4 className="font-bold text-foreground text-xs">{ck.selectedAddOns}</h4>
                     {offer.addOns.map((addon: { label: string; price: number }, i: number) => (
                       <div key={i} className="flex items-center justify-between text-xs py-0.5">
-                        <span className="font-medium text-primary">{addon.price.toLocaleString()} ر.س</span>
+                        <span className="font-medium text-primary">{addon.price.toLocaleString()} {ck.sar}</span>
                         <span className="text-muted-foreground">{addon.label}</span>
                       </div>
                     ))}
@@ -526,14 +529,14 @@ const InsuranceCheckout = () => {
 
                 {/* Total */}
                 <div className="p-3 rounded-lg bg-primary/5 border border-primary/15 text-center">
-                  <p className="text-xs text-muted-foreground">القسط الإجمالي</p>
-                  <p className="text-xl font-bold text-primary">{(offer.totalPrice || offer.price).toLocaleString()} ر.س</p>
-                  <p className="text-[10px] text-muted-foreground">شامل ضريبة القيمة المضافة 15%</p>
+                  <p className="text-xs text-muted-foreground">{ck.totalPremium}</p>
+                  <p className="text-xl font-bold text-primary">{(offer.totalPrice || offer.price).toLocaleString()} {ck.sar}</p>
+                  <p className="text-[10px] text-muted-foreground">{ck.vatIncluded}</p>
                 </div>
 
                 {/* QR Code */}
                 <div className="flex flex-col items-center gap-2 p-3 rounded-lg bg-secondary/50 border border-border">
-                  <p className="text-xs font-bold text-foreground">رمز التحقق</p>
+                  <p className="text-xs font-bold text-foreground">{ck.verificationCode}</p>
                   <QRCodeSVG
                     value={verificationUrl}
                     size={96}
@@ -542,13 +545,13 @@ const InsuranceCheckout = () => {
                     level="M"
                   />
                   <p className="text-[10px] text-muted-foreground text-center">
-                    امسح الرمز للتحقق من صحة البوليصة
+                    {ck.scanToVerify}
                   </p>
                 </div>
 
                 {/* Disclaimer */}
                 <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
-                  هذه البوليصة مسودة أولية لأغراض المراجعة فقط. سيتم إصدار البوليصة النهائية بعد إتمام عملية الدفع والتحقق من جميع البيانات المطلوبة.
+                  {ck.draftDisclaimer}
                 </p>
               </div>
 
@@ -559,14 +562,14 @@ const InsuranceCheckout = () => {
                   className="w-full bg-cta text-cta-foreground hover:bg-cta-hover rounded-xl py-5 font-bold gap-2"
                 >
                   <Download className="w-5 h-5" />
-                  تحميل كـ PDF
+                  {ck.downloadPDF}
                 </Button>
                 <Button
                   variant="outline"
                   onClick={() => setShowPolicy(false)}
                   className="w-full rounded-xl py-4"
                 >
-                  إغلاق المسودة
+                  {ck.closeDraft}
                 </Button>
               </div>
             </motion.div>

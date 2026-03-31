@@ -5,34 +5,17 @@ import { companyLogos } from "@/lib/companyLogos";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import PremiumPageHeader from "@/components/PremiumPageHeader";
-import {
-  Check, X, Star, ArrowRight, ShieldCheck, Car
-} from "lucide-react";
+import { Check, X, Star, ArrowRight, ShieldCheck, Car } from "lucide-react";
+import { useLanguage } from "@/i18n/LanguageContext";
 
-interface Feature {
-  label: string;
-  included: boolean;
-}
-
+interface Feature { label: string; included: boolean; }
 interface Offer {
-  id: string;
-  company: string;
-  companyEn: string;
-  logoInitials: string;
-  logoColor: string;
-  logoBg: string;
-  type: string;
-  typeLabel: string;
-  price: number;
-  originalPrice: number;
-  monthlyPrice: number;
-  rating: number;
-  reviewCount: number;
-  features: Feature[];
-  highlights: string[];
+  id: string; company: string; companyEn: string; logoInitials: string;
+  logoColor: string; logoBg: string; type: string; typeLabel: string;
+  price: number; originalPrice: number; monthlyPrice: number;
+  rating: number; reviewCount: number; features: Feature[]; highlights: string[];
 }
 
-/* collect all unique feature labels across offers */
 const getAllFeatures = (offers: Offer[]): string[] => {
   const set = new Set<string>();
   offers.forEach((o) => o.features.forEach((f) => set.add(f.label)));
@@ -42,6 +25,8 @@ const getAllFeatures = (offers: Offer[]): string[] => {
 const InsuranceCompare = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t, dir } = useLanguage();
+  const c = t.compare;
   const offers: Offer[] = location.state?.offers ?? [];
 
   if (offers.length < 2) {
@@ -51,8 +36,8 @@ const InsuranceCompare = () => {
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center space-y-4">
             <Car className="w-12 h-12 text-muted-foreground mx-auto" />
-            <p className="text-muted-foreground">يرجى اختيار عرضين على الأقل للمقارنة</p>
-            <Button onClick={() => navigate("/insurance/offers")} className="rounded-xl">عرض العروض</Button>
+            <p className="text-muted-foreground">{c.selectAtLeast2}</p>
+            <Button onClick={() => navigate("/insurance/offers")} className="rounded-xl">{c.showOffers}</Button>
           </div>
         </div>
       </div>
@@ -67,11 +52,8 @@ const InsuranceCompare = () => {
     navigate("/insurance/payment", {
       state: {
         offer: {
-          id: offer.id,
-          company: offer.company,
-          type: offer.typeLabel,
-          price: offer.price,
-          originalPrice: offer.originalPrice,
+          id: offer.id, company: offer.company, type: offer.typeLabel,
+          price: offer.price, originalPrice: offer.originalPrice,
           logoInitials: offer.logoInitials,
           features: offer.features.filter((f) => f.included).map((f) => f.label),
         },
@@ -80,35 +62,32 @@ const InsuranceCompare = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background" dir="rtl">
+    <div className="min-h-screen bg-background" dir={dir}>
       <Navbar />
-
       <PremiumPageHeader
-        title="مقارنة العروض"
-        subtitle={`قارن بين ${offers.length} عروض تأمين جنباً إلى جنب`}
-        badge="مقارنة تفصيلية"
+        title={c.title}
+        subtitle={c.subtitleTemplate.replace("{n}", String(offers.length))}
+        badge={c.badge}
         badgeIcon={<ShieldCheck className="w-3.5 h-3.5 text-cta" />}
         compact
       />
 
       <div className="container mx-auto px-4 -mt-8 pb-12">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-          {/* Back link */}
           <button
             onClick={() => navigate("/insurance/offers")}
             className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 mb-6 font-medium"
           >
             <ArrowRight className="w-4 h-4" />
-            العودة للعروض
+            {c.backToOffers}
           </button>
 
           <div className="bg-card rounded-2xl border border-border shadow-sm overflow-x-auto">
             <table className="w-full min-w-[600px]">
-              {/* Company headers */}
               <thead>
                 <tr>
                   <th className="p-4 text-right text-sm font-bold text-muted-foreground bg-secondary/50 w-[180px] sticky right-0 z-10">
-                    المقارنة
+                    {c.comparison}
                   </th>
                   {offers.map((offer) => (
                     <th key={offer.id} className="p-4 text-center min-w-[200px]">
@@ -124,13 +103,12 @@ const InsuranceCompare = () => {
                           <p className="font-bold text-foreground text-sm">{offer.company}</p>
                           <p className="text-[11px] text-muted-foreground">{offer.companyEn}</p>
                         </div>
-                        {/* Badges */}
                         <div className="flex gap-1.5">
                           {offer.id === cheapest.id && (
-                            <span className="text-[10px] bg-cta/10 text-cta px-2 py-0.5 rounded-full font-bold">الأقل سعراً</span>
+                            <span className="text-[10px] bg-cta/10 text-cta px-2 py-0.5 rounded-full font-bold">{c.lowestPrice}</span>
                           )}
                           {offer.id === bestRated.id && (
-                            <span className="text-[10px] bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-bold">الأعلى تقييماً</span>
+                            <span className="text-[10px] bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-bold">{c.highestRated}</span>
                           )}
                         </div>
                       </div>
@@ -138,44 +116,35 @@ const InsuranceCompare = () => {
                   ))}
                 </tr>
               </thead>
-
               <tbody>
-                {/* Type */}
-                <CompareRow label="نوع التأمين" icon="🛡️">
+                <CompareRow label={c.insuranceType} icon="🛡️">
                   {offers.map((o) => (
                     <td key={o.id} className="p-4 text-center">
                       <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold ${
-                        o.type === "comprehensive"
-                          ? "bg-primary/10 text-primary"
-                          : "bg-secondary text-muted-foreground"
-                      }`}>
-                        {o.typeLabel}
-                      </span>
+                        o.type === "comprehensive" ? "bg-primary/10 text-primary" : "bg-secondary text-muted-foreground"
+                      }`}>{o.typeLabel}</span>
                     </td>
                   ))}
                 </CompareRow>
 
-                {/* Price */}
-                <CompareRow label="السعر السنوي" icon="💰" highlight>
+                <CompareRow label={c.annualPrice} icon="💰" highlight>
                   {offers.map((o) => (
                     <td key={o.id} className="p-4 text-center">
-                      <p className="text-xl font-bold text-primary">{o.price.toLocaleString()} <span className="text-xs">ر.س</span></p>
-                      <p className="text-xs text-muted-foreground line-through">{o.originalPrice.toLocaleString()} ر.س</p>
+                      <p className="text-xl font-bold text-primary">{o.price.toLocaleString()} <span className="text-xs">{c.sar}</span></p>
+                      <p className="text-xs text-muted-foreground line-through">{o.originalPrice.toLocaleString()} {c.sar}</p>
                     </td>
                   ))}
                 </CompareRow>
 
-                {/* Monthly */}
-                <CompareRow label="القسط الشهري" icon="📅">
+                <CompareRow label={c.monthlyPremium} icon="📅">
                   {offers.map((o) => (
                     <td key={o.id} className="p-4 text-center">
-                      <p className="font-bold text-foreground">{o.monthlyPrice} <span className="text-xs text-muted-foreground">ر.س/شهر</span></p>
+                      <p className="font-bold text-foreground">{o.monthlyPrice} <span className="text-xs text-muted-foreground">{c.sarPerMonth}</span></p>
                     </td>
                   ))}
                 </CompareRow>
 
-                {/* Discount */}
-                <CompareRow label="نسبة الخصم" icon="🏷️">
+                <CompareRow label={c.discountRate} icon="🏷️">
                   {offers.map((o) => {
                     const d = Math.round(((o.originalPrice - o.price) / o.originalPrice) * 100);
                     return (
@@ -186,8 +155,7 @@ const InsuranceCompare = () => {
                   })}
                 </CompareRow>
 
-                {/* Rating */}
-                <CompareRow label="التقييم" icon="⭐">
+                <CompareRow label={c.rating} icon="⭐">
                   {offers.map((o) => (
                     <td key={o.id} className="p-4 text-center">
                       <div className="flex items-center justify-center gap-1.5">
@@ -199,17 +167,15 @@ const InsuranceCompare = () => {
                   ))}
                 </CompareRow>
 
-                {/* Separator */}
                 <tr>
                   <td colSpan={offers.length + 1} className="px-4 py-2">
                     <div className="flex items-center gap-2">
                       <ShieldCheck className="w-4 h-4 text-primary" />
-                      <span className="text-sm font-bold text-foreground">التغطيات والمزايا</span>
+                      <span className="text-sm font-bold text-foreground">{c.coverageAndBenefits}</span>
                     </div>
                   </td>
                 </tr>
 
-                {/* Features */}
                 {allFeatures.map((feat, idx) => (
                   <CompareRow key={feat} label={feat} alt={idx % 2 === 0}>
                     {offers.map((o) => {
@@ -232,7 +198,6 @@ const InsuranceCompare = () => {
                   </CompareRow>
                 ))}
 
-                {/* CTA row */}
                 <tr>
                   <td className="p-4 bg-secondary/50 sticky right-0 z-10" />
                   {offers.map((o) => (
@@ -241,7 +206,7 @@ const InsuranceCompare = () => {
                         onClick={() => handleSelect(o)}
                         className="bg-cta text-cta-foreground hover:bg-cta-hover rounded-xl px-6 py-5 font-bold text-sm w-full max-w-[180px]"
                       >
-                        اختر هذا العرض
+                        {c.selectThisOffer}
                       </Button>
                     </td>
                   ))}
@@ -251,25 +216,15 @@ const InsuranceCompare = () => {
           </div>
         </motion.div>
       </div>
-
       <Footer />
     </div>
   );
 };
 
-/* ── helper row component ── */
 const CompareRow = ({
-  label,
-  icon,
-  highlight,
-  alt,
-  children,
+  label, icon, highlight, alt, children,
 }: {
-  label: string;
-  icon?: string;
-  highlight?: boolean;
-  alt?: boolean;
-  children: React.ReactNode;
+  label: string; icon?: string; highlight?: boolean; alt?: boolean; children: React.ReactNode;
 }) => (
   <tr className={highlight ? "bg-primary/[0.03]" : alt ? "bg-secondary/30" : ""}>
     <td className={`p-4 text-right text-sm font-medium text-foreground sticky right-0 z-10 ${highlight ? "bg-primary/[0.03]" : alt ? "bg-secondary/30" : "bg-card"}`}>

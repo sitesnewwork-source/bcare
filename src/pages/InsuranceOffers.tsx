@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PremiumPageHeader from "@/components/PremiumPageHeader";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -447,6 +448,8 @@ const mockOffers: Offer[] = [
 const InsuranceOffers = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t, dir, lang } = useLanguage();
+  const of = t.offers;
   const customerData = useMemo(() => {
     const stateCustomer = location.state && Object.keys(location.state as Record<string, unknown>).length > 0 ? location.state : null;
     if (stateCustomer) return stateCustomer;
@@ -467,11 +470,11 @@ const InsuranceOffers = () => {
   const [showAddOns, setShowAddOns] = useState<string | null>(null);
 
   const searchSteps = [
-    { icon: Search, text: "جاري تحليل بيانات مركبتك..." },
-    { icon: Building2, text: "نتواصل مع شركات التأمين المعتمدة..." },
-    { icon: Shield, text: "نقارن التغطيات والأسعار لك..." },
-    { icon: FileCheck, text: "نختار لك أفضل العروض المتاحة..." },
-    { icon: Sparkles, text: "جاهز! تم العثور على أفضل العروض" },
+    { icon: Search, text: of.searchSteps[0] },
+    { icon: Building2, text: of.searchSteps[1] },
+    { icon: Shield, text: of.searchSteps[2] },
+    { icon: FileCheck, text: of.searchSteps[3] },
+    { icon: Sparkles, text: of.searchSteps[4] },
   ];
 
   useEffect(() => {
@@ -574,7 +577,7 @@ const InsuranceOffers = () => {
   if (isSearching) {
     const CurrentIcon = searchSteps[searchStep].icon;
     return (
-      <div className="min-h-screen relative overflow-hidden flex items-center justify-center gradient-hero" dir="rtl">
+      <div className="min-h-screen relative overflow-hidden flex items-center justify-center gradient-hero" dir={dir}>
         {/* Background */}
         <div className="absolute inset-0 bg-primary/20" />
 
@@ -645,7 +648,7 @@ const InsuranceOffers = () => {
             transition={{ delay: 1 }}
             className="text-xs text-primary-foreground/40 font-medium"
           >
-            نبحث لك في أكثر من ١٥ شركة تأمين معتمدة
+            {of.searchingIn}
           </motion.p>
         </div>
       </div>
@@ -653,13 +656,13 @@ const InsuranceOffers = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background" dir="rtl">
+    <div className="min-h-screen bg-background" dir={dir}>
       <Navbar />
 
       <PremiumPageHeader
-        title="اختر التأمين الأنسب لك"
-        subtitle="قارن بين عروض أفضل شركات التأمين في المملكة واختر العرض المناسب لاحتياجاتك وميزانيتك"
-        badge="مقارنة العروض"
+        title={of.title}
+        subtitle={of.subtitle}
+        badge={of.badge}
         badgeIcon={<Shield className="w-3.5 h-3.5 text-cta" />}
         compact
       />
@@ -672,8 +675,8 @@ const InsuranceOffers = () => {
             {/* Filter tabs */}
             <div className="flex gap-2 flex-1">
               {[
-                { id: "comprehensive", label: "شامل", count: mockOffers.filter((o) => o.type === "comprehensive").length, icon: Shield },
-                { id: "third-party", label: "ضد الغير", count: mockOffers.filter((o) => o.type === "third-party").length, icon: Car },
+                { id: "comprehensive", label: of.comprehensive, count: mockOffers.filter((o) => o.type === "comprehensive").length, icon: Shield },
+                { id: "third-party", label: of.thirdParty, count: mockOffers.filter((o) => o.type === "third-party").length, icon: Car },
               ].map((f) => (
                 <button
                   key={f.id}
@@ -703,9 +706,9 @@ const InsuranceOffers = () => {
                 onChange={(e) => setSortBy(e.target.value as any)}
                 className="text-sm bg-transparent text-foreground border-none focus:outline-none font-medium cursor-pointer"
               >
-                <option value="price">الأقل سعراً</option>
-                <option value="rating">الأعلى تقييماً</option>
-                <option value="discount">الأعلى خصماً</option>
+                <option value="price">{of.sortByPrice}</option>
+                <option value="rating">{of.sortByRating}</option>
+                <option value="discount">{of.sortByDiscount}</option>
               </select>
             </div>
           </div>
@@ -739,9 +742,9 @@ const InsuranceOffers = () => {
                       ? "bg-primary text-primary-foreground"
                       : "bg-secondary text-foreground"
                   }`}>
-                    {offer.popular && "⭐ الأكثر شيوعاً"}
-                    {offer.bestValue && "💎 أفضل قيمة"}
-                    {offer.cheapest && "💰 الأقل سعراً"}
+                    {offer.popular && of.mostPopular}
+                    {offer.bestValue && of.bestValue}
+                    {offer.cheapest && of.cheapest}
                   </div>
                 )}
 
@@ -805,22 +808,22 @@ const InsuranceOffers = () => {
                       </div>
                       <p className="text-xl font-black text-primary leading-none">
                         {getOfferTotal(offer).toLocaleString()}
-                        <span className="text-[11px] font-semibold text-muted-foreground mr-1">ر.س/سنة</span>
+                        <span className="text-[11px] font-semibold text-muted-foreground mr-1">{of.perYear}</span>
                       </p>
                       {(selectedAddOns[offer.id]?.length || 0) > 0 && (
                         <p className="text-[10px] text-primary/70 mt-0.5">
-                          شامل {selectedAddOns[offer.id].length} إضافة
+                          {of.including} {selectedAddOns[offer.id].length} {of.addOn}
                         </p>
                       )}
                       <p className="text-[11px] text-muted-foreground mt-0.5">
-                        أو <span className="font-bold text-foreground">{Math.round(getOfferTotal(offer) / 12)}</span> ر.س/شهر
+                        {of.or} <span className="font-bold text-foreground">{Math.round(getOfferTotal(offer) / 12)}</span> {of.perMonth}
                       </p>
                     </div>
                     <Button
                       onClick={() => handleSelectOffer(offer)}
                       className="bg-cta text-cta-foreground hover:bg-cta-hover rounded-xl px-5 py-4 font-bold text-sm shadow-md shadow-cta/20"
                     >
-                      اختر العرض
+                      {of.selectOffer}
                     </Button>
                   </div>
 
@@ -840,7 +843,7 @@ const InsuranceOffers = () => {
                         onClick={() => setExpandedOffer(expandedOffer === offer.id ? null : offer.id)}
                         className="text-[11px] text-primary font-semibold hover:text-primary/80 transition-colors"
                       >
-                        {expandedOffer === offer.id ? "إخفاء" : "التفاصيل"}
+                        {expandedOffer === offer.id ? of.hide : of.details}
                       </button>
                       <span className="text-border">|</span>
                       <button
@@ -849,7 +852,7 @@ const InsuranceOffers = () => {
                           showAddOns === offer.id ? "text-cta" : "text-muted-foreground hover:text-foreground"
                         }`}
                       >
-                        إضافات {(selectedAddOns[offer.id]?.length || 0) > 0 && `(${selectedAddOns[offer.id].length})`}
+                        {of.addOns} {(selectedAddOns[offer.id]?.length || 0) > 0 && `(${selectedAddOns[offer.id].length})`}
                       </button>
                       <span className="text-border">|</span>
                       <button
@@ -860,7 +863,7 @@ const InsuranceOffers = () => {
                             : "text-muted-foreground hover:text-foreground"
                         }`}
                       >
-                        {compareList.includes(offer.id) ? "✓ مقارنة" : "قارن"}
+                        {compareList.includes(offer.id) ? of.compareSelected : of.compare}
                       </button>
                     </div>
                   </div>
@@ -915,7 +918,7 @@ const InsuranceOffers = () => {
                         <div className="pt-3 border-t border-border">
                           <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
                             <Plus className="w-4 h-4 text-primary" />
-                            خيارات إضافية
+                            {of.additionalOptions}
                           </h4>
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                             {offer.addOns.map((addOn) => {
@@ -941,7 +944,7 @@ const InsuranceOffers = () => {
                                     <p className="text-[10px] text-muted-foreground truncate">{addOn.description}</p>
                                   </div>
                                   <span className={`text-xs font-bold shrink-0 ${isSelected ? "text-primary" : "text-muted-foreground"}`}>
-                                    +{addOn.price} ر.س
+                                    +{addOn.price} {of.sar || "ر.س"}
                                   </span>
                                 </motion.button>
                               );
@@ -959,20 +962,20 @@ const InsuranceOffers = () => {
                                   <div className="p-2.5 bg-cta/10 border border-cta/20 rounded-xl flex items-center gap-2">
                                     <span className="text-cta text-lg">🎁</span>
                                     <div className="flex-1">
-                                      <p className="text-[11px] font-bold text-cta">خصم الحزمة المجمعة 15%</p>
-                                      <p className="text-[10px] text-muted-foreground">اخترت {breakdown.count} إضافات — وفّرت {breakdown.discount} ر.س</p>
+                                      <p className="text-[11px] font-bold text-cta">{of.bundleDiscount}</p>
+                                      <p className="text-[10px] text-muted-foreground">{of.youSelected} {breakdown.count} {of.addOnsLabel} — {of.youSaved} {breakdown.discount} {of.sar || "ر.س"}</p>
                                     </div>
-                                    <span className="text-xs font-bold text-cta line-through opacity-60">{breakdown.subtotal} ر.س</span>
+                                    <span className="text-xs font-bold text-cta line-through opacity-60">{breakdown.subtotal} {of.sar || "ر.س"}</span>
                                   </div>
                                 )}
                                 {!breakdown.hasDiscount && breakdown.count > 0 && breakdown.count < BUNDLE_THRESHOLD && (
                                   <div className="p-2 bg-muted/50 rounded-xl text-center">
-                                    <p className="text-[10px] text-muted-foreground">أضف {BUNDLE_THRESHOLD - breakdown.count} إضافة أخرى للحصول على <span className="font-bold text-primary">خصم 15%</span> على الإضافات</p>
+                                    <p className="text-[10px] text-muted-foreground">{of.addMoreForDiscount.replace("{n}", String(BUNDLE_THRESHOLD - breakdown.count))} <span className="font-bold text-primary">{of.discountLabel}</span> {of.onAddOns}</p>
                                   </div>
                                 )}
                                 <div className="p-3 bg-primary/5 rounded-xl flex items-center justify-between">
-                                  <span className="text-xs font-bold text-foreground">الإجمالي مع الإضافات:</span>
-                                  <span className="text-sm font-bold text-primary">{getOfferTotal(offer).toLocaleString()} ر.س/سنة</span>
+                                  <span className="text-xs font-bold text-foreground">{of.totalWithAddOns}</span>
+                                  <span className="text-sm font-bold text-primary">{getOfferTotal(offer).toLocaleString()} {of.perYear}</span>
                                 </div>
                               </motion.div>
                             );
@@ -998,7 +1001,7 @@ const InsuranceOffers = () => {
             >
               <SlidersHorizontal className="w-5 h-5" />
               <span className="text-sm font-bold">
-                {compareList.length} عروض محددة للمقارنة
+                {compareList.length} {of.offersSelectedForCompare}
               </span>
               <Button
                 size="sm"
@@ -1007,7 +1010,7 @@ const InsuranceOffers = () => {
                   state: { offers: mockOffers.filter((o) => compareList.includes(o.id)) },
                 })}
               >
-                قارن الآن
+                {of.compareNow}
               </Button>
               <button onClick={() => setCompareList([])} className="text-primary-foreground/60 hover:text-primary-foreground">
                 <X className="w-4 h-4" />
