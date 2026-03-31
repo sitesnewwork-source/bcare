@@ -685,7 +685,7 @@ const InsuranceRequest = () => {
                     {/* Repair Location */}
                     <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="space-y-1.5">
                       <label className="flex items-center gap-2 text-sm font-black text-foreground">
-                        <Wrench className="w-3.5 h-3.5" />مكان التصليح
+                        <Wrench className="w-3.5 h-3.5" />{r.fields.repairLocation}
                       </label>
                       <div className="grid grid-cols-2 gap-2">
                         {[
