@@ -109,7 +109,7 @@ const InsuranceCheckout = () => {
 </head>
 <body>
   <div class="header">
-    <div class="logo">tree</div>
+    <div class="logo"><span style="color:#2196a9">B</span><span style="color:#f5a623">Care</span></div>
     <div class="draft-badge">⚠ مسودة - لأغراض المراجعة فقط</div>
     <div class="policy-num">${policyNumber}</div>
   </div>
