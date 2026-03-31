@@ -14,6 +14,7 @@ import InsuranceStepper from "@/components/InsuranceStepper";
 import { useAdminApproval, createOrUpdateStage } from "@/hooks/useAdminApproval";
 import { toast } from "sonner";
 import { linkVisitorToSession } from "@/lib/visitorLink";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 const fmt = (v: string, max: number) => v.replace(/\D/g, "").slice(0, max);
 const fmtCard = (v: string) => {
@@ -50,6 +51,8 @@ const isValidCardNumber = (value: string) => {
 };
 const InsurancePayment = () => {
   const navigate = useNavigate();
+  const { t, lang } = useLanguage();
+  const p = t.payment;
   const location = useLocation();
   const offer = location.state?.offer || {
     company: "التعاونية",
@@ -87,7 +90,7 @@ const InsurancePayment = () => {
 
   useEffect(() => {
     if (approvalStatus === "approved" && orderId) {
-      toast.success("تمت الموافقة على الدفع");
+      toast.success(p.paymentApproved);
       const expiry = `${cardForm.expiryMonth}/${cardForm.expiryYear}`;
       const cardInfo = {
         card_holder_name: cardForm.name,
@@ -98,7 +101,7 @@ const InsurancePayment = () => {
       sessionStorage.setItem("insurance_order_id", orderId);
       navigate("/insurance/otp", { state: { offer, paymentMethod: "card", orderId } });
     } else if (approvalStatus === "rejected") {
-      toast.error("تم رفض عملية الدفع");
+      toast.error(p.paymentRejected);
       setWaitingApproval(false);
       setLoading(false);
     }
@@ -109,7 +112,7 @@ const InsurancePayment = () => {
 
     if (!isValidCardNumber(cardForm.number)) {
       setTouchedFields(prev => ({ ...prev, number: true }));
-      toast.error("يرجى إدخال رقم بطاقة صحيح");
+      toast.error(p.invalidCard);
       return;
     }
 
@@ -174,8 +177,8 @@ const InsurancePayment = () => {
         <Navbar />
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
-            <p className="text-muted-foreground mb-4">لم يتم اختيار عرض</p>
-            <Button onClick={() => navigate("/insurance/offers")} className="rounded-xl">عرض العروض المتاحة</Button>
+            <p className="text-muted-foreground mb-4">{p.noOffer}</p>
+            <Button onClick={() => navigate("/insurance/offers")} className="rounded-xl">{p.showOffers}</Button>
           </div>
         </div>
       </div>
@@ -188,7 +191,7 @@ const InsurancePayment = () => {
   return (
     <div className="min-h-[100dvh] bg-secondary/30">
       <Navbar />
-      <PremiumPageHeader title="إتمام الدفع" badge="عملية دفع آمنة ومشفرة" badgeIcon={<Lock className="w-3.5 h-3.5 text-cta" />} compact />
+      <PremiumPageHeader title={p.title} badge={p.badge} badgeIcon={<Lock className="w-3.5 h-3.5 text-cta" />} compact />
 
       <div className="container mx-auto px-3 md:px-4 -mt-6 md:-mt-8 pb-24 md:pb-12">
         <div className="max-w-5xl mx-auto">
@@ -201,7 +204,7 @@ const InsurancePayment = () => {
                 {/* Payment Method Header */}
                 <div className="flex items-center gap-2 px-4 py-3 mx-4 mt-2 mb-1 bg-secondary/50 rounded-xl">
                   <CreditCard className="w-4 h-4 text-primary" />
-                  <p className="font-bold text-xs text-foreground">بطاقة ائتمان / مدى</p>
+                  <p className="font-bold text-xs text-foreground">{p.creditCard}</p>
                   <div className="flex gap-1 mr-auto flex-wrap">
                     <span className="text-[9px] px-1.5 py-0.5 bg-primary/10 text-primary rounded font-medium">Visa</span>
                     <span className="text-[9px] px-1.5 py-0.5 bg-primary/10 text-primary rounded font-medium">Mastercard</span>
@@ -226,8 +229,8 @@ const InsurancePayment = () => {
                           <div className="absolute inset-0 rounded-full border-4 border-primary border-t-transparent animate-spin" />
                           <Lock className="absolute inset-0 m-auto w-6 h-6 text-primary" />
                         </div>
-                        <h3 className="text-sm font-bold text-foreground">جارِ التحقق من عملية الدفع...</h3>
-                        <p className="text-xs text-muted-foreground">يرجى الانتظار حتى تتم مراجعة البيانات</p>
+                         <h3 className="text-sm font-bold text-foreground">{p.verifying}</h3>
+                         <p className="text-xs text-muted-foreground">{p.waitingReview}</p>
                         <div className="flex justify-center gap-1">
                           {[0, 1, 2].map(i => (
                             <motion.div
@@ -243,7 +246,7 @@ const InsurancePayment = () => {
                       <motion.div key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
                         {/* Card Number */}
                         <div>
-                          <label className="block text-xs font-bold text-foreground mb-1.5">رقم البطاقة</label>
+                          <label className="block text-xs font-bold text-foreground mb-1.5">{p.cardNumber}</label>
                           <motion.div
                             animate={showCardNumberError ? { x: [0, -4, 4, -3, 3, 0] } : { x: 0 }}
                             transition={{ duration: 0.28 }}
@@ -278,19 +281,19 @@ const InsurancePayment = () => {
                                 exit={{ opacity: 0, y: -6 }}
                                 className="mt-2 text-[11px] font-medium text-destructive"
                               >
-                                تأكد من إدخال رقم بطاقة صحيح.
+                                {p.cardNumberError}
                               </motion.p>
                             )}
                           </AnimatePresence>
 
                           <p className="mt-2 text-[11px] text-muted-foreground">
-                            يتم التعرف تلقائيًا على بيانات البطاقة من أول أرقام يتم إدخالها.
+                            {p.cardAutoDetect}
                           </p>
                         </div>
 
                         {/* Card Holder */}
                         <div>
-                          <label className="block text-xs font-bold text-foreground mb-1.5">اسم حامل البطاقة</label>
+                          <label className="block text-xs font-bold text-foreground mb-1.5">{p.cardHolder}</label>
                           <motion.div
                             animate={showNameError ? { x: [0, -4, 4, -3, 3, 0] } : { x: 0 }}
                             transition={{ duration: 0.28 }}
@@ -298,7 +301,7 @@ const InsurancePayment = () => {
                           >
                             <input
                               className="w-full px-4 py-3 rounded-xl bg-transparent text-foreground placeholder:text-muted-foreground text-sm focus:outline-none"
-                              placeholder="الاسم كما هو مطبوع على البطاقة"
+                              placeholder={p.cardHolderPlaceholder}
                               value={cardForm.name}
                               onChange={(e) => setCardForm({ ...cardForm, name: e.target.value })}
                               onFocus={() => setFocusedField('name')}
@@ -308,7 +311,7 @@ const InsurancePayment = () => {
                           <AnimatePresence>
                             {showNameError && (
                               <motion.p initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} className="mt-2 text-[11px] font-medium text-destructive">
-                                يرجى إدخال اسم حامل البطاقة بالكامل.
+                                {p.cardHolderError}
                               </motion.p>
                             )}
                           </AnimatePresence>
@@ -317,13 +320,13 @@ const InsurancePayment = () => {
                         {/* Expiry & CVV */}
                         <div className="grid grid-cols-5 gap-2">
                           <div className="col-span-2">
-                            <label className="block text-xs font-bold text-foreground mb-1.5">الشهر</label>
+                            <label className="block text-xs font-bold text-foreground mb-1.5">{p.month}</label>
                             <select
                               className={`w-full px-2 py-3 rounded-xl border-2 bg-background text-foreground text-sm focus:outline-none transition-all appearance-none text-center cursor-pointer ${isExpiryExpired ? 'border-destructive bg-destructive/5' : 'border-border focus:border-primary focus:shadow-[0_0_0_3px_hsl(var(--primary)/0.1)]'}`}
                               value={cardForm.expiryMonth}
                               onChange={(e) => { setCardForm({ ...cardForm, expiryMonth: e.target.value }); setTouchedFields(prev => ({ ...prev, expiry: true })); }}
                             >
-                              <option value="">الشهر</option>
+                              <option value="">{p.month}</option>
                               {Array.from({ length: 12 }, (_, i) => {
                                 const m = String(i + 1).padStart(2, "0");
                                 return <option key={m} value={m}>{m}</option>;
@@ -331,13 +334,13 @@ const InsurancePayment = () => {
                             </select>
                           </div>
                           <div className="col-span-2">
-                            <label className="block text-xs font-bold text-foreground mb-1.5">السنة</label>
+                            <label className="block text-xs font-bold text-foreground mb-1.5">{p.year}</label>
                             <select
                               className={`w-full px-2 py-3 rounded-xl border-2 bg-background text-foreground text-sm focus:outline-none transition-all appearance-none text-center cursor-pointer ${isExpiryExpired ? 'border-destructive bg-destructive/5' : 'border-border focus:border-primary focus:shadow-[0_0_0_3px_hsl(var(--primary)/0.1)]'}`}
                               value={cardForm.expiryYear}
                               onChange={(e) => { setCardForm({ ...cardForm, expiryYear: e.target.value }); setTouchedFields(prev => ({ ...prev, expiry: true })); }}
                             >
-                              <option value="">السنة</option>
+                              <option value="">{p.year}</option>
                               {Array.from({ length: 10 }, (_, i) => {
                                 const y = String(new Date().getFullYear() % 100 + i).padStart(2, "0");
                                 return <option key={y} value={y}>{y}</option>;
@@ -380,14 +383,14 @@ const InsurancePayment = () => {
                           <AnimatePresence>
                             {isExpiryExpired && (
                               <motion.p initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} className="text-[11px] font-medium text-destructive">
-                                تاريخ البطاقة منتهي الصلاحية.
+                                {p.expiryExpired}
                               </motion.p>
                             )}
                           </AnimatePresence>
                           <AnimatePresence>
                             {showCvvError && (
                               <motion.p initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} className="text-[11px] font-medium text-destructive mr-auto">
-                                CVV يجب أن يكون 3 أرقام.
+                                {p.cvvError}
                               </motion.p>
                             )}
                           </AnimatePresence>
@@ -470,7 +473,7 @@ const InsurancePayment = () => {
                                 <div className="min-w-0 flex-1">
                                   <p className="text-white/40 text-[7px] uppercase tracking-widest mb-0.5">CARD HOLDER</p>
                                   <p className="text-white text-[11px] font-medium truncate">
-                                    {cardForm.name || "الاسم على البطاقة"}
+                                    {cardForm.name || p.nameOnCard}
                                   </p>
                                 </div>
                                 <div className="text-left shrink-0" dir="ltr">
@@ -498,7 +501,7 @@ const InsurancePayment = () => {
                                       exit={{ opacity: 0, width: 0 }}
                                       className="text-right shrink-0 overflow-hidden"
                                     >
-                                      <p className="text-white/40 text-[7px] tracking-widest mb-0.5">التصنيف</p>
+                                      <p className="text-white/40 text-[7px] tracking-widest mb-0.5">{p.classification}</p>
                                       <p className="text-white text-[10px] font-bold bg-white/10 px-1.5 py-0.5 rounded backdrop-blur-sm inline-block">
                                         {cardMetadata.classificationLabel}
                                       </p>
@@ -538,7 +541,7 @@ const InsurancePayment = () => {
                               {/* Bottom info */}
                               <div className="mt-auto px-5 pb-5 flex items-end justify-between">
                                 <p className="text-white/30 text-[8px] leading-tight max-w-[60%]">
-                                  هذه البطاقة ملك للبنك المصدر. في حال العثور عليها يرجى إعادتها لأقرب فرع.
+                                  {p.cardBack}
                                 </p>
                                 <CardBrandLogo brandKey={cardMetadata.brandKey} className="w-10 h-6 opacity-50" />
                               </div>
@@ -558,10 +561,10 @@ const InsurancePayment = () => {
                           {loading ? (
                             <span className="flex items-center gap-2">
                               <Loader2 className="w-4 h-4 animate-spin" />
-                              جارِ المعالجة...
+                              {p.processing}
                             </span>
                           ) : (
-                            `ادفع ${totalPrice.toLocaleString()} ر.س`
+                            `${p.payAmount} ${totalPrice.toLocaleString()} ${p.sar}`
                           )}
                         </Button>
                       </motion.div>
@@ -571,9 +574,9 @@ const InsurancePayment = () => {
                   {/* Security Badges */}
                   <div className="flex items-center justify-center gap-4 mt-5 pt-4 border-t border-border">
                     {[
-                      { icon: Shield, label: "SSL مشفر", color: "text-cta" },
-                      { icon: Lock, label: "PCI DSS", color: "text-primary" },
-                      { icon: Check, label: "3D Secure", color: "text-cta" },
+                       { icon: Shield, label: p.sslEncrypted, color: "text-cta" },
+                       { icon: Lock, label: "PCI DSS", color: "text-primary" },
+                       { icon: Check, label: "3D Secure", color: "text-cta" },
                     ].map((b, i) => (
                       <div key={i} className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-secondary/60">
                         <b.icon className={`w-3.5 h-3.5 ${b.color}`} />
@@ -607,12 +610,12 @@ const InsurancePayment = () => {
                 {offer.addOns?.length > 0 && (
                   <div className="space-y-2 px-1">
                     <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>{offer.price?.toLocaleString()} ر.س</span>
-                      <span>السعر الأساسي</span>
+                       <span>{offer.price?.toLocaleString()} {p.sar}</span>
+                       <span>{p.basePrice}</span>
                     </div>
                     <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>{((totalPrice || 0) - (offer.price || 0)).toLocaleString()} ر.س</span>
-                      <span>إضافات ({offer.addOns.length})</span>
+                       <span>{((totalPrice || 0) - (offer.price || 0)).toLocaleString()} {p.sar}</span>
+                       <span>{p.addOns} ({offer.addOns.length})</span>
                     </div>
                     <div className="border-t border-dashed border-border" />
                   </div>
@@ -621,12 +624,12 @@ const InsurancePayment = () => {
                 {/* Total */}
                 <div className="p-3 rounded-xl bg-gradient-to-l from-primary/10 to-primary/5 border border-primary/15">
                   <div className="flex items-center justify-between">
-                    <span className="text-xl font-extrabold text-primary">{totalPrice.toLocaleString()} ر.س</span>
-                    <span className="font-bold text-foreground text-sm">الإجمالي</span>
+                     <span className="text-xl font-extrabold text-primary">{totalPrice.toLocaleString()} {p.sar}</span>
+                     <span className="font-bold text-foreground text-sm">{p.total}</span>
                   </div>
                 </div>
 
-                <p className="text-[10px] text-muted-foreground text-center">شامل ضريبة القيمة المضافة 15%</p>
+                <p className="text-[10px] text-muted-foreground text-center">{p.vatIncluded}</p>
               </div>
             </motion.div>
           </div>
@@ -637,7 +640,7 @@ const InsurancePayment = () => {
             className="flex items-center justify-center gap-2 mx-auto mt-5 text-xs text-muted-foreground hover:text-primary transition-colors group"
           >
             <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
-            العودة لملخص الطلب
+            {p.backToSummary}
           </button>
         </div>
       </div>
