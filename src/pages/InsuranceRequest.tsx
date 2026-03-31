@@ -994,7 +994,7 @@ const InsuranceRequest = () => {
                       <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 1.5, repeat: Infinity }}>
                         <CheckCircle2 className="w-4 h-4 text-cta shrink-0" />
                       </motion.div>
-                      <p className="text-xs text-foreground font-medium">بالضغط على "إرسال الطلب" تؤكد صحة جميع البيانات</p>
+                      <p className="text-xs text-foreground font-medium">{r.nav.confirmSubmit}</p>
                     </motion.div>
                   </motion.div>
                 )}
