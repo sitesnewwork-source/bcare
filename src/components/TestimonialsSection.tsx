@@ -87,8 +87,18 @@ const TestimonialsSection = () => {
   };
 
   return (
-    <section className="py-16 md:py-24 bg-background relative overflow-hidden">
-      <div className="max-w-6xl mx-auto px-4">
+    <section className="py-16 md:py-24 relative overflow-hidden">
+      {/* Gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/90 to-[hsl(193,72%,28%)]" />
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-0 left-0 w-96 h-96 rounded-full bg-cta blur-[120px]" />
+        <div className="absolute bottom-0 right-0 w-80 h-80 rounded-full bg-white blur-[100px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-primary-foreground/5 blur-[80px]" />
+      </div>
+      {/* Subtle pattern overlay */}
+      <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "32px 32px" }} />
+
+      <div className="max-w-6xl mx-auto px-4 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -96,10 +106,13 @@ const TestimonialsSection = () => {
           transition={{ duration: 0.5 }}
           className="text-center mb-12"
         >
-          <h2 className="text-2xl lg:text-4xl font-extrabold text-primary mb-3">
+          <span className="inline-block px-4 py-1.5 rounded-full bg-white/10 text-white/80 text-xs font-semibold mb-4 backdrop-blur-sm border border-white/10">
+            ⭐ {lang === "ar" ? "تقييم 4.9 من 5" : "Rated 4.9 out of 5"}
+          </span>
+          <h2 className="text-2xl lg:text-4xl font-extrabold text-white mb-3">
             {lang === "ar" ? "آراء عملائنا" : "What Our Clients Say"}
           </h2>
-          <p className="text-muted-foreground text-sm max-w-xl mx-auto">
+          <p className="text-white/70 text-sm max-w-xl mx-auto">
             {lang === "ar"
               ? "اكتشف لماذا يختار أكثر من نصف مليون عميل بي كير لتأمينهم"
               : "Discover why over half a million clients choose BCare for their insurance"}
