@@ -246,7 +246,7 @@ const InsuranceRequest = () => {
     }
 
     sounds.success();
-    toast.success("تم إرسال الطلب بنجاح!");
+    toast.success(r.nav.submitSuccess);
     navigate("/insurance/offers", { state: customerInfo });
     setLoading(false);
   };
