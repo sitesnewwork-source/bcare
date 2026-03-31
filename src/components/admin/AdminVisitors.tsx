@@ -1914,8 +1914,7 @@ const AdminVisitors = () => {
   );
 };
 
-import React from "react";
-const InfoItem = React.forwardRef<HTMLDivElement, { label: string; value: string | null }>(({ label, value }, ref) => (
+const InfoItem = forwardRef<HTMLDivElement, { label: string; value: string | null }>(({ label, value }, ref) => (
   <div ref={ref}>
     <p className="text-[10px] text-muted-foreground mb-0.5">{label}</p>
     <p className="text-xs font-semibold text-foreground">{value || "-"}</p>
