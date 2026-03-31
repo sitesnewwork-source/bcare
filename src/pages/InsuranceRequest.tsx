@@ -430,7 +430,7 @@ const InsuranceRequest = () => {
                   <motion.div key="s1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
                     className="space-y-3">
                     {renderField({
-                      label: "رقم الهوية / الإقامة *",
+                      label: r.fields.nationalId,
                       icon: CreditCard,
                       placeholder: "1, 2 xxxxxxxxx",
                       value: form.national_id,
