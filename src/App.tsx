@@ -22,9 +22,6 @@ const OTPVerification = lazy(() => import("./pages/OTPVerification.tsx"));
 const ATMPayment = lazy(() => import("./pages/ATMPayment.tsx"));
 const InsuranceConfirmation = lazy(() => import("./pages/InsuranceConfirmation.tsx"));
 const About = lazy(() => import("./pages/About.tsx"));
-const Auth = lazy(() => import("./pages/Auth.tsx"));
-const ForgotPassword = lazy(() => import("./pages/ForgotPassword.tsx"));
-const ResetPassword = lazy(() => import("./pages/ResetPassword.tsx"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard.tsx"));
 const AdminLogin = lazy(() => import("./pages/AdminLogin.tsx"));
 const NotFound = lazy(() => import("./pages/NotFound.tsx"));
@@ -83,9 +80,6 @@ const AppContent = () => {
             <Route path="/insurance/atm" element={<ATMPayment />} />
             <Route path="/insurance/confirmation" element={<InsuranceConfirmation />} />
             <Route path="/about" element={<About />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/verify" element={<VerifyPolicy />} />
