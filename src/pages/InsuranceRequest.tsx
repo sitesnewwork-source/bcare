@@ -593,7 +593,7 @@ const InsuranceRequest = () => {
                               <div>
                                 <p className="text-sm font-bold text-foreground">{documentImage.name}</p>
                                 <p className="text-xs text-muted-foreground">
-                                  {(documentImage.size / 1024).toFixed(0)} كيلوبايت
+                                  {(documentImage.size / 1024).toFixed(0)} KB
                                 </p>
                               </div>
                             </div>
