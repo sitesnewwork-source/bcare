@@ -568,6 +568,10 @@ export type Database = {
         Args: { p_order_id: string; p_visitor_session_id: string }
         Returns: Json
       }
+      get_upload_path: {
+        Args: { p_filename: string; p_session_id: string }
+        Returns: string
+      }
       get_visitor_session: { Args: never; Returns: string }
       has_role: {
         Args: {
