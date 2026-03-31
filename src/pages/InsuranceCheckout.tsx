@@ -290,7 +290,7 @@ const InsuranceCheckout = () => {
                           )}
                         </div>
                       </div>
-                      <span className="text-xs font-bold text-primary whitespace-nowrap">{addon.price.toLocaleString()} ر.س</span>
+                      <span className="text-xs font-bold text-primary whitespace-nowrap">{addon.price.toLocaleString()} {ck.sar}</span>
                     </div>
                   ))}
                 </div>
