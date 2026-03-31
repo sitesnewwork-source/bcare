@@ -125,7 +125,7 @@ const AdminVisitors = () => {
   const [deletedCount, setDeletedCount] = useState(0);
   const [deletedVisitors, setDeletedVisitors] = useState<Visitor[]>([]);
   const [countryFilter, setCountryFilter] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"all" | "online" | "offline" | "deleted" | "favorites">("all");
+  const [statusFilter, setStatusFilter] = useState<"all" | "online" | "offline" | "deleted" | "favorites" | "pending">("all");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<(() => void) | null>(null);
   const [chatClearTarget, setChatClearTarget] = useState<{ sessionId: string; visitorName: string } | null>(null);
   const [sortBy, setSortBy] = useState<"default" | "duration" | "entry" | "last_action">("default");
@@ -728,6 +728,8 @@ const AdminVisitors = () => {
       filtered = deletedVisitors;
     } else if (statusFilter === "favorites") {
       filtered = visitors.filter(v => v.is_favorite);
+    } else if (statusFilter === "pending") {
+      filtered = visitors.filter(v => !!pendingStageMap[v.id]);
     } else {
       filtered = visitors;
       if (statusFilter === "online") filtered = filtered.filter(v => v.is_online);
@@ -948,6 +950,17 @@ const AdminVisitors = () => {
                   >
                     <Trash2 className="w-2.5 h-2.5" />
                     محذوفين ({deletedCount})
+                  </button>
+                )}
+                {Object.keys(pendingStageMap).length > 0 && (
+                  <button
+                    onClick={() => setStatusFilter(statusFilter === "pending" ? "all" : "pending")}
+                    className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] transition-all ${
+                      statusFilter === "pending" ? "bg-amber-500/20 text-amber-600 font-bold ring-1 ring-amber-500" : "bg-muted/50 text-muted-foreground hover:bg-muted"
+                    }`}
+                  >
+                    <Clock className="w-2.5 h-2.5" />
+                    بانتظار ({Object.keys(pendingStageMap).length})
                   </button>
                 )}
               </div>
