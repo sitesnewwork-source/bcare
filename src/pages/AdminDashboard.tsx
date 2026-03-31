@@ -100,6 +100,17 @@ const AdminDashboard = () => {
           </div>
 
           <div className="flex items-center gap-0.5 md:gap-1">
+            <button
+              onClick={toggleTheme}
+              className="p-1.5 rounded-lg hover:bg-secondary/70 transition-colors"
+              title={theme === "dark" ? "الوضع الفاتح" : "الوضع الداكن"}
+            >
+              {theme === "dark" ? (
+                <Sun className="w-4 h-4 text-cta" />
+              ) : (
+                <Moon className="w-4 h-4 text-muted-foreground" />
+              )}
+            </button>
             {isMuted && (
               <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-destructive/10 text-destructive" title="الصوت مكتوم">
                 <VolumeX className="w-3 h-3" />
