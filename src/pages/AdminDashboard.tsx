@@ -28,6 +28,7 @@ const AdminDashboard = () => {
   const [liveFeedOpen, setLiveFeedOpen] = useState(false);
   const [liveFeedCount, setLiveFeedCount] = useState(0);
   const [isMuted, setIsMuted] = useState(() => localStorage.getItem("admin_feed_mute") === "true");
+  const { theme, toggleTheme } = useTheme();
 
   // Listen for mute changes from LiveFeed settings
   useEffect(() => {
