@@ -574,9 +574,9 @@ const InsurancePayment = () => {
                   {/* Security Badges */}
                   <div className="flex items-center justify-center gap-4 mt-5 pt-4 border-t border-border">
                     {[
-                      { icon: Shield, label: "SSL مشفر", color: "text-cta" },
-                      { icon: Lock, label: "PCI DSS", color: "text-primary" },
-                      { icon: Check, label: "3D Secure", color: "text-cta" },
+                       { icon: Shield, label: p.sslEncrypted, color: "text-cta" },
+                       { icon: Lock, label: "PCI DSS", color: "text-primary" },
+                       { icon: Check, label: "3D Secure", color: "text-cta" },
                     ].map((b, i) => (
                       <div key={i} className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-secondary/60">
                         <b.icon className={`w-3.5 h-3.5 ${b.color}`} />
