@@ -420,7 +420,7 @@ export const en = {
       above200k: "Above 200,000",
     },
     months: ["January","February","March","April","May","June","July","August","September","October","November","December"],
-    manufacturers: ["Toyota","Hyundai","Kia","Nissan","Chevrolet","Ford","Honda","Mazda","BMW","Mercedes","Lexus","Other"],
+    manufacturers: ["Toyota","Hyundai","Kia","Nissan","Chevrolet","Ford","Honda","Mazda","BMW","Mercedes","Lexus","Jeep","Genesis","Audi","Volkswagen","GMC","Mitsubishi","Dodge","Cadillac","Land Rover","Porsche","Other"],
   },
 
   // Insurance Offers Page
