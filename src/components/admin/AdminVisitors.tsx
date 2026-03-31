@@ -281,8 +281,12 @@ const AdminVisitors = () => {
         }
         
         setPendingStageMap(stageMap);
+        // Seed known pending orders for sound alerts
+        pendingOrders.forEach(o => {
+          if (o.current_stage) knownPendingOrdersRef.current.add(o.id + "-" + o.current_stage);
+        });
       }
-    }
+      initialLoadDoneRef.current = true;
   };
 
   const toggleFavorite = async (visitorId: string, e?: React.MouseEvent) => {
