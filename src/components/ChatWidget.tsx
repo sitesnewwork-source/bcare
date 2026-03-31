@@ -54,20 +54,17 @@ const ChatWidget = () => {
   }, [conversationId, mode]);
 
   const startConversation = async () => {
-    // Use visitor session ID as token so admin can link chat to visitor
     const token = sessionStorage.getItem("visitor_sid") || crypto.randomUUID();
-    const { data } = await supabase
-      .from("chat_conversations")
-      .insert({ status: "bot", session_token: token } as any)
-      .select()
-      .single();
-    if (data) {
-      setConversationId(data.id);
+    const { data: convId } = await supabase.rpc("create_chat_conversation", {
+      p_session_token: token,
+    });
+    if (convId) {
+      setConversationId(convId as string);
       sessionStorage.setItem("chat_session_token", token);
-      // Link conversation to visitor
+      // Link conversation to visitor via RPC
       const sid = sessionStorage.getItem("visitor_sid");
       if (sid) {
-        await supabase.from("site_visitors").update({ linked_conversation_id: data.id }).eq("session_id", sid);
+        await supabase.rpc("link_visitor_data", { p_session_id: sid });
       }
       const welcomeMsg: Message = {
         id: "welcome",
@@ -77,10 +74,11 @@ const ChatWidget = () => {
       };
       setMessages([welcomeMsg]);
 
-      await supabase.from("chat_messages").insert({
-        conversation_id: data.id,
-        sender_type: "bot",
-        content: welcomeMsg.content,
+      await supabase.rpc("send_chat_message", {
+        p_session_token: token,
+        p_conversation_id: convId as string,
+        p_content: welcomeMsg.content,
+        p_sender_type: "bot",
       });
     }
   };
