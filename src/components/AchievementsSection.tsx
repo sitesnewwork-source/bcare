@@ -75,7 +75,7 @@ const AchievementsSection = () => {
   const { lang } = useLanguage();
 
   return (
-    <section className="py-16 md:py-24 bg-gradient-to-b from-background to-primary/[0.03] relative overflow-hidden">
+    <section className="py-10 md:py-14 bg-gradient-to-b from-background to-primary/[0.03] relative overflow-hidden">
       <div className="absolute inset-0 opacity-[0.015]">
         <div className="absolute top-20 left-1/4 w-80 h-80 rounded-full bg-cta blur-3xl" />
         <div className="absolute bottom-20 right-1/4 w-64 h-64 rounded-full bg-primary blur-3xl" />
