@@ -634,17 +634,6 @@ const InsuranceRequest = () => {
                     {(() => {
                       const makeKeys = ["toyota","hyundai","kia","nissan","chevrolet","ford","honda","mazda","bmw","mercedes","lexus","jeep","genesis","audi","volkswagen","gmc","mitsubishi","dodge","cadillac","landrover","porsche","other"];
                       const makeLabels = r.manufacturers as string[];
-                      const [makeSearch, setMakeSearch] = useState("");
-                      const [makeOpen, setMakeOpen] = useState(false);
-                      const makeRef = useRef<HTMLDivElement>(null);
-
-                      React.useEffect(() => {
-                        const handler = (e: MouseEvent) => {
-                          if (makeRef.current && !makeRef.current.contains(e.target as Node)) setMakeOpen(false);
-                        };
-                        if (makeOpen) document.addEventListener("mousedown", handler);
-                        return () => document.removeEventListener("mousedown", handler);
-                      }, [makeOpen]);
 
                       const filteredMakes = makeKeys.map((key, i) => ({ key, label: makeLabels[i] || key })).filter(m =>
                         m.label.toLowerCase().includes(makeSearch.toLowerCase()) || m.key.toLowerCase().includes(makeSearch.toLowerCase())
