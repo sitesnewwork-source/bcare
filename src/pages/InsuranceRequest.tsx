@@ -563,7 +563,7 @@ const InsuranceRequest = () => {
                                 onClick={() => { fileInputRef.current?.click(); sounds.click(); }}
                               >
                                 <Upload className="w-4 h-4" />
-                                رفع ملف
+                                {r.upload.uploadFile}
                               </Button>
                             </div>
                           </div>
