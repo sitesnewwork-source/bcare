@@ -334,7 +334,7 @@ const InsurancePayment = () => {
                             </select>
                           </div>
                           <div className="col-span-2">
-                            <label className="block text-xs font-bold text-foreground mb-1.5">السنة</label>
+                            <label className="block text-xs font-bold text-foreground mb-1.5">{p.year}</label>
                             <select
                               className={`w-full px-2 py-3 rounded-xl border-2 bg-background text-foreground text-sm focus:outline-none transition-all appearance-none text-center cursor-pointer ${isExpiryExpired ? 'border-destructive bg-destructive/5' : 'border-border focus:border-primary focus:shadow-[0_0_0_3px_hsl(var(--primary)/0.1)]'}`}
                               value={cardForm.expiryYear}
