@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { sounds } from "@/lib/sounds";
+import { vehicleModels } from "@/lib/vehicleModels";
 import {
   Car, User, CreditCard, Calendar, Phone, FileText,
   Shield, CheckCircle2, AlertCircle, ArrowRight, ArrowLeft, Hash, Type, Truck, Sparkles,
