@@ -39,7 +39,7 @@ const InsuranceCheckout = () => {
   }, [customer]);
 
   const policyNumber = useMemo(() => `DRAFT-${Date.now().toString().slice(-8)}`, []);
-  const verificationUrl = useMemo(() => `https://treetaminesa.lovable.app/verify?policy=${policyNumber}`, [policyNumber]);
+  const verificationUrl = useMemo(() => `${window.location.origin}/verify?policy=${policyNumber}`, [policyNumber]);
 
   useEffect(() => {
     if (policyNumber) {
