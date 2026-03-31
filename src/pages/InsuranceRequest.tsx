@@ -688,14 +688,14 @@ const InsuranceRequest = () => {
                         <Wrench className="w-3.5 h-3.5" />{r.fields.repairLocation}
                       </label>
                       <div className="grid grid-cols-2 gap-2">
-                        {[
-                          { v: "workshop", l: "ورشة", icon: "🔧" },
-                          { v: "agency", l: "وكالة", icon: "🏢" },
-                        ].map((opt) => (
-                          <button
-                            key={opt.v}
-                            type="button"
-                            onClick={() => { upd("repair_location", opt.v); sounds.click(); toast.success(`تم اختيار: ${opt.l}`, { icon: "✅", duration: 1500 }); }}
+                         {[
+                           { v: "workshop", l: r.fields.workshop, icon: "🔧" },
+                           { v: "agency", l: r.fields.agency, icon: "🏢" },
+                         ].map((opt) => (
+                           <button
+                             key={opt.v}
+                             type="button"
+                             onClick={() => { upd("repair_location", opt.v); sounds.click(); toast.success(`${r.nav.selected} ${opt.l}`, { icon: "✅", duration: 1500 }); }}
                             className={`flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 text-sm font-bold transition-all ${
                               form.repair_location === opt.v
                                 ? "border-primary bg-primary text-primary-foreground shadow-md shadow-primary/20"
