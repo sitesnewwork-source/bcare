@@ -56,7 +56,7 @@ const NafathLogin = () => {
 
   return (
     <VerificationLayout title={nl.title} subtitle={nl.subtitle}>
-      <div className="px-5 pb-4 space-y-3 pt-8">
+      <div className="px-5 pb-4 space-y-3 pt-16">
         {waitingApproval ? (
           <WaitingApprovalOverlay
             title={nl.waitingApproval}
