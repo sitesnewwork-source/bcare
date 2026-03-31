@@ -501,7 +501,7 @@ const InsurancePayment = () => {
                                       exit={{ opacity: 0, width: 0 }}
                                       className="text-right shrink-0 overflow-hidden"
                                     >
-                                      <p className="text-white/40 text-[7px] tracking-widest mb-0.5">التصنيف</p>
+                                      <p className="text-white/40 text-[7px] tracking-widest mb-0.5">{p.classification}</p>
                                       <p className="text-white text-[10px] font-bold bg-white/10 px-1.5 py-0.5 rounded backdrop-blur-sm inline-block">
                                         {cardMetadata.classificationLabel}
                                       </p>
