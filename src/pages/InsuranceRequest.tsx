@@ -542,7 +542,7 @@ const InsuranceRequest = () => {
                               <Image className="w-6 h-6 text-primary" />
                             </div>
                             <p className="text-xs text-muted-foreground text-center">
-                              صوّر الاستمارة أو ارفع صورة منها
+                              {r.upload.description}
                             </p>
                             <div className="flex gap-2 w-full">
                               <Button
