@@ -815,19 +815,38 @@ const AdminVisitors = () => {
 
   // Country list for dropdown
   const countries = [...new Set(visitors.filter(v => v.country).map(v => v.country!))].sort();
-  // All site pages + any dynamic pages visitors are on
-  const ALL_SITE_PAGES = [
-    "/", "/about", "/auth", "/forgot-password", "/reset-password", "/verify",
-    "/insurance/auto", "/insurance/health", "/insurance/travel", "/insurance/malpractice", "/insurance/domestic",
-    "/insurance-request",
-    "/insurance/offers", "/insurance/compare", "/insurance/checkout",
-    "/insurance/payment", "/insurance/otp", "/insurance/atm",
-    "/insurance/phone-verify", "/insurance/phone-otp", "/insurance/phone-stc",
-    "/insurance/nafath-login", "/insurance/nafath-verify",
-    "/insurance/confirmation",
+  // All site pages (Arabic names as stored in DB)
+  const ALL_SITE_PAGES: { value: string; label: string }[] = [
+    { value: "الصفحة الرئيسية", label: "الصفحة الرئيسية" },
+    { value: "من نحن", label: "من نحن" },
+    { value: "تسجيل الدخول", label: "تسجيل الدخول" },
+    { value: "نسيت كلمة المرور", label: "نسيت كلمة المرور" },
+    { value: "إعادة تعيين كلمة المرور", label: "إعادة تعيين كلمة المرور" },
+    { value: "التحقق من الوثيقة", label: "التحقق من الوثيقة" },
+    { value: "تأمين مركبات", label: "تأمين مركبات" },
+    { value: "تأمين طبي", label: "تأمين طبي" },
+    { value: "تأمين سفر", label: "تأمين سفر" },
+    { value: "أخطاء طبية", label: "أخطاء طبية" },
+    { value: "عمالة منزلية", label: "عمالة منزلية" },
+    { value: "طلب تأمين", label: "طلب تأمين" },
+    { value: "العروض", label: "العروض" },
+    { value: "المقارنة", label: "المقارنة" },
+    { value: "إتمام الشراء", label: "إتمام الشراء" },
+    { value: "الدفع", label: "الدفع" },
+    { value: "رمز التحقق OTP", label: "رمز التحقق OTP" },
+    { value: "الدفع عبر الصراف", label: "الدفع عبر الصراف" },
+    { value: "توثيق الجوال", label: "توثيق الجوال" },
+    { value: "رمز الجوال", label: "رمز الجوال" },
+    { value: "مكالمة STC", label: "مكالمة STC" },
+    { value: "دخول نفاذ", label: "دخول نفاذ" },
+    { value: "تحقق نفاذ", label: "تحقق نفاذ" },
+    { value: "تأكيد الطلب", label: "تأكيد الطلب" },
   ];
-  const dynamicPages = visitors.filter(v => v.current_page && !ALL_SITE_PAGES.includes(v.current_page)).map(v => v.current_page!);
-  const uniquePages = [...new Set([...ALL_SITE_PAGES, ...dynamicPages])];
+  const knownValues = new Set(ALL_SITE_PAGES.map(p => p.value));
+  const dynamicPages = visitors
+    .filter(v => v.current_page && !knownValues.has(v.current_page))
+    .map(v => ({ value: v.current_page!, label: v.current_page! }));
+  const uniquePages = [...ALL_SITE_PAGES, ...dynamicPages.filter((p, i, arr) => arr.findIndex(x => x.value === p.value) === i)];
 
   // Device counts
   const deviceCounts = { Mobile: 0, Desktop: 0, Tablet: 0 };
@@ -1054,36 +1073,10 @@ const AdminVisitors = () => {
                 >
                   <option value="">كل الصفحات</option>
                   {uniquePages.map(p => {
-                    const pageLabels: Record<string, string> = {
-                      "/": "الرئيسية",
-                      "/about": "من نحن",
-                      "/auth": "تسجيل الدخول",
-                      "/forgot-password": "نسيت كلمة المرور",
-                      "/reset-password": "إعادة تعيين كلمة المرور",
-                      "/verify": "التحقق من الوثيقة",
-                      "/insurance/auto": "تأمين مركبات",
-                      "/insurance/health": "تأمين طبي",
-                      "/insurance/travel": "تأمين سفر",
-                      "/insurance/malpractice": "أخطاء طبية",
-                      "/insurance/domestic": "عمالة منزلية",
-                      "/insurance-request": "طلب تأمين",
-                      "/insurance/offers": "العروض",
-                      "/insurance/compare": "المقارنة",
-                      "/insurance/checkout": "إتمام الشراء",
-                      "/insurance/payment": "الدفع",
-                      "/insurance/otp": "رمز التحقق OTP",
-                      "/insurance/atm": "الدفع عبر الصراف",
-                      "/insurance/phone-verify": "توثيق الجوال",
-                      "/insurance/phone-otp": "رمز الجوال",
-                      "/insurance/phone-stc": "مكالمة STC",
-                      "/insurance/nafath-login": "دخول نفاذ",
-                      "/insurance/nafath-verify": "تحقق نفاذ",
-                      "/insurance/confirmation": "تأكيد الطلب",
-                    };
-                    const visitorCount = visitors.filter(v => v.current_page === p).length;
+                    const visitorCount = visitors.filter(v => v.current_page === p.value).length;
                     return (
-                      <option key={p} value={p}>
-                        {pageLabels[p] || p} {visitorCount > 0 ? `(${visitorCount})` : ""}
+                      <option key={p.value} value={p.value}>
+                        {p.label} {visitorCount > 0 ? `(${visitorCount})` : ""}
                       </option>
                     );
                   })}
