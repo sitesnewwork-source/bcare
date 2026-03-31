@@ -658,7 +658,7 @@ const InsuranceRequest = () => {
                         <select className={selectCls(form.vehicle_model)} value={form.vehicle_model}
                           onChange={(e) => { touch("vehicle_model"); upd("vehicle_model", e.target.value); sounds.click(); if (e.target.value) toast.success(`${r.nav.selected} ${e.target.selectedOptions[0]?.text}`, { icon: "✅", duration: 1500 }); }}
                           disabled={!form.vehicle_make || form.vehicle_make === "other"}>
-                          <option value="">{form.vehicle_make === "other" ? (dir === "rtl" ? "أدخل يدوياً" : "Enter manually") : (r.fields.selectModel || r.fields.exampleModel)}</option>
+                          <option value="">{form.vehicle_make === "other" ? (dir === "rtl" ? "أدخل يدوياً" : "Enter manually") : (dir === "rtl" ? "اختر الموديل" : "Select model")}</option>
                           {(vehicleModels[form.vehicle_make] || []).map((m, i) =>
                             <option key={i} value={m.en}>{dir === "rtl" ? m.ar : m.en}</option>
                           )}
