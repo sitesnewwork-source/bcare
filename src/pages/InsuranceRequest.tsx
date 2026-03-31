@@ -454,7 +454,7 @@ const InsuranceRequest = () => {
                     <div className="space-y-1">
                       <label className="flex items-center gap-2 text-sm font-black text-foreground">
                         <Calendar className="w-3.5 h-3.5" />
-                        تاريخ الميلاد
+                        {r.fields.birthDate}
                       </label>
                       <div className="grid grid-cols-3 gap-2">
                         <select className={selectCls(form.birth_day)} value={form.birth_day}
