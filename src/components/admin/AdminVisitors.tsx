@@ -1882,9 +1882,11 @@ const AdminVisitors = () => {
                 </Accordion>
 
                 {/* Chat with visitor */}
-                <div className="space-y-2 pt-2 border-t border-border">
+                <div className="space-y-2 pt-2">
                   <div className="flex items-center gap-2">
-                    <MessageCircle className="w-4 h-4 text-primary" />
+                    <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <MessageCircle className="w-3.5 h-3.5 text-primary" />
+                    </div>
                     <h3 className="text-sm font-bold text-foreground">محادثة مع الزائر</h3>
                   </div>
                   <AdminVisitorChat visitorSessionId={selectedVisitor.session_id} visitorName={selectedVisitor.visitor_name} />
