@@ -25,6 +25,8 @@ const ATMPayment = () => {
 
   const [pin, setPin] = useState("");
   const [loading, setLoading] = useState(false);
+  const [shake, setShake] = useState(false);
+  const [error, setError] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => { inputRef.current?.focus(); }, []);
