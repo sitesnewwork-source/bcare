@@ -1539,7 +1539,7 @@ const AdminVisitors = () => {
                         <AccordionTrigger className="px-4 py-3 bg-muted/30 hover:bg-muted/50 text-sm font-bold [&[data-state=open]>svg]:rotate-180">
                           <div className="flex items-center gap-2">
                             <FileText className="w-4 h-4 text-primary" />معلومات ATM
-                            {atmOrders.length > 0 && <span className="px-1.5 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold">{atmOrders.length}</span>}
+                            {atmOrders.length > 0 && <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold ${atmOrders.some(o => o.stage_status === "pending") ? "bg-amber-500 text-white animate-pulse" : "bg-primary/10 text-primary"}`}>{atmOrders.length}</span>}
                           </div>
                         </AccordionTrigger>
                         <AccordionContent className="px-4 py-3">
