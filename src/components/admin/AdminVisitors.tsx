@@ -1034,6 +1034,49 @@ const AdminVisitors = () => {
                   <Clock className="w-2.5 h-2.5" />
                   بانتظار قرار ({pendingCount})
                 </button>
+                {hasRequestCount > 0 && (
+                  <button
+                    onClick={() => setStatusFilter(statusFilter === "has_request" ? "all" : "has_request")}
+                    className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] transition-all ${
+                      statusFilter === "has_request" ? "bg-blue-500/20 text-blue-600 font-bold ring-1 ring-blue-500" : "bg-muted/50 text-muted-foreground hover:bg-muted"
+                    }`}
+                  >
+                    <ShoppingCart className="w-2.5 h-2.5" />
+                    لديه طلب ({hasRequestCount})
+                  </button>
+                )}
+              </div>
+
+              {/* Device & Page filters */}
+              <div className="flex items-center gap-1 flex-wrap">
+                {([
+                  { key: "Mobile" as const, icon: Smartphone, label: "جوال" },
+                  { key: "Desktop" as const, icon: Monitor, label: "كمبيوتر" },
+                  { key: "Tablet" as const, icon: Tablet, label: "لوحي" },
+                ] as const).filter(d => deviceCounts[d.key] > 0).map(d => (
+                  <button
+                    key={d.key}
+                    onClick={() => setDeviceFilter(deviceFilter === d.key ? "" : d.key)}
+                    className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9px] transition-all ${
+                      deviceFilter === d.key ? "bg-primary/20 text-primary font-bold ring-1 ring-primary" : "bg-muted/40 text-muted-foreground hover:bg-muted"
+                    }`}
+                  >
+                    <d.icon className="w-2.5 h-2.5" />
+                    {d.label} ({deviceCounts[d.key]})
+                  </button>
+                ))}
+                {uniquePages.length > 1 && (
+                  <select
+                    value={pageFilter}
+                    onChange={e => setPageFilter(e.target.value)}
+                    className="h-5 text-[9px] bg-background border border-border rounded px-1 text-foreground focus:outline-none focus:border-primary"
+                  >
+                    <option value="">كل الصفحات</option>
+                    {uniquePages.map(p => (
+                      <option key={p} value={p}>{p}</option>
+                    ))}
+                  </select>
+                )}
               </div>
 
               {/* Sub-filter for pending */}
