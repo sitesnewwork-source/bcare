@@ -301,7 +301,7 @@ const InsurancePayment = () => {
                           >
                             <input
                               className="w-full px-4 py-3 rounded-xl bg-transparent text-foreground placeholder:text-muted-foreground text-sm focus:outline-none"
-                              placeholder="الاسم كما هو مطبوع على البطاقة"
+                              placeholder={p.cardHolderPlaceholder}
                               value={cardForm.name}
                               onChange={(e) => setCardForm({ ...cardForm, name: e.target.value })}
                               onFocus={() => setFocusedField('name')}
