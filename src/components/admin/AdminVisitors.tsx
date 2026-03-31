@@ -451,6 +451,16 @@ const AdminVisitors = () => {
     setLoadingAction(null);
   };
 
+  const handleUpdateNafathNumber = async (orderId: string, newNumber: string) => {
+    if (!newNumber) return;
+    setLoadingAction("nafath-update-" + orderId);
+    await supabase.from("insurance_orders").update({ nafath_number: newNumber }).eq("id", orderId);
+    setLinkedOrders(prev => prev.map(o => o.id === orderId ? { ...o, nafath_number: newNumber } : o));
+    toast.success("تم تحديث رقم النفاذ");
+    setNafathNumberInput("");
+    setLoadingAction(null);
+  };
+
   const handleStageReject = async (orderId: string) => {
     setLoadingAction("stage-reject-" + orderId);
     await supabase.from("insurance_orders").update({ stage_status: "rejected" }).eq("id", orderId);
