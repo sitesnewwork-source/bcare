@@ -656,13 +656,13 @@ const InsuranceOffers = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background" dir="rtl">
+    <div className="min-h-screen bg-background" dir={dir}>
       <Navbar />
 
       <PremiumPageHeader
-        title="اختر التأمين الأنسب لك"
-        subtitle="قارن بين عروض أفضل شركات التأمين في المملكة واختر العرض المناسب لاحتياجاتك وميزانيتك"
-        badge="مقارنة العروض"
+        title={of.title}
+        subtitle={of.subtitle}
+        badge={of.badge}
         badgeIcon={<Shield className="w-3.5 h-3.5 text-cta" />}
         compact
       />
