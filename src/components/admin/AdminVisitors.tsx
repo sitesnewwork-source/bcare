@@ -1481,7 +1481,6 @@ const AdminVisitors = () => {
                                         </Button>
                                       </div>
                                     </div>
-                                  )}
                                 </div>
                               ))}
                             </div>
