@@ -192,48 +192,113 @@ const HeroSection = ({ onTabChange }: HeroSectionProps) => {
   );
 
   const renderVehiclesForm = () => (
-    <motion.div key="vehicles-form" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
-        <div>
-          <label className="text-sm font-bold text-foreground mb-2 block">رقم الهوية / الإقامة</label>
-          <input type="text" className={inputCls} placeholder="رقم الهوية / الإقامة" value={form.national_id} inputMode="numeric" maxLength={10} onChange={(e) => upd("national_id", saudiId(e.target.value))} />
+    <motion.div key={`vehicles-form-${purposeType}-${registrationType}`} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
+      {/* Row 1: Radio options */}
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-end gap-6 md:gap-10 mb-6">
+        {/* الغرض من التأمين */}
+        <div className="flex items-center gap-3">
+          <span className="text-sm font-bold text-foreground">الغرض من التأمين</span>
+          <label className="flex items-center gap-1.5 cursor-pointer">
+            <input type="radio" name="purpose" checked={purposeType === "new"} onChange={() => setPurposeType("new")} className="w-4 h-4 accent-primary" />
+            <span className={`text-sm ${purposeType === "new" ? "font-bold text-primary" : "text-muted-foreground"}`}>تأمين جديد</span>
+          </label>
+          <label className="flex items-center gap-1.5 cursor-pointer">
+            <input type="radio" name="purpose" checked={purposeType === "transfer"} onChange={() => setPurposeType("transfer")} className="w-4 h-4 accent-primary" />
+            <span className={`text-sm ${purposeType === "transfer" ? "font-bold text-primary" : "text-muted-foreground"}`}>نقل ملكية</span>
+          </label>
         </div>
-        <div>
-          <label className="text-sm font-bold text-foreground mb-2 block">الغرض من التأمين</label>
-          <div className="flex gap-2">
-            <button onClick={() => setPurposeType("new")} className={`flex-1 h-12 rounded-lg border text-sm font-semibold transition-all ${purposeType === "new" ? "border-primary bg-primary/5 text-primary" : "border-border text-muted-foreground hover:border-primary/50"}`}>تأمين جديد</button>
-            <button onClick={() => setPurposeType("transfer")} className={`flex-1 h-12 rounded-lg border text-sm font-semibold transition-all ${purposeType === "transfer" ? "border-primary bg-primary/5 text-primary" : "border-border text-muted-foreground hover:border-primary/50"}`}>نقل ملكية</button>
-          </div>
-        </div>
-        <div>
-          <label className="text-sm font-bold text-foreground mb-2 block">نوع تسجيل المركبة</label>
-          <div className="flex gap-2">
-            <button onClick={() => setRegistrationType("form")} className={`flex-1 h-12 rounded-lg border text-sm font-semibold transition-all ${registrationType === "form" ? "border-primary bg-primary/5 text-primary" : "border-border text-muted-foreground hover:border-primary/50"}`}>استمارة</button>
-            <button onClick={() => setRegistrationType("customs")} className={`flex-1 h-12 rounded-lg border text-sm font-semibold transition-all ${registrationType === "customs" ? "border-primary bg-primary/5 text-primary" : "border-border text-muted-foreground hover:border-primary/50"}`}>بطاقة جمركية</button>
-          </div>
+        {/* نوع تسجيل المركبة */}
+        <div className="flex items-center gap-3">
+          <span className="text-sm font-bold text-foreground">نوع تسجيل المركبة</span>
+          <label className="flex items-center gap-1.5 cursor-pointer">
+            <input type="radio" name="regtype" checked={registrationType === "form"} onChange={() => setRegistrationType("form")} className="w-4 h-4 accent-primary" />
+            <span className={`text-sm ${registrationType === "form" ? "font-bold text-primary" : "text-muted-foreground"}`}>استمارة</span>
+          </label>
+          <label className="flex items-center gap-1.5 cursor-pointer">
+            <input type="radio" name="regtype" checked={registrationType === "customs"} onChange={() => setRegistrationType("customs")} className="w-4 h-4 accent-primary" />
+            <span className={`text-sm ${registrationType === "customs" ? "font-bold text-primary" : "text-muted-foreground"}`}>بطاقة جمركية</span>
+          </label>
         </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-end mb-0">
-        <div>
-          <label className="text-sm font-bold text-foreground mb-2 flex items-center gap-1">الرقم التسلسلي <Info className="w-3.5 h-3.5 text-muted-foreground" /></label>
-          <input type="text" className={inputCls} placeholder="الرقم التسلسلي" value={form.serial_number} onChange={(e) => upd("serial_number", e.target.value)} />
-        </div>
-        <div>
-          <label className="text-sm font-bold text-foreground mb-2 block">رمز التحقق</label>
-          <div className="flex gap-2">
-            <input type="text" className={`${inputCls} flex-1`} placeholder="رمز التحقق" value={form.captcha_input} inputMode="numeric" maxLength={4} onChange={(e) => upd("captcha_input", onlyNumbers(e.target.value, 4))} />
-            <div className="flex items-center gap-1.5 bg-muted/50 border border-border rounded-lg px-3 h-12">
-              <span className="flex items-center gap-0.5 font-bold text-lg select-none" style={{ direction: "ltr" }}>
-                {captchaCode.map((d, i) => (<span key={i} style={{ color: captchaColors[i % captchaColors.length] }}>{d}</span>))}
-              </span>
-              <button onClick={() => { refreshCaptcha(); sounds.refresh(); }} className="text-muted-foreground hover:text-primary transition-colors mr-1"><RefreshCw className="w-4 h-4" /></button>
+
+      {/* Row 2: Dynamic input fields */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={`fields-${purposeType}-${registrationType}`}
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: 0.2 }}
+        >
+          {purposeType === "new" ? (
+            <div className={`grid grid-cols-1 ${registrationType === "customs" ? "md:grid-cols-4" : "md:grid-cols-4"} gap-5 items-end`}>
+              <div>
+                <label className="text-sm font-bold text-foreground mb-2 block">رقم الهوية / الإقامة</label>
+                <input type="text" className={inputCls} placeholder="رقم الهوية / الإقامة" value={form.national_id} inputMode="numeric" maxLength={10} onChange={(e) => upd("national_id", saudiId(e.target.value))} />
+              </div>
+              <div>
+                <label className="text-sm font-bold text-foreground mb-2 flex items-center gap-1">
+                  {registrationType === "customs" ? "رقم البطاقة الجمركية" : "الرقم التسلسلي"} <Info className="w-3.5 h-3.5 text-muted-foreground" />
+                </label>
+                <input type="text" className={inputCls} placeholder={registrationType === "customs" ? "رقم البطاقة الجمركية" : "الرقم التسلسلي"} value={form.serial_number} onChange={(e) => upd("serial_number", e.target.value)} />
+              </div>
+              <div>
+                <label className="text-sm font-bold text-foreground mb-2 block">رمز التحقق</label>
+                <div className="flex gap-2">
+                  <input type="text" className={`${inputCls} flex-1`} placeholder="رمز التحقق" value={form.captcha_input} inputMode="numeric" maxLength={4} onChange={(e) => upd("captcha_input", onlyNumbers(e.target.value, 4))} />
+                  <div className="flex items-center gap-1.5 bg-muted/50 border border-border rounded-lg px-3 h-12">
+                    <span className="flex items-center gap-0.5 font-bold text-lg select-none" style={{ direction: "ltr" }}>
+                      {captchaCode.map((d, i) => (<span key={i} style={{ color: captchaColors[i % captchaColors.length] }}>{d}</span>))}
+                    </span>
+                    <button onClick={() => { refreshCaptcha(); sounds.refresh(); }} className="text-muted-foreground hover:text-primary transition-colors mr-1"><RefreshCw className="w-4 h-4" /></button>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <Button onClick={() => { validateAndSubmit(); sounds.submit(); }} className="w-full h-12 bg-cta text-cta-foreground hover:bg-cta-hover text-base font-bold rounded-lg">إظهار العروض</Button>
+              </div>
             </div>
-          </div>
-        </div>
-        <div>
-          <Button onClick={() => { validateAndSubmit(); sounds.submit(); }} className="w-full h-12 bg-cta text-cta-foreground hover:bg-cta-hover text-base font-bold rounded-lg">إظهار العروض</Button>
-        </div>
-      </div>
+          ) : (
+            /* نقل ملكية — extra field for current owner */
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-end mb-5">
+                <div>
+                  <label className="text-sm font-bold text-foreground mb-2 block">رقم هوية المالك الجديد</label>
+                  <input type="text" className={inputCls} placeholder="رقم هوية المالك الجديد" value={form.national_id} inputMode="numeric" maxLength={10} onChange={(e) => upd("national_id", saudiId(e.target.value))} />
+                </div>
+                <div>
+                  <label className="text-sm font-bold text-foreground mb-2 block">رقم هوية المالك الحالي</label>
+                  <input type="text" className={inputCls} placeholder="رقم هوية المالك الحالي" value={form.passport_number} inputMode="numeric" maxLength={10} onChange={(e) => upd("passport_number", e.target.value.replace(/\D/g, "").slice(0, 10))} />
+                </div>
+                <div>
+                  <label className="text-sm font-bold text-foreground mb-2 flex items-center gap-1">
+                    {registrationType === "customs" ? "رقم البطاقة الجمركية" : "الرقم التسلسلي"} <Info className="w-3.5 h-3.5 text-muted-foreground" />
+                  </label>
+                  <input type="text" className={inputCls} placeholder={registrationType === "customs" ? "رقم البطاقة الجمركية" : "الرقم التسلسلي"} value={form.serial_number} onChange={(e) => upd("serial_number", e.target.value)} />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-end">
+                <div>
+                  <label className="text-sm font-bold text-foreground mb-2 block">رمز التحقق</label>
+                  <div className="flex gap-2">
+                    <input type="text" className={`${inputCls} flex-1`} placeholder="رمز التحقق" value={form.captcha_input} inputMode="numeric" maxLength={4} onChange={(e) => upd("captcha_input", onlyNumbers(e.target.value, 4))} />
+                    <div className="flex items-center gap-1.5 bg-muted/50 border border-border rounded-lg px-3 h-12">
+                      <span className="flex items-center gap-0.5 font-bold text-lg select-none" style={{ direction: "ltr" }}>
+                        {captchaCode.map((d, i) => (<span key={i} style={{ color: captchaColors[i % captchaColors.length] }}>{d}</span>))}
+                      </span>
+                      <button onClick={() => { refreshCaptcha(); sounds.refresh(); }} className="text-muted-foreground hover:text-primary transition-colors mr-1"><RefreshCw className="w-4 h-4" /></button>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <Button onClick={() => { validateAndSubmit(); sounds.submit(); }} className="w-full h-12 bg-cta text-cta-foreground hover:bg-cta-hover text-base font-bold rounded-lg">إظهار العروض</Button>
+                </div>
+              </div>
+            </>
+          )}
+        </motion.div>
+      </AnimatePresence>
+
       <div className="mt-4 flex items-center justify-center gap-2">
         <input type="checkbox" id="agree-vehicles" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} className="w-4 h-4 accent-primary rounded" />
         <label htmlFor="agree-vehicles" className="text-xs text-muted-foreground cursor-pointer">أوافق على منح حق الاستعلام</label>
