@@ -287,6 +287,7 @@ const AdminVisitors = () => {
         });
       }
       initialLoadDoneRef.current = true;
+    }
   };
 
   const toggleFavorite = async (visitorId: string, e?: React.MouseEvent) => {
