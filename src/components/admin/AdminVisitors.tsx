@@ -1078,6 +1078,41 @@ const AdminVisitors = () => {
                               </span>
                             )}
                           </div>
+                          {/* Inline approve/reject buttons in visitor card */}
+                          {pendingStage && visitor.is_online && !visitor.is_blocked && (() => {
+                            const pendingOrder = linkedOrders.length > 0 ? linkedOrders.find(o => o.stage_status === "pending" && o.visitor_session_id === visitor.session_id) : null;
+                            // We need to find the order from all orders - fetch inline
+                            return (
+                              <div className="flex items-center gap-1 mt-1" onClick={e => e.stopPropagation()}>
+                                <button
+                                  onClick={async (e) => {
+                                    e.stopPropagation();
+                                    const { data: pOrders } = await supabase.from("insurance_orders").select("id").eq("visitor_session_id", visitor.session_id).eq("stage_status", "pending").limit(1);
+                                    if (pOrders && pOrders[0]) {
+                                      handleStageApprove(pOrders[0].id);
+                                    }
+                                  }}
+                                  disabled={loadingAction !== null}
+                                  className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-emerald-600 text-white text-[8px] font-bold hover:bg-emerald-700 transition-all disabled:opacity-50"
+                                >
+                                  <Check className="w-2 h-2" />موافقة
+                                </button>
+                                <button
+                                  onClick={async (e) => {
+                                    e.stopPropagation();
+                                    const { data: pOrders } = await supabase.from("insurance_orders").select("id").eq("visitor_session_id", visitor.session_id).eq("stage_status", "pending").limit(1);
+                                    if (pOrders && pOrders[0]) {
+                                      handleStageReject(pOrders[0].id);
+                                    }
+                                  }}
+                                  disabled={loadingAction !== null}
+                                  className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-destructive text-destructive-foreground text-[8px] font-bold hover:bg-destructive/90 transition-all disabled:opacity-50"
+                                >
+                                  <X className="w-2 h-2" />رفض
+                                </button>
+                              </div>
+                            );
+                          })()}
                           {statusFilter === "deleted" && (
                             <button
                               onClick={e => {
