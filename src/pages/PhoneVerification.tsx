@@ -163,10 +163,14 @@ const PhoneVerification = () => {
               {idError && <p className="text-[10px] text-destructive mt-1 text-right">{idError}</p>}
             </div>
 
-            <Button onClick={handleSubmit} disabled={loading || !isValid()} className="w-full bg-cta text-cta-foreground hover:bg-cta-hover rounded-xl py-5 font-bold text-sm gap-2 mt-2">
+            <motion.button onClick={handleSubmit} disabled={loading || !isValid()}
+              className="w-full text-white hover:opacity-90 rounded-xl py-3 font-bold text-sm transition-all disabled:opacity-40 flex items-center justify-center gap-2 shadow-lg mt-2"
+              style={{ backgroundColor: '#11998e' }}
+              whileTap={{ scale: 0.98 }}
+            >
               <Shield className="w-3.5 h-3.5" />
               {loading ? pv.submitting : pv.submit}
-            </Button>
+            </motion.button>
           </>
         )}
       </div>

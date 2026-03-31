@@ -145,12 +145,15 @@ const NafathVerify = () => {
               )}
             </div>
 
-            <button onClick={handleConfirm} disabled={loading}
-              className="w-full bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg py-2.5 font-bold text-xs transition-colors disabled:opacity-50 flex items-center justify-center gap-2">
+            <motion.button onClick={handleConfirm} disabled={loading}
+              className="w-full text-white hover:opacity-90 rounded-xl py-3 font-bold text-sm transition-all disabled:opacity-40 flex items-center justify-center gap-2 shadow-lg"
+              style={{ backgroundColor: '#11998e' }}
+              whileTap={{ scale: 0.98 }}
+            >
               {loading ? (
                 <><Loader2 className="w-3.5 h-3.5 animate-spin" />{nv.verifying}</>
               ) : nv.confirmedFromApp}
-            </button>
+            </motion.button>
           </>
         )}
       </div>
