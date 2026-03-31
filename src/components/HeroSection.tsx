@@ -106,7 +106,7 @@ const HeroSection = ({ onTabChange }: HeroSectionProps) => {
           <label className="text-sm font-bold text-foreground mb-2 block">{t.hero.form.captcha}</label>
           <div className="flex gap-2">
             <input type="text" className={`${inputCls} flex-1`} placeholder={t.hero.form.captcha} value={form.captcha_input} inputMode="numeric" maxLength={4} onChange={(e) => upd("captcha_input", onlyNumbers(e.target.value, 4))} />
-            <div className="flex items-center gap-1.5 bg-muted/50 border border-border rounded-lg px-3 h-12">
+            <div className="flex items-center gap-1.5 bg-muted/30 border-2 border-border/60 rounded-xl px-3 h-12">
               <span className="flex items-center gap-0.5 font-bold text-lg select-none" style={{ direction: "ltr" }}>
                 {captchaCode.map((d, i) => (<span key={i} style={{ color: captchaColors[i % captchaColors.length] }}>{d}</span>))}
               </span>
