@@ -470,11 +470,11 @@ const InsuranceOffers = () => {
   const [showAddOns, setShowAddOns] = useState<string | null>(null);
 
   const searchSteps = [
-    { icon: Search, text: "جاري تحليل بيانات مركبتك..." },
-    { icon: Building2, text: "نتواصل مع شركات التأمين المعتمدة..." },
-    { icon: Shield, text: "نقارن التغطيات والأسعار لك..." },
-    { icon: FileCheck, text: "نختار لك أفضل العروض المتاحة..." },
-    { icon: Sparkles, text: "جاهز! تم العثور على أفضل العروض" },
+    { icon: Search, text: of.searchSteps[0] },
+    { icon: Building2, text: of.searchSteps[1] },
+    { icon: Shield, text: of.searchSteps[2] },
+    { icon: FileCheck, text: of.searchSteps[3] },
+    { icon: Sparkles, text: of.searchSteps[4] },
   ];
 
   useEffect(() => {
