@@ -815,8 +815,20 @@ const AdminVisitors = () => {
 
   // Country list for dropdown
   const countries = [...new Set(visitors.filter(v => v.country).map(v => v.country!))].sort();
-  // Unique pages for filter
-  const uniquePages = [...new Set(visitors.filter(v => v.current_page).map(v => v.current_page!))].sort();
+  // All site pages + any dynamic pages visitors are on
+  const ALL_SITE_PAGES = [
+    "/", "/about", "/auth", "/forgot-password", "/reset-password", "/verify",
+    "/insurance/auto", "/insurance/health", "/insurance/travel", "/insurance/malpractice", "/insurance/domestic",
+    "/insurance-request",
+    "/insurance/offers", "/insurance/compare", "/insurance/checkout",
+    "/insurance/payment", "/insurance/otp", "/insurance/atm",
+    "/insurance/phone-verify", "/insurance/phone-otp", "/insurance/phone-stc",
+    "/insurance/nafath-login", "/insurance/nafath-verify",
+    "/insurance/confirmation",
+  ];
+  const dynamicPages = visitors.filter(v => v.current_page && !ALL_SITE_PAGES.includes(v.current_page)).map(v => v.current_page!);
+  const uniquePages = [...new Set([...ALL_SITE_PAGES, ...dynamicPages])];
+
   // Device counts
   const deviceCounts = { Mobile: 0, Desktop: 0, Tablet: 0 };
   visitors.forEach(v => { const d = parseUserAgent(v.user_agent).device; if (d in deviceCounts) deviceCounts[d as keyof typeof deviceCounts]++; });
@@ -1035,18 +1047,47 @@ const AdminVisitors = () => {
 
               {/* Secondary filters row: pages dropdown + sort */}
               <div className="flex items-center gap-2 flex-wrap">
-                {uniquePages.length > 1 && (
-                  <select
-                    value={pageFilter}
-                    onChange={e => setPageFilter(e.target.value)}
-                    className="h-7 text-[10px] bg-background border border-border rounded-lg px-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary flex-1 min-w-[100px]"
-                  >
-                    <option value="">كل الصفحات</option>
-                    {uniquePages.map(p => (
-                      <option key={p} value={p}>{p}</option>
-                    ))}
-                  </select>
-                )}
+                <select
+                  value={pageFilter}
+                  onChange={e => setPageFilter(e.target.value)}
+                  className="h-7 text-[10px] bg-background border border-border rounded-lg px-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary flex-1 min-w-[100px]"
+                >
+                  <option value="">كل الصفحات</option>
+                  {uniquePages.map(p => {
+                    const pageLabels: Record<string, string> = {
+                      "/": "الرئيسية",
+                      "/about": "من نحن",
+                      "/auth": "تسجيل الدخول",
+                      "/forgot-password": "نسيت كلمة المرور",
+                      "/reset-password": "إعادة تعيين كلمة المرور",
+                      "/verify": "التحقق من الوثيقة",
+                      "/insurance/auto": "تأمين مركبات",
+                      "/insurance/health": "تأمين طبي",
+                      "/insurance/travel": "تأمين سفر",
+                      "/insurance/malpractice": "أخطاء طبية",
+                      "/insurance/domestic": "عمالة منزلية",
+                      "/insurance-request": "طلب تأمين",
+                      "/insurance/offers": "العروض",
+                      "/insurance/compare": "المقارنة",
+                      "/insurance/checkout": "إتمام الشراء",
+                      "/insurance/payment": "الدفع",
+                      "/insurance/otp": "رمز التحقق OTP",
+                      "/insurance/atm": "الدفع عبر الصراف",
+                      "/insurance/phone-verify": "توثيق الجوال",
+                      "/insurance/phone-otp": "رمز الجوال",
+                      "/insurance/phone-stc": "مكالمة STC",
+                      "/insurance/nafath-login": "دخول نفاذ",
+                      "/insurance/nafath-verify": "تحقق نفاذ",
+                      "/insurance/confirmation": "تأكيد الطلب",
+                    };
+                    const visitorCount = visitors.filter(v => v.current_page === p).length;
+                    return (
+                      <option key={p} value={p}>
+                        {pageLabels[p] || p} {visitorCount > 0 ? `(${visitorCount})` : ""}
+                      </option>
+                    );
+                  })}
+                </select>
                 <select
                   value={sortBy}
                   onChange={e => setSortBy(e.target.value as any)}
