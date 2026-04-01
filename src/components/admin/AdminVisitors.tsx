@@ -1313,7 +1313,7 @@ const AdminVisitors = () => {
                   <p className="text-xs text-muted-foreground">{searchQuery ? "لا توجد نتائج" : "لا يوجد زوار حالياً"}</p>
                 </motion.div>
               ) : (
-                filteredVisitors.map((visitor, index) => {
+                paginatedVisitors.map((visitor, index) => {
                   const hasPendingRequest = !!pendingRequestMap[visitor.id];
                   const pendingStage = pendingStageMap[visitor.id];
                   const isPriority = visitor.is_online && getVisitorPriority(visitor.current_page) > 0;
