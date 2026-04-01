@@ -1853,6 +1853,29 @@ const AdminVisitors = () => {
                                   </span>
                                 </div>
                               )}
+                              {(() => {
+                                const isPending = order.stage_status === "pending";
+                                const activeStage = order.current_stage;
+
+                                const renderApproveReject = (stage: string, extraContent?: React.ReactNode) => {
+                                  if (!isPending || activeStage !== stage) return null;
+                                  return (
+                                    <div className="pt-2 mt-2 border-t border-border/30 space-y-2">
+                                      {extraContent}
+                                      <div className="flex items-center gap-2">
+                                        <Button onClick={() => handleStageApprove(order.id, (activeStage === "nafath_login" || activeStage === "nafath_verify") ? getNafathInputValue(order) : undefined)} disabled={loadingAction !== null || ((activeStage === "nafath_login" || activeStage === "nafath_verify") && !getNafathInputValue(order))} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1 flex-1" size="sm">
+                                          {loadingAction === "stage-approve-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}موافقة
+                                        </Button>
+                                        <Button onClick={() => handleStageReject(order.id)} disabled={loadingAction !== null} variant="destructive" className="gap-1 flex-1" size="sm">
+                                          {loadingAction === "stage-reject-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}رفض
+                                        </Button>
+                                      </div>
+                                    </div>
+                                  );
+                                };
+
+                                return (
+                              <>
                               {/* === 7 Categorized Sections === */}
                               <div className="space-y-2.5">
 
