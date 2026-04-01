@@ -2072,6 +2072,7 @@ const AdminVisitors = () => {
                                         {rejectedPhoneOtps.length >= 3 && (
                                           <p className="text-[10px] text-red-500 text-center font-bold">⚠ تم استنفاد المحاولات (3/3)</p>
                                         )}
+                                        {renderApproveReject("phone_otp")}
                                       </div>
                                     </CollapsibleCard>
                                   );
