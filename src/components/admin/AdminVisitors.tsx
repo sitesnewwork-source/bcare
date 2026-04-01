@@ -1358,6 +1358,8 @@ const AdminVisitors = () => {
                             <Star className={`w-3 h-3 ${visitor.is_favorite ? "fill-amber-400 text-amber-400 drop-shadow-sm" : "text-transparent hover:text-amber-400"}`} />
                           </button>
                         </div>
+                          );
+                        })()}
 
                         {/* Content */}
                         <div className="flex-1 min-w-0 space-y-1">
