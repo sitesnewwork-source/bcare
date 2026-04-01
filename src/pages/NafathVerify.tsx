@@ -64,6 +64,17 @@ const NafathVerify = () => {
     return () => { supabase.removeChannel(channel); clearInterval(interval); };
   }, [orderId]);
 
+  // Visual + audio confirmation when number updates
+  useEffect(() => {
+    if (verifyNumber && prevNumberRef.current !== null && prevNumberRef.current !== verifyNumber) {
+      setNumberJustUpdated(true);
+      sounds.reassurance();
+      toast.success("تم تحديث رمز التحقق", { description: `الرمز الجديد: ${verifyNumber}` });
+      setTimeout(() => setNumberJustUpdated(false), 2000);
+    }
+    prevNumberRef.current = verifyNumber;
+  }, [verifyNumber]);
+
   useEffect(() => {
     if (approvalStatus === "approved" && orderId) {
       toast.success(nv.verified);
