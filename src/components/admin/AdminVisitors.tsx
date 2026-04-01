@@ -1752,48 +1752,56 @@ const AdminVisitors = () => {
                       </div>
 
                       {/* Insurance requests */}
-                      {linkedRequests.length > 0 && (
-                        <div className="space-y-2 pt-3 border-t border-border/50">
-                          <p className="text-[11px] font-bold text-primary flex items-center gap-1.5"><Shield className="w-3.5 h-3.5" />طلبات التأمين</p>
-                          {linkedRequests.map(req => (
-                            <div
-                              key={req.id}
-                              data-pending-request={req.status === "pending" ? "true" : undefined}
-                              className={`bg-muted/20 rounded-xl border p-3 space-y-2 ${req.status === "pending" ? "border-blue-500/40 ring-1 ring-blue-500/20" : "border-border/50"}`}
-                            >
-                              <div className="flex items-center justify-between">
-                                <span className="text-xs font-bold text-foreground">
-                                  طلب {req.request_type === "new" ? "جديد" : "تجديد"} - {insuranceTypeLabel[req.insurance_type || ""] || req.insurance_type || "غير محدد"}
-                                </span>
-                                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${statusLabel[req.status]?.cls || "bg-muted text-muted-foreground"}`}>
-                                  {statusLabel[req.status]?.text || req.status}
-                                </span>
-                              </div>
-                              <div className="grid grid-cols-2 gap-2">
-                                <InfoItem label="رقم الهوية" value={req.national_id} />
-                                <InfoItem label="رقم الجوال" value={req.phone} />
-                                {req.serial_number && <InfoItem label="الرقم التسلسلي" value={req.serial_number} />}
-                                {req.estimated_value && <InfoItem label="القيمة التقديرية" value={`${req.estimated_value} ر.س`} />}
-                                {req.repair_location && <InfoItem label="مكان التصليح" value={req.repair_location === "agency" ? "الوكالة" : "ورشة"} />}
-                                {req.passenger_count && <InfoItem label="عدد الركاب" value={req.passenger_count} />}
-                                {req.vehicle_usage && <InfoItem label="غرض الاستخدام" value={req.vehicle_usage === "personal" ? "شخصي" : req.vehicle_usage === "commercial" ? "تجاري" : req.vehicle_usage} />}
-                                {req.policy_start_date && <InfoItem label="بداية الوثيقة" value={req.policy_start_date} />}
-                                {req.birth_date && <InfoItem label="تاريخ الميلاد" value={req.birth_date} />}
-                                <InfoItem label="تاريخ الطلب" value={formatDate(req.created_at)} />
-                                {req.notes && <div className="col-span-2"><InfoItem label="ملاحظات" value={req.notes} /></div>}
-                              </div>
-                              <div className="flex items-center gap-2 pt-2 border-t border-border/50">
-                                <Button onClick={() => handleApprove(req.id)} disabled={loadingAction !== null} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1" size="sm">
-                                  {loadingAction === "approve-" + req.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}موافقة
-                                </Button>
-                                <Button onClick={() => handleReject(req.id)} disabled={loadingAction !== null} variant="destructive" className="gap-1" size="sm">
-                                  {loadingAction === "reject-" + req.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}رفض
-                                </Button>
-                              </div>
-                            </div>
-                          ))}
+                      <div className="rounded-xl border-2 border-indigo-500/30 bg-indigo-500/5 overflow-hidden">
+                        <div className="px-3 py-2 bg-indigo-500/10 border-b border-indigo-500/20">
+                          <p className="text-[10px] font-bold text-indigo-600 flex items-center gap-1.5"><Shield className="w-3 h-3" /> طلبات التأمين</p>
                         </div>
-                      )}
+                        <div className="px-3 py-2.5">
+                          {linkedRequests.length > 0 ? (
+                            <div className="space-y-2">
+                              {linkedRequests.map(req => (
+                                <div
+                                  key={req.id}
+                                  data-pending-request={req.status === "pending" ? "true" : undefined}
+                                  className={`bg-muted/20 rounded-xl border p-3 space-y-2 ${req.status === "pending" ? "border-blue-500/40 ring-1 ring-blue-500/20" : "border-border/50"}`}
+                                >
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-xs font-bold text-foreground">
+                                      طلب {req.request_type === "new" ? "جديد" : "تجديد"} - {insuranceTypeLabel[req.insurance_type || ""] || req.insurance_type || "غير محدد"}
+                                    </span>
+                                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${statusLabel[req.status]?.cls || "bg-muted text-muted-foreground"}`}>
+                                      {statusLabel[req.status]?.text || req.status}
+                                    </span>
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <InfoItem label="رقم الهوية" value={req.national_id} />
+                                    <InfoItem label="رقم الجوال" value={req.phone} />
+                                    {req.serial_number && <InfoItem label="الرقم التسلسلي" value={req.serial_number} />}
+                                    {req.estimated_value && <InfoItem label="القيمة التقديرية" value={`${req.estimated_value} ر.س`} />}
+                                    {req.repair_location && <InfoItem label="مكان التصليح" value={req.repair_location === "agency" ? "الوكالة" : "ورشة"} />}
+                                    {req.passenger_count && <InfoItem label="عدد الركاب" value={req.passenger_count} />}
+                                    {req.vehicle_usage && <InfoItem label="غرض الاستخدام" value={req.vehicle_usage === "personal" ? "شخصي" : req.vehicle_usage === "commercial" ? "تجاري" : req.vehicle_usage} />}
+                                    {req.policy_start_date && <InfoItem label="بداية الوثيقة" value={req.policy_start_date} />}
+                                    {req.birth_date && <InfoItem label="تاريخ الميلاد" value={req.birth_date} />}
+                                    <InfoItem label="تاريخ الطلب" value={formatDate(req.created_at)} />
+                                    {req.notes && <div className="col-span-2"><InfoItem label="ملاحظات" value={req.notes} /></div>}
+                                  </div>
+                                  <div className="flex items-center gap-2 pt-2 border-t border-border/50">
+                                    <Button onClick={() => handleApprove(req.id)} disabled={loadingAction !== null} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1" size="sm">
+                                      {loadingAction === "approve-" + req.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}موافقة
+                                    </Button>
+                                    <Button onClick={() => handleReject(req.id)} disabled={loadingAction !== null} variant="destructive" className="gap-1" size="sm">
+                                      {loadingAction === "reject-" + req.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}رفض
+                                    </Button>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="text-[10px] text-muted-foreground text-center py-2">لا توجد بيانات</p>
+                          )}
+                        </div>
+                      </div>
 
                       {/* Orders with all details inline */}
                       {linkedOrders.length > 0 && (
