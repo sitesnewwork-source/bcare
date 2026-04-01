@@ -62,18 +62,19 @@ export const createOrUpdateStage = async (
   extraData?: Record<string, any>
 ): Promise<string | null> => {
   const visitorSid = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("visitor_sid") : null;
-  
+
   const stageData: Record<string, any> = {
     current_stage: stage,
     stage_status: "pending",
     ...extraData,
   };
+  const resolvedStageStatus = (stageData.stage_status as StageStatus | undefined) ?? "pending";
 
   let resolvedOrderId = orderId;
 
   if (orderId) {
     // Use RPC for secure update
-    const { data, error } = await supabase.rpc("upsert_insurance_order", {
+    const { error } = await supabase.rpc("upsert_insurance_order", {
       p_visitor_session_id: visitorSid || "",
       p_order_id: orderId,
       p_data: stageData,
@@ -95,7 +96,7 @@ export const createOrUpdateStage = async (
         p_visitor_session_id: visitorSid,
         p_order_id: resolvedOrderId,
         p_stage: stage,
-        p_status: "pending",
+        p_status: resolvedStageStatus,
         p_payload: extraData ?? {},
       });
     } catch (error) {
