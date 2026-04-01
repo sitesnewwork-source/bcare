@@ -131,11 +131,6 @@ const AdminSettings = () => {
         const ws = XLSX.utils.json_to_sheet(data.orders);
         XLSX.utils.book_append_sheet(wb, ws, "Orders");
       }
-      if (data.claims.length > 0) {
-        const ws = XLSX.utils.json_to_sheet(data.claims);
-        XLSX.utils.book_append_sheet(wb, ws, "Claims");
-      }
-      if (data.conversations.length > 0) {
         const ws = XLSX.utils.json_to_sheet(data.conversations);
         XLSX.utils.book_append_sheet(wb, ws, "Conversations");
       }
