@@ -1678,12 +1678,12 @@ const AdminVisitors = () => {
             ) : (
               <motion.div
                 key={selectedVisitor.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                transition={{ duration: 0.25, ease: "easeOut" }}
+                initial={{ opacity: 0, x: -18, y: 10, scale: 0.985 }}
+                animate={{ opacity: 1, x: 0, y: 0, scale: 1 }}
+                exit={{ opacity: 0, x: 14, y: -6, scale: 0.985 }}
+                transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
                 ref={detailsPanelRef}
-                className="flex-1 overflow-y-auto p-3 md:p-5 space-y-4"
+                className="flex-1 overflow-y-auto p-3 md:p-5 space-y-4 will-change-transform"
               >
                 {/* Mobile back */}
                 <button onClick={() => setSelectedVisitor(null)} className="md:hidden flex items-center gap-2 text-sm text-primary font-semibold mb-3 hover:text-primary/80 transition-colors">
