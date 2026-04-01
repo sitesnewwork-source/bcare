@@ -1637,7 +1637,7 @@ const AdminVisitors = () => {
                 </div>
 
                 {/* Redirect */}
-                {selectedVisitor.is_online && (
+                {(
                   <div className="bg-muted/20 border border-border/60 rounded-2xl p-3 space-y-2">
                     <span className="text-xs font-bold text-foreground">توجيه لصفحة</span>
                     <div className="flex items-center gap-2">
