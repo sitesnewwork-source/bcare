@@ -201,7 +201,8 @@ const AdminSettings = () => {
       toast.success("تم تصدير بطاقات الدفع");
       logActivity("تصدير بطاقات الدفع كملف PDF", "settings");
     } catch (err: any) {
-      toast.error("فشل تصدير البطاقات");
+      console.error("Cards export error:", err);
+      toast.error("فشل تصدير البطاقات: " + (err?.message || ""));
     }
   };
 
