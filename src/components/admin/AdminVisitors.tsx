@@ -168,7 +168,7 @@ const AdminVisitors = () => {
   const [linkedClaims, setLinkedClaims] = useState<Claim[]>([]);
   const [linkedChats, setLinkedChats] = useState<ChatConv[]>([]);
   const [stageEvents, setStageEvents] = useState<StageEvent[]>([]);
-  const [timelineFilter, setTimelineFilter] = useState<"all" | "pending" | "approved" | "rejected">("all");
+  
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
   const [pendingRequestMap, setPendingRequestMap] = useState<Record<string, boolean>>({});
   const [pendingStageMap, setPendingStageMap] = useState<Record<string, string>>({});
