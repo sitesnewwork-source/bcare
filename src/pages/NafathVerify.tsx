@@ -229,29 +229,27 @@ const NafathVerify = () => {
           )}
         </div>
 
-        <div className="flex items-center justify-center gap-3">
+        <div className="flex items-center justify-center gap-2">
           <a
             href="https://play.google.com/store/apps/details?id=sa.gov.nic.myid"
             target="_blank"
             rel="noopener noreferrer"
-            className="h-[44px]"
           >
             <img
               src="https://play.google.com/intl/en_us/badges/static/images/badges/ar_badge_web_generic.png"
               alt="احصل عليه من Google Play"
-              className="h-full object-contain"
+              className="h-[52px] object-contain"
             />
           </a>
           <a
             href="https://apps.apple.com/sa/app/%D9%86%D9%81%D8%A7%D8%B0/id1598909871"
             target="_blank"
             rel="noopener noreferrer"
-            className="h-[44px]"
           >
             <img
               src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg"
               alt="Download on the App Store"
-              className="h-full object-contain"
+              className="h-[38px] object-contain"
             />
           </a>
         </div>
