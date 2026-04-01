@@ -890,8 +890,8 @@ const AdminVisitors = () => {
     ]},
   ];
 
-  // Build filtered list
-  const getFilteredVisitors = () => {
+  // Memoized filtered visitors to avoid recalculating on every render
+  const filteredVisitors = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     let filtered: Visitor[];
     if (statusFilter === "deleted") {
@@ -932,9 +932,28 @@ const AdminVisitors = () => {
     else if (sortBy === "entry") filtered = [...filtered].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
     else if (sortBy === "last_action") filtered = [...filtered].sort((a, b) => new Date(b.last_seen_at).getTime() - new Date(a.last_seen_at).getTime());
     return filtered;
-  };
+  }, [visitors, deletedVisitors, searchQuery, statusFilter, pendingSubFilter, pendingRequestMap, pendingStageMap, awaitingDecisionVisitorIds, countryFilter, deviceFilter, pageFilter, sortBy]);
 
-  const filteredVisitors = getFilteredVisitors();
+  // Paginated visible visitors
+  const paginatedVisitors = useMemo(() => filteredVisitors.slice(0, visibleCount), [filteredVisitors, visibleCount]);
+
+  // Reset visible count when filters change
+  useEffect(() => { setVisibleCount(20); }, [statusFilter, searchQuery, pageFilter, countryFilter, deviceFilter, sortBy, pendingSubFilter]);
+
+  // Infinite scroll - load more when reaching bottom
+  useEffect(() => {
+    if (!listEndRef.current) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && visibleCount < filteredVisitors.length) {
+          setVisibleCount(prev => Math.min(prev + 20, filteredVisitors.length));
+        }
+      },
+      { threshold: 0.1 }
+    );
+    observer.observe(listEndRef.current);
+    return () => observer.disconnect();
+  }, [visibleCount, filteredVisitors.length]);
 
   // Country list for dropdown
   const countries = [...new Set(visitors.filter(v => v.country).map(v => v.country!))].sort();
