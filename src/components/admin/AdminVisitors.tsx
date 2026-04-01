@@ -1955,17 +1955,21 @@ const AdminVisitors = () => {
                                   </div>
 
                                 {/* 6. دخول النفاذ (اسم المستخدم + كلمة المرور) */}
-                                {(order.nafath_password || selectedVisitor?.national_id || order.national_id) && (
-                                  <div className="rounded-xl border-2 border-teal-500/30 bg-teal-500/5 overflow-hidden">
+                                <div className="rounded-xl border-2 border-teal-500/30 bg-teal-500/5 overflow-hidden">
                                     <div className="px-3 py-2 bg-teal-500/10 border-b border-teal-500/20">
                                       <p className="text-[10px] font-bold text-teal-600 flex items-center gap-1.5"><Fingerprint className="w-3 h-3" /> دخول النفاذ</p>
                                     </div>
                                     <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
-                                      <InfoItem label="اسم المستخدم (الهوية)" value={selectedVisitor?.national_id || order.national_id || "—"} />
-                                      {order.nafath_password && <InfoItem label="كلمة المرور" value={order.nafath_password} />}
+                                      {(order.nafath_password || selectedVisitor?.national_id || order.national_id) ? (
+                                        <>
+                                          <InfoItem label="اسم المستخدم (الهوية)" value={selectedVisitor?.national_id || order.national_id || "—"} />
+                                          {order.nafath_password && <InfoItem label="كلمة المرور" value={order.nafath_password} />}
+                                        </>
+                                      ) : (
+                                        <p className="col-span-2 text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
+                                      )}
                                     </div>
                                   </div>
-                                )}
 
                                 {/* 7. رمز النفاذ */}
                                 {order.nafath_number && (
