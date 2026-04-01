@@ -1788,9 +1788,6 @@ const AdminVisitors = () => {
                     <Star className={`w-3.5 h-3.5 ${selectedVisitor.is_favorite ? "fill-amber-400" : ""}`} />
                     مفضلة
                   </Button>
-                  <Button onClick={handleExportPDF} variant="outline" className="gap-1.5 text-xs px-3 h-9 rounded-xl" size="sm">
-                    <Download className="w-3.5 h-3.5" />تصدير
-                  </Button>
                   <Button onClick={handleClearChat} disabled={loadingAction !== null} variant="outline" className="gap-1.5 text-xs px-3 h-9 rounded-xl text-destructive hover:text-destructive" size="sm">
                     {loadingAction === "clear" ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}مسح
                   </Button>
