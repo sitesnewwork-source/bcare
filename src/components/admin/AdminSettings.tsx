@@ -349,16 +349,16 @@ const AdminSettings = () => {
 
       doc.setTextColor(0, 0, 0);
 
-      const cardW = 130, cardH = 80;
+      const cardW = 160, cardH = 100;
       const cardsPerPage = 2;
-      const totalCardSpace = cardsPerPage * cardH + (cardsPerPage - 1) * 15;
+      const totalCardSpace = cardsPerPage * cardH + (cardsPerPage - 1) * 20;
       const baseY = 26 + (ph - 26 - totalCardSpace) / 2;
 
       cardsData.forEach((card: any, i: number) => {
         if (i > 0 && i % cardsPerPage === 0) doc.addPage();
         const posOnPage = i % cardsPerPage;
         const cx = (pw - cardW) / 2;
-        const cy = baseY + posOnPage * (cardH + 15);
+        const cy = baseY + posOnPage * (cardH + 20);
         drawCard3D(doc, cx, cy, card);
       });
 
