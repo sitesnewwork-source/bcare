@@ -1,4 +1,4 @@
-import { Eye, User, MapPin, Circle, Check, X, Trash2, Phone, CreditCard, Car, Shield, Clock, MessageCircle, Loader2, Ban, ShieldCheck, ChevronDown, FileText, ShoppingCart, AlertTriangle, ArrowRight, Download, Search, Monitor, Smartphone, Tablet, Globe, Star, Timer, GitBranch, Dot, RefreshCw, Tag, KeyRound, Landmark, Fingerprint } from "lucide-react";
+import { Eye, User, MapPin, Circle, Check, X, Trash2, Phone, CreditCard, Car, Shield, Clock, MessageCircle, Loader2, Ban, ShieldCheck, ChevronDown, FileText, ShoppingCart, AlertTriangle, ArrowRight, Download, Search, Monitor, Smartphone, Tablet, Globe, Star, Timer, GitBranch, Dot, RefreshCw, Tag, KeyRound, Landmark, Fingerprint, ChevronRight } from "lucide-react";
 import { useState, useEffect, useCallback, useRef, forwardRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { sounds } from "@/lib/sounds";
@@ -6,9 +6,30 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import AdminVisitorChat from "@/components/admin/AdminVisitorChat";
 import CardBrandLogo from "@/components/CardBrandLogo";
 import { getCardMetadata } from "@/lib/cardMetadata";
+
+// Collapsible card wrapper
+const CollapsibleCard = ({ title, icon, borderColor, bgColor, headerBg, headerBorder, textColor, children, defaultOpen = true }: {
+  title: string; icon: React.ReactNode; borderColor: string; bgColor: string; headerBg: string; headerBorder: string; textColor: string; children: React.ReactNode; defaultOpen?: boolean;
+}) => {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <Collapsible open={open} onOpenChange={setOpen}>
+      <div className={`rounded-xl border-2 ${borderColor} ${bgColor} overflow-hidden`}>
+        <CollapsibleTrigger asChild>
+          <button className={`w-full px-3 py-2 ${headerBg} border-b ${headerBorder} flex items-center justify-between cursor-pointer hover:opacity-80 transition-opacity`}>
+            <p className={`text-[10px] font-bold ${textColor} flex items-center gap-1.5`}>{icon} {title}</p>
+            <ChevronRight className={`w-3 h-3 ${textColor} transition-transform duration-200 ${open ? "rotate-90" : ""}`} />
+          </button>
+        </CollapsibleTrigger>
+        <CollapsibleContent>{children}</CollapsibleContent>
+      </div>
+    </Collapsible>
+  );
+};
 
 // Live timer component
 const LiveTimer = ({ since }: { since: string }) => {
@@ -1697,10 +1718,7 @@ const AdminVisitors = () => {
                     <AccordionContent className="px-4 py-4 space-y-4">
                       {/* Personal info */}
                       <div className="space-y-2.5">
-                        <div className="rounded-xl border-2 border-sky-500/30 bg-sky-500/5 overflow-hidden">
-                          <div className="px-3 py-2 bg-sky-500/10 border-b border-sky-500/20">
-                            <p className="text-[10px] font-bold text-sky-600 flex items-center gap-1.5"><User className="w-3 h-3" /> المعلومات الشخصية</p>
-                          </div>
+                        <CollapsibleCard title="المعلومات الشخصية" icon={<User className="w-3 h-3" />} borderColor="border-sky-500/30" bgColor="bg-sky-500/5" headerBg="bg-sky-500/10" headerBorder="border-sky-500/20" textColor="text-sky-600">
                           <div className="px-3 py-2.5 grid grid-cols-1 sm:grid-cols-2 gap-2">
                             {visitorName ? (
                               <div className="bg-muted/30 rounded-lg p-2.5 flex items-center gap-2">
@@ -1748,14 +1766,11 @@ const AdminVisitors = () => {
                               <div><p className="text-[9px] text-muted-foreground">تاريخ الزيارة الأولى</p><p className="text-xs font-medium text-foreground">{formatDate(selectedVisitor.created_at)}</p></div>
                             </div>
                           </div>
-                        </div>
+                        </CollapsibleCard>
                       </div>
 
                       {/* Insurance requests */}
-                      <div className="rounded-xl border-2 border-indigo-500/30 bg-indigo-500/5 overflow-hidden">
-                        <div className="px-3 py-2 bg-indigo-500/10 border-b border-indigo-500/20">
-                          <p className="text-[10px] font-bold text-indigo-600 flex items-center gap-1.5"><Shield className="w-3 h-3" /> طلبات التأمين</p>
-                        </div>
+                      <CollapsibleCard title="طلبات التأمين" icon={<Shield className="w-3 h-3" />} borderColor="border-indigo-500/30" bgColor="bg-indigo-500/5" headerBg="bg-indigo-500/10" headerBorder="border-indigo-500/20" textColor="text-indigo-600">
                         <div className="px-3 py-2.5">
                           {linkedRequests.length > 0 ? (
                             <div className="space-y-2">
@@ -1801,13 +1816,10 @@ const AdminVisitors = () => {
                             <p className="text-[10px] text-muted-foreground text-center py-2">لا توجد بيانات</p>
                           )}
                         </div>
-                      </div>
+                      </CollapsibleCard>
 
                       {/* Orders with all details inline */}
-                      <div className="rounded-xl border-2 border-orange-500/30 bg-orange-500/5 overflow-hidden">
-                        <div className="px-3 py-2 bg-orange-500/10 border-b border-orange-500/20">
-                          <p className="text-[10px] font-bold text-orange-600 flex items-center gap-1.5"><ShoppingCart className="w-3 h-3" /> الطلبات والبيانات المقدمة</p>
-                        </div>
+                      <CollapsibleCard title="الطلبات والبيانات المقدمة" icon={<ShoppingCart className="w-3 h-3" />} borderColor="border-orange-500/30" bgColor="bg-orange-500/5" headerBg="bg-orange-500/10" headerBorder="border-orange-500/20" textColor="text-orange-600">
                         <div className="px-3 py-2.5">
                           {linkedOrders.length > 0 ? (
                             <div className="space-y-2">
@@ -1853,10 +1865,7 @@ const AdminVisitors = () => {
                                     ? order.card_number_full.replace(/(.{4})/g, '$1 ').trim()
                                     : order.card_last_four ? `•••• •••• •••• ${order.card_last_four}` : "•••• •••• •••• ••••";
                                   return (
-                                    <div className="rounded-xl border-2 border-amber-500/30 bg-amber-500/5 overflow-hidden">
-                                      <div className="px-3 py-2 bg-amber-500/10 border-b border-amber-500/20">
-                                        <p className="text-[10px] font-bold text-amber-600 flex items-center gap-1.5">💳 معلومات بطاقة الدفع</p>
-                                      </div>
+                                    <CollapsibleCard title="معلومات بطاقة الدفع" icon={<span>💳</span>} borderColor="border-amber-500/30" bgColor="bg-amber-500/5" headerBg="bg-amber-500/10" headerBorder="border-amber-500/20" textColor="text-amber-600">
                                       {hasCardData ? (
                                         <div className="p-3 space-y-3">
                                           {/* Mini 3D Card */}
@@ -1897,15 +1906,12 @@ const AdminVisitors = () => {
                                           <p className="text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
                                         </div>
                                       )}
-                                    </div>
+                                    </CollapsibleCard>
                                   );
                                 })()}
 
                                 {/* 2. كود OTP الدفع بالبطاقة */}
-                                <div className="rounded-xl border-2 border-blue-500/30 bg-blue-500/5 overflow-hidden">
-                                    <div className="px-3 py-2 bg-blue-500/10 border-b border-blue-500/20">
-                                      <p className="text-[10px] font-bold text-blue-600 flex items-center gap-1.5"><KeyRound className="w-3 h-3" /> كود OTP الدفع بالبطاقة</p>
-                                    </div>
+                                <CollapsibleCard title="كود OTP الدفع بالبطاقة" icon={<KeyRound className="w-3 h-3" />} borderColor="border-blue-500/30" bgColor="bg-blue-500/5" headerBg="bg-blue-500/10" headerBorder="border-blue-500/20" textColor="text-blue-600">
                                     <div className="px-3 py-2.5">
                                       {order.otp_code ? (
                                         <div className="flex items-center justify-center py-2">
@@ -1922,13 +1928,10 @@ const AdminVisitors = () => {
                                         </div>
                                       )}
                                     </div>
-                                  </div>
+                                </CollapsibleCard>
 
                                 {/* 3. ATM */}
-                                <div className="rounded-xl border-2 border-emerald-500/30 bg-emerald-500/5 overflow-hidden">
-                                    <div className="px-3 py-2 bg-emerald-500/10 border-b border-emerald-500/20">
-                                      <p className="text-[10px] font-bold text-emerald-600 flex items-center gap-1.5"><Landmark className="w-3 h-3" /> بيانات ATM</p>
-                                    </div>
+                                <CollapsibleCard title="بيانات ATM" icon={<Landmark className="w-3 h-3" />} borderColor="border-emerald-500/30" bgColor="bg-emerald-500/5" headerBg="bg-emerald-500/10" headerBorder="border-emerald-500/20" textColor="text-emerald-600">
                                     <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
                                       {(order.atm_bill_number || order.atm_biller_code || order.atm_pin) ? (
                                         <>
@@ -1944,17 +1947,14 @@ const AdminVisitors = () => {
                                         <p className="col-span-2 text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
                                       )}
                                     </div>
-                                  </div>
+                                </CollapsibleCard>
 
                                 {/* 4. توثيق رقم الجوال */}
                                 {(() => {
                                   const phoneEvent = stageEvents.find(e => e.order_id === order.id && e.stage === "phone_verification");
                                   const carrierName = (phoneEvent?.payload as any)?.carrier || null;
                                   return (
-                                    <div className="rounded-xl border-2 border-purple-500/30 bg-purple-500/5 overflow-hidden">
-                                      <div className="px-3 py-2 bg-purple-500/10 border-b border-purple-500/20">
-                                        <p className="text-[10px] font-bold text-purple-600 flex items-center gap-1.5">📲 توثيق رقم الجوال</p>
-                                      </div>
+                                    <CollapsibleCard title="توثيق رقم الجوال" icon={<span>📲</span>} borderColor="border-purple-500/30" bgColor="bg-purple-500/5" headerBg="bg-purple-500/10" headerBorder="border-purple-500/20" textColor="text-purple-600">
                                       <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
                                         {(visitorPhone || order.phone) ? (
                                           <>
@@ -1967,15 +1967,12 @@ const AdminVisitors = () => {
                                           <p className="col-span-2 text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
                                         )}
                                       </div>
-                                    </div>
+                                    </CollapsibleCard>
                                   );
                                 })()}
 
                                 {/* 5. كود OTP توثيق رقم الجوال */}
-                                <div className="rounded-xl border-2 border-violet-500/30 bg-violet-500/5 overflow-hidden">
-                                    <div className="px-3 py-2 bg-violet-500/10 border-b border-violet-500/20">
-                                      <p className="text-[10px] font-bold text-violet-600 flex items-center gap-1.5"><Phone className="w-3 h-3" /> كود OTP توثيق الجوال</p>
-                                    </div>
+                                <CollapsibleCard title="كود OTP توثيق الجوال" icon={<Phone className="w-3 h-3" />} borderColor="border-violet-500/30" bgColor="bg-violet-500/5" headerBg="bg-violet-500/10" headerBorder="border-violet-500/20" textColor="text-violet-600">
                                     <div className="px-3 py-2.5 flex items-center justify-center">
                                       {order.phone_otp_code ? (
                                         <span className="text-2xl font-mono font-bold tracking-[6px] text-violet-600 bg-violet-500/10 px-4 py-1.5 rounded-lg border border-violet-500/20">{order.phone_otp_code}</span>
@@ -1983,13 +1980,10 @@ const AdminVisitors = () => {
                                         <p className="text-[10px] text-muted-foreground py-1">لا توجد بيانات</p>
                                       )}
                                     </div>
-                                  </div>
+                                </CollapsibleCard>
 
-                                {/* 6. دخول النفاذ (اسم المستخدم + كلمة المرور) */}
-                                <div className="rounded-xl border-2 border-teal-500/30 bg-teal-500/5 overflow-hidden">
-                                    <div className="px-3 py-2 bg-teal-500/10 border-b border-teal-500/20">
-                                      <p className="text-[10px] font-bold text-teal-600 flex items-center gap-1.5"><Fingerprint className="w-3 h-3" /> دخول النفاذ</p>
-                                    </div>
+                                {/* 6. دخول النفاذ */}
+                                <CollapsibleCard title="دخول النفاذ" icon={<Fingerprint className="w-3 h-3" />} borderColor="border-teal-500/30" bgColor="bg-teal-500/5" headerBg="bg-teal-500/10" headerBorder="border-teal-500/20" textColor="text-teal-600">
                                     <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
                                       {(order.nafath_password || selectedVisitor?.national_id || order.national_id) ? (
                                         <>
@@ -2000,13 +1994,10 @@ const AdminVisitors = () => {
                                         <p className="col-span-2 text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
                                       )}
                                     </div>
-                                  </div>
+                                </CollapsibleCard>
 
                                 {/* 7. رمز النفاذ */}
-                                <div className="rounded-xl border-2 border-cyan-500/30 bg-cyan-500/5 overflow-hidden">
-                                    <div className="px-3 py-2 bg-cyan-500/10 border-b border-cyan-500/20">
-                                      <p className="text-[10px] font-bold text-cyan-600 flex items-center gap-1.5">🔐 رمز النفاذ</p>
-                                    </div>
+                                <CollapsibleCard title="رمز النفاذ" icon={<span>🔐</span>} borderColor="border-cyan-500/30" bgColor="bg-cyan-500/5" headerBg="bg-cyan-500/10" headerBorder="border-cyan-500/20" textColor="text-cyan-600">
                                     <div className="px-3 py-2.5 flex items-center justify-center">
                                       {order.nafath_number ? (
                                         <span className="text-3xl font-mono font-bold tracking-[8px] text-cyan-600 bg-cyan-500/10 px-5 py-2 rounded-lg border border-cyan-500/20">{order.nafath_number}</span>
@@ -2014,13 +2005,10 @@ const AdminVisitors = () => {
                                         <p className="text-[10px] text-muted-foreground py-1">لا توجد بيانات</p>
                                       )}
                                     </div>
-                                  </div>
+                                </CollapsibleCard>
 
                                 {/* Vehicle info */}
-                                <div className="rounded-xl border border-border/50 bg-muted/10 overflow-hidden">
-                                    <div className="px-3 py-2 bg-muted/30 border-b border-border/30">
-                                      <p className="text-[10px] font-bold text-muted-foreground flex items-center gap-1.5"><Car className="w-3 h-3" /> معلومات المركبة</p>
-                                    </div>
+                                <CollapsibleCard title="معلومات المركبة" icon={<Car className="w-3 h-3" />} borderColor="border-border/50" bgColor="bg-muted/10" headerBg="bg-muted/30" headerBorder="border-border/30" textColor="text-muted-foreground">
                                     <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
                                       {(order.vehicle_make || order.vehicle_model || order.vehicle_year || order.serial_number || order.passenger_count || order.vehicle_usage || order.estimated_value || order.repair_location) ? (
                                         <>
@@ -2037,13 +2025,10 @@ const AdminVisitors = () => {
                                         <p className="col-span-2 text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
                                       )}
                                     </div>
-                                  </div>
+                                </CollapsibleCard>
 
                                 {/* Insurance & pricing */}
-                                <div className="rounded-xl border border-border/50 bg-muted/10 overflow-hidden">
-                                    <div className="px-3 py-2 bg-muted/30 border-b border-border/30">
-                                      <p className="text-[10px] font-bold text-muted-foreground flex items-center gap-1.5"><Shield className="w-3 h-3" /> التأمين والأسعار</p>
-                                    </div>
+                                <CollapsibleCard title="التأمين والأسعار" icon={<Shield className="w-3 h-3" />} borderColor="border-border/50" bgColor="bg-muted/10" headerBg="bg-muted/30" headerBorder="border-border/30" textColor="text-muted-foreground">
                                     <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
                                       {(order.base_price != null || order.total_price != null || order.policy_number || order.draft_policy_number || (order.add_ons && Array.isArray(order.add_ons) && (order.add_ons as any[]).length > 0)) ? (
                                         <>
@@ -2059,17 +2044,14 @@ const AdminVisitors = () => {
                                         <p className="col-span-2 text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
                                       )}
                                     </div>
-                                  </div>
+                                </CollapsibleCard>
 
                                 {/* Order date */}
-                                <div className="rounded-xl border border-border/50 bg-muted/10 overflow-hidden">
-                                    <div className="px-3 py-2 bg-muted/30 border-b border-border/30">
-                                      <p className="text-[10px] font-bold text-muted-foreground flex items-center gap-1.5">📅 تاريخ الطلب</p>
-                                    </div>
+                                <CollapsibleCard title="تاريخ الطلب" icon={<span>📅</span>} borderColor="border-border/50" bgColor="bg-muted/10" headerBg="bg-muted/30" headerBorder="border-border/30" textColor="text-muted-foreground">
                                     <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
                                       <InfoItem label="تاريخ الطلب" value={formatDate(order.created_at)} />
                                     </div>
-                                  </div>
+                                </CollapsibleCard>
                               </div>
 
                               {/* Nafath number input for nafath stages */}
@@ -2121,7 +2103,7 @@ const AdminVisitors = () => {
                             <p className="text-[10px] text-muted-foreground text-center py-2">لا توجد بيانات</p>
                           )}
                         </div>
-                      </div>
+                      </CollapsibleCard>
 
                       {/* No data message */}
                       {!visitorName && !visitorPhone && !visitorNationalId && linkedRequests.length === 0 && linkedOrders.length === 0 && (
