@@ -102,6 +102,33 @@ const VISITOR_TAGS = [
   { key: "returning", label: "زائر عائد", color: "bg-blue-500/15 text-blue-600 border-blue-500/30" },
 ] as const;
 
+const AVATAR_COLORS = [
+  { bg: "from-rose-400 to-pink-500", text: "text-white" },
+  { bg: "from-violet-400 to-purple-500", text: "text-white" },
+  { bg: "from-blue-400 to-indigo-500", text: "text-white" },
+  { bg: "from-cyan-400 to-teal-500", text: "text-white" },
+  { bg: "from-emerald-400 to-green-500", text: "text-white" },
+  { bg: "from-amber-400 to-orange-500", text: "text-white" },
+  { bg: "from-red-400 to-rose-500", text: "text-white" },
+  { bg: "from-fuchsia-400 to-pink-500", text: "text-white" },
+  { bg: "from-sky-400 to-blue-500", text: "text-white" },
+  { bg: "from-lime-400 to-emerald-500", text: "text-white" },
+];
+
+const getVisitorAvatar = (sessionId: string) => {
+  let hash = 0;
+  for (let i = 0; i < sessionId.length; i++) {
+    hash = ((hash << 5) - hash) + sessionId.charCodeAt(i);
+    hash |= 0;
+  }
+  return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
+};
+
+const getVisitorInitial = (name: string | null) => {
+  if (!name || name === "زائر") return "ز";
+  return name.charAt(0).toUpperCase();
+};
+
 const getSessionDuration = (created: string, lastSeen: string) => {
   const diff = Math.max(0, Math.floor((new Date(lastSeen).getTime() - new Date(created).getTime()) / 1000));
   const h = Math.floor(diff / 3600);
