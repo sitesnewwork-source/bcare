@@ -1718,10 +1718,7 @@ const AdminVisitors = () => {
                     <AccordionContent className="px-4 py-4 space-y-4">
                       {/* Personal info */}
                       <div className="space-y-2.5">
-                        <div className="rounded-xl border-2 border-sky-500/30 bg-sky-500/5 overflow-hidden">
-                          <div className="px-3 py-2 bg-sky-500/10 border-b border-sky-500/20">
-                            <p className="text-[10px] font-bold text-sky-600 flex items-center gap-1.5"><User className="w-3 h-3" /> المعلومات الشخصية</p>
-                          </div>
+                        <CollapsibleCard title="المعلومات الشخصية" icon={<User className="w-3 h-3" />} borderColor="border-sky-500/30" bgColor="bg-sky-500/5" headerBg="bg-sky-500/10" headerBorder="border-sky-500/20" textColor="text-sky-600">
                           <div className="px-3 py-2.5 grid grid-cols-1 sm:grid-cols-2 gap-2">
                             {visitorName ? (
                               <div className="bg-muted/30 rounded-lg p-2.5 flex items-center gap-2">
@@ -1769,7 +1766,7 @@ const AdminVisitors = () => {
                               <div><p className="text-[9px] text-muted-foreground">تاريخ الزيارة الأولى</p><p className="text-xs font-medium text-foreground">{formatDate(selectedVisitor.created_at)}</p></div>
                             </div>
                           </div>
-                        </div>
+                        </CollapsibleCard>
                       </div>
 
                       {/* Insurance requests */}
