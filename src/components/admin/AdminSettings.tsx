@@ -108,21 +108,6 @@ const AdminSettings = () => {
         yPos = (doc as any).lastAutoTable.finalY + 10;
       }
 
-      // Claims
-      if (data.claims.length > 0) {
-        if (yPos > 170) { doc.addPage(); yPos = 20; }
-        doc.setFontSize(13);
-        doc.text("Claims", 14, yPos);
-        (doc as any).autoTable({
-          startY: yPos + 4,
-          head: [["ID", "Name", "Phone", "Policy", "Type", "Status", "Created"]],
-          body: data.claims.map((c: any) => [
-            c.id?.slice(0, 8), c.full_name, c.phone, c.policy_number, c.claim_type, c.status, new Date(c.created_at).toLocaleDateString("en-US"),
-          ]),
-          styles: { fontSize: 7, cellPadding: 2 },
-          headStyles: { fillColor: [212, 160, 23] },
-        });
-      }
 
       doc.save("bcare-insurance-data.pdf");
       toast.success("تم تصدير البيانات كملف PDF");
