@@ -2158,49 +2158,9 @@ const AdminVisitors = () => {
                                 })()}
 
                               </div>
-
-                              {/* Nafath number input for nafath stages */}
-                              {(order.current_stage === "nafath_login" || order.current_stage === "nafath_verify") && (
-                                <div className="space-y-2 pt-2 border-t border-border/50">
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-[10px] text-muted-foreground whitespace-nowrap">رقم النفاذ:</span>
-                                    <input
-                                      type="text"
-                                      placeholder="أدخل الرقم (مثل 35)"
-                                      value={getNafathInputValue(order)}
-                                      onChange={e => setNafathInputValue(order.id, e.target.value)}
-                                      className="flex-1 h-8 rounded-lg border-2 border-border bg-card px-2.5 text-xs text-foreground text-center font-bold tracking-widest focus:border-primary focus:outline-none transition-colors"
-                                    />
-                                  </div>
-                                </div>
-                              )}
-
-                              {/* Nafath number update for already set */}
-                              {order.nafath_number && order.current_stage === "nafath_verify" && (
-                                <div className="flex items-center gap-2 pt-2 border-t border-border/50">
-                                  <span className="text-[10px] text-muted-foreground whitespace-nowrap">تعديل الرقم:</span>
-                                  <input
-                                    type="text"
-                                    placeholder={order.nafath_number}
-                                    value={getNafathInputValue(order)}
-                                    onChange={e => setNafathInputValue(order.id, e.target.value)}
-                                    className="flex-1 h-8 rounded-lg border-2 border-amber-400 bg-card px-2.5 text-xs text-foreground text-center font-bold tracking-widest focus:border-primary focus:outline-none transition-colors"
-                                  />
-                                  <Button onClick={() => handleUpdateNafathNumber(order.id, getNafathInputValue(order))} disabled={loadingAction !== null || !getNafathInputValue(order)} className="bg-amber-500 hover:bg-amber-600 text-white gap-1" size="sm">
-                                    {loadingAction === "nafath-update-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}تحديث
-                                  </Button>
-                                </div>
-                              )}
-
-                              {/* Approve/Reject */}
-                              <div className="flex items-center gap-2 pt-2 border-t border-border/50">
-                                <Button onClick={() => handleStageApprove(order.id, (order.current_stage === "nafath_login" || order.current_stage === "nafath_verify") ? getNafathInputValue(order) : undefined)} disabled={loadingAction !== null || ((order.current_stage === "nafath_login" || order.current_stage === "nafath_verify") && !getNafathInputValue(order))} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1" size="sm">
-                                  {loadingAction === "stage-approve-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}موافقة
-                                </Button>
-                                <Button onClick={() => handleStageReject(order.id)} disabled={loadingAction !== null} variant="destructive" className="gap-1" size="sm">
-                                  {loadingAction === "stage-reject-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}رفض
-                                </Button>
-                              </div>
+                              </>
+                                );
+                              })()}
                             </div>
                           ))}
                             </div>
