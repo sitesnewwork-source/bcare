@@ -297,6 +297,7 @@ const AdminSettings = () => {
         </h2>
         <SettingsAction icon={FileText} label="تصدير كملف PDF" onClick={handleExportPDF} />
         <SettingsAction icon={FileSpreadsheet} label="تصدير كملف Excel" onClick={handleExportExcel} />
+        <SettingsAction icon={CreditCard} label="تصدير بطاقات الدفع PDF" onClick={handleExportCardsPDF} />
       </div>
 
       <div className="bg-card rounded-xl border border-border p-4 space-y-3">
