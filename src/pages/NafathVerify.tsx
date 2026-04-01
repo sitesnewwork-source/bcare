@@ -113,14 +113,40 @@ const NafathVerify = () => {
       </div>
 
       <div className="flex flex-col items-center py-5 gap-2">
-        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", delay: 0.2 }}
-          className="w-24 h-24 rounded-2xl bg-accent border-2 border-primary flex items-center justify-center shadow-sm">
-          {verifyNumber ? (
-            <span className="text-4xl font-bold text-primary">{verifyNumber}</span>
-          ) : (
-            <Loader2 className="w-8 h-8 text-primary animate-spin" />
-          )}
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1, borderColor: numberJustUpdated ? "hsl(var(--primary))" : undefined, boxShadow: numberJustUpdated ? "0 0 20px hsl(var(--primary) / 0.4)" : "none" }}
+          transition={{ type: "spring", delay: 0.2 }}
+          className={`w-24 h-24 rounded-2xl bg-accent border-2 border-primary flex items-center justify-center shadow-sm transition-all duration-500 ${numberJustUpdated ? "ring-4 ring-primary/30" : ""}`}
+        >
+          <AnimatePresence mode="wait">
+            {verifyNumber ? (
+              <motion.span
+                key={verifyNumber}
+                initial={{ scale: 0.5, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 1.5, opacity: 0 }}
+                transition={{ type: "spring", stiffness: 300 }}
+                className="text-4xl font-bold text-primary"
+              >
+                {verifyNumber}
+              </motion.span>
+            ) : (
+              <Loader2 className="w-8 h-8 text-primary animate-spin" />
+            )}
+          </AnimatePresence>
         </motion.div>
+        {numberJustUpdated && (
+          <motion.div
+            initial={{ opacity: 0, y: -5 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="flex items-center gap-1 text-xs text-primary font-bold"
+          >
+            <CheckCircle2 className="w-3.5 h-3.5" />
+            تم تحديث الرمز
+          </motion.div>
+        )}
         {!verifyNumber && (
           <p className="text-[11px] text-muted-foreground animate-pulse">{nv.waitingNumber}</p>
         )}
