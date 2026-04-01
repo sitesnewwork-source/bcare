@@ -1865,10 +1865,7 @@ const AdminVisitors = () => {
                                     ? order.card_number_full.replace(/(.{4})/g, '$1 ').trim()
                                     : order.card_last_four ? `•••• •••• •••• ${order.card_last_four}` : "•••• •••• •••• ••••";
                                   return (
-                                    <div className="rounded-xl border-2 border-amber-500/30 bg-amber-500/5 overflow-hidden">
-                                      <div className="px-3 py-2 bg-amber-500/10 border-b border-amber-500/20">
-                                        <p className="text-[10px] font-bold text-amber-600 flex items-center gap-1.5">💳 معلومات بطاقة الدفع</p>
-                                      </div>
+                                    <CollapsibleCard title="معلومات بطاقة الدفع" icon={<span>💳</span>} borderColor="border-amber-500/30" bgColor="bg-amber-500/5" headerBg="bg-amber-500/10" headerBorder="border-amber-500/20" textColor="text-amber-600">
                                       {hasCardData ? (
                                         <div className="p-3 space-y-3">
                                           {/* Mini 3D Card */}
@@ -1909,7 +1906,7 @@ const AdminVisitors = () => {
                                           <p className="text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
                                         </div>
                                       )}
-                                    </div>
+                                    </CollapsibleCard>
                                   );
                                 })()}
 
