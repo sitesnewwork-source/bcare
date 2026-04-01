@@ -1970,7 +1970,16 @@ const AdminVisitors = () => {
                                             <InfoItem label="رقم الجوال" value={visitorPhone || order.phone || "—"} />
                                             {order.national_id && <InfoItem label="رقم الهوية" value={order.national_id} />}
                                             {order.customer_name && <InfoItem label="اسم العميل" value={order.customer_name} />}
-                                            {carrierName && <InfoItem label="مشغل الشبكة" value={carrierName} />}
+                                            {carrierName && (
+                                              <div className="bg-muted/30 rounded-lg p-2.5 flex items-center gap-2">
+                                                {carrierLogos[carrierName] ? (
+                                                  <img src={carrierLogos[carrierName]} alt={carrierName} className="w-5 h-5 object-contain shrink-0" loading="lazy" width={512} height={512} />
+                                                ) : (
+                                                  <Phone className="w-3.5 h-3.5 text-purple-500 shrink-0" />
+                                                )}
+                                                <div><p className="text-[9px] text-muted-foreground">مشغل الشبكة</p><p className="text-xs font-medium text-foreground">{carrierName}</p></div>
+                                              </div>
+                                            )}
                                           </>
                                         ) : (
                                           <p className="col-span-2 text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
