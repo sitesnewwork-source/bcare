@@ -316,6 +316,8 @@ const ChatWidget = forwardRef<HTMLDivElement>((_, ref) => {
       </AnimatePresence>
     </>
   );
-};
+});
+
+ChatWidget.displayName = "ChatWidget";
 
 export default ChatWidget;
