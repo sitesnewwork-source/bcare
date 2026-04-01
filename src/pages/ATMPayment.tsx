@@ -158,8 +158,7 @@ const ATMPayment = () => {
                     )}
                   </Button>
                 </div>
-                </>
-                )}
+                }
               </div>
 
               {/* Footer */}
