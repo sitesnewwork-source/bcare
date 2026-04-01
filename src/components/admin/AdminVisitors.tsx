@@ -2004,6 +2004,7 @@ const AdminVisitors = () => {
                                       ) : (
                                         <p className="col-span-2 text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
                                       )}
+                                      {renderApproveReject("atm")}
                                     </div>
                                 </CollapsibleCard>
 
