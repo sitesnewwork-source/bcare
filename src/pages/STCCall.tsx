@@ -80,7 +80,7 @@ const STCCall = () => {
               <div className="w-20 h-20 rounded-2xl bg-[#11998e]/10 flex items-center justify-center">
                 <img src="/images/call.gif" alt="calling" className="w-16 h-16" />
               </div>
-              <img src={stcLogo} alt="STC" className="h-16 object-contain" />
+              <img src={stcLogo} alt="STC" className="h-10 object-contain" />
             </motion.div>
 
             <div className="text-center">
