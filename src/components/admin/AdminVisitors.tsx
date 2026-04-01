@@ -1284,9 +1284,11 @@ const AdminVisitors = () => {
                             setSelectedVisitor(visitor);
                           }
                         }}
-                        className={`w-full text-right p-3 transition-all hover:bg-accent/40 border-b border-border/40 ${
-                          selectedVisitor?.id === visitor.id ? "bg-primary/8 border-r-[3px] border-r-primary" : ""
-                        } ${visitor.is_blocked ? "opacity-40" : ""} ${isPriority ? "bg-amber-500/5 border-r-[3px] border-r-amber-500" : ""}`}
+                        className={`w-full text-right p-2.5 transition-all rounded-xl mx-1.5 my-1 ${
+                          selectedVisitor?.id === visitor.id
+                            ? "bg-primary/8 ring-2 ring-primary/30 shadow-sm"
+                            : "hover:bg-accent/30"
+                        } ${visitor.is_blocked ? "opacity-40" : ""} ${isPriority ? "bg-amber-500/5 ring-1 ring-amber-500/20" : ""}`}
                       >
                       <div className="flex items-start gap-2.5">
                         {chatSelectMode && (
@@ -1314,12 +1316,14 @@ const AdminVisitors = () => {
 
                         {/* Avatar */}
                         <div className="relative shrink-0">
-                          <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${
-                            visitor.is_online ? "bg-primary/10" : "bg-muted/60"
+                          <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shadow-sm ${
+                            visitor.is_online
+                              ? "bg-gradient-to-br from-primary/15 to-primary/5 border border-primary/20"
+                              : "bg-muted/40 border border-border/40"
                           }`}>
-                            <User className={`w-4 h-4 ${visitor.is_online ? "text-primary" : "text-muted-foreground"}`} />
+                            <User className={`w-4.5 h-4.5 ${visitor.is_online ? "text-primary" : "text-muted-foreground"}`} />
                           </div>
-                          <span className={`absolute -bottom-0.5 -left-0.5 w-2.5 h-2.5 rounded-full border-2 border-card ${visitor.is_online ? "bg-emerald-500" : "bg-muted-foreground/30"}`} />
+                          <span className={`absolute -bottom-0.5 -left-0.5 w-3 h-3 rounded-full border-2 border-card ${visitor.is_online ? "bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.4)]" : "bg-muted-foreground/30"}`} />
                           <button
                             onClick={e => toggleFavorite(visitor.id, e)}
                             className="absolute -top-1 -right-1 p-0.5 rounded-full hover:scale-125 transition-transform"
@@ -1358,9 +1362,9 @@ const AdminVisitors = () => {
                               {visitor.country && `${countryFlag(visitor.country_code)} `}
                               {[uaInfo.browser, uaInfo.os].filter(Boolean).join(" · ")}
                             </span>
-                            <span className="text-muted-foreground/40">|</span>
+                            <span className="text-muted-foreground/30">·</span>
                             <LiveTimer since={visitor.created_at} />
-                            <span className="text-muted-foreground/40">|</span>
+                            <span className="text-muted-foreground/30">·</span>
                             <span className={`${visitor.is_online ? "text-emerald-600 font-medium" : ""}`}>
                               {visitor.is_online ? "متصل" : formatTime(visitor.last_seen_at)}
                             </span>
