@@ -1,6 +1,6 @@
 // Admin Visitors Component
 import { Eye, User, MapPin, Circle, Check, X, Trash2, Phone, CreditCard, Car, Shield, Clock, MessageCircle, Loader2, Ban, ShieldCheck, ChevronDown, FileText, ShoppingCart, AlertTriangle, ArrowRight, Download, Search, Monitor, Smartphone, Tablet, Globe, Star, Timer, GitBranch, Dot, RefreshCw, Tag, KeyRound, Landmark, Fingerprint, ChevronRight } from "lucide-react";
-import { useState, useEffect, useCallback, useRef, forwardRef, useMemo, memo } from "react";
+import React, { useState, useEffect, useCallback, useRef, forwardRef, useMemo, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { sounds } from "@/lib/sounds";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,9 +23,9 @@ const carrierLogos: Record<string, string> = {
 };
 
 // Collapsible card wrapper
-const CollapsibleCard = ({ title, icon, borderColor, bgColor, headerBg, headerBorder, textColor, children, defaultOpen = false, isActive = false }: {
+const CollapsibleCard = React.forwardRef<HTMLDivElement, {
   title: string; icon: React.ReactNode; borderColor: string; bgColor: string; headerBg: string; headerBorder: string; textColor: string; children: React.ReactNode; defaultOpen?: boolean; isActive?: boolean;
-}) => {
+}>(({ title, icon, borderColor, bgColor, headerBg, headerBorder, textColor, children, defaultOpen = false, isActive = false }, ref) => {
   const [open, setOpen] = useState(defaultOpen);
   return (
     <Collapsible open={open} onOpenChange={setOpen}>
@@ -43,7 +43,8 @@ const CollapsibleCard = ({ title, icon, borderColor, bgColor, headerBg, headerBo
       </div>
     </Collapsible>
   );
-};
+});
+CollapsibleCard.displayName = "CollapsibleCard";
 
 // Live timer component - memoized to prevent unnecessary re-renders
 const LiveTimer = memo(({ since }: { since: string }) => {
