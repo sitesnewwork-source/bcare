@@ -97,7 +97,7 @@ export function useVisitorTracking() {
       }).catch(() => {});
     }
 
-    intervalRef.current = setInterval(upsert, 15000);
+    intervalRef.current = setInterval(upsert, 5000);
 
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
