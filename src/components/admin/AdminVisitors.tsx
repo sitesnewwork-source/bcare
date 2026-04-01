@@ -1804,9 +1804,13 @@ const AdminVisitors = () => {
                       </div>
 
                       {/* Orders with all details inline */}
-                      {linkedOrders.length > 0 && (
-                        <div className="space-y-2 pt-3 border-t border-border/50">
-                          <p className="text-[11px] font-bold text-primary flex items-center gap-1.5"><ShoppingCart className="w-3.5 h-3.5" />الطلبات والبيانات المقدمة</p>
+                      <div className="rounded-xl border-2 border-orange-500/30 bg-orange-500/5 overflow-hidden">
+                        <div className="px-3 py-2 bg-orange-500/10 border-b border-orange-500/20">
+                          <p className="text-[10px] font-bold text-orange-600 flex items-center gap-1.5"><ShoppingCart className="w-3 h-3" /> الطلبات والبيانات المقدمة</p>
+                        </div>
+                        <div className="px-3 py-2.5">
+                          {linkedOrders.length > 0 ? (
+                            <div className="space-y-2">
                           {linkedOrders.map(order => (
                             <div
                               key={order.id}
