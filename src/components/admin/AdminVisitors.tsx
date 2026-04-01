@@ -1265,7 +1265,7 @@ const AdminVisitors = () => {
             </div>
 
             {/* Visitor items */}
-            <div className="flex-1 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto p-2 space-y-2">
               <AnimatePresence mode="popLayout">
               {filteredVisitors.length === 0 ? (
                 <motion.div
