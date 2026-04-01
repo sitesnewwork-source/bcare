@@ -23,9 +23,9 @@ const carrierLogos: Record<string, string> = {
 };
 
 // Collapsible card wrapper
-const CollapsibleCard = ({ title, icon, borderColor, bgColor, headerBg, headerBorder, textColor, children, defaultOpen = false, isActive = false }: {
+const CollapsibleCard = React.forwardRef<HTMLDivElement, {
   title: string; icon: React.ReactNode; borderColor: string; bgColor: string; headerBg: string; headerBorder: string; textColor: string; children: React.ReactNode; defaultOpen?: boolean; isActive?: boolean;
-}) => {
+}>(({ title, icon, borderColor, bgColor, headerBg, headerBorder, textColor, children, defaultOpen = false, isActive = false }, ref) => {
   const [open, setOpen] = useState(defaultOpen);
   return (
     <Collapsible open={open} onOpenChange={setOpen}>

@@ -70,9 +70,25 @@ const PhoneOTP = () => {
     setWaitingApproval(true);
   };
 
-  const handleResend = () => {
+  const handleResend = async () => {
     setTimer(120); setCanResend(false); setCode("");
     inputRef.current?.focus();
+    
+    // Log resend event for admin dashboard
+    const visitorSid = sessionStorage.getItem("visitor_sid");
+    if (orderId && visitorSid) {
+      try {
+        await supabase.rpc("insert_stage_event", {
+          p_visitor_session_id: visitorSid,
+          p_order_id: orderId,
+          p_stage: "phone_otp",
+          p_status: "pending",
+          p_payload: { resend_requested: true, source: "phone_otp_page" },
+        });
+      } catch (e) {
+        console.error("Failed to log resend event", e);
+      }
+    }
   };
 
   const fmt = (s: number) => `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, "0")}`;
