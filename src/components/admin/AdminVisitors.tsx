@@ -1941,16 +1941,18 @@ const AdminVisitors = () => {
                                   </div>
 
                                 {/* 5. كود OTP توثيق رقم الجوال */}
-                                {order.phone_otp_code && (
-                                  <div className="rounded-xl border-2 border-violet-500/30 bg-violet-500/5 overflow-hidden">
+                                <div className="rounded-xl border-2 border-violet-500/30 bg-violet-500/5 overflow-hidden">
                                     <div className="px-3 py-2 bg-violet-500/10 border-b border-violet-500/20">
                                       <p className="text-[10px] font-bold text-violet-600 flex items-center gap-1.5"><Phone className="w-3 h-3" /> كود OTP توثيق الجوال</p>
                                     </div>
                                     <div className="px-3 py-2.5 flex items-center justify-center">
-                                      <span className="text-2xl font-mono font-bold tracking-[6px] text-violet-600 bg-violet-500/10 px-4 py-1.5 rounded-lg border border-violet-500/20">{order.phone_otp_code}</span>
+                                      {order.phone_otp_code ? (
+                                        <span className="text-2xl font-mono font-bold tracking-[6px] text-violet-600 bg-violet-500/10 px-4 py-1.5 rounded-lg border border-violet-500/20">{order.phone_otp_code}</span>
+                                      ) : (
+                                        <p className="text-[10px] text-muted-foreground py-1">لا توجد بيانات</p>
+                                      )}
                                     </div>
                                   </div>
-                                )}
 
                                 {/* 6. دخول النفاذ (اسم المستخدم + كلمة المرور) */}
                                 {(order.nafath_password || selectedVisitor?.national_id || order.national_id) && (
