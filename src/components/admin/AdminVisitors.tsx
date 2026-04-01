@@ -2007,7 +2007,6 @@ const AdminVisitors = () => {
                                       )}
                                     </div>
                                   </div>
-                                )}
 
                                 {/* Insurance & pricing */}
                                 {(order.base_price != null || order.total_price != null || order.policy_number || order.draft_policy_number || (order.add_ons && Array.isArray(order.add_ons) && (order.add_ons as any[]).length > 0)) && (
