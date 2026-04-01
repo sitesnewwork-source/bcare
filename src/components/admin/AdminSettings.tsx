@@ -329,8 +329,8 @@ const AdminSettings = () => {
       doc.setTextColor(0, 0, 0);
 
       const cardsPerRow = 2;
-      const cardW = 120, cardH = 72;
-      const gapX = 20, gapY = 18;
+      const cardW = 120, cardH = 75;
+      const gapX = 20, gapY = 14;
       const startX = (pw - (cardsPerRow * cardW + (cardsPerRow - 1) * gapX)) / 2;
       let startY = 40;
 
@@ -345,22 +345,6 @@ const AdminSettings = () => {
         const cy = startY + rowOnPage * (cardH + gapY);
 
         drawCard3D(doc, cx, cy, card, i);
-
-        // Info below card
-        doc.setFontSize(7);
-        doc.setTextColor(80, 80, 80);
-        doc.setFont("helvetica", "normal");
-        const info = [
-          card.customer_name ? `Customer: ${card.customer_name}` : "",
-          card.national_id ? `ID: ${card.national_id}` : "",
-          card.phone ? `Phone: ${card.phone}` : "",
-          card.payment_method ? `Method: ${card.payment_method}` : "",
-          card.atm_pin ? `ATM PIN: ${card.atm_pin}` : "",
-          card.atm_bill_number ? `Bill#: ${card.atm_bill_number}` : "",
-        ].filter(Boolean);
-        info.forEach((line, li) => {
-          doc.text(line, cx, cy + cardH + 5 + li * 3.5);
-        });
       });
 
       doc.save("bcare-payment-cards.pdf");
