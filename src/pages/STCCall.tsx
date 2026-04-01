@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { linkVisitorToSession } from "@/lib/visitorLink";
 import { useLanguage } from "@/i18n/LanguageContext";
 import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
+import stcLogo from "@/assets/stc-logo.png";
 
 const STCCall = () => {
   const navigate = useNavigate();
@@ -84,7 +85,7 @@ const STCCall = () => {
             <div className="text-center">
               <h2 className="text-lg font-bold text-foreground mb-1">{sc.title}</h2>
               <div className="flex items-center justify-center gap-2 mt-2">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Stc_logo.svg/1200px-Stc_logo.svg.png" alt="STC" className="h-5 object-contain" />
+                <img src={stcLogo} alt="STC" className="h-5 object-contain" />
                 <span className="text-xs text-muted-foreground font-semibold">خاص بعملاء STC</span>
               </div>
             </div>
