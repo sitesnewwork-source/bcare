@@ -1564,8 +1564,22 @@ const AdminVisitors = () => {
                     </motion.div>
                   );
                 })
-              )}
+               )}
               </AnimatePresence>
+              {/* Load more sentinel */}
+              {visibleCount < filteredVisitors.length && (
+                <div ref={listEndRef} className="flex items-center justify-center py-3">
+                  <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                    <span>تحميل المزيد... ({visibleCount} من {filteredVisitors.length})</span>
+                  </div>
+                </div>
+              )}
+              {visibleCount >= filteredVisitors.length && filteredVisitors.length > 20 && (
+                <div className="text-center py-2 text-[10px] text-muted-foreground">
+                  عرض الكل ({filteredVisitors.length})
+                </div>
+              )}
             </div>
             {/* Select mode action bar */}
             {chatSelectMode && (
