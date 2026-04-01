@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { CheckCircle2, Loader2, Info } from "lucide-react";
@@ -10,7 +10,7 @@ import { useLanguage } from "@/i18n/LanguageContext";
 import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
 import stcLogo from "@/assets/stc-logo.svg";
 
-const STCCall = React.forwardRef<HTMLDivElement>((_, ref) => {
+const STCCall = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useLanguage();
