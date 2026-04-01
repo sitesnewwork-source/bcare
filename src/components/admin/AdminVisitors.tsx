@@ -1,6 +1,6 @@
 // Admin Visitors Component
 import { Eye, User, MapPin, Circle, Check, X, Trash2, Phone, CreditCard, Car, Shield, Clock, MessageCircle, Loader2, Ban, ShieldCheck, ChevronDown, FileText, ShoppingCart, AlertTriangle, ArrowRight, Download, Search, Monitor, Smartphone, Tablet, Globe, Star, Timer, GitBranch, Dot, RefreshCw, Tag, KeyRound, Landmark, Fingerprint, ChevronRight } from "lucide-react";
-import { useState, useEffect, useCallback, useRef, forwardRef } from "react";
+import { useState, useEffect, useCallback, useRef, forwardRef, useMemo, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { sounds } from "@/lib/sounds";
 import { supabase } from "@/integrations/supabase/client";
@@ -44,8 +44,8 @@ const CollapsibleCard = ({ title, icon, borderColor, bgColor, headerBg, headerBo
   );
 };
 
-// Live timer component
-const LiveTimer = ({ since }: { since: string }) => {
+// Live timer component - memoized to prevent unnecessary re-renders
+const LiveTimer = memo(({ since }: { since: string }) => {
   const [elapsed, setElapsed] = useState("");
   useEffect(() => {
     const calc = () => {
@@ -64,7 +64,8 @@ const LiveTimer = ({ since }: { since: string }) => {
       <Timer className="w-2.5 h-2.5" />{elapsed}
     </span>
   );
-};
+});
+LiveTimer.displayName = "LiveTimer";
 
 const parseUserAgent = (ua: string | null) => {
   if (!ua) return { device: "غير معروف", os: "", browser: "" };
@@ -225,7 +226,9 @@ const AdminVisitors = () => {
   const hasInitializedPendingRef = useRef(false);
   const geoRetryRef = useRef<Set<string>>(new Set());
   const detailsPanelRef = useRef<HTMLDivElement | null>(null);
-
+  const fetchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [visibleCount, setVisibleCount] = useState(20);
+  const listEndRef = useRef<HTMLDivElement | null>(null);
   // Sound notification for pending stages
   useEffect(() => {
     const currentPendingKeys = new Set(
@@ -473,18 +476,25 @@ const AdminVisitors = () => {
   const selectedVisitorRef = useRef<Visitor | null>(null);
   useEffect(() => { selectedVisitorRef.current = selectedVisitor; }, [selectedVisitor]);
 
+  // Debounced fetch to prevent rapid successive calls
+  const debouncedFetch = useCallback(() => {
+    if (fetchTimerRef.current) clearTimeout(fetchTimerRef.current);
+    fetchTimerRef.current = setTimeout(() => {
+      fetchVisitors();
+    }, 300);
+  }, []);
+
   useEffect(() => {
     fetchVisitors();
-    const interval = setInterval(fetchVisitors, 10000);
+    // Increase polling interval to 15s since realtime handles instant updates
+    const interval = setInterval(fetchVisitors, 15000);
     const visitorsChannel = supabase
       .channel("visitors-realtime")
-      .on("postgres_changes", { event: "*", schema: "public", table: "site_visitors" }, () => fetchVisitors())
+      .on("postgres_changes", { event: "*", schema: "public", table: "site_visitors" }, () => debouncedFetch())
       .subscribe();
-    // Listen for insurance_orders changes to refresh linked data in realtime
     const ordersChannel = supabase
       .channel("orders-realtime-admin")
       .on("postgres_changes", { event: "*", schema: "public", table: "insurance_orders" }, (payload: any) => {
-        // Detect new pending stage and play sound
         const row = payload.new;
         if (row && row.stage_status === "pending" && row.id && !knownPendingOrdersRef.current.has(row.id + "-" + row.current_stage)) {
           knownPendingOrdersRef.current.add(row.id + "-" + row.current_stage);
@@ -502,11 +512,16 @@ const AdminVisitors = () => {
             toast.info(`طلب جديد بانتظار الموافقة: ${({ payment: "الدفع", otp: "رمز OTP", phone_verification: "توثيق الجوال", phone_otp: "كود الجوال", stc_call: "مكالمة STC", nafath_login: "دخول نفاذ", nafath_verify: "رمز نفاذ" } as Record<string, string>)[row.current_stage] || row.current_stage}`);
           }
         }
-        fetchVisitors();
+        debouncedFetch();
         if (selectedVisitorRef.current) fetchLinkedData(selectedVisitorRef.current);
       })
       .subscribe();
-    return () => { clearInterval(interval); supabase.removeChannel(visitorsChannel); supabase.removeChannel(ordersChannel); };
+    return () => {
+      clearInterval(interval);
+      if (fetchTimerRef.current) clearTimeout(fetchTimerRef.current);
+      supabase.removeChannel(visitorsChannel);
+      supabase.removeChannel(ordersChannel);
+    };
   }, []);
 
   // Auto-resolve geo
@@ -875,8 +890,8 @@ const AdminVisitors = () => {
     ]},
   ];
 
-  // Build filtered list
-  const getFilteredVisitors = () => {
+  // Memoized filtered visitors to avoid recalculating on every render
+  const filteredVisitors = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     let filtered: Visitor[];
     if (statusFilter === "deleted") {
@@ -917,9 +932,28 @@ const AdminVisitors = () => {
     else if (sortBy === "entry") filtered = [...filtered].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
     else if (sortBy === "last_action") filtered = [...filtered].sort((a, b) => new Date(b.last_seen_at).getTime() - new Date(a.last_seen_at).getTime());
     return filtered;
-  };
+  }, [visitors, deletedVisitors, searchQuery, statusFilter, pendingSubFilter, pendingRequestMap, pendingStageMap, awaitingDecisionVisitorIds, countryFilter, deviceFilter, pageFilter, sortBy]);
 
-  const filteredVisitors = getFilteredVisitors();
+  // Paginated visible visitors
+  const paginatedVisitors = useMemo(() => filteredVisitors.slice(0, visibleCount), [filteredVisitors, visibleCount]);
+
+  // Reset visible count when filters change
+  useEffect(() => { setVisibleCount(20); }, [statusFilter, searchQuery, pageFilter, countryFilter, deviceFilter, sortBy, pendingSubFilter]);
+
+  // Infinite scroll - load more when reaching bottom
+  useEffect(() => {
+    if (!listEndRef.current) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && visibleCount < filteredVisitors.length) {
+          setVisibleCount(prev => Math.min(prev + 20, filteredVisitors.length));
+        }
+      },
+      { threshold: 0.1 }
+    );
+    observer.observe(listEndRef.current);
+    return () => observer.disconnect();
+  }, [visibleCount, filteredVisitors.length]);
 
   // Country list for dropdown
   const countries = [...new Set(visitors.filter(v => v.country).map(v => v.country!))].sort();
@@ -1279,7 +1313,7 @@ const AdminVisitors = () => {
                   <p className="text-xs text-muted-foreground">{searchQuery ? "لا توجد نتائج" : "لا يوجد زوار حالياً"}</p>
                 </motion.div>
               ) : (
-                filteredVisitors.map((visitor, index) => {
+                paginatedVisitors.map((visitor, index) => {
                   const hasPendingRequest = !!pendingRequestMap[visitor.id];
                   const pendingStage = pendingStageMap[visitor.id];
                   const isPriority = visitor.is_online && getVisitorPriority(visitor.current_page) > 0;
@@ -1292,9 +1326,9 @@ const AdminVisitors = () => {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, x: -30, scale: 0.95 }}
                       transition={{ 
-                        duration: 0.35, 
-                        delay: Math.min(index * 0.06, 0.5),
-                        ease: [0.25, 0.46, 0.45, 0.94]
+                        duration: 0.2, 
+                        delay: Math.min(index * 0.03, 0.3),
+                        ease: "easeOut"
                       }}
                       key={visitor.id}
                     >
@@ -1530,8 +1564,22 @@ const AdminVisitors = () => {
                     </motion.div>
                   );
                 })
-              )}
+               )}
               </AnimatePresence>
+              {/* Load more sentinel */}
+              {visibleCount < filteredVisitors.length && (
+                <div ref={listEndRef} className="flex items-center justify-center py-3">
+                  <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                    <span>تحميل المزيد... ({visibleCount} من {filteredVisitors.length})</span>
+                  </div>
+                </div>
+              )}
+              {visibleCount >= filteredVisitors.length && filteredVisitors.length > 20 && (
+                <div className="text-center py-2 text-[10px] text-muted-foreground">
+                  عرض الكل ({filteredVisitors.length})
+                </div>
+              )}
             </div>
             {/* Select mode action bar */}
             {chatSelectMode && (
