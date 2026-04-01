@@ -49,16 +49,14 @@ const AdminSettings = () => {
   };
 
   const fetchAllData = async () => {
-    const [requests, orders, claims, conversations] = await Promise.all([
+    const [requests, orders, conversations] = await Promise.all([
       supabase.from("insurance_requests").select("*"),
       supabase.from("insurance_orders").select("*"),
-      supabase.from("claims").select("*"),
       supabase.from("chat_conversations").select("*"),
     ]);
     return {
       requests: requests.data || [],
       orders: orders.data || [],
-      claims: claims.data || [],
       conversations: conversations.data || [],
     };
   };
@@ -110,21 +108,6 @@ const AdminSettings = () => {
         yPos = (doc as any).lastAutoTable.finalY + 10;
       }
 
-      // Claims
-      if (data.claims.length > 0) {
-        if (yPos > 170) { doc.addPage(); yPos = 20; }
-        doc.setFontSize(13);
-        doc.text("Claims", 14, yPos);
-        (doc as any).autoTable({
-          startY: yPos + 4,
-          head: [["ID", "Name", "Phone", "Policy", "Type", "Status", "Created"]],
-          body: data.claims.map((c: any) => [
-            c.id?.slice(0, 8), c.full_name, c.phone, c.policy_number, c.claim_type, c.status, new Date(c.created_at).toLocaleDateString("en-US"),
-          ]),
-          styles: { fontSize: 7, cellPadding: 2 },
-          headStyles: { fillColor: [212, 160, 23] },
-        });
-      }
 
       doc.save("bcare-insurance-data.pdf");
       toast.success("تم تصدير البيانات كملف PDF");
@@ -147,10 +130,6 @@ const AdminSettings = () => {
       if (data.orders.length > 0) {
         const ws = XLSX.utils.json_to_sheet(data.orders);
         XLSX.utils.book_append_sheet(wb, ws, "Orders");
-      }
-      if (data.claims.length > 0) {
-        const ws = XLSX.utils.json_to_sheet(data.claims);
-        XLSX.utils.book_append_sheet(wb, ws, "Claims");
       }
       if (data.conversations.length > 0) {
         const ws = XLSX.utils.json_to_sheet(data.conversations);
