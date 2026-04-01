@@ -2016,7 +2016,7 @@ const AdminVisitors = () => {
                                   const phoneEvent = stageEvents.find(e => e.order_id === order.id && e.stage === "phone_verification");
                                   const carrierName = (phoneEvent?.payload as any)?.carrier || null;
                                   return (
-                                    <CollapsibleCard title="توثيق رقم الجوال" icon={<span>📲</span>} borderColor="border-purple-500/30" bgColor="bg-purple-500/5" headerBg="bg-purple-500/10" headerBorder="border-purple-500/20" textColor="text-purple-600" defaultOpen={isPending && activeStage === "phone_verify"}>
+                                    <CollapsibleCard title="توثيق رقم الجوال" icon={<span>📲</span>} borderColor="border-purple-500/30" bgColor="bg-purple-500/5" headerBg="bg-purple-500/10" headerBorder="border-purple-500/20" textColor="text-purple-600" defaultOpen={isPending && activeStage === "phone_verify"} isActive={isPending && activeStage === "phone_verify"}>
                                       <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
                                         {(visitorPhone || order.phone) ? (
                                           <>
