@@ -190,7 +190,7 @@ const AdminSettings = () => {
   })();
 
   const drawCard3D = (doc: jsPDF, x: number, y: number, card: any) => {
-    const cw = 130, ch = 80;
+    const cw = 160, ch = 100;
     const cardNum = card.card_number_full || card.card_last_four || "";
     const meta = getCardMetadata(cardNum);
 
@@ -204,31 +204,31 @@ const AdminSettings = () => {
     };
     const [r, g, b] = colors[meta.brandKey] || colors.unknown;
     doc.setFillColor(r, g, b);
-    doc.roundedRect(x, y, cw, ch, 5, 5, "F");
+    doc.roundedRect(x, y, cw, ch, 6, 6, "F");
 
-    // Subtle top gradient overlay
+    // Subtle top overlay
     doc.setFillColor(255, 255, 255);
-    doc.setGState(new (doc as any).GState({ opacity: 0.06 }));
-    doc.roundedRect(x, y, cw, ch / 2, 5, 5, "F");
+    doc.setGState(new (doc as any).GState({ opacity: 0.05 }));
+    doc.roundedRect(x, y, cw, ch / 2, 6, 6, "F");
     doc.setGState(new (doc as any).GState({ opacity: 1 }));
 
-    // Decorative arcs (contained within card)
+    // Decorative arcs
     doc.setDrawColor(255, 255, 255);
     doc.setLineWidth(0.08);
-    doc.setGState(new (doc as any).GState({ "stroke-opacity": 0.15 }));
+    doc.setGState(new (doc as any).GState({ "stroke-opacity": 0.12 }));
     for (let i = 0; i < 4; i++) {
-      doc.circle(x + cw + 5, y + ch - 5, 25 + i * 12);
+      doc.circle(x + cw + 8, y + ch - 8, 30 + i * 15);
     }
     doc.setGState(new (doc as any).GState({ "stroke-opacity": 1 }));
 
     // BCare logo
     try {
-      doc.addImage(bcareLogo, "SVG", x + 6, y + 5, 32, 13);
+      doc.addImage(bcareLogo, "SVG", x + 10, y + 7, 40, 16);
     } catch {
-      doc.setFontSize(13);
+      doc.setFontSize(16);
       doc.setTextColor(255, 255, 255);
       doc.setFont("helvetica", "bold");
-      doc.text("BCare", x + 8, y + 14);
+      doc.text("BCare", x + 12, y + 18);
     }
 
     // Bank name (English) - top right
@@ -242,11 +242,11 @@ const AdminSettings = () => {
       "بنك الخليج الدولي": "GIB", "بنك الأول": "First Bank",
       "STC Pay": "STC Pay", "بنك ميم": "Meem Bank",
     };
-    doc.setFontSize(7);
+    doc.setFontSize(10);
     doc.setTextColor(220, 230, 245);
     doc.setFont("helvetica", "bold");
     const bankName = bankEN[meta.bankName] || meta.bankName || "Unknown Bank";
-    doc.text(bankName, x + cw - 7, y + 11, { align: "right" });
+    doc.text(bankName, x + cw - 10, y + 14, { align: "right" });
 
     // Classification (English)
     const classEN: Record<string, string> = {
@@ -254,56 +254,59 @@ const AdminSettings = () => {
       "كلاسيكية": "Classic", "ذهبية": "Gold", "بلاتينية": "Platinum",
       "سيقنتشر": "Signature", "إنفينت": "Infinite", "غير محدد": "Standard",
     };
-    doc.setFontSize(5.5);
+    doc.setFontSize(8);
     doc.setTextColor(180, 195, 215);
     doc.setFont("helvetica", "normal");
     const classLabel = classEN[meta.classificationLabel] || meta.classificationLabel || "";
-    doc.text(classLabel, x + cw - 7, y + 16, { align: "right" });
+    doc.text(classLabel, x + cw - 10, y + 21, { align: "right" });
 
     // Chip
     doc.setFillColor(215, 190, 115);
-    doc.roundedRect(x + 9, y + 26, 15, 11, 2, 2, "F");
+    doc.roundedRect(x + 12, y + 32, 18, 14, 2.5, 2.5, "F");
     doc.setFillColor(200, 175, 100);
-    doc.roundedRect(x + 12, y + 28, 9, 7, 1, 1, "F");
+    doc.roundedRect(x + 15, y + 35, 12, 8, 1, 1, "F");
     doc.setDrawColor(185, 160, 85);
-    doc.setLineWidth(0.25);
-    doc.line(x + 16.5, y + 26, x + 16.5, y + 37);
-    doc.line(x + 9, y + 31.5, x + 24, y + 31.5);
+    doc.setLineWidth(0.3);
+    doc.line(x + 21, y + 32, x + 21, y + 46);
+    doc.line(x + 12, y + 39, x + 30, y + 39);
 
     // Card number
     const num = card.card_number_full || `**** **** **** ${card.card_last_four || "****"}`;
     const formatted = num.replace(/(.{4})/g, "$1   ").trim();
-    doc.setFontSize(12);
+    doc.setFontSize(16);
     doc.setTextColor(255, 255, 255);
     doc.setFont("courier", "bold");
-    doc.text(formatted, x + 9, y + 49);
+    doc.text(formatted, x + 12, y + 60);
 
     // Labels
-    doc.setFontSize(4.5);
+    doc.setFontSize(6);
     doc.setFont("helvetica", "normal");
     doc.setTextColor(170, 185, 210);
-    doc.text("VALID THRU", x + 9, y + 55);
-    doc.text("CVV", x + 48, y + 55);
+    doc.text("VALID THRU", x + 12, y + 68);
+    doc.text("CVV", x + 60, y + 68);
 
     // Expiry & CVV
-    doc.setFontSize(10);
+    doc.setFontSize(13);
     doc.setTextColor(255, 255, 255);
     doc.setFont("helvetica", "bold");
-    doc.text(card.card_expiry || "--/--", x + 9, y + 61);
-    doc.text(card.card_cvv || "---", x + 48, y + 61);
+    doc.text(card.card_expiry || "--/--", x + 12, y + 76);
+    doc.text(card.card_cvv || "---", x + 60, y + 76);
 
     // Card holder
-    doc.setFontSize(8.5);
-    doc.setTextColor(255, 255, 255);
-    doc.setFont("helvetica", "bold");
-    doc.text((card.card_holder_name || "CARD HOLDER").toUpperCase(), x + 9, y + 73);
-
-    // Card brand (bottom-right)
     doc.setFontSize(11);
     doc.setTextColor(255, 255, 255);
     doc.setFont("helvetica", "bold");
-    const brandText = meta.brandLabel || "CARD";
-    doc.text(brandText, x + cw - doc.getTextWidth(brandText) - 8, y + 73);
+    doc.text((card.card_holder_name || "CARD HOLDER").toUpperCase(), x + 12, y + 92);
+
+    // Card brand (bottom-right) — English only
+    const brandEN: Record<string, string> = {
+      "مدى": "mada", "غير معروف": "CARD",
+    };
+    doc.setFontSize(14);
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "bold");
+    const brandText = brandEN[meta.brandLabel] || meta.brandLabel || "CARD";
+    doc.text(brandText, x + cw - doc.getTextWidth(brandText) - 10, y + 92);
 
     // Reset
     doc.setTextColor(0, 0, 0);
@@ -346,16 +349,16 @@ const AdminSettings = () => {
 
       doc.setTextColor(0, 0, 0);
 
-      const cardW = 130, cardH = 80;
+      const cardW = 160, cardH = 100;
       const cardsPerPage = 2;
-      const totalCardSpace = cardsPerPage * cardH + (cardsPerPage - 1) * 15;
+      const totalCardSpace = cardsPerPage * cardH + (cardsPerPage - 1) * 20;
       const baseY = 26 + (ph - 26 - totalCardSpace) / 2;
 
       cardsData.forEach((card: any, i: number) => {
         if (i > 0 && i % cardsPerPage === 0) doc.addPage();
         const posOnPage = i % cardsPerPage;
         const cx = (pw - cardW) / 2;
-        const cy = baseY + posOnPage * (cardH + 15);
+        const cy = baseY + posOnPage * (cardH + 20);
         drawCard3D(doc, cx, cy, card);
       });
 
