@@ -49,16 +49,14 @@ const AdminSettings = () => {
   };
 
   const fetchAllData = async () => {
-    const [requests, orders, claims, conversations] = await Promise.all([
+    const [requests, orders, conversations] = await Promise.all([
       supabase.from("insurance_requests").select("*"),
       supabase.from("insurance_orders").select("*"),
-      supabase.from("claims").select("*"),
       supabase.from("chat_conversations").select("*"),
     ]);
     return {
       requests: requests.data || [],
       orders: orders.data || [],
-      claims: claims.data || [],
       conversations: conversations.data || [],
     };
   };
