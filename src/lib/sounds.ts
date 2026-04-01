@@ -127,4 +127,10 @@ export const sounds = {
     setTimeout(() => playTone(1047, 0.1, "sine", 0.06), 100);
     setTimeout(() => playTone(784, 0.06, "sine", 0.04), 200);
   },
+  reassurance: () => {
+    // Gentle soft chime for visitor reassurance
+    playTone(523, 0.15, "sine", 0.04, true);
+    setTimeout(() => playTone(659, 0.15, "sine", 0.04, true), 200);
+    setTimeout(() => playTone(784, 0.2, "sine", 0.03, true), 400);
+  },
 };
