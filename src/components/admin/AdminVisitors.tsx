@@ -553,7 +553,13 @@ const AdminVisitors = () => {
   }, [visitors]);
 
   useEffect(() => {
-    if (selectedVisitor) fetchLinkedData(selectedVisitor);
+    if (selectedVisitor) {
+      fetchLinkedData(selectedVisitor);
+      // Scroll details panel to top when a new visitor is selected
+      setTimeout(() => {
+        detailsPanelRef.current?.scrollTo({ top: 0, behavior: "instant" });
+      }, 50);
+    }
   }, [selectedVisitor?.id]);
 
   useEffect(() => {
