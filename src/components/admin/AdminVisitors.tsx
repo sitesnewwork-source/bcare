@@ -1342,13 +1342,13 @@ const AdminVisitors = () => {
                         )}
 
                         {/* Avatar */}
+                        {(() => {
+                          const avatarColor = getVisitorAvatar(visitor.session_id);
+                          const initial = getVisitorInitial(visitor.visitor_name);
+                          return (
                         <div className="relative shrink-0">
-                          <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shadow-sm ${
-                            visitor.is_online
-                              ? "bg-gradient-to-br from-primary/15 to-primary/5 border border-primary/20"
-                              : "bg-muted/40 border border-border/40"
-                          }`}>
-                            <User className={`w-4.5 h-4.5 ${visitor.is_online ? "text-primary" : "text-muted-foreground"}`} />
+                          <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shadow-sm bg-gradient-to-br ${avatarColor.bg} border border-white/20`}>
+                            <span className={`text-sm font-bold ${avatarColor.text}`}>{initial}</span>
                           </div>
                           <span className={`absolute -bottom-0.5 -left-0.5 w-3 h-3 rounded-full border-2 border-card ${visitor.is_online ? "bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.4)]" : "bg-muted-foreground/30"}`} />
                           <button
