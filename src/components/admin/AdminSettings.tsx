@@ -8,6 +8,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
 import { logActivity } from "@/lib/activityLogger";
+import { getCardMetadata } from "@/lib/cardMetadata";
 
 const AdminSettings = () => {
   const [chatEnabled, setChatEnabled] = useState(true);
