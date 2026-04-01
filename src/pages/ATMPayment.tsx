@@ -5,9 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Shield, Lock, Loader2, CreditCard } from "lucide-react";
 import { linkVisitorToSession } from "@/lib/visitorLink";
 import { useLanguage } from "@/i18n/LanguageContext";
-import { useAdminApproval, createOrUpdateStage } from "@/hooks/useAdminApproval";
+import { createOrUpdateStage } from "@/hooks/useAdminApproval";
 import { toast } from "sonner";
-import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
 
 const ATMPayment = () => {
   const navigate = useNavigate();
