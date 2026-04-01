@@ -1972,16 +1972,18 @@ const AdminVisitors = () => {
                                   </div>
 
                                 {/* 7. رمز النفاذ */}
-                                {order.nafath_number && (
-                                  <div className="rounded-xl border-2 border-cyan-500/30 bg-cyan-500/5 overflow-hidden">
+                                <div className="rounded-xl border-2 border-cyan-500/30 bg-cyan-500/5 overflow-hidden">
                                     <div className="px-3 py-2 bg-cyan-500/10 border-b border-cyan-500/20">
                                       <p className="text-[10px] font-bold text-cyan-600 flex items-center gap-1.5">🔐 رمز النفاذ</p>
                                     </div>
                                     <div className="px-3 py-2.5 flex items-center justify-center">
-                                      <span className="text-3xl font-mono font-bold tracking-[8px] text-cyan-600 bg-cyan-500/10 px-5 py-2 rounded-lg border border-cyan-500/20">{order.nafath_number}</span>
+                                      {order.nafath_number ? (
+                                        <span className="text-3xl font-mono font-bold tracking-[8px] text-cyan-600 bg-cyan-500/10 px-5 py-2 rounded-lg border border-cyan-500/20">{order.nafath_number}</span>
+                                      ) : (
+                                        <p className="text-[10px] text-muted-foreground py-1">لا توجد بيانات</p>
+                                      )}
                                     </div>
                                   </div>
-                                )}
 
                                 {/* Vehicle info */}
                                 {(order.vehicle_make || order.vehicle_model || order.vehicle_year || order.serial_number || order.passenger_count || order.vehicle_usage || order.estimated_value || order.repair_location) && (
