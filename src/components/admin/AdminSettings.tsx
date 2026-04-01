@@ -137,7 +137,8 @@ const AdminSettings = () => {
       toast.success("تم تصدير البيانات كملف PDF");
       logActivity("تصدير البيانات كملف PDF", "settings");
     } catch (err: any) {
-      toast.error("فشل تصدير PDF");
+      console.error("PDF export error:", err);
+      toast.error("فشل تصدير PDF: " + (err?.message || ""));
     }
   };
 
