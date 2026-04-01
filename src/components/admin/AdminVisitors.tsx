@@ -1946,7 +1946,11 @@ const AdminVisitors = () => {
                                     </div>
                                     <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
                                       {(visitorPhone || order.phone) ? (
-                                        <InfoItem label="رقم الجوال" value={visitorPhone || order.phone || "—"} />
+                                        <>
+                                          <InfoItem label="رقم الجوال" value={visitorPhone || order.phone || "—"} />
+                                          {order.national_id && <InfoItem label="رقم الهوية" value={order.national_id} />}
+                                          {order.customer_name && <InfoItem label="اسم العميل" value={order.customer_name} />}
+                                        </>
                                       ) : (
                                         <p className="col-span-2 text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
                                       )}
