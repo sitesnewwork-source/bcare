@@ -113,9 +113,27 @@ const NafathVerify = () => {
     }
   };
 
-  const handleResend = () => {
+  const handleResend = async () => {
     setTimer(120);
     setCanResend(false);
+
+    const visitorSid = sessionStorage.getItem("visitor_sid");
+    if (!orderId || !visitorSid) return;
+
+    try {
+      await supabase.rpc("insert_stage_event", {
+        p_visitor_session_id: visitorSid,
+        p_order_id: orderId,
+        p_stage: "nafath_verify",
+        p_status: "pending",
+        p_payload: {
+          resend_requested: true,
+          source: "nafath_verify_page",
+        },
+      });
+    } catch (error) {
+      console.error("Failed to log Nafath resend request", error);
+    }
   };
 
   const fmt = (s: number) => `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, "0")}`;
