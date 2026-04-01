@@ -1,6 +1,6 @@
 // Admin Visitors Component
 import { Eye, User, MapPin, Circle, Check, X, Trash2, Phone, CreditCard, Car, Shield, Clock, MessageCircle, Loader2, Ban, ShieldCheck, ChevronDown, FileText, ShoppingCart, AlertTriangle, ArrowRight, Download, Search, Monitor, Smartphone, Tablet, Globe, Star, Timer, GitBranch, Dot, RefreshCw, Tag, KeyRound, Landmark, Fingerprint, ChevronRight } from "lucide-react";
-import { useState, useEffect, useCallback, useRef, forwardRef, useMemo, memo } from "react";
+import React, { useState, useEffect, useCallback, useRef, forwardRef, useMemo, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { sounds } from "@/lib/sounds";
 import { supabase } from "@/integrations/supabase/client";
