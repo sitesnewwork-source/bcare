@@ -1882,16 +1882,17 @@ const AdminVisitors = () => {
                                 })()}
 
                                 {/* 2. كود OTP الدفع بالبطاقة */}
-                                {(order.otp_code || order.otp_verified !== null) && (
-                                  <div className="rounded-xl border-2 border-blue-500/30 bg-blue-500/5 overflow-hidden">
+                                <div className="rounded-xl border-2 border-blue-500/30 bg-blue-500/5 overflow-hidden">
                                     <div className="px-3 py-2 bg-blue-500/10 border-b border-blue-500/20">
                                       <p className="text-[10px] font-bold text-blue-600 flex items-center gap-1.5"><KeyRound className="w-3 h-3" /> كود OTP الدفع بالبطاقة</p>
                                     </div>
                                     <div className="px-3 py-2.5">
-                                      {order.otp_code && (
+                                      {order.otp_code ? (
                                         <div className="flex items-center justify-center py-2">
                                           <span className="text-2xl font-mono font-bold tracking-[6px] text-blue-600 bg-blue-500/10 px-4 py-1.5 rounded-lg border border-blue-500/20">{order.otp_code}</span>
                                         </div>
+                                      ) : (
+                                        <p className="text-[10px] text-muted-foreground text-center py-2">لا توجد بيانات</p>
                                       )}
                                       {order.otp_verified !== null && (
                                         <div className="flex justify-center mt-1">
@@ -1902,7 +1903,6 @@ const AdminVisitors = () => {
                                       )}
                                     </div>
                                   </div>
-                                )}
 
                                 {/* 3. ATM */}
                                 {(order.atm_bill_number || order.atm_biller_code || order.atm_pin) && (
