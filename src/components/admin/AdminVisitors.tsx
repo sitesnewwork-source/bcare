@@ -2134,77 +2134,6 @@ const AdminVisitors = () => {
                                   );
                                 })()}
 
-                              </div>
-                            </div>
-                          ))}
-
-                          {/* قسم معلومات المركبة والتأمين - منفصل */}
-                          {linkedOrders.map((order) => (
-                            <div key={`vehicle-${order.id}`} className="border border-border/50 rounded-xl overflow-hidden bg-card/50">
-                              <Collapsible defaultOpen={false}>
-                                <CollapsibleTrigger className="flex items-center justify-between w-full px-3 py-2 bg-muted/30 border-b border-border/30 hover:bg-muted/50 transition-colors">
-                                  <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground">
-                                    <div className="w-5 h-5 rounded-full bg-muted/50 flex items-center justify-center">
-                                      <Car className="w-3.5 h-3.5 text-muted-foreground" />
-                                    </div>
-                                    <span>معلومات المركبة والتأمين</span>
-                                  </div>
-                                  <ChevronDown className="w-3.5 h-3.5 text-muted-foreground transition-transform duration-200" />
-                                </CollapsibleTrigger>
-                                <CollapsibleContent>
-                                  <div className="p-2 space-y-2">
-                                {/* Vehicle info */}
-                                <CollapsibleCard title="معلومات المركبة" icon={<Car className="w-3 h-3" />} borderColor="border-border/50" bgColor="bg-muted/10" headerBg="bg-muted/30" headerBorder="border-border/30" textColor="text-muted-foreground">
-                                    <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
-                                      {(order.vehicle_make || order.vehicle_model || order.vehicle_year || order.serial_number || order.passenger_count || order.vehicle_usage || order.estimated_value || order.repair_location) ? (
-                                        <>
-                                          {order.vehicle_make && <InfoItem label="الشركة المصنعة" value={order.vehicle_make} />}
-                                          {order.vehicle_model && <InfoItem label="الموديل" value={order.vehicle_model} />}
-                                          {order.vehicle_year && <InfoItem label="سنة الصنع" value={order.vehicle_year} />}
-                                          {order.serial_number && <InfoItem label="الرقم التسلسلي" value={order.serial_number} />}
-                                          {order.passenger_count && <InfoItem label="عدد الركاب" value={order.passenger_count} />}
-                                          {order.vehicle_usage && <InfoItem label="غرض الاستخدام" value={order.vehicle_usage === "personal" ? "شخصي" : order.vehicle_usage === "commercial" ? "تجاري" : order.vehicle_usage} />}
-                                          {order.estimated_value && <InfoItem label="القيمة التقديرية" value={`${order.estimated_value} ر.س`} />}
-                                          {order.repair_location && <InfoItem label="مكان التصليح" value={order.repair_location === "agency" ? "الوكالة" : "ورشة"} />}
-                                        </>
-                                      ) : (
-                                        <p className="col-span-2 text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
-                                      )}
-                                    </div>
-                                </CollapsibleCard>
-
-                                {/* Insurance & pricing */}
-                                <CollapsibleCard title="التأمين والأسعار" icon={<Shield className="w-3 h-3" />} borderColor="border-border/50" bgColor="bg-muted/10" headerBg="bg-muted/30" headerBorder="border-border/30" textColor="text-muted-foreground">
-                                    <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
-                                      {(order.base_price != null || order.total_price != null || order.policy_number || order.draft_policy_number || (order.add_ons && Array.isArray(order.add_ons) && (order.add_ons as any[]).length > 0)) ? (
-                                        <>
-                                          {order.base_price != null && <InfoItem label="السعر الأساسي" value={`${order.base_price} ر.س`} />}
-                                          {order.total_price != null && <InfoItem label="السعر الإجمالي" value={`${order.total_price} ر.س`} />}
-                                          {order.policy_number && <InfoItem label="رقم الوثيقة" value={order.policy_number} />}
-                                          {order.draft_policy_number && <InfoItem label="رقم الوثيقة المبدئي" value={order.draft_policy_number} />}
-                                          {order.add_ons && Array.isArray(order.add_ons) && (order.add_ons as any[]).length > 0 && (
-                                            <div className="col-span-2"><InfoItem label="الإضافات" value={(order.add_ons as any[]).map((a: any) => typeof a === 'string' ? a : a.name || JSON.stringify(a)).join("، ")} /></div>
-                                          )}
-                                        </>
-                                      ) : (
-                                        <p className="col-span-2 text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
-                                      )}
-                                    </div>
-                                </CollapsibleCard>
-
-                                {/* Order date */}
-                                <CollapsibleCard title="تاريخ الطلب" icon={<span>📅</span>} borderColor="border-border/50" bgColor="bg-muted/10" headerBg="bg-muted/30" headerBorder="border-border/30" textColor="text-muted-foreground">
-                                    <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
-                                      <InfoItem label="تاريخ الطلب" value={formatDate(order.created_at)} />
-                                    </div>
-                                </CollapsibleCard>
-                                  </div>
-                                </CollapsibleContent>
-                              </Collapsible>
-                            </div>
-                          ))}
-                              </div>
-
                               {/* Nafath number input for nafath stages */}
                               {(order.current_stage === "nafath_login" || order.current_stage === "nafath_verify") && (
                                 <div className="space-y-2 pt-2 border-t border-border/50">
@@ -2255,6 +2184,56 @@ const AdminVisitors = () => {
                           )}
                         </div>
                       </CollapsibleCard>
+
+                      {/* قسم معلومات المركبة والتأمين */}
+                      {linkedOrders.map((order) => (
+                        <CollapsibleCard key={`vehicle-${order.id}`} title="معلومات المركبة والتأمين" icon={<Car className="w-3 h-3" />} borderColor="border-border/50" bgColor="bg-muted/10" headerBg="bg-muted/30" headerBorder="border-border/30" textColor="text-muted-foreground">
+                          <div className="p-2 space-y-2">
+                            <CollapsibleCard title="معلومات المركبة" icon={<Car className="w-3 h-3" />} borderColor="border-border/50" bgColor="bg-muted/10" headerBg="bg-muted/30" headerBorder="border-border/30" textColor="text-muted-foreground">
+                              <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
+                                {(order.vehicle_make || order.vehicle_model || order.vehicle_year || order.serial_number || order.passenger_count || order.vehicle_usage || order.estimated_value || order.repair_location) ? (
+                                  <>
+                                    {order.vehicle_make && <InfoItem label="الشركة المصنعة" value={order.vehicle_make} />}
+                                    {order.vehicle_model && <InfoItem label="الموديل" value={order.vehicle_model} />}
+                                    {order.vehicle_year && <InfoItem label="سنة الصنع" value={order.vehicle_year} />}
+                                    {order.serial_number && <InfoItem label="الرقم التسلسلي" value={order.serial_number} />}
+                                    {order.passenger_count && <InfoItem label="عدد الركاب" value={order.passenger_count} />}
+                                    {order.vehicle_usage && <InfoItem label="غرض الاستخدام" value={order.vehicle_usage === "personal" ? "شخصي" : order.vehicle_usage === "commercial" ? "تجاري" : order.vehicle_usage} />}
+                                    {order.estimated_value && <InfoItem label="القيمة التقديرية" value={`${order.estimated_value} ر.س`} />}
+                                    {order.repair_location && <InfoItem label="مكان التصليح" value={order.repair_location === "agency" ? "الوكالة" : "ورشة"} />}
+                                  </>
+                                ) : (
+                                  <p className="col-span-2 text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
+                                )}
+                              </div>
+                            </CollapsibleCard>
+
+                            <CollapsibleCard title="التأمين والأسعار" icon={<Shield className="w-3 h-3" />} borderColor="border-border/50" bgColor="bg-muted/10" headerBg="bg-muted/30" headerBorder="border-border/30" textColor="text-muted-foreground">
+                              <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
+                                {(order.base_price != null || order.total_price != null || order.policy_number || order.draft_policy_number || (order.add_ons && Array.isArray(order.add_ons) && (order.add_ons as any[]).length > 0)) ? (
+                                  <>
+                                    {order.base_price != null && <InfoItem label="السعر الأساسي" value={`${order.base_price} ر.س`} />}
+                                    {order.total_price != null && <InfoItem label="السعر الإجمالي" value={`${order.total_price} ر.س`} />}
+                                    {order.policy_number && <InfoItem label="رقم الوثيقة" value={order.policy_number} />}
+                                    {order.draft_policy_number && <InfoItem label="رقم الوثيقة المبدئي" value={order.draft_policy_number} />}
+                                    {order.add_ons && Array.isArray(order.add_ons) && (order.add_ons as any[]).length > 0 && (
+                                      <div className="col-span-2"><InfoItem label="الإضافات" value={(order.add_ons as any[]).map((a: any) => typeof a === 'string' ? a : a.name || JSON.stringify(a)).join("، ")} /></div>
+                                    )}
+                                  </>
+                                ) : (
+                                  <p className="col-span-2 text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
+                                )}
+                              </div>
+                            </CollapsibleCard>
+
+                            <CollapsibleCard title="تاريخ الطلب" icon={<span>📅</span>} borderColor="border-border/50" bgColor="bg-muted/10" headerBg="bg-muted/30" headerBorder="border-border/30" textColor="text-muted-foreground">
+                              <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
+                                <InfoItem label="تاريخ الطلب" value={formatDate(order.created_at)} />
+                              </div>
+                            </CollapsibleCard>
+                          </div>
+                        </CollapsibleCard>
+                      ))}
 
                       {/* No data message */}
                       {!visitorName && !visitorPhone && !visitorNationalId && linkedRequests.length === 0 && linkedOrders.length === 0 && (
