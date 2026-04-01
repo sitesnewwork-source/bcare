@@ -1284,9 +1284,11 @@ const AdminVisitors = () => {
                             setSelectedVisitor(visitor);
                           }
                         }}
-                        className={`w-full text-right p-3 transition-all hover:bg-accent/40 border-b border-border/40 ${
-                          selectedVisitor?.id === visitor.id ? "bg-primary/8 border-r-[3px] border-r-primary" : ""
-                        } ${visitor.is_blocked ? "opacity-40" : ""} ${isPriority ? "bg-amber-500/5 border-r-[3px] border-r-amber-500" : ""}`}
+                        className={`w-full text-right p-2.5 transition-all rounded-xl mx-1.5 my-1 ${
+                          selectedVisitor?.id === visitor.id
+                            ? "bg-primary/8 ring-2 ring-primary/30 shadow-sm"
+                            : "hover:bg-accent/30"
+                        } ${visitor.is_blocked ? "opacity-40" : ""} ${isPriority ? "bg-amber-500/5 ring-1 ring-amber-500/20" : ""}`}
                       >
                       <div className="flex items-start gap-2.5">
                         {chatSelectMode && (
