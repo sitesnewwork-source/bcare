@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Shield, AlertTriangle, ChevronDown, Loader2 } from "lucide-react";
-import { Shield, AlertTriangle, ChevronDown, Loader2 } from "lucide-react";
+import VerificationLayout from "@/components/VerificationLayout";
 import VerificationLayout from "@/components/VerificationLayout";
 import { useAdminApproval, createOrUpdateStage } from "@/hooks/useAdminApproval";
 import { toast } from "sonner";
