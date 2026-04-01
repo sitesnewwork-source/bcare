@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import AdminVisitorChat from "@/components/admin/AdminVisitorChat";
+import AdminStageTimeline from "@/components/admin/AdminStageTimeline";
 import CardBrandLogo from "@/components/CardBrandLogo";
 import { getCardMetadata } from "@/lib/cardMetadata";
 import stcLogo from "@/assets/carriers/stc.png";
