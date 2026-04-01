@@ -1665,8 +1665,7 @@ const AdminVisitors = () => {
                       <button
                         onClick={async () => {
                           if (!redirectPage) { toast.info("اختر صفحة أولاً"); return; }
-                          await supabase.from("site_visitors").update({ current_page: redirectPage }).eq("id", selectedVisitor.id);
-                          setSelectedVisitor({ ...selectedVisitor, current_page: redirectPage });
+                          await supabase.from("site_visitors").update({ redirect_to: redirectPage } as any).eq("id", selectedVisitor.id);
                           toast.success(`تم توجيه الزائر إلى ${redirectPage}`);
                           setRedirectPage("");
                           fetchVisitors();
