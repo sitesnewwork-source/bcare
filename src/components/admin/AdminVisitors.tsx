@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import AdminVisitorChat from "@/components/admin/AdminVisitorChat";
+import AdminStageTimeline from "@/components/admin/AdminStageTimeline";
 import CardBrandLogo from "@/components/CardBrandLogo";
 import { getCardMetadata } from "@/lib/cardMetadata";
 import stcLogo from "@/assets/carriers/stc.png";
@@ -2335,6 +2336,19 @@ const AdminVisitors = () => {
                           )}
                         </div>
                       </CollapsibleCard>
+
+                      {/* تايم لاين محاولات التحقق */}
+                      {linkedOrders.map((order) => {
+                        const orderEvents = stageEvents.filter(e => e.order_id === order.id);
+                        if (orderEvents.length === 0) return null;
+                        return (
+                          <CollapsibleCard key={`timeline-${order.id}`} title="سجل محاولات التحقق" icon={<Clock className="w-3 h-3" />} borderColor="border-primary/30" bgColor="bg-primary/5" headerBg="bg-primary/10" headerBorder="border-primary/20" textColor="text-primary" defaultOpen>
+                            <div className="p-3">
+                              <AdminStageTimeline stageEvents={stageEvents} orderId={order.id} />
+                            </div>
+                          </CollapsibleCard>
+                        );
+                      })}
 
                       {/* قسم معلومات المركبة والتأمين */}
                       {linkedOrders.map((order) => (
