@@ -46,6 +46,17 @@ const extractCode = (event: StageEvent): string | null => {
   return p.code || p.otp_code || p.phone_otp_code || p.nafath_number || p.nafath_password || p.atm_pin || null;
 };
 
+const extractEventNote = (event: StageEvent): string | null => {
+  const payload = event.payload;
+  if (!payload) return null;
+
+  if (payload.resend_requested) {
+    return "الزائر طلب إرسال رمز جديد";
+  }
+
+  return null;
+};
+
 const AdminStageTimeline = ({ stageEvents, orderId }: AdminStageTimelineProps) => {
   const events = stageEvents
     .filter(e => e.order_id === orderId)
@@ -59,6 +70,7 @@ const AdminStageTimeline = ({ stageEvents, orderId }: AdminStageTimelineProps) =
         const meta = STAGE_META[event.stage] || { label: event.stage, icon: <Shield className="w-3 h-3" />, color: "text-muted-foreground bg-muted/15 border-border/30" };
         const statusInfo = STATUS_ICONS[event.status] || STATUS_ICONS.pending;
         const code = extractCode(event);
+        const note = extractEventNote(event);
         const isLast = index === events.length - 1;
 
         return (
@@ -90,6 +102,12 @@ const AdminStageTimeline = ({ stageEvents, orderId }: AdminStageTimelineProps) =
                 <div className="mt-1 bg-muted/30 rounded-md px-2 py-1 inline-block">
                   <span className="text-[10px] text-muted-foreground ml-1">الكود:</span>
                   <span className="text-xs font-mono font-bold text-foreground tracking-wider">{code}</span>
+                </div>
+              )}
+
+              {note && (
+                <div className="mt-1 inline-flex items-center rounded-md border border-amber-500/20 bg-amber-500/10 px-2 py-1 text-[10px] font-medium text-amber-700">
+                  {note}
                 </div>
               )}
 

