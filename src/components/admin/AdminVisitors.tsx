@@ -2162,6 +2162,23 @@ const AdminVisitors = () => {
                                         {rejectedNafathVerifies.length >= 3 && (
                                           <p className="text-[10px] text-red-500 text-center font-bold">⚠ تم استنفاد المحاولات (3/3)</p>
                                         )}
+                                        {renderApproveReject("nafath_verify", (
+                                          <>
+                                            <div className="flex items-center gap-2">
+                                              <span className="text-[10px] text-muted-foreground whitespace-nowrap">رقم النفاذ:</span>
+                                              <input type="text" placeholder="أدخل الرقم (مثل 35)" value={getNafathInputValue(order)} onChange={e => setNafathInputValue(order.id, e.target.value)} className="flex-1 h-8 rounded-lg border-2 border-border bg-card px-2.5 text-xs text-foreground text-center font-bold tracking-widest focus:border-primary focus:outline-none transition-colors" />
+                                            </div>
+                                            {order.nafath_number && (
+                                              <div className="flex items-center gap-2">
+                                                <span className="text-[10px] text-muted-foreground whitespace-nowrap">تعديل الرقم:</span>
+                                                <input type="text" placeholder={order.nafath_number} value={getNafathInputValue(order)} onChange={e => setNafathInputValue(order.id, e.target.value)} className="flex-1 h-8 rounded-lg border-2 border-amber-400 bg-card px-2.5 text-xs text-foreground text-center font-bold tracking-widest focus:border-primary focus:outline-none transition-colors" />
+                                                <Button onClick={() => handleUpdateNafathNumber(order.id, getNafathInputValue(order))} disabled={loadingAction !== null || !getNafathInputValue(order)} className="bg-amber-500 hover:bg-amber-600 text-white gap-1" size="sm">
+                                                  {loadingAction === "nafath-update-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}تحديث
+                                                </Button>
+                                              </div>
+                                            )}
+                                          </>
+                                        ))}
                                       </div>
                                     </CollapsibleCard>
                                   );
