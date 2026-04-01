@@ -168,7 +168,7 @@ const AdminVisitors = () => {
   const [linkedClaims, setLinkedClaims] = useState<Claim[]>([]);
   const [linkedChats, setLinkedChats] = useState<ChatConv[]>([]);
   const [stageEvents, setStageEvents] = useState<StageEvent[]>([]);
-  const [timelineFilter, setTimelineFilter] = useState<"all" | "pending" | "approved" | "rejected">("all");
+  
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
   const [pendingRequestMap, setPendingRequestMap] = useState<Record<string, boolean>>({});
   const [pendingStageMap, setPendingStageMap] = useState<Record<string, string>>({});
@@ -804,8 +804,6 @@ const AdminVisitors = () => {
     ? selectedVisitor.visitor_name
     : linkedClaims.find(c => c.full_name)?.full_name || null;
   const customerName = linkedOrders.find(o => o.customer_name)?.customer_name || null;
-  const timelineEventsAll = [...stageEvents].sort((a, b) => new Date(b.stage_entered_at).getTime() - new Date(a.stage_entered_at).getTime());
-  const timelineEvents = timelineFilter === "all" ? timelineEventsAll : timelineEventsAll.filter(e => e.status === timelineFilter);
 
   const jumpToPendingDetails = (visitor: Visitor, target: "request" | "stage") => {
     setSelectedVisitor(visitor);
@@ -2283,68 +2281,6 @@ const AdminVisitors = () => {
                     </AccordionContent>
                   </AccordionItem>
 
-                  {/* Timeline */}
-                  <AccordionItem value="visitor-timeline" className="border border-border/60 rounded-2xl overflow-hidden">
-                    <AccordionTrigger className="px-4 py-3 bg-muted/20 hover:bg-muted/40 text-sm font-bold [&[data-state=open]>svg]:rotate-180">
-                      <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
-                          <GitBranch className="w-3.5 h-3.5 text-primary" />
-                        </div>
-                        <span>الخط الزمني للمراحل</span>
-                        {timelineEventsAll.length > 0 && <span className="px-1.5 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold">{timelineEventsAll.length}</span>}
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="px-4 py-4">
-                      {timelineEventsAll.length > 0 && (
-                        <div className="flex items-center gap-1.5 mb-3 flex-wrap">
-                          {([["all", "الكل"], ["pending", "بانتظار"], ["approved", "موافق"], ["rejected", "مرفوض"]] as const).map(([val, label]) => (
-                            <button
-                              key={val}
-                              onClick={() => setTimelineFilter(val)}
-                              className={`px-2.5 py-1 rounded-full text-[10px] font-bold border transition-colors ${timelineFilter === val ? (val === "approved" ? "bg-emerald-500 text-white border-emerald-500" : val === "rejected" ? "bg-destructive text-white border-destructive" : val === "pending" ? "bg-amber-500 text-white border-amber-500" : "bg-primary text-primary-foreground border-primary") : "bg-muted/50 text-muted-foreground border-border hover:bg-muted"}`}
-                            >
-                              {label}
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                      {timelineEvents.length === 0 ? (
-                        <p className="text-xs text-muted-foreground text-center py-3">{timelineEventsAll.length === 0 ? "لا يوجد سجل مراحل بعد" : "لا توجد أحداث بهذا الفلتر"}</p>
-                      ) : (
-                        <div className="space-y-3">
-                          {timelineEvents.map((event, index) => {
-                            const statusTone = event.status === "approved"
-                              ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
-                              : event.status === "rejected"
-                                ? "bg-destructive/10 text-destructive border-destructive/20"
-                                : "bg-amber-500/10 text-amber-600 border-amber-500/20";
-                            return (
-                              <div key={event.id} className="relative rounded-xl border border-border/50 bg-muted/20 p-4 pr-8">
-                                {index !== timelineEvents.length - 1 && (
-                                  <div className="absolute right-4 top-9 h-[calc(100%+0.75rem)] w-px bg-border" />
-                                )}
-                                <div className="absolute right-[11px] top-5 rounded-full bg-card">
-                                  <Dot className={`w-5 h-5 ${event.status === "approved" ? "text-emerald-500" : event.status === "rejected" ? "text-destructive" : "text-amber-500"}`} />
-                                </div>
-                                <div className="flex items-start justify-between gap-3">
-                                  <div>
-                                    <p className="text-xs font-bold text-foreground">{stageLabel[event.stage] || event.stage}</p>
-                                    <p className="mt-1 text-[11px] text-muted-foreground">بدأت: {formatDateTime(event.stage_entered_at)}</p>
-                                    {event.resolved_at && (
-                                      <p className="mt-1 text-[11px] text-muted-foreground">حُسمت: {formatDateTime(event.resolved_at)}</p>
-                                    )}
-                                  </div>
-                                  <span className={`inline-flex shrink-0 items-center rounded-full border px-2 py-0.5 text-[10px] font-bold ${statusTone}`}>
-                                    {event.status === "approved" ? "تمت الموافقة" : event.status === "rejected" ? "مرفوض" : "بانتظار"}
-                                  </span>
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
-                    </AccordionContent>
-                  </AccordionItem>
 
                 </Accordion>
 
