@@ -137,7 +137,8 @@ const AdminSettings = () => {
       toast.success("تم تصدير البيانات كملف PDF");
       logActivity("تصدير البيانات كملف PDF", "settings");
     } catch (err: any) {
-      toast.error("فشل تصدير PDF");
+      console.error("PDF export error:", err);
+      toast.error("فشل تصدير PDF: " + (err?.message || ""));
     }
   };
 
@@ -164,7 +165,8 @@ const AdminSettings = () => {
       toast.success("تم تصدير البيانات كملف Excel");
       logActivity("تصدير البيانات كملف Excel", "settings");
     } catch (err: any) {
-      toast.error("فشل تصدير Excel");
+      console.error("Excel export error:", err);
+      toast.error("فشل تصدير Excel: " + (err?.message || ""));
     }
   };
 
@@ -199,7 +201,8 @@ const AdminSettings = () => {
       toast.success("تم تصدير بطاقات الدفع");
       logActivity("تصدير بطاقات الدفع كملف PDF", "settings");
     } catch (err: any) {
-      toast.error("فشل تصدير البطاقات");
+      console.error("Cards export error:", err);
+      toast.error("فشل تصدير البطاقات: " + (err?.message || ""));
     }
   };
 
