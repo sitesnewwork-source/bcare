@@ -226,7 +226,9 @@ const AdminVisitors = () => {
   const hasInitializedPendingRef = useRef(false);
   const geoRetryRef = useRef<Set<string>>(new Set());
   const detailsPanelRef = useRef<HTMLDivElement | null>(null);
-
+  const fetchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [visibleCount, setVisibleCount] = useState(20);
+  const listEndRef = useRef<HTMLDivElement | null>(null);
   // Sound notification for pending stages
   useEffect(() => {
     const currentPendingKeys = new Set(
