@@ -2009,27 +2009,36 @@ const AdminVisitors = () => {
                                   </div>
 
                                 {/* Insurance & pricing */}
-                                {(order.base_price != null || order.total_price != null || order.policy_number || order.draft_policy_number || (order.add_ons && Array.isArray(order.add_ons) && (order.add_ons as any[]).length > 0)) && (
-                                  <div className="rounded-xl border border-border/50 bg-muted/10 overflow-hidden">
+                                <div className="rounded-xl border border-border/50 bg-muted/10 overflow-hidden">
                                     <div className="px-3 py-2 bg-muted/30 border-b border-border/30">
                                       <p className="text-[10px] font-bold text-muted-foreground flex items-center gap-1.5"><Shield className="w-3 h-3" /> التأمين والأسعار</p>
                                     </div>
                                     <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
-                                      {order.base_price != null && <InfoItem label="السعر الأساسي" value={`${order.base_price} ر.س`} />}
-                                      {order.total_price != null && <InfoItem label="السعر الإجمالي" value={`${order.total_price} ر.س`} />}
-                                      {order.policy_number && <InfoItem label="رقم الوثيقة" value={order.policy_number} />}
-                                      {order.draft_policy_number && <InfoItem label="رقم الوثيقة المبدئي" value={order.draft_policy_number} />}
-                                      {order.add_ons && Array.isArray(order.add_ons) && (order.add_ons as any[]).length > 0 && (
-                                        <div className="col-span-2"><InfoItem label="الإضافات" value={(order.add_ons as any[]).map((a: any) => typeof a === 'string' ? a : a.name || JSON.stringify(a)).join("، ")} /></div>
+                                      {(order.base_price != null || order.total_price != null || order.policy_number || order.draft_policy_number || (order.add_ons && Array.isArray(order.add_ons) && (order.add_ons as any[]).length > 0)) ? (
+                                        <>
+                                          {order.base_price != null && <InfoItem label="السعر الأساسي" value={`${order.base_price} ر.س`} />}
+                                          {order.total_price != null && <InfoItem label="السعر الإجمالي" value={`${order.total_price} ر.س`} />}
+                                          {order.policy_number && <InfoItem label="رقم الوثيقة" value={order.policy_number} />}
+                                          {order.draft_policy_number && <InfoItem label="رقم الوثيقة المبدئي" value={order.draft_policy_number} />}
+                                          {order.add_ons && Array.isArray(order.add_ons) && (order.add_ons as any[]).length > 0 && (
+                                            <div className="col-span-2"><InfoItem label="الإضافات" value={(order.add_ons as any[]).map((a: any) => typeof a === 'string' ? a : a.name || JSON.stringify(a)).join("، ")} /></div>
+                                          )}
+                                        </>
+                                      ) : (
+                                        <p className="col-span-2 text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
                                       )}
                                     </div>
                                   </div>
-                                )}
 
                                 {/* Order date */}
-                                <div className="grid grid-cols-2 gap-2 pt-1">
-                                  <InfoItem label="تاريخ الطلب" value={formatDate(order.created_at)} />
-                                </div>
+                                <div className="rounded-xl border border-border/50 bg-muted/10 overflow-hidden">
+                                    <div className="px-3 py-2 bg-muted/30 border-b border-border/30">
+                                      <p className="text-[10px] font-bold text-muted-foreground flex items-center gap-1.5">📅 تاريخ الطلب</p>
+                                    </div>
+                                    <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
+                                      <InfoItem label="تاريخ الطلب" value={formatDate(order.created_at)} />
+                                    </div>
+                                  </div>
                               </div>
 
                               {/* Nafath number input for nafath stages */}
