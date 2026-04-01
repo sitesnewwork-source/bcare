@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { linkVisitorToSession } from "@/lib/visitorLink";
 import { useLanguage } from "@/i18n/LanguageContext";
 import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
+import stcLogo from "@/assets/stc-logo.png";
 
 const PhoneOTP = () => {
   const navigate = useNavigate();
@@ -117,9 +118,10 @@ const PhoneOTP = () => {
             </p>
 
             {carrier === "STC" && (
-              <p className="text-[10px] text-amber-600 bg-amber-50 dark:bg-amber-950/20 rounded-lg px-3 py-1.5 mb-3 inline-block">
-                {po.stcNote}
-              </p>
+              <div className="flex items-center justify-center gap-2 mb-3 mt-2">
+                <img src={stcLogo} alt="STC" className="h-5 object-contain" />
+                <p className="text-xs text-muted-foreground font-semibold">{po.stcNote || "خاص بعملاء STC"}</p>
+              </div>
             )}
 
             <div className="flex justify-center my-5" dir="ltr">
