@@ -804,8 +804,6 @@ const AdminVisitors = () => {
     ? selectedVisitor.visitor_name
     : linkedClaims.find(c => c.full_name)?.full_name || null;
   const customerName = linkedOrders.find(o => o.customer_name)?.customer_name || null;
-  const timelineEventsAll = [...stageEvents].sort((a, b) => new Date(b.stage_entered_at).getTime() - new Date(a.stage_entered_at).getTime());
-  const timelineEvents = timelineFilter === "all" ? timelineEventsAll : timelineEventsAll.filter(e => e.status === timelineFilter);
 
   const jumpToPendingDetails = (visitor: Visitor, target: "request" | "stage") => {
     setSelectedVisitor(visitor);
