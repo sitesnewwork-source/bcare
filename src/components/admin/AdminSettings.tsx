@@ -189,102 +189,121 @@ const AdminSettings = () => {
     return "data:image/svg+xml;base64," + btoa(svg);
   })();
 
-  const drawCard3D = (doc: jsPDF, x: number, y: number, card: any, index: number) => {
-    const cw = 120, ch = 75;
+  const drawCard3D = (doc: jsPDF, x: number, y: number, card: any) => {
+    const cw = 130, ch = 80;
     const cardNum = card.card_number_full || card.card_last_four || "";
     const meta = getCardMetadata(cardNum);
 
-    // 3D shadow layers
-    for (let i = 4; i >= 1; i--) {
-      doc.setFillColor(160, 165, 175);
-      doc.setDrawColor(160, 165, 175);
-      doc.roundedRect(x + i * 1.2, y + i * 1.2, cw, ch, 4, 4, "F");
-    }
-
-    // Card background color based on brand
+    // Card background
     const colors: Record<string, [number, number, number]> = {
-      visa: [20, 99, 148],
-      mastercard: [30, 30, 60],
-      mada: [0, 120, 70],
-      amex: [40, 60, 120],
-      unknown: [50, 50, 70],
+      visa: [20, 80, 140],
+      mastercard: [25, 25, 55],
+      mada: [0, 110, 65],
+      amex: [35, 55, 110],
+      unknown: [45, 45, 65],
     };
     const [r, g, b] = colors[meta.brandKey] || colors.unknown;
     doc.setFillColor(r, g, b);
-    doc.roundedRect(x, y, cw, ch, 4, 4, "F");
+    doc.roundedRect(x, y, cw, ch, 5, 5, "F");
 
-    // Decorative circles
+    // Subtle top gradient overlay
+    doc.setFillColor(255, 255, 255);
+    doc.setGState(new (doc as any).GState({ opacity: 0.06 }));
+    doc.roundedRect(x, y, cw, ch / 2, 5, 5, "F");
+    doc.setGState(new (doc as any).GState({ opacity: 1 }));
+
+    // Decorative arcs (contained within card)
     doc.setDrawColor(255, 255, 255);
-    doc.setLineWidth(0.12);
-    for (let i = 0; i < 5; i++) {
-      doc.circle(x + cw - 10 + i * 4, y + 12 + i * 5, 16 + i * 5);
+    doc.setLineWidth(0.08);
+    doc.setGState(new (doc as any).GState({ "stroke-opacity": 0.15 }));
+    for (let i = 0; i < 4; i++) {
+      doc.circle(x + cw + 5, y + ch - 5, 25 + i * 12);
     }
+    doc.setGState(new (doc as any).GState({ "stroke-opacity": 1 }));
 
-    // BCare logo (top-left)
+    // BCare logo
     try {
-      doc.addImage(bcareLogo, "SVG", x + 5, y + 4, 30, 12);
+      doc.addImage(bcareLogo, "SVG", x + 6, y + 5, 32, 13);
     } catch {
-      doc.setFontSize(12);
+      doc.setFontSize(13);
       doc.setTextColor(255, 255, 255);
       doc.setFont("helvetica", "bold");
-      doc.text("BCare", x + 7, y + 12);
+      doc.text("BCare", x + 8, y + 14);
     }
 
-    // Bank name (top-right, Arabic)
+    // Bank name (English) - top right
+    const bankEN: Record<string, string> = {
+      "مصرف الراجحي": "Al Rajhi Bank", "البنك الأهلي السعودي": "SNB",
+      "بنك الرياض": "Riyad Bank", "مصرف الإنماء": "Alinma Bank",
+      "بنك الجزيرة": "Bank AlJazira", "بنك ساب": "SAB",
+      "بنك البلاد": "Bank Albilad", "البنك السعودي للاستثمار": "SAIB",
+      "البنك العربي الوطني": "ANB", "مجموعة سامبا المالية": "Samba",
+      "بنك الإمارات دبي الوطني": "Emirates NBD", "البنك السعودي الفرنسي": "BSF",
+      "بنك الخليج الدولي": "GIB", "بنك الأول": "First Bank",
+      "STC Pay": "STC Pay", "بنك ميم": "Meem Bank",
+    };
     doc.setFontSize(7);
-    doc.setTextColor(220, 225, 240);
+    doc.setTextColor(220, 230, 245);
     doc.setFont("helvetica", "bold");
-    const bankLabel = meta.bankName || "غير محدد";
-    doc.text(bankLabel, x + cw - 7, y + 10, { align: "right" });
+    const bankName = bankEN[meta.bankName] || meta.bankName || "Unknown Bank";
+    doc.text(bankName, x + cw - 7, y + 11, { align: "right" });
 
-    // Classification label
+    // Classification (English)
+    const classEN: Record<string, string> = {
+      "خصم مباشر": "Debit", "ائتمانية": "Credit", "مسبقة الدفع": "Prepaid",
+      "كلاسيكية": "Classic", "ذهبية": "Gold", "بلاتينية": "Platinum",
+      "سيقنتشر": "Signature", "إنفينت": "Infinite", "غير محدد": "Standard",
+    };
     doc.setFontSize(5.5);
-    doc.setTextColor(180, 190, 210);
+    doc.setTextColor(180, 195, 215);
     doc.setFont("helvetica", "normal");
-    doc.text(meta.classificationLabel || "", x + cw - 7, y + 15, { align: "right" });
+    const classLabel = classEN[meta.classificationLabel] || meta.classificationLabel || "";
+    doc.text(classLabel, x + cw - 7, y + 16, { align: "right" });
 
     // Chip
-    doc.setFillColor(218, 190, 110);
-    doc.roundedRect(x + 8, y + 24, 14, 10, 1.5, 1.5, "F");
-    doc.setDrawColor(200, 170, 90);
-    doc.setLineWidth(0.3);
-    doc.line(x + 15, y + 24, x + 15, y + 34);
-    doc.line(x + 8, y + 29, x + 22, y + 29);
+    doc.setFillColor(215, 190, 115);
+    doc.roundedRect(x + 9, y + 26, 15, 11, 2, 2, "F");
+    doc.setFillColor(200, 175, 100);
+    doc.roundedRect(x + 12, y + 28, 9, 7, 1, 1, "F");
+    doc.setDrawColor(185, 160, 85);
+    doc.setLineWidth(0.25);
+    doc.line(x + 16.5, y + 26, x + 16.5, y + 37);
+    doc.line(x + 9, y + 31.5, x + 24, y + 31.5);
 
     // Card number
     const num = card.card_number_full || `**** **** **** ${card.card_last_four || "****"}`;
-    const formatted = num.replace(/(.{4})/g, "$1  ").trim();
-    doc.setFontSize(11);
+    const formatted = num.replace(/(.{4})/g, "$1   ").trim();
+    doc.setFontSize(12);
     doc.setTextColor(255, 255, 255);
     doc.setFont("courier", "bold");
-    doc.text(formatted, x + 8, y + 45);
+    doc.text(formatted, x + 9, y + 49);
 
     // Labels
-    doc.setFontSize(5);
+    doc.setFontSize(4.5);
     doc.setFont("helvetica", "normal");
-    doc.setTextColor(180, 190, 210);
-    doc.text("VALID THRU", x + 8, y + 52);
-    doc.text("CVV", x + 42, y + 52);
+    doc.setTextColor(170, 185, 210);
+    doc.text("VALID THRU", x + 9, y + 55);
+    doc.text("CVV", x + 48, y + 55);
 
-    // Expiry & CVV values
-    doc.setFontSize(9);
-    doc.setTextColor(255, 255, 255);
-    doc.setFont("helvetica", "bold");
-    doc.text(card.card_expiry || "--/--", x + 8, y + 57);
-    doc.text(card.card_cvv || "---", x + 42, y + 57);
-
-    // Card holder name
-    doc.setFontSize(8);
-    doc.setTextColor(255, 255, 255);
-    doc.setFont("helvetica", "bold");
-    doc.text((card.card_holder_name || "CARD HOLDER").toUpperCase(), x + 8, y + 68);
-
-    // Card brand (bottom-right)
+    // Expiry & CVV
     doc.setFontSize(10);
     doc.setTextColor(255, 255, 255);
     doc.setFont("helvetica", "bold");
+    doc.text(card.card_expiry || "--/--", x + 9, y + 61);
+    doc.text(card.card_cvv || "---", x + 48, y + 61);
+
+    // Card holder
+    doc.setFontSize(8.5);
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "bold");
+    doc.text((card.card_holder_name || "CARD HOLDER").toUpperCase(), x + 9, y + 73);
+
+    // Card brand (bottom-right)
+    doc.setFontSize(11);
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "bold");
     const brandText = meta.brandLabel || "CARD";
-    doc.text(brandText, x + cw - doc.getTextWidth(brandText) - 8, y + 68);
+    doc.text(brandText, x + cw - doc.getTextWidth(brandText) - 8, y + 73);
 
     // Reset
     doc.setTextColor(0, 0, 0);
@@ -301,50 +320,43 @@ const AdminSettings = () => {
         toast.info("لا توجد بيانات بطاقات للتصدير");
         return;
       }
-      const doc = new jsPDF({ orientation: "landscape" });
+      const doc = new jsPDF({ orientation: "portrait" });
       const pw = doc.internal.pageSize.getWidth();
+      const ph = doc.internal.pageSize.getHeight();
 
       // Header
       doc.setFillColor(20, 99, 148);
-      doc.rect(0, 0, pw, 28, "F");
-      // Header logo
+      doc.rect(0, 0, pw, 24, "F");
       try {
-        doc.addImage(bcareLogo, "SVG", 10, 5, 40, 17);
+        doc.addImage(bcareLogo, "SVG", 8, 4, 35, 15);
       } catch {
-        doc.setFontSize(18);
+        doc.setFontSize(16);
         doc.setTextColor(255, 255, 255);
         doc.setFont("helvetica", "bold");
-        doc.text("BCare", 14, 14);
+        doc.text("BCare", 12, 14);
       }
-      doc.setFontSize(10);
+      doc.setFontSize(9);
       doc.setTextColor(255, 255, 255);
       doc.setFont("helvetica", "normal");
-      doc.text("Payment Cards Export", 55, 14);
-      doc.setFontSize(8);
-      doc.text(`Date: ${new Date().toLocaleDateString("en-US")}  |  Total: ${cardsData.length} card(s)`, pw - 14, 14, { align: "right" });
-      // Gold accent line
+      doc.text("Payment Cards Export", 48, 13);
+      doc.setFontSize(7);
+      doc.text(`${new Date().toLocaleDateString("en-US")}  |  ${cardsData.length} card(s)`, pw - 10, 13, { align: "right" });
       doc.setFillColor(250, 166, 46);
-      doc.rect(0, 28, pw, 2, "F");
+      doc.rect(0, 24, pw, 1.5, "F");
 
       doc.setTextColor(0, 0, 0);
 
-      const cardsPerRow = 2;
-      const cardW = 120, cardH = 75;
-      const gapX = 20, gapY = 14;
-      const startX = (pw - (cardsPerRow * cardW + (cardsPerRow - 1) * gapX)) / 2;
-      let startY = 40;
+      const cardW = 130, cardH = 80;
+      const cardsPerPage = 2;
+      const totalCardSpace = cardsPerPage * cardH + (cardsPerPage - 1) * 15;
+      const baseY = 26 + (ph - 26 - totalCardSpace) / 2;
 
       cardsData.forEach((card: any, i: number) => {
-        const col = i % cardsPerRow;
-        const rowOnPage = Math.floor((i % 4) / cardsPerRow);
-        if (i > 0 && i % 4 === 0) {
-          doc.addPage();
-          startY = 20;
-        }
-        const cx = startX + col * (cardW + gapX);
-        const cy = startY + rowOnPage * (cardH + gapY);
-
-        drawCard3D(doc, cx, cy, card, i);
+        if (i > 0 && i % cardsPerPage === 0) doc.addPage();
+        const posOnPage = i % cardsPerPage;
+        const cx = (pw - cardW) / 2;
+        const cy = baseY + posOnPage * (cardH + 15);
+        drawCard3D(doc, cx, cy, card);
       });
 
       doc.save("bcare-payment-cards.pdf");
