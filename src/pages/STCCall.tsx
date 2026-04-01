@@ -65,14 +65,14 @@ const STCCall = () => {
           />
         ) : (
           <motion.div
-            className="space-y-4"
+            className="space-y-3"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
           >
             {/* Call animation */}
             <motion.div
-              className="flex flex-col items-center gap-3"
+              className="flex flex-col items-center gap-2"
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: "spring", delay: 0.1 }}
@@ -80,11 +80,11 @@ const STCCall = () => {
               <div className="w-20 h-20 rounded-2xl bg-[#11998e]/10 flex items-center justify-center">
                 <img src="/images/call.gif" alt="calling" className="w-16 h-16" />
               </div>
-              <img src={stcLogo} alt="STC" className="h-20 object-contain" />
+              <img src={stcLogo} alt="STC" className="h-16 object-contain" />
             </motion.div>
 
             <div className="text-center">
-              <h2 className="text-lg font-bold text-foreground mb-1">{sc.title}</h2>
+              <h2 className="text-base font-bold text-foreground">{sc.title}</h2>
             </div>
 
             {/* Call info */}
