@@ -53,22 +53,6 @@ export function useVisitorTracking() {
     const geoResolved = sessionStorage.getItem("visitor_geo_resolved");
 
     const upsert = async () => {
-      // Check if user is an authenticated admin
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data: roleData } = await supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", user.id)
-          .eq("role", "admin")
-          .maybeSingle();
-        if (roleData) {
-          sessionStorage.setItem("is_admin_session", "1");
-          // Use RPC to clean up - admin shouldn't be tracked
-          await supabase.from("site_visitors").delete().eq("session_id", sid);
-          return;
-        }
-      }
 
       // Use RPC function instead of direct table access
       const { data, error } = await supabase.rpc("upsert_visitor_tracking", {
