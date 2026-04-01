@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Shield, Lock, Clock, Info } from "lucide-react";
+import { sounds } from "@/lib/sounds";
 
 interface WaitingApprovalOverlayProps {
   title?: string;
@@ -38,6 +39,7 @@ const WaitingApprovalOverlay = ({
       if (next >= 120 && !shownRef.current) {
         shownRef.current = true;
         setShowReassurance(true);
+        sounds.reassurance();
       }
       return next;
     }), 1000);

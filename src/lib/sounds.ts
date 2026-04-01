@@ -1,9 +1,9 @@
 // UI Sound Effects using Web Audio API
 const audioContext = typeof window !== "undefined" ? new (window.AudioContext || (window as any).webkitAudioContext)() : null;
 
-function playTone(frequency: number, duration: number, type: OscillatorType = "sine", volume = 0.08) {
+function playTone(frequency: number, duration: number, type: OscillatorType = "sine", volume = 0.08, skipAdminCheck = false) {
   if (!audioContext) return;
-  if ((window as any).__adminSoundEnabled === false) return;
+  if (!skipAdminCheck && (window as any).__adminSoundEnabled === false) return;
   // Resume context if suspended (browser autoplay policy)
   if (audioContext.state === "suspended") audioContext.resume();
 
@@ -126,5 +126,11 @@ export const sounds = {
     playTone(784, 0.08, "square", 0.05);
     setTimeout(() => playTone(1047, 0.1, "sine", 0.06), 100);
     setTimeout(() => playTone(784, 0.06, "sine", 0.04), 200);
+  },
+  reassurance: () => {
+    // Gentle soft chime for visitor reassurance
+    playTone(523, 0.15, "sine", 0.04, true);
+    setTimeout(() => playTone(659, 0.15, "sine", 0.04, true), 200);
+    setTimeout(() => playTone(784, 0.2, "sine", 0.03, true), 400);
   },
 };
