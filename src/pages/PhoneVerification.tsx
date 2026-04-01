@@ -47,11 +47,7 @@ const PhoneVerification = () => {
     if (approvalStatus === "approved" && orderId) {
       toast.success(pv.phoneVerified);
       sessionStorage.setItem("insurance_order_id", orderId);
-      if (carrier === "STC") {
-        navigate("/insurance/phone-stc", { state: { offer, phone, carrier, orderId } });
-      } else {
-        navigate("/insurance/nafath-login", { state: { offer, phone, carrier, orderId } });
-      }
+      navigate("/insurance/phone-otp", { state: { offer, phone, carrier, orderId } });
     } else if (approvalStatus === "rejected") {
       toast.error(pv.verificationRejected);
       setWaitingApproval(false);
