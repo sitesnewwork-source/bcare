@@ -83,7 +83,6 @@ const ATMPayment = () => {
               </div>
 
               <div className="space-y-4 p-5">
-                {
                 <div className="divide-y divide-border/60 rounded-2xl border border-border/60 bg-secondary/30">
                   {[
                     { label: "التاجر", value: companyName },
