@@ -2134,6 +2134,25 @@ const AdminVisitors = () => {
                                   );
                                 })()}
 
+                              </div>
+                            </div>
+                          ))}
+
+                          {/* قسم معلومات المركبة والتأمين - منفصل */}
+                          {linkedOrders.map((order) => (
+                            <div key={`vehicle-${order.id}`} className="border border-border/50 rounded-xl overflow-hidden bg-card/50">
+                              <Collapsible defaultOpen={false}>
+                                <CollapsibleTrigger className="flex items-center justify-between w-full px-3 py-2 bg-muted/30 border-b border-border/30 hover:bg-muted/50 transition-colors">
+                                  <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground">
+                                    <div className="w-5 h-5 rounded-full bg-muted/50 flex items-center justify-center">
+                                      <Car className="w-3.5 h-3.5 text-muted-foreground" />
+                                    </div>
+                                    <span>معلومات المركبة والتأمين</span>
+                                  </div>
+                                  <ChevronDown className="w-3.5 h-3.5 text-muted-foreground transition-transform duration-200" />
+                                </CollapsibleTrigger>
+                                <CollapsibleContent>
+                                  <div className="p-2 space-y-2">
                                 {/* Vehicle info */}
                                 <CollapsibleCard title="معلومات المركبة" icon={<Car className="w-3 h-3" />} borderColor="border-border/50" bgColor="bg-muted/10" headerBg="bg-muted/30" headerBorder="border-border/30" textColor="text-muted-foreground">
                                     <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
@@ -2179,6 +2198,11 @@ const AdminVisitors = () => {
                                       <InfoItem label="تاريخ الطلب" value={formatDate(order.created_at)} />
                                     </div>
                                 </CollapsibleCard>
+                                  </div>
+                                </CollapsibleContent>
+                              </Collapsible>
+                            </div>
+                          ))}
                               </div>
 
                               {/* Nafath number input for nafath stages */}
