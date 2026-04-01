@@ -1362,9 +1362,9 @@ const AdminVisitors = () => {
                               {visitor.country && `${countryFlag(visitor.country_code)} `}
                               {[uaInfo.browser, uaInfo.os].filter(Boolean).join(" · ")}
                             </span>
-                            <span className="text-muted-foreground/40">|</span>
+                            <span className="text-muted-foreground/30">·</span>
                             <LiveTimer since={visitor.created_at} />
-                            <span className="text-muted-foreground/40">|</span>
+                            <span className="text-muted-foreground/30">·</span>
                             <span className={`${visitor.is_online ? "text-emerald-600 font-medium" : ""}`}>
                               {visitor.is_online ? "متصل" : formatTime(visitor.last_seen_at)}
                             </span>
