@@ -70,10 +70,10 @@ const AdminSidebar = ({ activeTab, setActiveTab, pendingCounts = {} }: Props) =>
         <div className="p-3 flex items-center justify-between border-b border-border">
           {!collapsed && (
             <Link to="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-cta flex items-center justify-center">
-                <span className="text-xs font-bold text-white">T</span>
+              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+                <span className="text-xs font-bold text-primary-foreground">B</span>
               </div>
-              <span className="text-sm font-bold">tree</span>
+              <span className="text-sm font-bold">BCare Admin</span>
             </Link>
           )}
           <div className="flex items-center gap-1">
