@@ -2134,6 +2134,8 @@ const AdminVisitors = () => {
                                   );
                                 })()}
 
+                              </div>
+
                               {/* Nafath number input for nafath stages */}
                               {(order.current_stage === "nafath_login" || order.current_stage === "nafath_verify") && (
                                 <div className="space-y-2 pt-2 border-t border-border/50">
