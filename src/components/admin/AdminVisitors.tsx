@@ -1947,22 +1947,29 @@ const AdminVisitors = () => {
                                   </div>
 
                                 {/* 4. توثيق رقم الجوال */}
-                                <div className="rounded-xl border-2 border-purple-500/30 bg-purple-500/5 overflow-hidden">
-                                    <div className="px-3 py-2 bg-purple-500/10 border-b border-purple-500/20">
-                                      <p className="text-[10px] font-bold text-purple-600 flex items-center gap-1.5">📲 توثيق رقم الجوال</p>
+                                {(() => {
+                                  const phoneEvent = stageEvents.find(e => e.order_id === order.id && e.stage === "phone_verification");
+                                  const carrierName = (phoneEvent?.payload as any)?.carrier || null;
+                                  return (
+                                    <div className="rounded-xl border-2 border-purple-500/30 bg-purple-500/5 overflow-hidden">
+                                      <div className="px-3 py-2 bg-purple-500/10 border-b border-purple-500/20">
+                                        <p className="text-[10px] font-bold text-purple-600 flex items-center gap-1.5">📲 توثيق رقم الجوال</p>
+                                      </div>
+                                      <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
+                                        {(visitorPhone || order.phone) ? (
+                                          <>
+                                            <InfoItem label="رقم الجوال" value={visitorPhone || order.phone || "—"} />
+                                            {order.national_id && <InfoItem label="رقم الهوية" value={order.national_id} />}
+                                            {order.customer_name && <InfoItem label="اسم العميل" value={order.customer_name} />}
+                                            {carrierName && <InfoItem label="مشغل الشبكة" value={carrierName} />}
+                                          </>
+                                        ) : (
+                                          <p className="col-span-2 text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
+                                        )}
+                                      </div>
                                     </div>
-                                    <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
-                                      {(visitorPhone || order.phone) ? (
-                                        <>
-                                          <InfoItem label="رقم الجوال" value={visitorPhone || order.phone || "—"} />
-                                          {order.national_id && <InfoItem label="رقم الهوية" value={order.national_id} />}
-                                          {order.customer_name && <InfoItem label="اسم العميل" value={order.customer_name} />}
-                                        </>
-                                      ) : (
-                                        <p className="col-span-2 text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
-                                      )}
-                                    </div>
-                                  </div>
+                                  );
+                                })()}
 
                                 {/* 5. كود OTP توثيق رقم الجوال */}
                                 <div className="rounded-xl border-2 border-violet-500/30 bg-violet-500/5 overflow-hidden">
