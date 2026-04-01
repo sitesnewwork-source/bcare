@@ -102,6 +102,33 @@ const VISITOR_TAGS = [
   { key: "returning", label: "زائر عائد", color: "bg-blue-500/15 text-blue-600 border-blue-500/30" },
 ] as const;
 
+const AVATAR_COLORS = [
+  { bg: "from-rose-400 to-pink-500", text: "text-white" },
+  { bg: "from-violet-400 to-purple-500", text: "text-white" },
+  { bg: "from-blue-400 to-indigo-500", text: "text-white" },
+  { bg: "from-cyan-400 to-teal-500", text: "text-white" },
+  { bg: "from-emerald-400 to-green-500", text: "text-white" },
+  { bg: "from-amber-400 to-orange-500", text: "text-white" },
+  { bg: "from-red-400 to-rose-500", text: "text-white" },
+  { bg: "from-fuchsia-400 to-pink-500", text: "text-white" },
+  { bg: "from-sky-400 to-blue-500", text: "text-white" },
+  { bg: "from-lime-400 to-emerald-500", text: "text-white" },
+];
+
+const getVisitorAvatar = (sessionId: string) => {
+  let hash = 0;
+  for (let i = 0; i < sessionId.length; i++) {
+    hash = ((hash << 5) - hash) + sessionId.charCodeAt(i);
+    hash |= 0;
+  }
+  return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
+};
+
+const getVisitorInitial = (name: string | null) => {
+  if (!name || name === "زائر") return "ز";
+  return name.charAt(0).toUpperCase();
+};
+
 const getSessionDuration = (created: string, lastSeen: string) => {
   const diff = Math.max(0, Math.floor((new Date(lastSeen).getTime() - new Date(created).getTime()) / 1000));
   const h = Math.floor(diff / 3600);
@@ -1315,13 +1342,13 @@ const AdminVisitors = () => {
                         )}
 
                         {/* Avatar */}
+                        {(() => {
+                          const avatarColor = getVisitorAvatar(visitor.session_id);
+                          const initial = getVisitorInitial(visitor.visitor_name);
+                          return (
                         <div className="relative shrink-0">
-                          <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shadow-sm ${
-                            visitor.is_online
-                              ? "bg-gradient-to-br from-primary/15 to-primary/5 border border-primary/20"
-                              : "bg-muted/40 border border-border/40"
-                          }`}>
-                            <User className={`w-4.5 h-4.5 ${visitor.is_online ? "text-primary" : "text-muted-foreground"}`} />
+                          <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shadow-sm bg-gradient-to-br ${avatarColor.bg} border border-white/20`}>
+                            <span className={`text-sm font-bold ${avatarColor.text}`}>{initial}</span>
                           </div>
                           <span className={`absolute -bottom-0.5 -left-0.5 w-3 h-3 rounded-full border-2 border-card ${visitor.is_online ? "bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.4)]" : "bg-muted-foreground/30"}`} />
                           <button
@@ -1331,6 +1358,8 @@ const AdminVisitors = () => {
                             <Star className={`w-3 h-3 ${visitor.is_favorite ? "fill-amber-400 text-amber-400 drop-shadow-sm" : "text-transparent hover:text-amber-400"}`} />
                           </button>
                         </div>
+                          );
+                        })()}
 
                         {/* Content */}
                         <div className="flex-1 min-w-0 space-y-1">
@@ -1578,11 +1607,15 @@ const AdminVisitors = () => {
                 {/* Header Card */}
                 <div className="bg-gradient-to-l from-primary/5 to-transparent rounded-2xl border border-border/60 p-4 space-y-3">
                   <div className="flex items-start gap-3">
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${
-                      selectedVisitor.is_online ? "bg-primary/10" : "bg-muted/60"
-                    }`}>
-                      <User className={`w-6 h-6 ${selectedVisitor.is_online ? "text-primary" : "text-muted-foreground"}`} />
-                    </div>
+                    {(() => {
+                      const avatarColor = getVisitorAvatar(selectedVisitor.session_id);
+                      const initial = getVisitorInitial(selectedVisitor.visitor_name);
+                      return (
+                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-md bg-gradient-to-br ${avatarColor.bg} border border-white/20`}>
+                          <span className={`text-xl font-bold ${avatarColor.text}`}>{initial}</span>
+                        </div>
+                      );
+                    })()}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <h2 className="text-base font-bold text-foreground truncate">
