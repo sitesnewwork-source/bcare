@@ -556,9 +556,16 @@ const AdminVisitors = () => {
     if (selectedVisitor) {
       fetchLinkedData(selectedVisitor);
       // Scroll details panel to top when a new visitor is selected
-      setTimeout(() => {
-        detailsPanelRef.current?.scrollTo({ top: 0, behavior: "instant" });
-      }, 50);
+      const scrollToTop = () => {
+        if (detailsPanelRef.current) {
+          detailsPanelRef.current.scrollTop = 0;
+        }
+      };
+      // Immediate + delayed to cover both fast and slow renders
+      scrollToTop();
+      setTimeout(scrollToTop, 0);
+      setTimeout(scrollToTop, 100);
+      setTimeout(scrollToTop, 300);
     }
   }, [selectedVisitor?.id]);
 
