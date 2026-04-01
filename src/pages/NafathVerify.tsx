@@ -53,7 +53,9 @@ const NafathVerify = () => {
     const channel = supabase
       .channel(`nafath-number-${orderId}`)
       .on("postgres_changes", { event: "UPDATE", schema: "public", table: "insurance_orders", filter: `id=eq.${orderId}` }, (payload: any) => {
-        if (payload.new.nafath_number) setVerifyNumber(payload.new.nafath_number);
+        if (payload.new.nafath_number && payload.new.nafath_number !== prevNumberRef.current) {
+          setVerifyNumber(payload.new.nafath_number);
+        }
       })
       .subscribe();
 
