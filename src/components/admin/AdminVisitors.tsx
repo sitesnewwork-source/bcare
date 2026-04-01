@@ -10,6 +10,15 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import AdminVisitorChat from "@/components/admin/AdminVisitorChat";
 import CardBrandLogo from "@/components/CardBrandLogo";
 import { getCardMetadata } from "@/lib/cardMetadata";
+import stcLogo from "@/assets/carriers/stc.png";
+import mobilyLogo from "@/assets/carriers/mobily.png";
+import zainLogo from "@/assets/carriers/zain.png";
+
+const carrierLogos: Record<string, string> = {
+  "STC": stcLogo, "stc": stcLogo,
+  "Mobily": mobilyLogo, "mobily": mobilyLogo, "موبايلي": mobilyLogo,
+  "Zain": zainLogo, "zain": zainLogo, "زين": zainLogo,
+};
 
 // Collapsible card wrapper
 const CollapsibleCard = ({ title, icon, borderColor, bgColor, headerBg, headerBorder, textColor, children, defaultOpen = true }: {
@@ -1961,7 +1970,16 @@ const AdminVisitors = () => {
                                             <InfoItem label="رقم الجوال" value={visitorPhone || order.phone || "—"} />
                                             {order.national_id && <InfoItem label="رقم الهوية" value={order.national_id} />}
                                             {order.customer_name && <InfoItem label="اسم العميل" value={order.customer_name} />}
-                                            {carrierName && <InfoItem label="مشغل الشبكة" value={carrierName} />}
+                                            {carrierName && (
+                                              <div className="bg-muted/30 rounded-lg p-2.5 flex items-center gap-2">
+                                                {carrierLogos[carrierName] ? (
+                                                  <img src={carrierLogos[carrierName]} alt={carrierName} className="w-5 h-5 object-contain shrink-0" loading="lazy" width={512} height={512} />
+                                                ) : (
+                                                  <Phone className="w-3.5 h-3.5 text-purple-500 shrink-0" />
+                                                )}
+                                                <div><p className="text-[9px] text-muted-foreground">مشغل الشبكة</p><p className="text-xs font-medium text-foreground">{carrierName}</p></div>
+                                              </div>
+                                            )}
                                           </>
                                         ) : (
                                           <p className="col-span-2 text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
