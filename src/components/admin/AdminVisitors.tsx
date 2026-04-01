@@ -43,7 +43,8 @@ const CollapsibleCard = React.forwardRef<HTMLDivElement, {
       </div>
     </Collapsible>
   );
-};
+});
+CollapsibleCard.displayName = "CollapsibleCard";
 
 // Live timer component - memoized to prevent unnecessary re-renders
 const LiveTimer = memo(({ since }: { since: string }) => {
