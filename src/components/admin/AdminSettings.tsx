@@ -165,7 +165,8 @@ const AdminSettings = () => {
       toast.success("تم تصدير البيانات كملف Excel");
       logActivity("تصدير البيانات كملف Excel", "settings");
     } catch (err: any) {
-      toast.error("فشل تصدير Excel");
+      console.error("Excel export error:", err);
+      toast.error("فشل تصدير Excel: " + (err?.message || ""));
     }
   };
 
