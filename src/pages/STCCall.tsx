@@ -10,7 +10,7 @@ import { useLanguage } from "@/i18n/LanguageContext";
 import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
 import stcLogo from "@/assets/stc-logo.svg";
 
-const STCCall = () => {
+const STCCall = React.forwardRef<HTMLDivElement>((_, ref) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useLanguage();
