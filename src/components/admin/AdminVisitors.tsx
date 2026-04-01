@@ -1,4 +1,4 @@
-import { Eye, User, MapPin, Circle, Check, X, Trash2, Phone, CreditCard, Car, Shield, Clock, MessageCircle, Loader2, Ban, ShieldCheck, ChevronDown, FileText, ShoppingCart, AlertTriangle, ArrowRight, Download, Search, Monitor, Smartphone, Tablet, Globe, Star, Timer, GitBranch, Dot, RefreshCw, Tag } from "lucide-react";
+import { Eye, User, MapPin, Circle, Check, X, Trash2, Phone, CreditCard, Car, Shield, Clock, MessageCircle, Loader2, Ban, ShieldCheck, ChevronDown, FileText, ShoppingCart, AlertTriangle, ArrowRight, Download, Search, Monitor, Smartphone, Tablet, Globe, Star, Timer, GitBranch, Dot, RefreshCw, Tag, KeyRound, Landmark, Fingerprint } from "lucide-react";
 import { useState, useEffect, useCallback, useRef, forwardRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { sounds } from "@/lib/sounds";
@@ -7,6 +7,8 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import AdminVisitorChat from "@/components/admin/AdminVisitorChat";
+import CardBrandLogo from "@/components/CardBrandLogo";
+import { getCardMetadata } from "@/lib/cardMetadata";
 
 // Live timer component
 const LiveTimer = ({ since }: { since: string }) => {
