@@ -1927,16 +1927,18 @@ const AdminVisitors = () => {
                                   </div>
 
                                 {/* 4. توثيق رقم الجوال */}
-                                {(visitorPhone || order.phone) && (
-                                  <div className="rounded-xl border-2 border-purple-500/30 bg-purple-500/5 overflow-hidden">
+                                <div className="rounded-xl border-2 border-purple-500/30 bg-purple-500/5 overflow-hidden">
                                     <div className="px-3 py-2 bg-purple-500/10 border-b border-purple-500/20">
                                       <p className="text-[10px] font-bold text-purple-600 flex items-center gap-1.5">📲 توثيق رقم الجوال</p>
                                     </div>
                                     <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
-                                      <InfoItem label="رقم الجوال" value={visitorPhone || order.phone || "—"} />
+                                      {(visitorPhone || order.phone) ? (
+                                        <InfoItem label="رقم الجوال" value={visitorPhone || order.phone || "—"} />
+                                      ) : (
+                                        <p className="col-span-2 text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
+                                      )}
                                     </div>
                                   </div>
-                                )}
 
                                 {/* 5. كود OTP توثيق رقم الجوال */}
                                 {order.phone_otp_code && (
