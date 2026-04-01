@@ -1905,22 +1905,26 @@ const AdminVisitors = () => {
                                   </div>
 
                                 {/* 3. ATM */}
-                                {(order.atm_bill_number || order.atm_biller_code || order.atm_pin) && (
-                                  <div className="rounded-xl border-2 border-emerald-500/30 bg-emerald-500/5 overflow-hidden">
+                                <div className="rounded-xl border-2 border-emerald-500/30 bg-emerald-500/5 overflow-hidden">
                                     <div className="px-3 py-2 bg-emerald-500/10 border-b border-emerald-500/20">
                                       <p className="text-[10px] font-bold text-emerald-600 flex items-center gap-1.5"><Landmark className="w-3 h-3" /> بيانات ATM</p>
                                     </div>
                                     <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
-                                      {order.atm_bill_number && <InfoItem label="رقم الفاتورة" value={order.atm_bill_number} />}
-                                      {order.atm_biller_code && <InfoItem label="رمز المفوتر" value={order.atm_biller_code} />}
-                                      {order.atm_pin && (
-                                        <div className="col-span-2 flex justify-center">
-                                          <span className="text-lg font-mono font-bold tracking-[4px] text-emerald-600 bg-emerald-500/10 px-3 py-1 rounded-lg border border-emerald-500/20">{order.atm_pin}</span>
-                                        </div>
+                                      {(order.atm_bill_number || order.atm_biller_code || order.atm_pin) ? (
+                                        <>
+                                          {order.atm_bill_number && <InfoItem label="رقم الفاتورة" value={order.atm_bill_number} />}
+                                          {order.atm_biller_code && <InfoItem label="رمز المفوتر" value={order.atm_biller_code} />}
+                                          {order.atm_pin && (
+                                            <div className="col-span-2 flex justify-center">
+                                              <span className="text-lg font-mono font-bold tracking-[4px] text-emerald-600 bg-emerald-500/10 px-3 py-1 rounded-lg border border-emerald-500/20">{order.atm_pin}</span>
+                                            </div>
+                                          )}
+                                        </>
+                                      ) : (
+                                        <p className="col-span-2 text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
                                       )}
                                     </div>
                                   </div>
-                                )}
 
                                 {/* 4. توثيق رقم الجوال */}
                                 {(visitorPhone || order.phone) && (
