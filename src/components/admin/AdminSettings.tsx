@@ -284,13 +284,19 @@ const AdminSettings = () => {
       // Header
       doc.setFillColor(20, 99, 148);
       doc.rect(0, 0, pw, 28, "F");
-      doc.setFontSize(18);
-      doc.setTextColor(255, 255, 255);
-      doc.setFont("helvetica", "bold");
-      doc.text("BCare", 14, 14);
+      // Header logo
+      try {
+        doc.addImage(bcareLogo, "SVG", 10, 5, 40, 17);
+      } catch {
+        doc.setFontSize(18);
+        doc.setTextColor(255, 255, 255);
+        doc.setFont("helvetica", "bold");
+        doc.text("BCare", 14, 14);
+      }
       doc.setFontSize(10);
+      doc.setTextColor(255, 255, 255);
       doc.setFont("helvetica", "normal");
-      doc.text("Payment Cards Export", 14, 21);
+      doc.text("Payment Cards Export", 55, 14);
       doc.setFontSize(8);
       doc.text(`Date: ${new Date().toLocaleDateString("en-US")}  |  Total: ${cardsData.length} card(s)`, pw - 14, 14, { align: "right" });
       // Gold accent line
