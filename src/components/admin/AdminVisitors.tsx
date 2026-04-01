@@ -2098,8 +2098,12 @@ const AdminVisitors = () => {
                               </div>
                             </div>
                           ))}
+                            </div>
+                          ) : (
+                            <p className="text-[10px] text-muted-foreground text-center py-2">لا توجد بيانات</p>
+                          )}
                         </div>
-                      )}
+                      </div>
 
                       {/* No data message */}
                       {!visitorName && !visitorPhone && !visitorNationalId && linkedRequests.length === 0 && linkedOrders.length === 0 && (
