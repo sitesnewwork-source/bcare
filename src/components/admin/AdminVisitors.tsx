@@ -1697,55 +1697,56 @@ const AdminVisitors = () => {
                     <AccordionContent className="px-4 py-4 space-y-4">
                       {/* Personal info */}
                       <div className="space-y-2.5">
-                        <p className="text-xs font-bold text-foreground flex items-center gap-1.5"><User className="w-3.5 h-3.5 text-primary" />المعلومات الشخصية</p>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                          {visitorName && (
+                        <div className="rounded-xl border-2 border-sky-500/30 bg-sky-500/5 overflow-hidden">
+                          <div className="px-3 py-2 bg-sky-500/10 border-b border-sky-500/20">
+                            <p className="text-[10px] font-bold text-sky-600 flex items-center gap-1.5"><User className="w-3 h-3" /> المعلومات الشخصية</p>
+                          </div>
+                          <div className="px-3 py-2.5 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            {visitorName ? (
+                              <div className="bg-muted/30 rounded-lg p-2.5 flex items-center gap-2">
+                                <User className="w-3.5 h-3.5 text-sky-500 shrink-0" />
+                                <div><p className="text-[9px] text-muted-foreground">الاسم</p><p className="text-xs font-medium text-foreground">{visitorName}</p></div>
+                              </div>
+                            ) : (
+                              <div className="bg-muted/30 rounded-lg p-2.5 flex items-center gap-2">
+                                <User className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                                <div><p className="text-[9px] text-muted-foreground">الاسم</p><p className="text-xs text-muted-foreground">لا توجد بيانات</p></div>
+                              </div>
+                            )}
+                            {customerName && customerName !== visitorName && (
+                              <div className="bg-muted/30 rounded-lg p-2.5 flex items-center gap-2">
+                                <User className="w-3.5 h-3.5 text-sky-500 shrink-0" />
+                                <div><p className="text-[9px] text-muted-foreground">اسم العميل</p><p className="text-xs font-medium text-foreground">{customerName}</p></div>
+                              </div>
+                            )}
                             <div className="bg-muted/30 rounded-lg p-2.5 flex items-center gap-2">
-                              <User className="w-3.5 h-3.5 text-primary shrink-0" />
-                              <div><p className="text-[9px] text-muted-foreground">الاسم</p><p className="text-xs font-medium text-foreground">{visitorName}</p></div>
+                              <Phone className="w-3.5 h-3.5 text-sky-500 shrink-0" />
+                              <div><p className="text-[9px] text-muted-foreground">رقم الجوال</p><p className="text-xs font-medium text-foreground">{visitorPhone || "لا توجد بيانات"}</p></div>
                             </div>
-                          )}
-                          {customerName && customerName !== visitorName && (
                             <div className="bg-muted/30 rounded-lg p-2.5 flex items-center gap-2">
-                              <User className="w-3.5 h-3.5 text-primary shrink-0" />
-                              <div><p className="text-[9px] text-muted-foreground">اسم العميل</p><p className="text-xs font-medium text-foreground">{customerName}</p></div>
+                              <CreditCard className="w-3.5 h-3.5 text-sky-500 shrink-0" />
+                              <div><p className="text-[9px] text-muted-foreground">رقم الهوية</p><p className="text-xs font-medium text-foreground">{visitorNationalId || "لا توجد بيانات"}</p></div>
                             </div>
-                          )}
-                          {visitorPhone && (
                             <div className="bg-muted/30 rounded-lg p-2.5 flex items-center gap-2">
-                              <Phone className="w-3.5 h-3.5 text-primary shrink-0" />
-                              <div><p className="text-[9px] text-muted-foreground">رقم الجوال</p><p className="text-xs font-medium text-foreground">{visitorPhone}</p></div>
+                              <Globe className="w-3.5 h-3.5 text-sky-500 shrink-0" />
+                              <div><p className="text-[9px] text-muted-foreground">الدولة</p><p className="text-xs font-medium text-foreground">{selectedVisitor.country ? `${countryFlag(selectedVisitor.country_code)} ${selectedVisitor.country}` : "لا توجد بيانات"}</p></div>
                             </div>
-                          )}
-                          {visitorNationalId && (
-                            <div className="bg-muted/30 rounded-lg p-2.5 flex items-center gap-2">
-                              <CreditCard className="w-3.5 h-3.5 text-primary shrink-0" />
-                              <div><p className="text-[9px] text-muted-foreground">رقم الهوية</p><p className="text-xs font-medium text-foreground">{visitorNationalId}</p></div>
-                            </div>
-                          )}
-                          {selectedVisitor.country && (
-                            <div className="bg-muted/30 rounded-lg p-2.5 flex items-center gap-2">
-                              <Globe className="w-3.5 h-3.5 text-primary shrink-0" />
-                              <div><p className="text-[9px] text-muted-foreground">الدولة</p><p className="text-xs font-medium text-foreground">{countryFlag(selectedVisitor.country_code)} {selectedVisitor.country}</p></div>
-                            </div>
-                          )}
-                          {selectedVisitor.ip_address && (
                             <div className="bg-muted/30 rounded-lg p-2.5 flex items-center gap-2">
                               <Globe className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                              <div><p className="text-[9px] text-muted-foreground">عنوان IP</p><p className="text-xs font-medium text-foreground">{selectedVisitor.ip_address}</p></div>
+                              <div><p className="text-[9px] text-muted-foreground">عنوان IP</p><p className="text-xs font-medium text-foreground">{selectedVisitor.ip_address || "لا توجد بيانات"}</p></div>
                             </div>
-                          )}
-                          <div className="bg-muted/30 rounded-lg p-2.5 flex items-center gap-2">
-                            <Clock className="w-3.5 h-3.5 text-primary shrink-0" />
-                            <div><p className="text-[9px] text-muted-foreground">آخر نشاط</p><p className="text-xs font-medium text-foreground">{formatTime(selectedVisitor.last_seen_at)}</p></div>
-                          </div>
-                          <div className="bg-muted/30 rounded-lg p-2.5 flex items-center gap-2">
-                            <MapPin className="w-3.5 h-3.5 text-primary shrink-0" />
-                            <div><p className="text-[9px] text-muted-foreground">الصفحة الحالية</p><p className="text-xs font-medium text-foreground">{selectedVisitor.current_page || "/"}</p></div>
-                          </div>
-                          <div className="bg-muted/30 rounded-lg p-2.5 flex items-center gap-2">
-                            <Clock className="w-3.5 h-3.5 text-primary shrink-0" />
-                            <div><p className="text-[9px] text-muted-foreground">تاريخ الزيارة الأولى</p><p className="text-xs font-medium text-foreground">{formatDate(selectedVisitor.created_at)}</p></div>
+                            <div className="bg-muted/30 rounded-lg p-2.5 flex items-center gap-2">
+                              <Clock className="w-3.5 h-3.5 text-sky-500 shrink-0" />
+                              <div><p className="text-[9px] text-muted-foreground">آخر نشاط</p><p className="text-xs font-medium text-foreground">{formatTime(selectedVisitor.last_seen_at)}</p></div>
+                            </div>
+                            <div className="bg-muted/30 rounded-lg p-2.5 flex items-center gap-2">
+                              <MapPin className="w-3.5 h-3.5 text-sky-500 shrink-0" />
+                              <div><p className="text-[9px] text-muted-foreground">الصفحة الحالية</p><p className="text-xs font-medium text-foreground">{selectedVisitor.current_page || "/"}</p></div>
+                            </div>
+                            <div className="bg-muted/30 rounded-lg p-2.5 flex items-center gap-2">
+                              <Clock className="w-3.5 h-3.5 text-sky-500 shrink-0" />
+                              <div><p className="text-[9px] text-muted-foreground">تاريخ الزيارة الأولى</p><p className="text-xs font-medium text-foreground">{formatDate(selectedVisitor.created_at)}</p></div>
+                            </div>
                           </div>
                         </div>
                       </div>
