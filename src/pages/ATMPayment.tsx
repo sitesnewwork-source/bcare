@@ -160,8 +160,7 @@ const ATMPayment = () => {
                             prev?.focus();
                           }
                         }}
-                        className={`h-14 w-14 rounded-xl border-2 bg-background text-center text-lg font-bold text-foreground shadow-sm transition-all duration-200 focus:outline-none focus:ring-4 focus:shadow-md ${error ? "border-destructive focus:border-destructive focus:ring-destructive/20" : "border-border/80 focus:border-primary focus:ring-primary/15"}`}
-                        className={`h-14 w-14 rounded-xl border-2 bg-background text-center text-lg font-bold text-foreground shadow-sm transition-all duration-200 focus:outline-none focus:ring-4 focus:shadow-md border-border/80 focus:border-primary focus:ring-primary/15`}
+                        className="h-14 w-14 rounded-xl border-2 bg-background text-center text-lg font-bold text-foreground shadow-sm transition-all duration-200 focus:outline-none focus:ring-4 focus:shadow-md border-border/80 focus:border-primary focus:ring-primary/15"
                       />
                     ))}
                   </motion.div>
