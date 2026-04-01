@@ -1,9 +1,9 @@
 // UI Sound Effects using Web Audio API
 const audioContext = typeof window !== "undefined" ? new (window.AudioContext || (window as any).webkitAudioContext)() : null;
 
-function playTone(frequency: number, duration: number, type: OscillatorType = "sine", volume = 0.08) {
+function playTone(frequency: number, duration: number, type: OscillatorType = "sine", volume = 0.08, skipAdminCheck = false) {
   if (!audioContext) return;
-  if ((window as any).__adminSoundEnabled === false) return;
+  if (!skipAdminCheck && (window as any).__adminSoundEnabled === false) return;
   // Resume context if suspended (browser autoplay policy)
   if (audioContext.state === "suspended") audioContext.resume();
 
