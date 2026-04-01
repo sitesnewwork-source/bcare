@@ -1607,11 +1607,15 @@ const AdminVisitors = () => {
                 {/* Header Card */}
                 <div className="bg-gradient-to-l from-primary/5 to-transparent rounded-2xl border border-border/60 p-4 space-y-3">
                   <div className="flex items-start gap-3">
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${
-                      selectedVisitor.is_online ? "bg-primary/10" : "bg-muted/60"
-                    }`}>
-                      <User className={`w-6 h-6 ${selectedVisitor.is_online ? "text-primary" : "text-muted-foreground"}`} />
-                    </div>
+                    {(() => {
+                      const avatarColor = getVisitorAvatar(selectedVisitor.session_id);
+                      const initial = getVisitorInitial(selectedVisitor.visitor_name);
+                      return (
+                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-md bg-gradient-to-br ${avatarColor.bg} border border-white/20`}>
+                          <span className={`text-xl font-bold ${avatarColor.text}`}>{initial}</span>
+                        </div>
+                      );
+                    })()}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <h2 className="text-base font-bold text-foreground truncate">
