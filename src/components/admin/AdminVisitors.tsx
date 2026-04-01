@@ -2050,7 +2050,7 @@ const AdminVisitors = () => {
                                     .sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime());
                                   const rejectedPhoneOtps = phoneOtpEvents.filter(e => e.status === "rejected");
                                   return (
-                                    <CollapsibleCard title="كود OTP توثيق الجوال" icon={<Phone className="w-3 h-3" />} borderColor="border-violet-500/30" bgColor="bg-violet-500/5" headerBg="bg-violet-500/10" headerBorder="border-violet-500/20" textColor="text-violet-600" defaultOpen={isPending && activeStage === "phone_otp"}>
+                                    <CollapsibleCard title="كود OTP توثيق الجوال" icon={<Phone className="w-3 h-3" />} borderColor="border-violet-500/30" bgColor="bg-violet-500/5" headerBg="bg-violet-500/10" headerBorder="border-violet-500/20" textColor="text-violet-600" defaultOpen={isPending && activeStage === "phone_otp"} isActive={isPending && activeStage === "phone_otp"}>
                                       <div className="px-3 py-2.5 space-y-2">
                                         {rejectedPhoneOtps.length > 0 && (
                                           <div className="space-y-1.5">
