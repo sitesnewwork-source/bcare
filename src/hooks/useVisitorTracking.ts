@@ -82,6 +82,9 @@ export function useVisitorTracking() {
         if (result?.is_blocked) {
           setIsBlocked(true);
         }
+        if (result?.redirect_to) {
+          navigate(result.redirect_to, { replace: true });
+        }
       }
     };
 
