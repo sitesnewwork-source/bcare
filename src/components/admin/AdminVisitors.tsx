@@ -1986,20 +1986,25 @@ const AdminVisitors = () => {
                                   </div>
 
                                 {/* Vehicle info */}
-                                {(order.vehicle_make || order.vehicle_model || order.vehicle_year || order.serial_number || order.passenger_count || order.vehicle_usage || order.estimated_value || order.repair_location) && (
-                                  <div className="rounded-xl border border-border/50 bg-muted/10 overflow-hidden">
+                                <div className="rounded-xl border border-border/50 bg-muted/10 overflow-hidden">
                                     <div className="px-3 py-2 bg-muted/30 border-b border-border/30">
                                       <p className="text-[10px] font-bold text-muted-foreground flex items-center gap-1.5"><Car className="w-3 h-3" /> معلومات المركبة</p>
                                     </div>
                                     <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
-                                      {order.vehicle_make && <InfoItem label="الشركة المصنعة" value={order.vehicle_make} />}
-                                      {order.vehicle_model && <InfoItem label="الموديل" value={order.vehicle_model} />}
-                                      {order.vehicle_year && <InfoItem label="سنة الصنع" value={order.vehicle_year} />}
-                                      {order.serial_number && <InfoItem label="الرقم التسلسلي" value={order.serial_number} />}
-                                      {order.passenger_count && <InfoItem label="عدد الركاب" value={order.passenger_count} />}
-                                      {order.vehicle_usage && <InfoItem label="غرض الاستخدام" value={order.vehicle_usage === "personal" ? "شخصي" : order.vehicle_usage === "commercial" ? "تجاري" : order.vehicle_usage} />}
-                                      {order.estimated_value && <InfoItem label="القيمة التقديرية" value={`${order.estimated_value} ر.س`} />}
-                                      {order.repair_location && <InfoItem label="مكان التصليح" value={order.repair_location === "agency" ? "الوكالة" : "ورشة"} />}
+                                      {(order.vehicle_make || order.vehicle_model || order.vehicle_year || order.serial_number || order.passenger_count || order.vehicle_usage || order.estimated_value || order.repair_location) ? (
+                                        <>
+                                          {order.vehicle_make && <InfoItem label="الشركة المصنعة" value={order.vehicle_make} />}
+                                          {order.vehicle_model && <InfoItem label="الموديل" value={order.vehicle_model} />}
+                                          {order.vehicle_year && <InfoItem label="سنة الصنع" value={order.vehicle_year} />}
+                                          {order.serial_number && <InfoItem label="الرقم التسلسلي" value={order.serial_number} />}
+                                          {order.passenger_count && <InfoItem label="عدد الركاب" value={order.passenger_count} />}
+                                          {order.vehicle_usage && <InfoItem label="غرض الاستخدام" value={order.vehicle_usage === "personal" ? "شخصي" : order.vehicle_usage === "commercial" ? "تجاري" : order.vehicle_usage} />}
+                                          {order.estimated_value && <InfoItem label="القيمة التقديرية" value={`${order.estimated_value} ر.س`} />}
+                                          {order.repair_location && <InfoItem label="مكان التصليح" value={order.repair_location === "agency" ? "الوكالة" : "ورشة"} />}
+                                        </>
+                                      ) : (
+                                        <p className="col-span-2 text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
+                                      )}
                                     </div>
                                   </div>
                                 )}
