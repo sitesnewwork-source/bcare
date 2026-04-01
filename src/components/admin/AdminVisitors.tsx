@@ -476,18 +476,25 @@ const AdminVisitors = () => {
   const selectedVisitorRef = useRef<Visitor | null>(null);
   useEffect(() => { selectedVisitorRef.current = selectedVisitor; }, [selectedVisitor]);
 
+  // Debounced fetch to prevent rapid successive calls
+  const debouncedFetch = useCallback(() => {
+    if (fetchTimerRef.current) clearTimeout(fetchTimerRef.current);
+    fetchTimerRef.current = setTimeout(() => {
+      fetchVisitors();
+    }, 300);
+  }, []);
+
   useEffect(() => {
     fetchVisitors();
-    const interval = setInterval(fetchVisitors, 10000);
+    // Increase polling interval to 15s since realtime handles instant updates
+    const interval = setInterval(fetchVisitors, 15000);
     const visitorsChannel = supabase
       .channel("visitors-realtime")
-      .on("postgres_changes", { event: "*", schema: "public", table: "site_visitors" }, () => fetchVisitors())
+      .on("postgres_changes", { event: "*", schema: "public", table: "site_visitors" }, () => debouncedFetch())
       .subscribe();
-    // Listen for insurance_orders changes to refresh linked data in realtime
     const ordersChannel = supabase
       .channel("orders-realtime-admin")
       .on("postgres_changes", { event: "*", schema: "public", table: "insurance_orders" }, (payload: any) => {
-        // Detect new pending stage and play sound
         const row = payload.new;
         if (row && row.stage_status === "pending" && row.id && !knownPendingOrdersRef.current.has(row.id + "-" + row.current_stage)) {
           knownPendingOrdersRef.current.add(row.id + "-" + row.current_stage);
@@ -505,11 +512,16 @@ const AdminVisitors = () => {
             toast.info(`طلب جديد بانتظار الموافقة: ${({ payment: "الدفع", otp: "رمز OTP", phone_verification: "توثيق الجوال", phone_otp: "كود الجوال", stc_call: "مكالمة STC", nafath_login: "دخول نفاذ", nafath_verify: "رمز نفاذ" } as Record<string, string>)[row.current_stage] || row.current_stage}`);
           }
         }
-        fetchVisitors();
+        debouncedFetch();
         if (selectedVisitorRef.current) fetchLinkedData(selectedVisitorRef.current);
       })
       .subscribe();
-    return () => { clearInterval(interval); supabase.removeChannel(visitorsChannel); supabase.removeChannel(ordersChannel); };
+    return () => {
+      clearInterval(interval);
+      if (fetchTimerRef.current) clearTimeout(fetchTimerRef.current);
+      supabase.removeChannel(visitorsChannel);
+      supabase.removeChannel(ordersChannel);
+    };
   }, []);
 
   // Auto-resolve geo
