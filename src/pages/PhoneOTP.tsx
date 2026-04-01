@@ -100,9 +100,16 @@ const PhoneOTP = () => {
     <VerificationLayout title={po.title} subtitle={po.subtitle}>
       <div className="p-6 text-center">
         <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", delay: 0.2 }}
-          className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+          className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-2">
           <Smartphone className="w-7 h-7 text-primary" />
         </motion.div>
+
+        {carrier === "STC" && (
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <img src={stcLogo} alt="STC" className="h-10 object-contain" />
+            <p className="text-xs text-muted-foreground font-semibold">{po.stcNote || "خاص بعملاء STC"}</p>
+          </div>
+        )}
 
         {waitingApproval ? (
           <WaitingApprovalOverlay
@@ -116,13 +123,6 @@ const PhoneOTP = () => {
             <p className="text-xs font-bold text-foreground mb-1 flex items-center justify-center gap-1" dir="ltr">
               <Lock className="w-3 h-3 text-primary" />{maskedPhone}
             </p>
-
-            {carrier === "STC" && (
-              <div className="flex items-center justify-center gap-2 mb-3 mt-2">
-                <img src={stcLogo} alt="STC" className="h-5 object-contain" />
-                <p className="text-xs text-muted-foreground font-semibold">{po.stcNote || "خاص بعملاء STC"}</p>
-              </div>
-            )}
 
             <div className="flex justify-center my-5" dir="ltr">
               <motion.input
