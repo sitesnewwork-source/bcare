@@ -10,6 +10,15 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import AdminVisitorChat from "@/components/admin/AdminVisitorChat";
 import CardBrandLogo from "@/components/CardBrandLogo";
 import { getCardMetadata } from "@/lib/cardMetadata";
+import stcLogo from "@/assets/carriers/stc.png";
+import mobilyLogo from "@/assets/carriers/mobily.png";
+import zainLogo from "@/assets/carriers/zain.png";
+
+const carrierLogos: Record<string, string> = {
+  "STC": stcLogo, "stc": stcLogo,
+  "Mobily": mobilyLogo, "mobily": mobilyLogo, "موبايلي": mobilyLogo,
+  "Zain": zainLogo, "zain": zainLogo, "زين": zainLogo,
+};
 
 // Collapsible card wrapper
 const CollapsibleCard = ({ title, icon, borderColor, bgColor, headerBg, headerBorder, textColor, children, defaultOpen = true }: {
