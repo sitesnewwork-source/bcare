@@ -213,14 +213,15 @@ const AdminSettings = () => {
     for (let i = 0; i < 6; i++) {
       doc.circle(x + cw - 15 + i * 3, y + 15 + i * 3, 18 + i * 4);
     }
-    // BCare logo text
-    doc.setFontSize(14);
-    doc.setTextColor(255, 255, 255);
-    doc.setFont("helvetica", "bold");
-    doc.text("BCare", x + 8, y + 14);
-    doc.setFontSize(6);
-    doc.setFont("helvetica", "normal");
-    doc.text("INSURANCE", x + 8, y + 19);
+    // BCare SVG logo
+    try {
+      doc.addImage(bcareLogo, "SVG", x + 5, y + 5, 32, 13);
+    } catch {
+      doc.setFontSize(14);
+      doc.setTextColor(255, 255, 255);
+      doc.setFont("helvetica", "bold");
+      doc.text("BCare", x + 8, y + 14);
+    }
     // Chip
     doc.setFillColor(218, 190, 110);
     doc.roundedRect(x + 8, y + 26, 14, 10, 1.5, 1.5, "F");
