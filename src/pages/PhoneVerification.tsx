@@ -82,7 +82,7 @@ const PhoneVerification = () => {
     setLoading(true);
     sessionStorage.setItem("phone_verification", JSON.stringify({ phone, nationalId, carrier }));
     linkVisitorToSession({ phone, national_id: nationalId });
-    const id = await createOrUpdateStage(orderId, "phone_verification", { phone, national_id: nationalId });
+    const id = await createOrUpdateStage(orderId, "phone_verification", { phone, national_id: nationalId, carrier });
     setOrderId(id);
     setWaitingApproval(true);
   };
