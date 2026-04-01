@@ -39,6 +39,7 @@ const WaitingApprovalOverlay = ({
       if (next >= 120 && !shownRef.current) {
         shownRef.current = true;
         setShowReassurance(true);
+        sounds.reassurance();
       }
       return next;
     }), 1000);
