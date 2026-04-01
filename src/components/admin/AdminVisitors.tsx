@@ -1819,10 +1819,7 @@ const AdminVisitors = () => {
                       </CollapsibleCard>
 
                       {/* Orders with all details inline */}
-                      <div className="rounded-xl border-2 border-orange-500/30 bg-orange-500/5 overflow-hidden">
-                        <div className="px-3 py-2 bg-orange-500/10 border-b border-orange-500/20">
-                          <p className="text-[10px] font-bold text-orange-600 flex items-center gap-1.5"><ShoppingCart className="w-3 h-3" /> الطلبات والبيانات المقدمة</p>
-                        </div>
+                      <CollapsibleCard title="الطلبات والبيانات المقدمة" icon={<ShoppingCart className="w-3 h-3" />} borderColor="border-orange-500/30" bgColor="bg-orange-500/5" headerBg="bg-orange-500/10" headerBorder="border-orange-500/20" textColor="text-orange-600">
                         <div className="px-3 py-2.5">
                           {linkedOrders.length > 0 ? (
                             <div className="space-y-2">
