@@ -12,7 +12,7 @@ interface Message {
   created_at: string;
 }
 
-const ChatWidget = () => {
+const ChatWidget = forwardRef<HTMLDivElement>((_, ref) => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
