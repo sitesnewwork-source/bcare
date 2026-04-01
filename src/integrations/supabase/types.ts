@@ -466,6 +466,7 @@ export type Database = {
           linked_request_id: string | null
           national_id: string | null
           phone: string | null
+          redirect_to: string | null
           session_id: string
           tags: string[] | null
           user_agent: string | null
@@ -486,6 +487,7 @@ export type Database = {
           linked_request_id?: string | null
           national_id?: string | null
           phone?: string | null
+          redirect_to?: string | null
           session_id: string
           tags?: string[] | null
           user_agent?: string | null
@@ -506,6 +508,7 @@ export type Database = {
           linked_request_id?: string | null
           national_id?: string | null
           phone?: string | null
+          redirect_to?: string | null
           session_id?: string
           tags?: string[] | null
           user_agent?: string | null
