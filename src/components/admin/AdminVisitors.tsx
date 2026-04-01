@@ -44,8 +44,8 @@ const CollapsibleCard = ({ title, icon, borderColor, bgColor, headerBg, headerBo
   );
 };
 
-// Live timer component
-const LiveTimer = ({ since }: { since: string }) => {
+// Live timer component - memoized to prevent unnecessary re-renders
+const LiveTimer = memo(({ since }: { since: string }) => {
   const [elapsed, setElapsed] = useState("");
   useEffect(() => {
     const calc = () => {
@@ -64,7 +64,8 @@ const LiveTimer = ({ since }: { since: string }) => {
       <Timer className="w-2.5 h-2.5" />{elapsed}
     </span>
   );
-};
+});
+LiveTimer.displayName = "LiveTimer";
 
 const parseUserAgent = (ua: string | null) => {
   if (!ua) return { device: "غير معروف", os: "", browser: "" };
