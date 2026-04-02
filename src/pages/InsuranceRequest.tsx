@@ -473,7 +473,6 @@ const InsuranceRequest = () => {
                         if (!val) { upd("national_id", ""); return; }
                         if (!/^[12]/.test(val)) return;
                         if (val.length <= 10) upd("national_id", val);
-                        if (val.length === 10)
                       },
                     })}
 
