@@ -519,7 +519,6 @@ const InsuranceRequest = () => {
                         if (val.length === 1 && val !== "0") return;
                         if (val.length >= 2 && !val.startsWith("05")) return;
                         if (val.length <= 10) upd("phone", val);
-                        if (val.length === 10)
                       },
                     })}
                   </motion.div>
