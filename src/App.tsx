@@ -34,7 +34,6 @@ const NafathVerify = lazy(() => import("./pages/NafathVerify.tsx"));
 
 // Lazy-load non-critical global components
 const ChatWidget = lazy(() => import("./components/ChatWidget.tsx"));
-const PageTransition = lazy(() => import("./components/PageTransition.tsx"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -62,7 +61,7 @@ const AppContent = () => {
     <>
       <ScrollToTop />
       <Suspense fallback={<RouteLoader />}>
-        <PageTransition>
+        
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/insurance/:type" element={<InsuranceProduct />} />
@@ -85,7 +84,7 @@ const AppContent = () => {
             <Route path="/verify" element={<VerifyPolicy />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </PageTransition>
+        
         {!isAdminRoute && <ChatWidget />}
       </Suspense>
     </>
