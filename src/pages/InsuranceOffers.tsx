@@ -385,7 +385,7 @@ const mockOffers: Offer[] = [
   },
   {
     id: "tp7", company: "ليفا للتأمين", companyEn: "Liva Insurance", logoInitials: "لف", logoColor: "#fff", logoBg: "#E65100",
-    type: "third-party", typeLabel: "ضد الغير", price: 850, originalPrice: 1150, monthlyPrice: 71,
+    type: "third-party", typeLabel: "ضد الغير", price: 750, originalPrice: 1050, monthlyPrice: 63,
     rating: 4.4, reviewCount: 1050,
     features: [
       { label: "تغطية ضد الغير", included: true }, { label: "المسؤولية المدنية", included: true },
