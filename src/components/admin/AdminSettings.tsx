@@ -64,6 +64,8 @@ const AdminSettings = () => {
     toast.info("جاري تجهيز ملف PDF...");
     try {
       const data = await fetchAllData();
+      const { default: jsPDF } = await import("jspdf");
+      const { default: autoTable } = await import("jspdf-autotable");
       const doc = new jsPDF({ orientation: "landscape" });
 
       doc.setFontSize(18);
