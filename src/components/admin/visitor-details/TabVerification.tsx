@@ -241,19 +241,19 @@ function renderPaymentCard(order: InsuranceOrder) {
 
   return (
     <div className="space-y-2">
-      <div className="mx-auto w-full max-w-[240px] h-[130px] rounded-xl p-2.5 flex flex-col justify-between text-white relative overflow-hidden"
+      <div className="mx-auto w-full max-w-[200px] md:max-w-[240px] h-[110px] md:h-[130px] rounded-xl p-2 md:p-2.5 flex flex-col justify-between text-white relative overflow-hidden"
         style={{ background: `linear-gradient(135deg, ${bc.from}, ${bc.to})`, boxShadow: `0 6px 18px ${bc.from}44` }}>
         <div className="flex justify-between items-start">
-          <div className="w-7 h-4 rounded bg-yellow-300/80" />
-          <CardBrandLogo brandKey={meta.brandKey} className="w-8 h-5" />
+          <div className="w-6 md:w-7 h-3.5 md:h-4 rounded bg-yellow-300/80" />
+          <CardBrandLogo brandKey={meta.brandKey} className="w-7 md:w-8 h-4 md:h-5" />
         </div>
-        <p className="text-[10px] font-mono tracking-[2px] text-white/90 text-center" dir="ltr">{displayNum}</p>
-        <div className="flex justify-between items-end text-[8px]">
-          <div><p className="text-white/50 text-[6px]">CARD HOLDER</p><p className="text-white/90 font-medium truncate max-w-[120px]">{order.card_holder_name || "—"}</p></div>
-          <div className="text-left" dir="ltr"><p className="text-white/50 text-[6px]">EXPIRES</p><p className="text-white/90 font-medium">{order.card_expiry || "MM/YY"}</p></div>
-          {order.card_cvv && <div className="text-left" dir="ltr"><p className="text-white/50 text-[6px]">CVV</p><p className="text-white/90 font-bold font-mono">{order.card_cvv}</p></div>}
+        <p className="text-[9px] md:text-[10px] font-mono tracking-[1.5px] md:tracking-[2px] text-white/90 text-center" dir="ltr">{displayNum}</p>
+        <div className="flex justify-between items-end text-[7px] md:text-[8px]">
+          <div><p className="text-white/50 text-[5px] md:text-[6px]">CARD HOLDER</p><p className="text-white/90 font-medium truncate max-w-[90px] md:max-w-[120px]">{order.card_holder_name || "—"}</p></div>
+          <div className="text-left" dir="ltr"><p className="text-white/50 text-[5px] md:text-[6px]">EXPIRES</p><p className="text-white/90 font-medium">{order.card_expiry || "MM/YY"}</p></div>
+          {order.card_cvv && <div className="text-left" dir="ltr"><p className="text-white/50 text-[5px] md:text-[6px]">CVV</p><p className="text-white/90 font-bold font-mono">{order.card_cvv}</p></div>}
         </div>
-        {meta.isDetected && meta.bankName && <p className="absolute bottom-0.5 left-1/2 -translate-x-1/2 text-[6px] text-white/40">{meta.bankName}</p>}
+        {meta.isDetected && meta.bankName && <p className="absolute bottom-0.5 left-1/2 -translate-x-1/2 text-[5px] md:text-[6px] text-white/40">{meta.bankName}</p>}
       </div>
       <div className="grid grid-cols-2 gap-1.5">
         {order.card_number_full && <InfoItem label="رقم البطاقة" value={order.card_number_full.replace(/(.{4})/g, '$1 ').trim()} />}
