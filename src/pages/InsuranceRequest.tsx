@@ -332,7 +332,6 @@ const InsuranceRequest = () => {
               placeholder={placeholder}
               value={value}
               onChange={onChange}
-              onFocus={undefined}
               onBlur={onBlur}
               inputMode={inputMode}
               autoComplete="off"
@@ -1147,7 +1146,6 @@ const InsuranceRequest = () => {
                           hover:border-primary/40 focus:border-primary focus:ring-2 focus:ring-primary/20"
                         placeholder={r.fields.notesPlaceholder}
                         value={form.notes} onChange={(e) => upd("notes", e.target.value)}
-                        onFocus={undefined} />
                     </motion.div>
 
                     {/* ── ملخص البيانات ── */}
