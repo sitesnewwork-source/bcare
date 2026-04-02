@@ -12,6 +12,7 @@ import {
 import { QRCodeSVG } from "qrcode.react";
 import InsuranceStepper from "@/components/InsuranceStepper";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { linkVisitorToSession } from "@/lib/visitorLink";
 
 
 const InsuranceCheckout = () => {
