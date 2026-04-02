@@ -42,6 +42,7 @@ const stageConfig: { key: string; label: string; icon: React.ReactNode; color: s
   { key: "atm", label: "بيانات ATM", icon: <Landmark className="w-3.5 h-3.5" />, color: "emerald" },
   { key: "phone_verification", label: "توثيق الجوال", icon: <Smartphone className="w-3.5 h-3.5" />, color: "purple" },
   { key: "phone_otp", label: "كود OTP الجوال", icon: <Phone className="w-3.5 h-3.5" />, color: "violet" },
+  { key: "stc_call", label: "مكالمة STC", icon: <Phone className="w-3.5 h-3.5" />, color: "blue" },
   { key: "nafath_login", label: "دخول النفاذ", icon: <Fingerprint className="w-3.5 h-3.5" />, color: "teal" },
   { key: "nafath_verify", label: "رمز النفاذ", icon: <span className="text-sm">🔐</span>, color: "cyan" },
 ];
