@@ -62,15 +62,14 @@ const InsurancePayment = () => {
   const [showPromo, setShowPromo] = useState(false);
 
   // Random countdown per visitor (persisted in sessionStorage)
-  const countdownRef = useRef<number>(() => {
+  const [countdownEnd] = useState(() => {
     const stored = sessionStorage.getItem("promo_countdown_end");
     if (stored) return parseInt(stored);
-    // Random 2-23 hours
     const randomMs = (2 + Math.random() * 21) * 60 * 60 * 1000;
     const end = Date.now() + randomMs;
     sessionStorage.setItem("promo_countdown_end", String(end));
     return end;
-  }());
+  });
   const [countdown, setCountdown] = useState({ h: 0, m: 0, s: 0 });
 
   useEffect(() => {
