@@ -409,7 +409,7 @@ const mockOffers: Offer[] = [
   },
   {
     id: "tp9", company: "ملاذ للتأمين", companyEn: "Malath Insurance", logoInitials: "مل", logoColor: "#fff", logoBg: "#EF6C00",
-    type: "third-party", typeLabel: "ضد الغير", price: 1100, originalPrice: 1450, monthlyPrice: 92,
+    type: "third-party", typeLabel: "ضد الغير", price: 1030, originalPrice: 1380, monthlyPrice: 86,
     rating: 4.3, reviewCount: 980,
     features: [
       { label: "تغطية ضد الغير", included: true }, { label: "المسؤولية المدنية", included: true },
