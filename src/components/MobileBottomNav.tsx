@@ -11,9 +11,9 @@ const MobileBottomNav = () => {
   if (isAdminRoute) return null;
 
   const tabs = [
-    { id: "/", icon: Home, label: t.nav?.home || "الرئيسية" },
-    { id: "/about", icon: Info, label: t.nav?.about || "عن بي كير" },
-    { id: "/verify", icon: Shield, label: t.nav?.verify || "تحقق" },
+    { id: "/", icon: Home, label: "الرئيسية" },
+    { id: "/about", icon: Info, label: "عن بي كير" },
+    { id: "/verify", icon: Shield, label: "تحقق" },
   ];
 
   const activeTab = tabs.find((tab) => location.pathname === tab.id)?.id || "";
