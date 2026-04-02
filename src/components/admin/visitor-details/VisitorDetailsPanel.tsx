@@ -158,21 +158,21 @@ const VisitorDetailsPanel: React.FC<Props> = ({
       </div>
 
       {/* Horizontal Tabs */}
-      <div className="flex items-center border-b border-border bg-card/50 shrink-0 overflow-x-auto" dir="rtl">
+      <div className="flex items-center border-b border-border bg-card/50 shrink-0 overflow-x-auto scrollbar-none" dir="rtl">
         {tabs.map(tab => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`relative flex items-center gap-1.5 px-4 py-2.5 text-xs font-bold transition-all whitespace-nowrap ${
+            className={`relative flex items-center gap-1 md:gap-1.5 px-2.5 md:px-4 py-2 md:py-2.5 text-[10px] md:text-xs font-bold transition-all whitespace-nowrap ${
               activeTab === tab.key
                 ? "text-primary"
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
             {tab.icon}
-            {tab.label}
+            <span className="hidden xs:inline md:inline">{tab.label}</span>
             {tab.badge && (
-              <span className={`min-w-[16px] h-[16px] rounded-full text-[9px] font-bold flex items-center justify-center px-0.5 ${
+              <span className={`min-w-[14px] md:min-w-[16px] h-[14px] md:h-[16px] rounded-full text-[8px] md:text-[9px] font-bold flex items-center justify-center px-0.5 ${
                 tab.key === "verification" && hasPendingVerification
                   ? "bg-amber-500 text-white animate-pulse"
                   : "bg-primary/10 text-primary"
@@ -192,7 +192,7 @@ const VisitorDetailsPanel: React.FC<Props> = ({
       </div>
 
       {/* Tab Content */}
-      <div className="flex-1 overflow-y-auto p-3 md:p-5">
+      <div className="flex-1 overflow-y-auto p-2.5 md:p-5">
         {activeTab === "identity" && (
           <TabIdentity
             selectedVisitor={selectedVisitor}
