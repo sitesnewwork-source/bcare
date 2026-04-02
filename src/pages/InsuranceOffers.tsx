@@ -337,7 +337,7 @@ const mockOffers: Offer[] = [
   },
   {
     id: "tp3", company: "المتكاملة (أسيج)", companyEn: "ASEIG Insurance", logoInitials: "أس", logoColor: "#fff", logoBg: "#1976D2",
-    type: "third-party", typeLabel: "ضد الغير", price: 600, originalPrice: 850, monthlyPrice: 50,
+    type: "third-party", typeLabel: "ضد الغير", price: 530, originalPrice: 780, monthlyPrice: 44,
     rating: 4.2, reviewCount: 1100,
     features: [
       { label: "تغطية ضد الغير", included: true }, { label: "المسؤولية المدنية", included: true },
