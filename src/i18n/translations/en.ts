@@ -434,6 +434,8 @@ export const en = {
     sortByPrice: "Lowest Price",
     sortByRating: "Highest Rated",
     sortByDiscount: "Highest Discount",
+    disclaimerLabel: "Note:",
+    disclaimerText: "Prices shown are approximate and may vary based on vehicle type, model year, driving record, and geographic location. To get an exact quote, please complete the insurance application.",
     mostPopular: "⭐ Most Popular",
     bestValue: "💎 Best Value",
     cheapest: "💰 Cheapest",

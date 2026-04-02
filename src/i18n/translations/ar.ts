@@ -434,6 +434,8 @@ export const ar = {
     sortByPrice: "الأقل سعراً",
     sortByRating: "الأعلى تقييماً",
     sortByDiscount: "الأعلى خصماً",
+    disclaimerLabel: "تنبيه:",
+    disclaimerText: "الأسعار المعروضة تقريبية وقد تختلف حسب نوع السيارة، سنة الصنع، سجل القيادة، والمنطقة الجغرافية. للحصول على السعر الدقيق يرجى إكمال طلب التأمين.",
     mostPopular: "⭐ الأكثر شيوعاً",
     bestValue: "💎 أفضل قيمة",
     cheapest: "💰 الأقل سعراً",
