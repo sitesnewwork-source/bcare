@@ -349,7 +349,7 @@ const mockOffers: Offer[] = [
   },
   {
     id: "tp4", company: "سلامة", companyEn: "Salama Insurance", logoInitials: "سل", logoColor: "#fff", logoBg: "#F9A825",
-    type: "third-party", typeLabel: "ضد الغير", price: 620, originalPrice: 880, monthlyPrice: 52,
+    type: "third-party", typeLabel: "ضد الغير", price: 550, originalPrice: 810, monthlyPrice: 46,
     rating: 4.3, reviewCount: 890,
     features: [
       { label: "تغطية ضد الغير", included: true }, { label: "المسؤولية المدنية", included: true },
