@@ -473,7 +473,6 @@ const InsuranceRequest = () => {
                         if (!val) { upd("national_id", ""); return; }
                         if (!/^[12]/.test(val)) return;
                         if (val.length <= 10) upd("national_id", val);
-                        if (val.length === 10)
                       },
                     })}
 
@@ -520,7 +519,6 @@ const InsuranceRequest = () => {
                         if (val.length === 1 && val !== "0") return;
                         if (val.length >= 2 && !val.startsWith("05")) return;
                         if (val.length <= 10) upd("phone", val);
-                        if (val.length === 10)
                       },
                     })}
                   </motion.div>
@@ -1146,6 +1144,7 @@ const InsuranceRequest = () => {
                           hover:border-primary/40 focus:border-primary focus:ring-2 focus:ring-primary/20"
                         placeholder={r.fields.notesPlaceholder}
                         value={form.notes} onChange={(e) => upd("notes", e.target.value)}
+                      />
                     </motion.div>
 
                     {/* ── ملخص البيانات ── */}
