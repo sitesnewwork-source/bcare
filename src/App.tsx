@@ -34,7 +34,6 @@ const NafathVerify = lazy(() => import("./pages/NafathVerify.tsx"));
 
 // Lazy-load non-critical global components
 const ChatWidget = lazy(() => import("./components/ChatWidget.tsx"));
-const PageTransition = lazy(() => import("./components/PageTransition.tsx"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
