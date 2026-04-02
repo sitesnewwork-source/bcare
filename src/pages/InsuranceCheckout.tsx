@@ -156,10 +156,10 @@ const InsuranceCheckout = () => {
     <div class="total-label">الإجمالي شامل ضريبة القيمة المضافة 15%</div>
   </div>
 
-  <div style="text-align:center;margin:24px 0;padding:20px;border:1px solid #e0e0e0;border-radius:12px;background:#f9f9f9">
-    <p style="font-size:14px;font-weight:700;color:#0d5c4b;margin-bottom:12px">رمز التحقق من البوليصة</p>
-    <img src="${qrUrl}" alt="QR Code" style="margin:0 auto;display:block" width="130" height="130" />
-    <p style="font-size:11px;color:#999;margin-top:10px">امسح الرمز للتحقق من صحة البوليصة</p>
+  <div class="qr-section">
+    <p style="font-size:13px;font-weight:700;color:#0d5c4b;margin-bottom:10px">رمز التحقق من البوليصة</p>
+    <img src="${qrUrl}" alt="QR Code" style="margin:0 auto;display:block" width="120" height="120" />
+    <p style="font-size:10px;color:#999;margin-top:8px">امسح الرمز للتحقق من صحة البوليصة</p>
   </div>
 
   <div class="disclaimer">
