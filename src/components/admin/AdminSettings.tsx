@@ -159,6 +159,7 @@ const AdminSettings = () => {
     toast.info("جاري تجهيز ملف Excel...");
     try {
       const data = await fetchAllData();
+      const XLSX = await import("xlsx");
       const wb = XLSX.utils.book_new();
 
       if (data.requests.length > 0) {
