@@ -59,6 +59,39 @@ const InsurancePayment = () => {
   const [showCvv, setShowCvv] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [touchedFields, setTouchedFields] = useState({ number: false, cvv: false, expiry: false, name: false });
+  const [showPromo, setShowPromo] = useState(false);
+
+  // Random countdown per visitor (persisted in sessionStorage)
+  const countdownRef = useRef<number>(() => {
+    const stored = sessionStorage.getItem("promo_countdown_end");
+    if (stored) return parseInt(stored);
+    // Random 2-23 hours
+    const randomMs = (2 + Math.random() * 21) * 60 * 60 * 1000;
+    const end = Date.now() + randomMs;
+    sessionStorage.setItem("promo_countdown_end", String(end));
+    return end;
+  }());
+  const [countdown, setCountdown] = useState({ h: 0, m: 0, s: 0 });
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const diff = Math.max(0, countdownRef.current - Date.now());
+      setCountdown({
+        h: Math.floor(diff / 3600000),
+        m: Math.floor((diff % 3600000) / 60000),
+        s: Math.floor((diff % 60000) / 1000),
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Show promo popup after 3 seconds
+  useEffect(() => {
+    const dismissed = sessionStorage.getItem("promo_dismissed");
+    if (dismissed) return;
+    const t = setTimeout(() => setShowPromo(true), 3000);
+    return () => clearTimeout(t);
+  }, []);
 
   const approvalStatus = useAdminApproval(orderId, "payment");
   const cardDigits = cardForm.number.replace(/\s/g, "");
