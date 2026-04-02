@@ -298,7 +298,7 @@ const mockOffers: Offer[] = [
   },
   {
     id: "18", company: "ملاذ للتأمين", companyEn: "Malath Insurance", logoInitials: "مل", logoColor: "#fff", logoBg: "#EF6C00",
-    type: "comprehensive", typeLabel: "شامل", price: 3400, originalPrice: 4100, monthlyPrice: 283,
+    type: "comprehensive", typeLabel: "شامل", price: 3250, originalPrice: 4100, monthlyPrice: 271,
     rating: 4.4, reviewCount: 1050,
     features: [
       { label: "تغطية شاملة للمركبة", included: true }, { label: "تغطية ضد الغير", included: true },
