@@ -220,7 +220,7 @@ const mockOffers: Offer[] = [
   },
   {
     id: "12", company: "الصقر للتأمين", companyEn: "Al Sagr Insurance", logoInitials: "صق", logoColor: "#fff", logoBg: "#4E342E",
-    type: "comprehensive", typeLabel: "شامل", price: 1500, originalPrice: 2000, monthlyPrice: 125,
+    type: "comprehensive", typeLabel: "شامل", price: 1350, originalPrice: 2000, monthlyPrice: 113,
     rating: 4.1, reviewCount: 650,
     features: [
       { label: "تغطية شاملة للمركبة", included: true }, { label: "تغطية ضد الغير", included: true },
