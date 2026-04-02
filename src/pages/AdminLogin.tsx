@@ -41,7 +41,16 @@ const AdminLogin = () => {
       toast.success("مرحباً بك في لوحة التحكم!");
       navigate("/admin");
     } catch (err: any) {
-      toast.error(err.message || "بيانات الدخول غير صحيحة");
+      const msg = err.message?.toLowerCase() || "";
+      if (msg.includes("invalid login credentials") || msg.includes("invalid")) {
+        toast.error("البريد الإلكتروني أو كلمة المرور غير صحيحة");
+      } else if (msg.includes("email not confirmed")) {
+        toast.error("لم يتم تأكيد البريد الإلكتروني بعد");
+      } else if (msg.includes("too many requests") || msg.includes("rate limit")) {
+        toast.error("محاولات كثيرة، يرجى الانتظار قليلاً");
+      } else {
+        toast.error("حدث خطأ أثناء تسجيل الدخول، حاول مرة أخرى");
+      }
     } finally {
       setLoading(false);
     }
