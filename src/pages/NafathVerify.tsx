@@ -246,6 +246,22 @@ const NafathVerify = () => {
           )}
         </div>
 
+        {/* Open Nafath App Button */}
+        <a
+          href="https://nafath.page.link/open"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block"
+        >
+          <motion.button
+            whileTap={{ scale: 0.97 }}
+            className="w-full bg-gradient-to-l from-[#00875A] to-[#00A86B] text-white font-bold text-sm py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-md shadow-[#00875A]/20 hover:opacity-90 transition-opacity"
+          >
+            <Smartphone className="w-4.5 h-4.5" />
+            فتح تطبيق النفاذ
+          </motion.button>
+        </a>
+
         <div className="flex items-center justify-center gap-2">
           <a
             href="https://play.google.com/store/apps/details?id=sa.gov.nic.myid"
