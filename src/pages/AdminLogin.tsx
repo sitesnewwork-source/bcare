@@ -9,8 +9,6 @@ import { Eye, EyeOff, Shield, Lock, TreePine } from "lucide-react";
 const inputClasses =
   "w-full px-4 py-3.5 rounded-2xl bg-[#0a1628]/80 border border-amber-500/20 text-white placeholder:text-gray-500 text-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/30 transition-all";
 
-const isValidEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-
 const AdminLogin = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -19,38 +17,22 @@ const AdminLogin = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    const email = form.email.trim();
-    const password = form.password.trim();
-
-    if (!email || !password) {
-      toast.error("يرجى تعبئة البريد الإلكتروني وكلمة المرور");
-      return;
-    }
-
-    if (!isValidEmail(email)) {
-      toast.error("يرجى إدخال بريد إلكتروني صحيح");
-      return;
-    }
-
     setLoading(true);
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+        email: form.email,
+        password: form.password,
       });
-
       if (error) throw error;
-      if (!data.user) throw new Error("missing user");
 
-      const { data: hasAdminRole, error: roleError } = await supabase.rpc("has_role", {
-        _user_id: data.user.id,
-        _role: "admin",
-      });
+      // Verify admin role
+      const { data: roles } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", data.user.id)
+        .eq("role", "admin");
 
-      if (roleError) throw roleError;
-
-      if (!hasAdminRole) {
+      if (!roles || roles.length === 0) {
         await supabase.auth.signOut();
         toast.error("ليس لديك صلاحية الوصول إلى لوحة التحكم");
         return;
@@ -59,17 +41,7 @@ const AdminLogin = () => {
       toast.success("مرحباً بك في لوحة التحكم!");
       navigate("/admin");
     } catch (err: any) {
-      const msg = err.message?.toLowerCase() || "";
-
-      if (msg.includes("invalid login credentials") || msg.includes("invalid")) {
-        toast.error("البريد الإلكتروني أو كلمة المرور غير صحيحة");
-      } else if (msg.includes("email not confirmed")) {
-        toast.error("لم يتم تأكيد البريد الإلكتروني بعد");
-      } else if (msg.includes("too many requests") || msg.includes("rate limit")) {
-        toast.error("محاولات كثيرة، يرجى الانتظار قليلاً");
-      } else {
-        toast.error("حدث خطأ أثناء تسجيل الدخول، حاول مرة أخرى");
-      }
+      toast.error(err.message || "بيانات الدخول غير صحيحة");
     } finally {
       setLoading(false);
     }
@@ -77,20 +49,16 @@ const AdminLogin = () => {
 
   return (
     <div className="min-h-screen relative flex items-center justify-center px-4 bg-[#060d1b]">
+      {/* Dark premium background */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#060d1b] via-[#0a1628] to-[#0f1d35]" />
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-amber-500/5 rounded-full blur-[120px]" />
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-amber-600/3 rounded-full blur-[100px]" />
       </div>
 
-      <div
-        className="absolute inset-0 opacity-[0.03]"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px)",
-          backgroundSize: "60px 60px",
-        }}
-      />
+      {/* Grid pattern overlay */}
+      <div className="absolute inset-0 opacity-[0.03]"
+        style={{ backgroundImage: "linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
 
       <motion.div
         initial={{ opacity: 0, y: 30 }}
@@ -98,6 +66,7 @@ const AdminLogin = () => {
         transition={{ duration: 0.6 }}
         className="w-full max-w-md relative z-10"
       >
+        {/* Logo & Title */}
         <div className="text-center mb-10">
           <motion.div
             initial={{ scale: 0 }}
@@ -114,6 +83,7 @@ const AdminLogin = () => {
           <p className="text-gray-500 text-sm">سجّل دخولك للوصول إلى لوحة الإدارة</p>
         </div>
 
+        {/* Card */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -125,22 +95,16 @@ const AdminLogin = () => {
             <span className="text-sm font-medium text-gray-400">تسجيل دخول المسؤول</span>
           </div>
 
-          <form onSubmit={handleSubmit} noValidate className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label className="block text-sm font-bold text-gray-300 mb-2">البريد الإلكتروني</label>
               <input
                 className={inputClasses}
                 type="email"
-                name="email"
-                inputMode="email"
-                autoComplete="username"
-                autoCapitalize="none"
-                autoCorrect="off"
-                spellCheck={false}
-                dir="ltr"
                 placeholder="admin@example.com"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
+                required
               />
             </div>
             <div>
@@ -149,15 +113,10 @@ const AdminLogin = () => {
                 <input
                   className={inputClasses}
                   type={showPassword ? "text" : "password"}
-                  name="password"
-                  autoComplete="current-password"
-                  autoCapitalize="none"
-                  autoCorrect="off"
-                  spellCheck={false}
-                  dir="ltr"
                   placeholder="••••••••"
                   value={form.password}
                   onChange={(e) => setForm({ ...form, password: e.target.value })}
+                  required
                 />
                 <button
                   type="button"
@@ -186,7 +145,9 @@ const AdminLogin = () => {
           </form>
         </motion.div>
 
-        <p className="text-center text-gray-600 text-xs mt-6">وصول مقيّد للمسؤولين فقط</p>
+        <p className="text-center text-gray-600 text-xs mt-6">
+          وصول مقيّد للمسؤولين فقط
+        </p>
       </motion.div>
     </div>
   );

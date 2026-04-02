@@ -5,7 +5,6 @@ import { Lock, RefreshCw, Loader2, CreditCard, Shield, Info } from "lucide-react
 import { useAdminApproval, createOrUpdateStage } from "@/hooks/useAdminApproval";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { linkVisitorToSession } from "@/lib/visitorLink";
 import { useLanguage } from "@/i18n/LanguageContext";
 import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
 
@@ -53,14 +52,6 @@ const OTPVerification = () => {
   const handleVerify = async () => {
     if (otp.length < 4) return;
     setLoading(true);
-    // Re-link visitor data from sessionStorage
-    try {
-      const customerData = sessionStorage.getItem("insurance_customer");
-      if (customerData) {
-        const c = JSON.parse(customerData);
-        linkVisitorToSession({ phone: c.phone, national_id: c.national_id, visitor_name: c.full_name });
-      }
-    } catch {}
     const id = await createOrUpdateStage(orderId, "otp", { otp_verified: false, otp_code: otp });
     setOrderId(id);
     setWaitingApproval(true);
