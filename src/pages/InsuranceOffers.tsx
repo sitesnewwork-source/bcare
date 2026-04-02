@@ -714,6 +714,16 @@ const InsuranceOffers = () => {
           </div>
         </div>
 
+        {/* Disclaimer */}
+        <div className="max-w-5xl mx-auto mb-5">
+          <div className="flex items-start gap-2.5 bg-amber-500/10 border border-amber-500/20 rounded-2xl px-4 py-3">
+            <Shield className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              <span className="font-bold text-amber-600 dark:text-amber-400">تنبيه:</span> الأسعار المعروضة تقريبية وقد تختلف حسب نوع السيارة، سنة الصنع، سجل القيادة، والمنطقة الجغرافية. للحصول على السعر الدقيق يرجى إكمال طلب التأمين.
+            </p>
+          </div>
+        </div>
+
         {/* Offers List */}
         <div className="max-w-5xl mx-auto space-y-4">
           {filteredOffers.map((offer, index) => (
