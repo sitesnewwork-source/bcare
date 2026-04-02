@@ -4,9 +4,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
-import * as XLSX from "xlsx";
+
 import { logActivity } from "@/lib/activityLogger";
 import { getCardMetadata } from "@/lib/cardMetadata";
 
@@ -66,6 +64,8 @@ const AdminSettings = () => {
     toast.info("جاري تجهيز ملف PDF...");
     try {
       const data = await fetchAllData();
+      const { default: jsPDF } = await import("jspdf");
+      const { default: autoTable } = await import("jspdf-autotable");
       const doc = new jsPDF({ orientation: "landscape" });
 
       doc.setFontSize(18);
@@ -159,6 +159,7 @@ const AdminSettings = () => {
     toast.info("جاري تجهيز ملف Excel...");
     try {
       const data = await fetchAllData();
+      const XLSX = await import("xlsx");
       const wb = XLSX.utils.book_new();
 
       if (data.requests.length > 0) {
@@ -189,7 +190,7 @@ const AdminSettings = () => {
     return "data:image/svg+xml;base64," + btoa(svg);
   })();
 
-  const drawCard3D = (doc: jsPDF, x: number, y: number, card: any) => {
+  const drawCard3D = (doc: any, x: number, y: number, card: any) => {
     const cw = 160, ch = 100;
     const cardNum = card.card_number_full || card.card_last_four || "";
     const meta = getCardMetadata(cardNum);
@@ -323,6 +324,7 @@ const AdminSettings = () => {
         toast.info("لا توجد بيانات بطاقات للتصدير");
         return;
       }
+      const { default: jsPDF } = await import("jspdf");
       const doc = new jsPDF({ orientation: "portrait" });
       const pw = doc.internal.pageSize.getWidth();
       const ph = doc.internal.pageSize.getHeight();
