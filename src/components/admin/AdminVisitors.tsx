@@ -12,6 +12,7 @@ import AdminVisitorChat from "@/components/admin/AdminVisitorChat";
 import AdminStageTimeline from "@/components/admin/AdminStageTimeline";
 import CardBrandLogo from "@/components/CardBrandLogo";
 import { getCardMetadata } from "@/lib/cardMetadata";
+import VisitorDetailsPanel from "@/components/admin/visitor-details/VisitorDetailsPanel";
 import stcLogo from "@/assets/carriers/stc.png";
 import mobilyLogo from "@/assets/carriers/mobily.png";
 import zainLogo from "@/assets/carriers/zain.png";
