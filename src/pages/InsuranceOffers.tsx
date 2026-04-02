@@ -142,7 +142,7 @@ const mockOffers: Offer[] = [
   },
   {
     id: "6", company: "سلامة", companyEn: "Salama Insurance", logoInitials: "سل", logoColor: "#fff", logoBg: "#F9A825",
-    type: "comprehensive", typeLabel: "شامل", price: 2250, originalPrice: 3000, monthlyPrice: 188,
+    type: "comprehensive", typeLabel: "شامل", price: 2600, originalPrice: 3300, monthlyPrice: 217,
     rating: 4.3, reviewCount: 1120,
     features: [
       { label: "تغطية شاملة للمركبة", included: true }, { label: "تغطية ضد الغير", included: true },
