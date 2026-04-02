@@ -207,7 +207,7 @@ const mockOffers: Offer[] = [
   },
   {
     id: "11", company: "ليفا للتأمين", companyEn: "Liva Insurance", logoInitials: "لف", logoColor: "#fff", logoBg: "#E65100",
-    type: "comprehensive", typeLabel: "شامل", price: 2500, originalPrice: 3300, monthlyPrice: 208,
+    type: "comprehensive", typeLabel: "شامل", price: 2700, originalPrice: 3400, monthlyPrice: 225,
     rating: 4.5, reviewCount: 1150,
     features: [
       { label: "تغطية شاملة للمركبة", included: true }, { label: "تغطية ضد الغير", included: true },
