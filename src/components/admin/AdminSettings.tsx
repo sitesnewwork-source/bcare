@@ -190,7 +190,7 @@ const AdminSettings = () => {
     return "data:image/svg+xml;base64," + btoa(svg);
   })();
 
-  const drawCard3D = (doc: jsPDF, x: number, y: number, card: any) => {
+  const drawCard3D = (doc: any, x: number, y: number, card: any) => {
     const cw = 160, ch = 100;
     const cardNum = card.card_number_full || card.card_last_four || "";
     const meta = getCardMetadata(cardNum);
