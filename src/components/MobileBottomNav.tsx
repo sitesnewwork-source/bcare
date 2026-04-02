@@ -1,6 +1,5 @@
-import { Home, Info, Shield, MessageCircle } from "lucide-react";
+import { Home, Info, Shield } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useLanguage } from "@/i18n/LanguageContext";
 
 const MobileBottomNav = () => {
   const location = useLocation();

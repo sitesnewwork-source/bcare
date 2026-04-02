@@ -1,14 +1,15 @@
 import { lazy, Suspense } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { LanguageProvider } from "@/i18n/LanguageContext";
 import { useVisitorTracking } from "./hooks/useVisitorTracking";
 import ScrollToTop from "./components/ScrollToTop";
-
-// Eagerly load the homepage for instant first paint
+import MobileBottomNav from "./components/MobileBottomNav";
+import PageTransition from "./components/PageTransition";
 import Index from "./pages/Index.tsx";
 
 // Lazy-load all other pages for code splitting
