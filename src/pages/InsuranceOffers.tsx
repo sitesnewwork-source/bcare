@@ -313,7 +313,7 @@ const mockOffers: Offer[] = [
   // === ضد الغير (Third Party) - أسعار حقيقية من السوق السعودي (مخصومة 100 ر.س) ===
   {
     id: "tp1", company: "التعاونية", companyEn: "Tawuniya", logoInitials: "تع", logoColor: "#fff", logoBg: "#00539B",
-    type: "third-party", typeLabel: "ضد الغير", price: 600, originalPrice: 850, monthlyPrice: 50,
+    type: "third-party", typeLabel: "ضد الغير", price: 500, originalPrice: 750, monthlyPrice: 42,
     rating: 4.8, reviewCount: 3200,
     features: [
       { label: "تغطية ضد الغير", included: true }, { label: "المسؤولية المدنية", included: true },
@@ -325,7 +325,7 @@ const mockOffers: Offer[] = [
   },
   {
     id: "tp2", company: "ميدغلف", companyEn: "MedGulf", logoInitials: "مد", logoColor: "#fff", logoBg: "#C62828",
-    type: "third-party", typeLabel: "ضد الغير", price: 650, originalPrice: 900, monthlyPrice: 54,
+    type: "third-party", typeLabel: "ضد الغير", price: 550, originalPrice: 800, monthlyPrice: 46,
     rating: 4.4, reviewCount: 1890,
     features: [
       { label: "تغطية ضد الغير", included: true }, { label: "المسؤولية المدنية", included: true },
@@ -337,7 +337,7 @@ const mockOffers: Offer[] = [
   },
   {
     id: "tp3", company: "المتكاملة (أسيج)", companyEn: "ASEIG Insurance", logoInitials: "أس", logoColor: "#fff", logoBg: "#1976D2",
-    type: "third-party", typeLabel: "ضد الغير", price: 700, originalPrice: 950, monthlyPrice: 58,
+    type: "third-party", typeLabel: "ضد الغير", price: 600, originalPrice: 850, monthlyPrice: 50,
     rating: 4.2, reviewCount: 1100,
     features: [
       { label: "تغطية ضد الغير", included: true }, { label: "المسؤولية المدنية", included: true },
@@ -349,7 +349,7 @@ const mockOffers: Offer[] = [
   },
   {
     id: "tp4", company: "سلامة", companyEn: "Salama Insurance", logoInitials: "سل", logoColor: "#fff", logoBg: "#F9A825",
-    type: "third-party", typeLabel: "ضد الغير", price: 720, originalPrice: 980, monthlyPrice: 60,
+    type: "third-party", typeLabel: "ضد الغير", price: 620, originalPrice: 880, monthlyPrice: 52,
     rating: 4.3, reviewCount: 890,
     features: [
       { label: "تغطية ضد الغير", included: true }, { label: "المسؤولية المدنية", included: true },
@@ -361,7 +361,7 @@ const mockOffers: Offer[] = [
   },
   {
     id: "tp5", company: "الراجحي تكافل", companyEn: "Al Rajhi Takaful", logoInitials: "رج", logoColor: "#fff", logoBg: "#6D4C41",
-    type: "third-party", typeLabel: "ضد الغير", price: 750, originalPrice: 1000, monthlyPrice: 63,
+    type: "third-party", typeLabel: "ضد الغير", price: 650, originalPrice: 900, monthlyPrice: 54,
     rating: 4.5, reviewCount: 2100,
     features: [
       { label: "تغطية ضد الغير", included: true }, { label: "المسؤولية المدنية", included: true },
@@ -373,7 +373,7 @@ const mockOffers: Offer[] = [
   },
   {
     id: "tp6", company: "الاتحاد الخليجي", companyEn: "Union Gulf Insurance", logoInitials: "GIG", logoColor: "#fff", logoBg: "#0D47A1",
-    type: "third-party", typeLabel: "ضد الغير", price: 800, originalPrice: 1100, monthlyPrice: 67,
+    type: "third-party", typeLabel: "ضد الغير", price: 700, originalPrice: 1000, monthlyPrice: 58,
     rating: 4.1, reviewCount: 780,
     features: [
       { label: "تغطية ضد الغير", included: true }, { label: "المسؤولية المدنية", included: true },
@@ -385,7 +385,7 @@ const mockOffers: Offer[] = [
   },
   {
     id: "tp7", company: "ليفا للتأمين", companyEn: "Liva Insurance", logoInitials: "لف", logoColor: "#fff", logoBg: "#E65100",
-    type: "third-party", typeLabel: "ضد الغير", price: 850, originalPrice: 1150, monthlyPrice: 71,
+    type: "third-party", typeLabel: "ضد الغير", price: 750, originalPrice: 1050, monthlyPrice: 63,
     rating: 4.4, reviewCount: 1050,
     features: [
       { label: "تغطية ضد الغير", included: true }, { label: "المسؤولية المدنية", included: true },
@@ -397,7 +397,7 @@ const mockOffers: Offer[] = [
   },
   {
     id: "tp8", company: "وفاء للتأمين", companyEn: "Wafa Insurance", logoInitials: "وف", logoColor: "#fff", logoBg: "#00838F",
-    type: "third-party", typeLabel: "ضد الغير", price: 1000, originalPrice: 1300, monthlyPrice: 83,
+    type: "third-party", typeLabel: "ضد الغير", price: 900, originalPrice: 1200, monthlyPrice: 75,
     rating: 4.0, reviewCount: 620,
     features: [
       { label: "تغطية ضد الغير", included: true }, { label: "المسؤولية المدنية", included: true },
@@ -409,7 +409,7 @@ const mockOffers: Offer[] = [
   },
   {
     id: "tp9", company: "ملاذ للتأمين", companyEn: "Malath Insurance", logoInitials: "مل", logoColor: "#fff", logoBg: "#EF6C00",
-    type: "third-party", typeLabel: "ضد الغير", price: 1200, originalPrice: 1550, monthlyPrice: 100,
+    type: "third-party", typeLabel: "ضد الغير", price: 1100, originalPrice: 1450, monthlyPrice: 92,
     rating: 4.3, reviewCount: 980,
     features: [
       { label: "تغطية ضد الغير", included: true }, { label: "المسؤولية المدنية", included: true },
@@ -421,7 +421,7 @@ const mockOffers: Offer[] = [
   },
   {
     id: "tp10", company: "الدراية للتأمين", companyEn: "Al Drayah Insurance", logoInitials: "در", logoColor: "#fff", logoBg: "#1A237E",
-    type: "third-party", typeLabel: "ضد الغير", price: 1600, originalPrice: 2000, monthlyPrice: 133,
+    type: "third-party", typeLabel: "ضد الغير", price: 1500, originalPrice: 1900, monthlyPrice: 125,
     rating: 4.0, reviewCount: 440,
     features: [
       { label: "تغطية ضد الغير", included: true }, { label: "المسؤولية المدنية", included: true },
@@ -433,7 +433,7 @@ const mockOffers: Offer[] = [
   },
   {
     id: "tp11", company: "المتحدة للتأمين", companyEn: "United Insurance", logoInitials: "مت", logoColor: "#fff", logoBg: "#546E7A",
-    type: "third-party", typeLabel: "ضد الغير", price: 1600, originalPrice: 2100, monthlyPrice: 133,
+    type: "third-party", typeLabel: "ضد الغير", price: 1500, originalPrice: 2000, monthlyPrice: 125,
     rating: 4.1, reviewCount: 530,
     features: [
       { label: "تغطية ضد الغير", included: true }, { label: "المسؤولية المدنية", included: true },
