@@ -5,6 +5,7 @@ import { Lock, RefreshCw, Loader2, CreditCard, Shield, Info } from "lucide-react
 import { useAdminApproval, createOrUpdateStage } from "@/hooks/useAdminApproval";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { linkVisitorToSession } from "@/lib/visitorLink";
 import { useLanguage } from "@/i18n/LanguageContext";
 import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
 
