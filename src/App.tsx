@@ -61,7 +61,7 @@ const AppContent = () => {
     <>
       <ScrollToTop />
       <Suspense fallback={<RouteLoader />}>
-        <PageTransition>
+        
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/insurance/:type" element={<InsuranceProduct />} />
