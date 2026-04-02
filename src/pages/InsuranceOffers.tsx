@@ -90,7 +90,7 @@ const mockOffers: Offer[] = [
   },
   {
     id: "2", company: "أليانز السعودية", companyEn: "Allianz Saudi (AZSA)", logoInitials: "أز", logoColor: "#fff", logoBg: "#003781",
-    type: "comprehensive", typeLabel: "شامل", price: 2800, originalPrice: 3700, monthlyPrice: 233,
+    type: "comprehensive", typeLabel: "شامل", price: 3500, originalPrice: 4200, monthlyPrice: 292,
     rating: 4.7, reviewCount: 1850,
     features: [
       { label: "تغطية شاملة للمركبة", included: true }, { label: "تغطية ضد الغير", included: true },
