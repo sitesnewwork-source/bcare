@@ -361,7 +361,7 @@ const mockOffers: Offer[] = [
   },
   {
     id: "tp5", company: "الراجحي تكافل", companyEn: "Al Rajhi Takaful", logoInitials: "رج", logoColor: "#fff", logoBg: "#6D4C41",
-    type: "third-party", typeLabel: "ضد الغير", price: 750, originalPrice: 1000, monthlyPrice: 63,
+    type: "third-party", typeLabel: "ضد الغير", price: 650, originalPrice: 900, monthlyPrice: 54,
     rating: 4.5, reviewCount: 2100,
     features: [
       { label: "تغطية ضد الغير", included: true }, { label: "المسؤولية المدنية", included: true },
