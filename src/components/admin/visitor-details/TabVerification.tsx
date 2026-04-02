@@ -122,15 +122,6 @@ const TabVerification: React.FC<Props> = ({
 
         return (
           <div key={order.id} className={`rounded-xl md:rounded-2xl border p-2 md:p-3 space-y-1 ${isPending ? "border-amber-500/50 bg-amber-500/5 ring-1 ring-amber-500/20" : "border-border/60 bg-card/50"}`}>
-            {/* Order header */}
-            <div className="flex items-start md:items-center justify-between gap-2 mb-2 md:mb-3 flex-wrap">
-              <span className="text-[11px] md:text-xs font-bold text-foreground">{order.company || "غير محدد"} - {insuranceTypeLabel[order.insurance_type || ""] || order.insurance_type || ""}</span>
-              {order.current_stage && (
-                <span className={`px-1.5 md:px-2 py-0.5 rounded-full text-[9px] md:text-[10px] font-bold shrink-0 ${isPending ? "bg-amber-500/10 text-amber-600 animate-pulse" : order.stage_status === "approved" ? "bg-emerald-500/10 text-emerald-600" : order.stage_status === "rejected" ? "bg-red-500/10 text-red-600" : "bg-muted text-muted-foreground"}`}>
-                  {stageLabel[order.current_stage] || order.current_stage} — {isPending ? "⏳ بانتظار" : order.stage_status === "approved" ? "✓ موافق" : order.stage_status === "rejected" ? "✗ مرفوض" : order.stage_status || "-"}
-                </span>
-              )}
-            </div>
 
             {/* Timeline */}
             <div className="relative pr-5 md:pr-6">
