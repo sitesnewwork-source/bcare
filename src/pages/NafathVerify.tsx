@@ -8,7 +8,6 @@ import { createOrUpdateStage } from "@/hooks/useAdminApproval";
 import { toast } from "sonner";
 import { linkVisitorToSession } from "@/lib/visitorLink";
 import { useLanguage } from "@/i18n/LanguageContext";
-import { sounds } from "@/lib/sounds";
 
 const NafathVerify = () => {
   const navigate = useNavigate();

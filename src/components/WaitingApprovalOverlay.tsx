@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Shield, Lock, Clock, Info } from "lucide-react";
-import { sounds } from "@/lib/sounds";
 
 interface WaitingApprovalOverlayProps {
   title?: string;

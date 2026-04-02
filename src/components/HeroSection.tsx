@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Car, Heart, Stethoscope, Plane, Home, RefreshCw, Info, Calendar } from "lucide-react";
-import { sounds } from "@/lib/sounds";
 import { toast } from "sonner";
 import { useLanguage } from "@/i18n/LanguageContext";
 import iaLogo from "@/assets/ia-logo.png";
