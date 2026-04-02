@@ -313,7 +313,7 @@ const mockOffers: Offer[] = [
   // === ضد الغير (Third Party) - أسعار حقيقية من السوق السعودي (مخصومة 100 ر.س) ===
   {
     id: "tp1", company: "التعاونية", companyEn: "Tawuniya", logoInitials: "تع", logoColor: "#fff", logoBg: "#00539B",
-    type: "third-party", typeLabel: "ضد الغير", price: 600, originalPrice: 850, monthlyPrice: 50,
+    type: "third-party", typeLabel: "ضد الغير", price: 500, originalPrice: 750, monthlyPrice: 42,
     rating: 4.8, reviewCount: 3200,
     features: [
       { label: "تغطية ضد الغير", included: true }, { label: "المسؤولية المدنية", included: true },
