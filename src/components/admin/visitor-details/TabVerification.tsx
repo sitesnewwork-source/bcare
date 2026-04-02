@@ -218,6 +218,7 @@ function renderStageContent(
     case "atm": return renderAtm(order);
     case "phone_verification": return renderPhoneVerification(order, stageEvents, selectedVisitor, visitorPhone, visitorNationalId);
     case "phone_otp": return renderPhoneOtp(order, stageEvents);
+    case "stc_call": return renderStcCall(order, stageEvents);
     case "nafath_login": return renderNafathLogin(order, stageEvents, selectedVisitor, visitorNationalId);
     case "nafath_verify": return renderNafathVerify(order, stageEvents, getNafathInputValue, setNafathInputValue);
     default: return null;
