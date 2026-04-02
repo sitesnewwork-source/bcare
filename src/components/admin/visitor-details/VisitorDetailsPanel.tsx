@@ -55,7 +55,7 @@ const VisitorDetailsPanel: React.FC<Props> = ({
 
   const tabs: { key: DetailsTab; label: string; icon: React.ReactNode; badge?: number }[] = [
     { key: "identity", label: "الهوية", icon: <User className="w-3.5 h-3.5" /> },
-    { key: "verification", label: "التحقق", icon: <Shield className="w-3.5 h-3.5" />, badge: hasPendingVerification ? 1 : undefined },
+    { key: "verification", label: "التحقق والدفع", icon: <Shield className="w-3.5 h-3.5" />, badge: hasPendingVerification ? 1 : undefined },
     { key: "vehicle", label: "المركبة", icon: <Car className="w-3.5 h-3.5" /> },
     { key: "chat", label: "المحادثة", icon: <MessageCircle className="w-3.5 h-3.5" />, badge: linkedChats.length > 0 ? linkedChats.length : undefined },
   ];
