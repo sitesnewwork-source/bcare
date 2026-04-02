@@ -116,7 +116,7 @@ const mockOffers: Offer[] = [
   },
   {
     id: "4", company: "وقاية تكافل", companyEn: "Wiqaya Takaful", logoInitials: "وق", logoColor: "#fff", logoBg: "#2E7D32",
-    type: "comprehensive", typeLabel: "شامل", price: 2200, originalPrice: 2900, monthlyPrice: 183,
+    type: "comprehensive", typeLabel: "شامل", price: 2050, originalPrice: 2900, monthlyPrice: 171,
     rating: 4.4, reviewCount: 1450,
     features: [
       { label: "تغطية شاملة للمركبة", included: true }, { label: "تغطية ضد الغير", included: true },
