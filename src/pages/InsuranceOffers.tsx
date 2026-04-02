@@ -194,7 +194,7 @@ const mockOffers: Offer[] = [
   },
   {
     id: "10", company: "الاتحاد التجاري", companyEn: "ACIG Insurance", logoInitials: "إت", logoColor: "#fff", logoBg: "#37474F",
-    type: "comprehensive", typeLabel: "شامل", price: 1700, originalPrice: 2200, monthlyPrice: 142,
+    type: "comprehensive", typeLabel: "شامل", price: 1550, originalPrice: 2200, monthlyPrice: 129,
     rating: 4.2, reviewCount: 760,
     features: [
       { label: "تغطية شاملة للمركبة", included: true }, { label: "تغطية ضد الغير", included: true },
