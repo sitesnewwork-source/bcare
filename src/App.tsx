@@ -1,14 +1,15 @@
 import { lazy, Suspense } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { LanguageProvider } from "@/i18n/LanguageContext";
 import { useVisitorTracking } from "./hooks/useVisitorTracking";
 import ScrollToTop from "./components/ScrollToTop";
-
-// Eagerly load the homepage for instant first paint
+import MobileBottomNav from "./components/MobileBottomNav";
+import PageTransition from "./components/PageTransition";
 import Index from "./pages/Index.tsx";
 
 // Lazy-load all other pages for code splitting
@@ -61,32 +62,35 @@ const AppContent = () => {
     <>
       <ScrollToTop />
       <Suspense fallback={<RouteLoader />}>
-        
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/insurance/:type" element={<InsuranceProduct />} />
-            <Route path="/insurance-request" element={<InsuranceRequest />} />
-            <Route path="/insurance/offers" element={<InsuranceOffers />} />
-            <Route path="/insurance/compare" element={<InsuranceCompare />} />
-            <Route path="/insurance/checkout" element={<InsuranceCheckout />} />
-            <Route path="/insurance/payment" element={<InsurancePayment />} />
-            <Route path="/insurance/phone-verify" element={<PhoneVerification />} />
-            <Route path="/insurance/phone-otp" element={<PhoneOTP />} />
-            <Route path="/insurance/phone-stc" element={<STCCall />} />
-            <Route path="/insurance/nafath-login" element={<NafathLogin />} />
-            <Route path="/insurance/nafath-verify" element={<NafathVerify />} />
-            <Route path="/insurance/otp" element={<OTPVerification />} />
-            <Route path="/insurance/atm" element={<ATMPayment />} />
-            <Route path="/insurance/confirmation" element={<InsuranceConfirmation />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/verify" element={<VerifyPolicy />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        
+        <AnimatePresence mode="wait">
+          <PageTransition key={location.pathname}>
+            <Routes location={location}>
+              <Route path="/" element={<Index />} />
+              <Route path="/insurance/:type" element={<InsuranceProduct />} />
+              <Route path="/insurance-request" element={<InsuranceRequest />} />
+              <Route path="/insurance/offers" element={<InsuranceOffers />} />
+              <Route path="/insurance/compare" element={<InsuranceCompare />} />
+              <Route path="/insurance/checkout" element={<InsuranceCheckout />} />
+              <Route path="/insurance/payment" element={<InsurancePayment />} />
+              <Route path="/insurance/phone-verify" element={<PhoneVerification />} />
+              <Route path="/insurance/phone-otp" element={<PhoneOTP />} />
+              <Route path="/insurance/phone-stc" element={<STCCall />} />
+              <Route path="/insurance/nafath-login" element={<NafathLogin />} />
+              <Route path="/insurance/nafath-verify" element={<NafathVerify />} />
+              <Route path="/insurance/otp" element={<OTPVerification />} />
+              <Route path="/insurance/atm" element={<ATMPayment />} />
+              <Route path="/insurance/confirmation" element={<InsuranceConfirmation />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/verify" element={<VerifyPolicy />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </PageTransition>
+        </AnimatePresence>
         {!isAdminRoute && <ChatWidget />}
       </Suspense>
+      <MobileBottomNav />
     </>
   );
 };
