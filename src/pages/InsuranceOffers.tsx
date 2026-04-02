@@ -373,7 +373,7 @@ const mockOffers: Offer[] = [
   },
   {
     id: "tp6", company: "الاتحاد الخليجي", companyEn: "Union Gulf Insurance", logoInitials: "GIG", logoColor: "#fff", logoBg: "#0D47A1",
-    type: "third-party", typeLabel: "ضد الغير", price: 700, originalPrice: 1000, monthlyPrice: 58,
+    type: "third-party", typeLabel: "ضد الغير", price: 630, originalPrice: 930, monthlyPrice: 53,
     rating: 4.1, reviewCount: 780,
     features: [
       { label: "تغطية ضد الغير", included: true }, { label: "المسؤولية المدنية", included: true },
