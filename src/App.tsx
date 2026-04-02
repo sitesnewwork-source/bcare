@@ -84,7 +84,7 @@ const AppContent = () => {
             <Route path="/verify" element={<VerifyPolicy />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </PageTransition>
+        
         {!isAdminRoute && <ChatWidget />}
       </Suspense>
     </>
