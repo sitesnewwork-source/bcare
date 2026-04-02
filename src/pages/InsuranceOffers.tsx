@@ -168,7 +168,7 @@ const mockOffers: Offer[] = [
   },
   {
     id: "8", company: "GIG", companyEn: "Gulf Insurance Group", logoInitials: "GIG", logoColor: "#fff", logoBg: "#0D47A1",
-    type: "comprehensive", typeLabel: "شامل", price: 950, originalPrice: 1200, monthlyPrice: 79,
+    type: "comprehensive", typeLabel: "شامل", price: 800, originalPrice: 1200, monthlyPrice: 67,
     rating: 4.5, reviewCount: 1340,
     features: [
       { label: "تغطية شاملة للمركبة", included: true }, { label: "تغطية ضد الغير", included: true },
