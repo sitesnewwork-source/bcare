@@ -397,7 +397,7 @@ const mockOffers: Offer[] = [
   },
   {
     id: "tp8", company: "وفاء للتأمين", companyEn: "Wafa Insurance", logoInitials: "وف", logoColor: "#fff", logoBg: "#00838F",
-    type: "third-party", typeLabel: "ضد الغير", price: 1000, originalPrice: 1300, monthlyPrice: 83,
+    type: "third-party", typeLabel: "ضد الغير", price: 900, originalPrice: 1200, monthlyPrice: 75,
     rating: 4.0, reviewCount: 620,
     features: [
       { label: "تغطية ضد الغير", included: true }, { label: "المسؤولية المدنية", included: true },
