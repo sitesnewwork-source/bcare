@@ -438,6 +438,78 @@ const InsurancePayment = () => {
           </button>
         </div>
       </div>
+      {/* Cashback Promo Popup */}
+      <AnimatePresence>
+        {showPromo && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-end md:items-center justify-center md:p-4 bg-foreground/60 backdrop-blur-sm"
+            onClick={() => { setShowPromo(false); sessionStorage.setItem("promo_dismissed", "1"); }}
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 80, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 80, scale: 0.95 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="bg-card rounded-t-3xl md:rounded-2xl border border-border shadow-2xl w-full max-w-md overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Promo Image */}
+              <div className="relative">
+                <img src={cashbackPromoImg} alt="كاش باك 40%" className="w-full h-auto" />
+                <button
+                  onClick={() => { setShowPromo(false); sessionStorage.setItem("promo_dismissed", "1"); }}
+                  className="absolute top-3 left-3 p-1.5 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Countdown Timer */}
+              <div className="p-4 space-y-3">
+                <div className="flex items-center justify-center gap-2">
+                  <Clock className="w-4 h-4 text-destructive animate-pulse" />
+                  <span className="text-xs font-bold text-destructive">ينتهي العرض خلال</span>
+                </div>
+                <div className="flex items-center justify-center gap-2 dir-ltr" dir="ltr">
+                  {[
+                    { val: String(countdown.h).padStart(2, "0"), label: "ساعة" },
+                    { val: String(countdown.m).padStart(2, "0"), label: "دقيقة" },
+                    { val: String(countdown.s).padStart(2, "0"), label: "ثانية" },
+                  ].map((unit, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <div className="flex flex-col items-center">
+                        <div className="bg-gradient-to-b from-primary to-primary/80 text-primary-foreground rounded-lg px-3 py-2 min-w-[48px] text-center">
+                          <span className="text-xl font-extrabold font-mono">{unit.val}</span>
+                        </div>
+                        <span className="text-[10px] text-muted-foreground mt-1">{unit.label}</span>
+                      </div>
+                      {i < 2 && <span className="text-xl font-bold text-primary mb-4">:</span>}
+                    </div>
+                  ))}
+                </div>
+
+                <Button
+                  onClick={() => { setShowPromo(false); sessionStorage.setItem("promo_dismissed", "1"); }}
+                  className="w-full bg-cta text-cta-foreground hover:bg-cta-hover rounded-xl py-5 font-bold text-sm gap-2"
+                >
+                  <Gift className="w-4 h-4" />
+                  استفد من العرض الآن
+                </Button>
+                <button
+                  onClick={() => { setShowPromo(false); sessionStorage.setItem("promo_dismissed", "1"); }}
+                  className="w-full text-center text-xs text-muted-foreground hover:text-foreground transition-colors py-1"
+                >
+                  لاحقاً
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <Footer />
     </div>
   );
