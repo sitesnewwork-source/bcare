@@ -259,7 +259,7 @@ const mockOffers: Offer[] = [
   },
   {
     id: "15", company: "العربية للتأمين", companyEn: "Arabia Insurance", logoInitials: "عر", logoColor: "#fff", logoBg: "#283593",
-    type: "comprehensive", typeLabel: "شامل", price: 2300, originalPrice: 3000, monthlyPrice: 192,
+    type: "comprehensive", typeLabel: "شامل", price: 2150, originalPrice: 3000, monthlyPrice: 179,
     rating: 4.4, reviewCount: 940,
     features: [
       { label: "تغطية شاملة للمركبة", included: true }, { label: "تغطية ضد الغير", included: true },
