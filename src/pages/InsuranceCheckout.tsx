@@ -379,188 +379,189 @@ const InsuranceCheckout = () => {
         </div>
       </div>
 
-      {/* Draft Policy Modal */}
+      {/* Draft Policy Modal - Full screen on mobile, centered on desktop */}
       <AnimatePresence>
         {showPolicy && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-foreground/60 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-end md:items-center justify-center md:p-4 bg-foreground/60 backdrop-blur-sm"
             onClick={() => setShowPolicy(false)}
           >
             <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 30 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 30 }}
-              transition={{ type: "spring", damping: 25 }}
-              className="bg-card rounded-2xl border border-border shadow-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto"
+              initial={{ opacity: 0, y: 100 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 100 }}
+              transition={{ type: "spring", damping: 28, stiffness: 300 }}
+              className="bg-card rounded-t-3xl md:rounded-2xl border border-border shadow-2xl w-full max-w-lg h-[92dvh] md:max-h-[85vh] flex flex-col"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
-              <div className="sticky top-0 bg-card/95 backdrop-blur-sm border-b border-border p-4 flex items-center justify-between rounded-t-2xl z-10">
-                <button onClick={() => setShowPolicy(false)} className="p-1.5 rounded-lg hover:bg-secondary transition-colors">
+              <div className="shrink-0 bg-card border-b border-border px-4 py-3 flex items-center justify-between rounded-t-3xl md:rounded-t-2xl">
+                <button onClick={() => setShowPolicy(false)} className="p-2 -m-1 rounded-xl hover:bg-secondary transition-colors">
                   <X className="w-4 h-4 text-muted-foreground" />
                 </button>
                 <h3 className="font-bold text-sm text-foreground">{ck.policyDraft}</h3>
+                {/* Mobile drag indicator */}
+                <div className="w-8 md:hidden" />
               </div>
 
-              {/* Draft Banner */}
-              <div className="mx-4 mt-3 p-2 rounded-lg bg-destructive/10 border border-destructive/20 flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 text-destructive shrink-0" />
-                <p className="text-[11px] text-destructive font-medium">
-                  {ck.draftBanner}
-                </p>
-              </div>
-
-              {/* Policy Content */}
-              <div className="p-4 space-y-3">
-                {/* Policy Number */}
-                <div className="text-center p-2.5 rounded-lg bg-secondary/50 border border-border">
-                  <p className="text-[10px] text-muted-foreground">{ck.tempPolicyNumber}</p>
-                  <p className="font-mono font-bold text-primary text-sm tracking-wider">
-                    {policyNumber}
+              {/* Scrollable Content */}
+              <div className="flex-1 overflow-y-auto overscroll-contain">
+                {/* Draft Banner */}
+                <div className="mx-3 mt-3 p-2.5 rounded-xl bg-destructive/10 border border-destructive/20 flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4 text-destructive shrink-0" />
+                  <p className="text-[11px] text-destructive font-medium leading-relaxed">
+                    {ck.draftBanner}
                   </p>
                 </div>
 
-                {/* Company Info */}
-                <div className="flex items-center gap-2.5 p-2.5 rounded-lg border border-border">
-                  <div className="w-10 h-10 rounded-lg overflow-hidden bg-secondary border border-border flex items-center justify-center">
-                    {companyLogos[offer.company] ? (
-                      <img src={companyLogos[offer.company]} alt={offer.company} className="w-full h-full object-contain p-1" loading="lazy" />
-                    ) : (
-                      <span className="text-[10px] font-bold text-primary">{offer.company?.slice(0, 2)}</span>
-                    )}
+                <div className="p-3 space-y-3">
+                  {/* Policy Number */}
+                  <div className="text-center p-3 rounded-xl bg-secondary/50 border border-border">
+                    <p className="text-[10px] text-muted-foreground mb-1">{ck.tempPolicyNumber}</p>
+                    <p className="font-mono font-bold text-primary text-base tracking-wider">
+                      {policyNumber}
+                    </p>
                   </div>
-                  <div>
-                    <p className="font-bold text-foreground text-sm">{offer.company}</p>
-                    <p className="text-xs text-muted-foreground">{offer.type}</p>
-                  </div>
-                </div>
 
-                {/* Customer Info */}
-                {(customer.full_name || customer.national_id || customer.phone) && (
-                  <div className="space-y-1">
-                    <h4 className="font-bold text-foreground text-xs flex items-center gap-1.5">
-                      <User className="w-3.5 h-3.5 text-primary" />
-                      {ck.insuredData}
-                    </h4>
-                    {[
-                      { label: ck.fullName, value: customer.full_name },
-                      { label: ck.nationalId, value: customer.national_id },
-                      { label: ck.phoneNumber, value: customer.phone },
-                    ].filter(item => item.value).map((item, i) => (
-                      <div key={i} className="flex items-center justify-between py-1 border-b border-border/30 last:border-0">
-                        <span className="text-xs font-medium text-foreground">{item.value}</span>
-                        <span className="text-xs text-muted-foreground">{item.label}</span>
+                  {/* Company Info */}
+                  <div className="flex items-center gap-3 p-3 rounded-xl border border-border bg-secondary/30">
+                    <div className="w-11 h-11 rounded-xl overflow-hidden bg-card border border-border flex items-center justify-center shrink-0">
+                      {companyLogos[offer.company] ? (
+                        <img src={companyLogos[offer.company]} alt={offer.company} className="w-full h-full object-contain p-1" loading="lazy" />
+                      ) : (
+                        <span className="text-[10px] font-bold text-primary">{offer.company?.slice(0, 2)}</span>
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="font-bold text-foreground text-sm truncate">{offer.company}</p>
+                      <p className="text-xs text-muted-foreground">{offer.type}</p>
+                    </div>
+                  </div>
+
+                  {/* Info Sections */}
+                  {[
+                    {
+                      show: customer.full_name || customer.national_id || customer.phone,
+                      icon: <User className="w-3.5 h-3.5 text-primary" />,
+                      title: ck.insuredData,
+                      rows: [
+                        { label: ck.fullName, value: customer.full_name },
+                        { label: ck.nationalId, value: customer.national_id },
+                        { label: ck.phoneNumber, value: customer.phone },
+                      ].filter((r) => r.value),
+                    },
+                    {
+                      show: customer.vehicle_make || customer.serial_number,
+                      icon: <Car className="w-3.5 h-3.5 text-primary" />,
+                      title: ck.vehicleData,
+                      rows: [
+                        { label: ck.manufacturer, value: customer.vehicle_make },
+                        { label: ck.model, value: customer.vehicle_model },
+                        { label: ck.yearOfMake, value: customer.vehicle_year },
+                        { label: ck.serialNumber, value: customer.serial_number },
+                        { label: ck.passengerCount, value: customer.passenger_count },
+                        { label: ck.vehicleUsage, value: customer.vehicle_usage === "personal" ? ck.personal : customer.vehicle_usage === "commercial" ? ck.commercial : customer.vehicle_usage },
+                        { label: ck.estimatedValue, value: customer.estimated_value || null },
+                        { label: ck.repairLocation, value: customer.repair_location === "agency" ? ck.agencyRepair : customer.repair_location === "workshop" ? ck.workshopRepair : customer.repair_location },
+                      ].filter((r) => r.value),
+                    },
+                    {
+                      show: true,
+                      icon: <FileText className="w-3.5 h-3.5 text-primary" />,
+                      title: ck.policyDetails,
+                      rows: [
+                        { label: ck.coverageType, value: offer.type },
+                        { label: ck.coverageDuration, value: ck.months12 },
+                        { label: ck.startDate, value: new Date().toLocaleDateString(lang === "ar" ? "ar-SA" : "en-US") },
+                        { label: ck.endDate, value: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toLocaleDateString(lang === "ar" ? "ar-SA" : "en-US") },
+                      ],
+                    },
+                  ].filter((s) => s.show).map((section, si) => (
+                    <div key={si} className="rounded-xl border border-border overflow-hidden">
+                      <div className="flex items-center gap-1.5 px-3 py-2 bg-secondary/40 border-b border-border">
+                        {section.icon}
+                        <h4 className="font-bold text-foreground text-xs">{section.title}</h4>
                       </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* Vehicle Info */}
-                {(customer.vehicle_make || customer.serial_number) && (
-                  <div className="space-y-1">
-                    <h4 className="font-bold text-foreground text-xs flex items-center gap-1.5">
-                      <Car className="w-3.5 h-3.5 text-primary" />
-                      {ck.vehicleData}
-                    </h4>
-                    {[
-                      { label: ck.manufacturer, value: customer.vehicle_make },
-                      { label: ck.model, value: customer.vehicle_model },
-                      { label: ck.yearOfMake, value: customer.vehicle_year },
-                      { label: ck.serialNumber, value: customer.serial_number },
-                      { label: ck.passengerCount, value: customer.passenger_count },
-                      { label: ck.vehicleUsage, value: customer.vehicle_usage === "personal" ? ck.personal : customer.vehicle_usage === "commercial" ? ck.commercial : customer.vehicle_usage },
-                      { label: ck.estimatedValue, value: customer.estimated_value || null },
-                      { label: ck.repairLocation, value: customer.repair_location === "agency" ? ck.agencyRepair : customer.repair_location === "workshop" ? ck.workshopRepair : customer.repair_location },
-                    ].filter(item => item.value).map((item, i) => (
-                      <div key={i} className="flex items-center justify-between py-1 border-b border-border/30 last:border-0">
-                        <span className="text-xs font-medium text-foreground">{item.value}</span>
-                        <span className="text-xs text-muted-foreground">{item.label}</span>
+                      <div className="divide-y divide-border/40">
+                        {section.rows.map((item, i) => (
+                          <div key={i} className="flex items-center justify-between px-3 py-2">
+                            <span className="text-xs font-medium text-foreground truncate max-w-[55%]">{item.value}</span>
+                            <span className="text-[11px] text-muted-foreground shrink-0">{item.label}</span>
+                          </div>
+                        ))}
                       </div>
-                    ))}
+                    </div>
+                  ))}
+
+                  {/* Coverage */}
+                  <div className="rounded-xl border border-border overflow-hidden">
+                    <div className="flex items-center gap-1.5 px-3 py-2 bg-secondary/40 border-b border-border">
+                      <Shield className="w-3.5 h-3.5 text-primary" />
+                      <h4 className="font-bold text-foreground text-xs">{ck.coverages}</h4>
+                    </div>
+                    <div className="p-3 grid grid-cols-1 gap-1.5">
+                      {offer.features?.map((f: string, i: number) => (
+                        <div key={i} className="flex items-center gap-2 py-1">
+                          <Check className="w-3.5 h-3.5 text-cta shrink-0" />
+                          <span className="text-xs text-foreground">{f}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                )}
 
-                {/* Policy Details */}
-                <div className="space-y-1">
-                    <h4 className="font-bold text-foreground text-xs flex items-center gap-1.5">
-                      <FileText className="w-3.5 h-3.5 text-primary" />
-                      {ck.policyDetails}
-                    </h4>
-                    {[
-                      { label: ck.coverageType, value: offer.type },
-                      { label: ck.coverageDuration, value: ck.months12 },
-                      { label: ck.startDate, value: new Date().toLocaleDateString(lang === "ar" ? "ar-SA" : "en-US") },
-                      { label: ck.endDate, value: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toLocaleDateString(lang === "ar" ? "ar-SA" : "en-US") },
-                    ].map((item, i) => (
-                      <div key={i} className="flex items-center justify-between py-1 border-b border-border/30 last:border-0">
-                        <span className="text-xs font-medium text-foreground">{item.value}</span>
-                        <span className="text-xs text-muted-foreground">{item.label}</span>
+                  {/* Add-ons */}
+                  {offer.addOns?.length > 0 && (
+                    <div className="rounded-xl border border-border overflow-hidden">
+                      <div className="flex items-center gap-1.5 px-3 py-2 bg-secondary/40 border-b border-border">
+                        <Shield className="w-3.5 h-3.5 text-primary" />
+                        <h4 className="font-bold text-foreground text-xs">{ck.selectedAddOns}</h4>
+                        <span className="text-[10px] bg-primary/10 text-primary font-bold px-1.5 py-0.5 rounded-full mr-auto">{offer.addOns.length}</span>
                       </div>
-                    ))}
-                </div>
+                      <div className="divide-y divide-border/40">
+                        {offer.addOns.map((addon: { label: string; price: number }, i: number) => (
+                          <div key={i} className="flex items-center justify-between px-3 py-2">
+                            <span className="font-medium text-primary text-xs">{addon.price.toLocaleString()} {ck.sar}</span>
+                            <span className="text-xs text-muted-foreground">{addon.label}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
-                {/* Coverage */}
-                <div className="space-y-1">
-                  <h4 className="font-bold text-foreground text-xs flex items-center gap-1.5">
-                    <Shield className="w-3.5 h-3.5 text-primary" />
-                    {ck.coverages}
-                  </h4>
-                  <div className="space-y-0.5">
-                    {offer.features?.map((f: string, i: number) => (
-                      <div key={i} className="flex items-center gap-1.5 py-0.5">
-                        <Check className="w-3.5 h-3.5 text-cta shrink-0" />
-                        <span className="text-xs text-muted-foreground">{f}</span>
-                      </div>
-                    ))}
+                  {/* Total */}
+                  <div className="p-4 rounded-xl bg-gradient-to-l from-primary/10 to-primary/5 border border-primary/20 text-center">
+                    <p className="text-xs text-muted-foreground mb-1">{ck.totalPremium}</p>
+                    <p className="text-2xl font-extrabold text-primary">{(offer.totalPrice || offer.price).toLocaleString()} {ck.sar}</p>
+                    <p className="text-[10px] text-muted-foreground mt-1">{ck.vatIncluded}</p>
                   </div>
-                </div>
 
-                {/* Add-ons */}
-                {offer.addOns?.length > 0 && (
-                  <div className="space-y-1">
-                    <h4 className="font-bold text-foreground text-xs">{ck.selectedAddOns}</h4>
-                    {offer.addOns.map((addon: { label: string; price: number }, i: number) => (
-                      <div key={i} className="flex items-center justify-between text-xs py-0.5">
-                        <span className="font-medium text-primary">{addon.price.toLocaleString()} {ck.sar}</span>
-                        <span className="text-muted-foreground">{addon.label}</span>
-                      </div>
-                    ))}
+                  {/* QR Code */}
+                  <div className="flex flex-col items-center gap-2 p-4 rounded-xl bg-secondary/50 border border-border">
+                    <p className="text-xs font-bold text-foreground">{ck.verificationCode}</p>
+                    <QRCodeSVG
+                      value={verificationUrl}
+                      size={88}
+                      bgColor="transparent"
+                      fgColor="hsl(168, 75%, 20%)"
+                      level="M"
+                    />
+                    <p className="text-[10px] text-muted-foreground text-center">
+                      {ck.scanToVerify}
+                    </p>
                   </div>
-                )}
 
-                {/* Total */}
-                <div className="p-3 rounded-lg bg-primary/5 border border-primary/15 text-center">
-                  <p className="text-xs text-muted-foreground">{ck.totalPremium}</p>
-                  <p className="text-xl font-bold text-primary">{(offer.totalPrice || offer.price).toLocaleString()} {ck.sar}</p>
-                  <p className="text-[10px] text-muted-foreground">{ck.vatIncluded}</p>
-                </div>
-
-                {/* QR Code */}
-                <div className="flex flex-col items-center gap-2 p-3 rounded-lg bg-secondary/50 border border-border">
-                  <p className="text-xs font-bold text-foreground">{ck.verificationCode}</p>
-                  <QRCodeSVG
-                    value={verificationUrl}
-                    size={96}
-                    bgColor="transparent"
-                    fgColor="hsl(168, 75%, 20%)"
-                    level="M"
-                  />
-                  <p className="text-[10px] text-muted-foreground text-center">
-                    {ck.scanToVerify}
+                  {/* Disclaimer */}
+                  <p className="text-[10px] text-muted-foreground text-center leading-relaxed px-2">
+                    {ck.draftDisclaimer}
                   </p>
                 </div>
-
-                {/* Disclaimer */}
-                <p className="text-[10px] text-muted-foreground text-center leading-relaxed">
-                  {ck.draftDisclaimer}
-                </p>
               </div>
 
-              {/* Footer */}
-              <div className="sticky bottom-0 bg-card/95 backdrop-blur-sm border-t border-border p-4 rounded-b-2xl space-y-2">
+              {/* Sticky Footer */}
+              <div className="shrink-0 bg-card border-t border-border p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] space-y-2">
                 <Button
                   onClick={handleDownloadPDF}
                   className="w-full bg-cta text-cta-foreground hover:bg-cta-hover rounded-xl py-5 font-bold gap-2"
@@ -571,7 +572,7 @@ const InsuranceCheckout = () => {
                 <Button
                   variant="outline"
                   onClick={() => setShowPolicy(false)}
-                  className="w-full rounded-xl py-4"
+                  className="w-full rounded-xl py-3.5 text-sm"
                 >
                   {ck.closeDraft}
                 </Button>
