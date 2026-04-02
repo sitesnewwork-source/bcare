@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap');
+/* Font loaded async via index.html preload */
 
 @tailwind base;
 @tailwind components;
@@ -198,9 +198,21 @@ body {
 
   .animate-marquee {
     animation: marquee 40s linear infinite;
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
   }
 
   .animate-marquee:hover {
     animation-play-state: paused;
+  }
+}
+
+/* GPU acceleration for animations */
+@layer utilities {
+  .gpu-accelerated {
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
   }
 }
