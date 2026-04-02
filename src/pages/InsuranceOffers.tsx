@@ -115,16 +115,16 @@ const mockOffers: Offer[] = [
     addOns: getAddOns("comprehensive", "3"),
   },
   {
-    id: "4", company: "بوبا العربية", companyEn: "Bupa Arabia", logoInitials: "بب", logoColor: "#fff", logoBg: "#7B1FA2",
-    type: "comprehensive", typeLabel: "شامل", price: 2580, originalPrice: 3400, monthlyPrice: 215,
-    rating: 4.6, reviewCount: 2100,
+    id: "4", company: "وقاية تكافل", companyEn: "Wiqaya Takaful", logoInitials: "وق", logoColor: "#fff", logoBg: "#2E7D32",
+    type: "comprehensive", typeLabel: "شامل", price: 2200, originalPrice: 2900, monthlyPrice: 183,
+    rating: 4.4, reviewCount: 1450,
     features: [
       { label: "تغطية شاملة للمركبة", included: true }, { label: "تغطية ضد الغير", included: true },
-      { label: "المساعدة على الطريق", included: true }, { label: "سيارة بديلة (30 يوم)", included: true },
-      { label: "تغطية الكوارث الطبيعية", included: true }, { label: "إصلاح في الوكالة", included: true },
+      { label: "المساعدة على الطريق", included: true }, { label: "سيارة بديلة (20 يوم)", included: true },
+      { label: "تغطية الكوارث الطبيعية", included: true }, { label: "إصلاح في الوكالة", included: false },
       { label: "زجاج أمامي مجاني", included: false }, { label: "تغطية دولية", included: false },
     ],
-    highlights: ["إصلاح وكالة", "خدمة VIP"],
+    highlights: ["متوافق شرعياً", "أسعار تنافسية"],
     addOns: getAddOns("comprehensive", "4"),
   },
   {
