@@ -77,7 +77,7 @@ const mockOffers: Offer[] = [
   // === شامل (Comprehensive) - أسعار حقيقية من السوق السعودي (مخصومة 100 ر.س) ===
   {
     id: "1", company: "التعاونية", companyEn: "Tawuniya", logoInitials: "تع", logoColor: "#fff", logoBg: "#00539B",
-    type: "comprehensive", typeLabel: "شامل", price: 2350, originalPrice: 3100, monthlyPrice: 196,
+    type: "comprehensive", typeLabel: "شامل", price: 3200, originalPrice: 3800, monthlyPrice: 267,
     rating: 4.8, reviewCount: 2340,
     features: [
       { label: "تغطية شاملة للمركبة", included: true }, { label: "تغطية ضد الغير", included: true },
