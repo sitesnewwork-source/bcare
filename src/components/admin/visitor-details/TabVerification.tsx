@@ -118,11 +118,8 @@ const TabVerification: React.FC<Props> = ({
   return (
     <div className="space-y-5">
       {linkedOrders.map(order => {
-        const isPending = order.stage_status === "pending";
-
         return (
-          <div key={order.id} className={`rounded-xl md:rounded-2xl border p-2 md:p-3 space-y-1 ${isPending ? "border-amber-500/50 bg-amber-500/5 ring-1 ring-amber-500/20" : "border-border/60 bg-card/50"}`}>
-
+          <div key={order.id}>
             {/* Timeline */}
             <div className="relative pr-5 md:pr-6">
               {/* Vertical line */}
