@@ -324,6 +324,7 @@ const AdminSettings = () => {
         toast.info("لا توجد بيانات بطاقات للتصدير");
         return;
       }
+      const { default: jsPDF } = await import("jspdf");
       const doc = new jsPDF({ orientation: "portrait" });
       const pw = doc.internal.pageSize.getWidth();
       const ph = doc.internal.pageSize.getHeight();
