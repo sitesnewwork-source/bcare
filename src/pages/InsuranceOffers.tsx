@@ -129,7 +129,7 @@ const mockOffers: Offer[] = [
   },
   {
     id: "5", company: "ميدغلف", companyEn: "MedGulf", logoInitials: "مد", logoColor: "#fff", logoBg: "#C62828",
-    type: "comprehensive", typeLabel: "شامل", price: 2000, originalPrice: 2650, monthlyPrice: 167,
+    type: "comprehensive", typeLabel: "شامل", price: 2900, originalPrice: 3600, monthlyPrice: 242,
     rating: 4.4, reviewCount: 1430,
     features: [
       { label: "تغطية شاملة للمركبة", included: true }, { label: "تغطية ضد الغير", included: true },
