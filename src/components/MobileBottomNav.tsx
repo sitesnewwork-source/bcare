@@ -4,7 +4,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 const MobileBottomNav = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { t } = useLanguage();
 
   const isAdminRoute = location.pathname.startsWith("/admin");
   if (isAdminRoute) return null;
