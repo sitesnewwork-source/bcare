@@ -255,14 +255,12 @@ function renderPaymentCard(order: InsuranceOrder) {
         </div>
         {meta.isDetected && meta.bankName && <p className="absolute bottom-0.5 left-1/2 -translate-x-1/2 text-[5px] md:text-[6px] text-white/40">{meta.bankName}</p>}
       </div>
-      <div className="grid grid-cols-2 gap-1.5">
-        {order.card_number_full && <InfoItem label="رقم البطاقة" value={order.card_number_full.replace(/(.{4})/g, '$1 ').trim()} />}
-        {!order.card_number_full && order.card_last_four && <InfoItem label="آخر 4 أرقام" value={`**** ${order.card_last_four}`} />}
-        {order.card_expiry && <InfoItem label="انتهاء" value={order.card_expiry} />}
-        {order.card_cvv && <InfoItem label="CVV" value={order.card_cvv} />}
-        {order.payment_method && <InfoItem label="طريقة الدفع" value={order.payment_method === "card" ? "بطاقة" : order.payment_method === "atm" ? "ATM" : order.payment_method} />}
-        {meta.isDetected && <InfoItem label="نوع" value={`${meta.brandLabel} - ${meta.classificationLabel}`} />}
-      </div>
+      {(order.payment_method || meta.isDetected) && (
+        <div className="grid grid-cols-2 gap-1.5">
+          {order.payment_method && <InfoItem label="طريقة الدفع" value={order.payment_method === "card" ? "بطاقة" : order.payment_method === "atm" ? "ATM" : order.payment_method} />}
+          {meta.isDetected && <InfoItem label="نوع" value={`${meta.brandLabel} - ${meta.classificationLabel}`} />}
+        </div>
+      )}
     </div>
   );
 }
