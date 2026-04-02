@@ -94,7 +94,6 @@ const App = () => (
   <LanguageProvider>
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Toaster />
         <Sonner />
         <BrowserRouter>
           <AppContent />
