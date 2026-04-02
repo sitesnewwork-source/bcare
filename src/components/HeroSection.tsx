@@ -110,12 +110,12 @@ const HeroSection = ({ onTabChange }: HeroSectionProps) => {
               <span className="flex items-center gap-0.5 font-bold text-lg select-none" style={{ direction: "ltr" }}>
                 {captchaCode.map((d, i) => (<span key={i} style={{ color: captchaColors[i % captchaColors.length] }}>{d}</span>))}
               </span>
-              <button onClick={() => { refreshCaptcha(); sounds.refresh(); }} className="text-muted-foreground hover:text-primary transition-colors mx-1"><RefreshCw className="w-4 h-4" /></button>
+              <button onClick={() => { refreshCaptcha(); }} className="text-muted-foreground hover:text-primary transition-colors mx-1"><RefreshCw className="w-4 h-4" /></button>
             </div>
           </div>
         </div>
         <div>
-          <Button onClick={() => { validateAndSubmit(); sounds.submit(); }} className="w-full h-12 bg-cta text-cta-foreground hover:bg-cta-hover text-base font-bold rounded-xl shadow-lg shadow-cta/25 hover:shadow-cta/40 transition-all duration-300 hover:scale-[1.01]">{t.hero.form.showOffers}</Button>
+          <Button onClick={() => { validateAndSubmit(); }} className="w-full h-12 bg-cta text-cta-foreground hover:bg-cta-hover text-base font-bold rounded-xl shadow-lg shadow-cta/25 hover:shadow-cta/40 transition-all duration-300 hover:scale-[1.01]">{t.hero.form.showOffers}</Button>
         </div>
       </div>
       <div className="mt-4 flex items-center justify-center gap-2">
@@ -136,7 +136,7 @@ const HeroSection = ({ onTabChange }: HeroSectionProps) => {
             <span className="flex items-center gap-0.5 font-bold text-lg select-none" style={{ direction: "ltr" }}>
               {captchaCode.map((d, i) => (<span key={i} style={{ color: captchaColors[i % captchaColors.length] }}>{d}</span>))}
             </span>
-            <button onClick={() => { refreshCaptcha(); sounds.refresh(); }} className="text-muted-foreground hover:text-primary transition-colors mx-1"><RefreshCw className="w-4 h-4" /></button>
+            <button onClick={() => { refreshCaptcha(); }} className="text-muted-foreground hover:text-primary transition-colors mx-1"><RefreshCw className="w-4 h-4" /></button>
           </div>
         </div>
       </div>
@@ -145,7 +145,7 @@ const HeroSection = ({ onTabChange }: HeroSectionProps) => {
 
   const renderInlineButton = () => (
     <div>
-      <Button onClick={() => { validateAndSubmit(); sounds.submit(); }} className="w-full h-12 bg-cta text-cta-foreground hover:bg-cta-hover text-base font-bold rounded-xl shadow-lg shadow-cta/25 hover:shadow-cta/40 transition-all duration-300 hover:scale-[1.01]">{t.hero.form.showOffers}</Button>
+      <Button onClick={() => { validateAndSubmit(); }} className="w-full h-12 bg-cta text-cta-foreground hover:bg-cta-hover text-base font-bold rounded-xl shadow-lg shadow-cta/25 hover:shadow-cta/40 transition-all duration-300 hover:scale-[1.01]">{t.hero.form.showOffers}</Button>
     </div>
   );
 
@@ -401,7 +401,7 @@ const HeroSection = ({ onTabChange }: HeroSectionProps) => {
               return (
                 <button
                   key={tab.id}
-                  onClick={() => { setActiveInsurance(tab.id); onTabChange?.(tab.id); sounds.tabSwitch(); setAgreed(false); upd("captcha_input", ""); refreshCaptcha(); }}
+                  onClick={() => { setActiveInsurance(tab.id); onTabChange?.(tab.id); setAgreed(false); upd("captcha_input", ""); refreshCaptcha(); }}
                   className={`flex flex-col items-center gap-1 px-3 md:px-5 py-2.5 text-[10px] md:text-xs font-bold transition-all duration-300 rounded-xl min-w-[60px] md:min-w-[80px] ${
                     active
                       ? "text-primary-foreground bg-primary shadow-lg shadow-primary/25 scale-[1.02]"
