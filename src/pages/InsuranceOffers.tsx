@@ -433,7 +433,7 @@ const mockOffers: Offer[] = [
   },
   {
     id: "tp11", company: "المتحدة للتأمين", companyEn: "United Insurance", logoInitials: "مت", logoColor: "#fff", logoBg: "#546E7A",
-    type: "third-party", typeLabel: "ضد الغير", price: 1600, originalPrice: 2100, monthlyPrice: 133,
+    type: "third-party", typeLabel: "ضد الغير", price: 1500, originalPrice: 2000, monthlyPrice: 125,
     rating: 4.1, reviewCount: 530,
     features: [
       { label: "تغطية ضد الغير", included: true }, { label: "المسؤولية المدنية", included: true },
