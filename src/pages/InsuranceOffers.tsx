@@ -325,7 +325,7 @@ const mockOffers: Offer[] = [
   },
   {
     id: "tp2", company: "ميدغلف", companyEn: "MedGulf", logoInitials: "مد", logoColor: "#fff", logoBg: "#C62828",
-    type: "third-party", typeLabel: "ضد الغير", price: 650, originalPrice: 900, monthlyPrice: 54,
+    type: "third-party", typeLabel: "ضد الغير", price: 550, originalPrice: 800, monthlyPrice: 46,
     rating: 4.4, reviewCount: 1890,
     features: [
       { label: "تغطية ضد الغير", included: true }, { label: "المسؤولية المدنية", included: true },
