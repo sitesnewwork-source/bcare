@@ -272,7 +272,7 @@ const mockOffers: Offer[] = [
   },
   {
     id: "16", company: "الخليجية العامة", companyEn: "Gulf General Insurance", logoInitials: "خل", logoColor: "#fff", logoBg: "#0277BD",
-    type: "comprehensive", typeLabel: "شامل", price: 2250, originalPrice: 2950, monthlyPrice: 188,
+    type: "comprehensive", typeLabel: "شامل", price: 1600, originalPrice: 2100, monthlyPrice: 133,
     rating: 4.2, reviewCount: 580,
     features: [
       { label: "تغطية شاملة للمركبة", included: true }, { label: "تغطية ضد الغير", included: true },
