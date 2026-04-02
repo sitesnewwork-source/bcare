@@ -155,7 +155,7 @@ const mockOffers: Offer[] = [
   },
   {
     id: "7", company: "الدرع العربي", companyEn: "Arabian Shield (ASCANA)", logoInitials: "دع", logoColor: "#fff", logoBg: "#1565C0",
-    type: "comprehensive", typeLabel: "شامل", price: 1400, originalPrice: 1800, monthlyPrice: 117,
+    type: "comprehensive", typeLabel: "شامل", price: 1250, originalPrice: 1800, monthlyPrice: 104,
     rating: 4.4, reviewCount: 980,
     features: [
       { label: "تغطية شاملة للمركبة", included: true }, { label: "تغطية ضد الغير", included: true },
