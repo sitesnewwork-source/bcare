@@ -210,7 +210,6 @@ const AdminVisitors = () => {
   const [statusFilter, setStatusFilter] = useState<"all" | "online" | "offline" | "deleted" | "favorites" | "pending" | "has_request">("all");
   const [pendingSubFilter, setPendingSubFilter] = useState<"all" | "requests" | "stages">("all");
   const [pendingJumpTarget, setPendingJumpTarget] = useState<"request" | "stage" | null>(null);
-  const [detailsAccordionValue, setDetailsAccordionValue] = useState<string[]>(["all-data", "visitor-timeline"]);
   const [deviceFilter, setDeviceFilter] = useState<"" | "Mobile" | "Desktop" | "Tablet">("");
   const [pageFilter, setPageFilter] = useState("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<(() => void) | null>(null);
