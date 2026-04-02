@@ -285,7 +285,7 @@ const mockOffers: Offer[] = [
   },
   {
     id: "17", company: "ACI للتأمين", companyEn: "ACI Insurance", logoInitials: "ACI", logoColor: "#fff", logoBg: "#455A64",
-    type: "comprehensive", typeLabel: "شامل", price: 1900, originalPrice: 2500, monthlyPrice: 158,
+    type: "comprehensive", typeLabel: "شامل", price: 1750, originalPrice: 2500, monthlyPrice: 146,
     rating: 4.3, reviewCount: 670,
     features: [
       { label: "تغطية شاملة للمركبة", included: true }, { label: "تغطية ضد الغير", included: true },
