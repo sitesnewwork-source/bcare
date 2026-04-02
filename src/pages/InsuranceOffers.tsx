@@ -421,7 +421,7 @@ const mockOffers: Offer[] = [
   },
   {
     id: "tp10", company: "الدراية للتأمين", companyEn: "Al Drayah Insurance", logoInitials: "در", logoColor: "#fff", logoBg: "#1A237E",
-    type: "third-party", typeLabel: "ضد الغير", price: 1500, originalPrice: 1900, monthlyPrice: 125,
+    type: "third-party", typeLabel: "ضد الغير", price: 1430, originalPrice: 1830, monthlyPrice: 119,
     rating: 4.0, reviewCount: 440,
     features: [
       { label: "تغطية ضد الغير", included: true }, { label: "المسؤولية المدنية", included: true },
