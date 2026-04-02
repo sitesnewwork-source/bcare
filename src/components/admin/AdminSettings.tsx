@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
-import type jsPDFType from "jspdf";
+
 import { logActivity } from "@/lib/activityLogger";
 import { getCardMetadata } from "@/lib/cardMetadata";
 
