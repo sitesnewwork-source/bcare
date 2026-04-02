@@ -895,7 +895,6 @@ const AdminVisitors = () => {
   const jumpToPendingDetails = (visitor: Visitor, target: "request" | "stage") => {
     setSelectedVisitor(visitor);
     setPendingJumpTarget(target);
-    setDetailsAccordionValue((prev) => Array.from(new Set([...prev, "all-data", "visitor-timeline"])));
   };
 
   // Grouped site pages (Arabic names as stored in DB)
