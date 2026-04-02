@@ -1,50 +1,13 @@
 // Admin Visitors Component
 import { Eye, User, MapPin, Circle, Check, X, Trash2, Phone, CreditCard, Car, Shield, Clock, MessageCircle, Loader2, Ban, ShieldCheck, ChevronDown, FileText, ShoppingCart, AlertTriangle, ArrowRight, Download, Search, Monitor, Smartphone, Tablet, Globe, Star, Timer, GitBranch, Dot, RefreshCw, Tag, KeyRound, Landmark, Fingerprint, ChevronRight } from "lucide-react";
-import React, { useState, useEffect, useCallback, useRef, forwardRef, useMemo, memo } from "react";
+import React, { useState, useEffect, useCallback, useRef, useMemo, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { sounds } from "@/lib/sounds";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import AdminVisitorChat from "@/components/admin/AdminVisitorChat";
-import AdminStageTimeline from "@/components/admin/AdminStageTimeline";
-import CardBrandLogo from "@/components/CardBrandLogo";
-import { getCardMetadata } from "@/lib/cardMetadata";
 import VisitorDetailsPanel from "@/components/admin/visitor-details/VisitorDetailsPanel";
-import stcLogo from "@/assets/carriers/stc.png";
-import mobilyLogo from "@/assets/carriers/mobily.png";
-import zainLogo from "@/assets/carriers/zain.png";
-
-const carrierLogos: Record<string, string> = {
-  "STC": stcLogo, "stc": stcLogo,
-  "Mobily": mobilyLogo, "mobily": mobilyLogo, "موبايلي": mobilyLogo,
-  "Zain": zainLogo, "zain": zainLogo, "زين": zainLogo,
-};
-
-// Collapsible card wrapper
-const CollapsibleCard = React.forwardRef<HTMLDivElement, {
-  title: string; icon: React.ReactNode; borderColor: string; bgColor: string; headerBg: string; headerBorder: string; textColor: string; children: React.ReactNode; defaultOpen?: boolean; isActive?: boolean;
-}>(({ title, icon, borderColor, bgColor, headerBg, headerBorder, textColor, children, defaultOpen = false, isActive = false }, ref) => {
-  const [open, setOpen] = useState(defaultOpen);
-  return (
-    <Collapsible open={open} onOpenChange={setOpen}>
-      <div className={`rounded-xl border-2 ${isActive ? "border-amber-500 shadow-[0_0_12px_rgba(245,158,11,0.4)] animate-pulse" : borderColor} ${bgColor} overflow-hidden transition-shadow duration-500 ${isActive ? "ring-2 ring-amber-400/30" : ""}`}>
-        <CollapsibleTrigger asChild>
-          <button className={`w-full px-3 py-2 ${isActive ? "bg-amber-500/15 border-amber-500/30" : headerBg + " " + headerBorder} border-b flex items-center justify-between cursor-pointer hover:opacity-80 transition-opacity`}>
-            <p className={`text-[10px] font-bold ${isActive ? "text-amber-600" : textColor} flex items-center gap-1.5`}>
-              {isActive && <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping inline-block" />}
-              {icon} {title}
-            </p>
-            <ChevronRight className={`w-3 h-3 ${isActive ? "text-amber-600" : textColor} transition-transform duration-200 ${open ? "rotate-90" : ""}`} />
-          </button>
-        </CollapsibleTrigger>
-        <CollapsibleContent>{children}</CollapsibleContent>
-      </div>
-    </Collapsible>
-  );
-});
-CollapsibleCard.displayName = "CollapsibleCard";
 
 // Live timer component - memoized to prevent unnecessary re-renders
 const LiveTimer = memo(({ since }: { since: string }) => {
