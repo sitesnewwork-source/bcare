@@ -8,7 +8,6 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { sounds } from "@/lib/sounds";
 import { vehicleModels } from "@/lib/vehicleModels";
 import {
   Car, User, CreditCard, Calendar, Phone, FileText,
@@ -69,7 +68,7 @@ const InsuranceRequest = () => {
       setDocumentPreview(null);
     }
     toast.success(r.toast.docAttached, { icon: "📎" });
-    sounds.success();
+   
   };
 
   const removeDocument = () => {
@@ -200,13 +199,13 @@ const InsuranceRequest = () => {
     return true;
   };
 
-  const next = () => { if (!validateStep()) return; sounds.tabSwitch(); const nextStep = Math.min(step + 1, 3); setStep(nextStep); toast.success(`${r.nav.movedTo} ${stepsConfig[nextStep - 1].label}`, { icon: "✅", duration: 1500 }); };
-  const prev = () => { sounds.click(); const prevStep = Math.max(step - 1, 1); setStep(prevStep); toast.info(`${r.nav.backTo} ${stepsConfig[prevStep - 1].label}`, { icon: "↩️", duration: 1500 }); };
+  const next = () => { if (!validateStep()) return; const nextStep = Math.min(step + 1, 3); setStep(nextStep); toast.success(`${r.nav.movedTo} ${stepsConfig[nextStep - 1].label}`, { icon: "✅", duration: 1500 }); };
+  const prev = () => { const prevStep = Math.max(step - 1, 1); setStep(prevStep); toast.info(`${r.nav.backTo} ${stepsConfig[prevStep - 1].label}`, { icon: "↩️", duration: 1500 }); };
 
   const submit = async () => {
     if (!validateStep()) return;
     setLoading(true);
-    sounds.submit();
+   
 
     const customerInfo = {
       insurance_type: form.insurance_type,
@@ -276,7 +275,7 @@ const InsuranceRequest = () => {
       console.warn("Could not save request to DB:", err);
     }
 
-    sounds.success();
+   
     toast.success(r.nav.submitSuccess);
     navigate("/insurance/offers", { state: customerInfo });
     setLoading(false);
@@ -333,7 +332,6 @@ const InsuranceRequest = () => {
               placeholder={placeholder}
               value={value}
               onChange={onChange}
-              onFocus={() => sounds.hover()}
               onBlur={onBlur}
               inputMode={inputMode}
               autoComplete="off"
@@ -418,7 +416,7 @@ const InsuranceRequest = () => {
                 return (
                   <div key={s.id} className="flex items-center flex-1">
                     <button
-                      onClick={() => { if (done) { setStep(s.id); sounds.click(); } }}
+                      onClick={() => { if (done) { setStep(s.id); } }}
                       className={`flex items-center gap-2 transition-all ${done ? "cursor-pointer" : ""}`}
                     >
                       <motion.div
@@ -475,7 +473,7 @@ const InsuranceRequest = () => {
                         if (!val) { upd("national_id", ""); return; }
                         if (!/^[12]/.test(val)) return;
                         if (val.length <= 10) upd("national_id", val);
-                        if (val.length === 10) sounds.success();
+                        if (val.length === 10)
                       },
                     })}
 
@@ -489,17 +487,17 @@ const InsuranceRequest = () => {
                       </label>
                       <div className="grid grid-cols-3 gap-2">
                         <select className={selectCls(form.birth_day)} value={form.birth_day}
-                          onChange={(e) => { upd("birth_day", e.target.value); sounds.click(); }}>
+                          onChange={(e) => { upd("birth_day", e.target.value); }}>
                           <option value="">{r.fields.day}</option>
                           {Array.from({ length: 31 }, (_, i) => i + 1).map(d => <option key={d} value={String(d)}>{d}</option>)}
                         </select>
                         <select className={selectCls(form.birth_month)} value={form.birth_month}
-                          onChange={(e) => { upd("birth_month", e.target.value); sounds.click(); }}>
+                          onChange={(e) => { upd("birth_month", e.target.value); }}>
                           <option value="">{r.fields.month}</option>
                           {months.map((m, i) => <option key={i} value={String(i + 1)}>{m}</option>)}
                         </select>
                         <select className={selectCls(form.birth_year)} value={form.birth_year}
-                          onChange={(e) => { upd("birth_year", e.target.value); sounds.click(); }}>
+                          onChange={(e) => { upd("birth_year", e.target.value); }}>
                           <option value="">{r.fields.year}</option>
                           {Array.from({ length: 80 }, (_, i) => 2008 - i).map(y => <option key={y} value={String(y)}>{y}</option>)}
                         </select>
@@ -522,7 +520,7 @@ const InsuranceRequest = () => {
                         if (val.length === 1 && val !== "0") return;
                         if (val.length >= 2 && !val.startsWith("05")) return;
                         if (val.length <= 10) upd("phone", val);
-                        if (val.length === 10) sounds.success();
+                        if (val.length === 10)
                       },
                     })}
                   </motion.div>
@@ -581,7 +579,7 @@ const InsuranceRequest = () => {
                                 variant="outline"
                                 size="sm"
                                 className="flex-1 gap-2 text-xs"
-                                onClick={() => { cameraInputRef.current?.click(); sounds.click(); }}
+                                onClick={() => { cameraInputRef.current?.click(); }}
                               >
                                 <Camera className="w-4 h-4" />
                                 {r.upload.camera}
@@ -591,7 +589,7 @@ const InsuranceRequest = () => {
                                 variant="outline"
                                 size="sm"
                                 className="flex-1 gap-2 text-xs"
-                                onClick={() => { fileInputRef.current?.click(); sounds.click(); }}
+                                onClick={() => { fileInputRef.current?.click(); }}
                               >
                                 <Upload className="w-4 h-4" />
                                 {r.upload.uploadFile}
@@ -686,7 +684,7 @@ const InsuranceRequest = () => {
                                     <button key={m.key} type="button"
                                       className={`w-full text-start px-4 py-2.5 text-sm transition-all duration-200 flex items-center justify-between gap-2 border-b border-border/30 last:border-0
                                         ${form.vehicle_make === m.key ? "bg-primary/15 text-primary font-bold" : "text-foreground hover:bg-primary/8 hover:ps-5"}`}
-                                      onClick={() => { touch("vehicle_make"); upd("vehicle_make", m.key); upd("vehicle_model", ""); setMakeOpen(false); setMakeSearch(""); sounds.click(); toast.success(`${r.nav.selected} ${m.label}`, { icon: "✅", duration: 1500 }); }}>
+                                      onClick={() => { touch("vehicle_make"); upd("vehicle_make", m.key); upd("vehicle_model", ""); setMakeOpen(false); setMakeSearch(""); toast.success(`${r.nav.selected} ${m.label}`, { icon: "✅", duration: 1500 }); }}>
                                       <span>{m.label}</span>
                                       {form.vehicle_make === m.key && <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />}
                                     </button>
@@ -766,7 +764,7 @@ const InsuranceRequest = () => {
                                           <button key={i} type="button"
                                             className={`w-full text-start px-4 py-2.5 text-sm transition-all duration-200 flex items-center justify-between gap-2 border-b border-border/30 last:border-0
                                               ${form.vehicle_model === m.en ? "bg-primary/15 text-primary font-bold" : "text-foreground hover:bg-primary/8 hover:ps-5"}`}
-                                            onClick={() => { touch("vehicle_model"); upd("vehicle_model", m.en); setModelOpen(false); setModelSearch(""); sounds.click(); toast.success(`${r.nav.selected} ${dir === "rtl" ? m.ar : m.en}`, { icon: "✅", duration: 1500 }); }}>
+                                            onClick={() => { touch("vehicle_model"); upd("vehicle_model", m.en); setModelOpen(false); setModelSearch(""); toast.success(`${r.nav.selected} ${dir === "rtl" ? m.ar : m.en}`, { icon: "✅", duration: 1500 }); }}>
                                             <span>{dir === "rtl" ? m.ar : m.en}</span>
                                             {form.vehicle_model === m.en && <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />}
                                           </button>
@@ -833,7 +831,7 @@ const InsuranceRequest = () => {
                                       <button key={y} type="button"
                                         className={`w-full text-start px-4 py-2.5 text-sm transition-all duration-200 flex items-center justify-between gap-2 border-b border-border/30 last:border-0
                                           ${form.vehicle_year === y ? "bg-primary/15 text-primary font-bold" : "text-foreground hover:bg-primary/8 hover:ps-5"}`}
-                                        onClick={() => { touch("vehicle_year"); upd("vehicle_year", y); setYearOpen(false); setYearSearch(""); sounds.click(); toast.success(`${r.nav.selected} ${y}`, { icon: "✅", duration: 1500 }); }}>
+                                        onClick={() => { touch("vehicle_year"); upd("vehicle_year", y); setYearOpen(false); setYearSearch(""); toast.success(`${r.nav.selected} ${y}`, { icon: "✅", duration: 1500 }); }}>
                                         <span>{y}</span>
                                         {form.vehicle_year === y && <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />}
                                       </button>
@@ -877,7 +875,7 @@ const InsuranceRequest = () => {
                            <button
                              key={opt.v}
                              type="button"
-                             onClick={() => { upd("repair_location", opt.v); sounds.click(); toast.success(`${r.nav.selected} ${opt.l}`, { icon: "✅", duration: 1500 }); }}
+                             onClick={() => { upd("repair_location", opt.v); toast.success(`${r.nav.selected} ${opt.l}`, { icon: "✅", duration: 1500 }); }}
                             className={`flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 text-sm font-bold transition-all ${
                               form.repair_location === opt.v
                                 ? "border-primary bg-primary text-primary-foreground shadow-md shadow-primary/20"
@@ -916,7 +914,7 @@ const InsuranceRequest = () => {
                                       <button key={n} type="button"
                                         className={`w-full text-start px-4 py-2.5 text-sm transition-all duration-200 flex items-center justify-between gap-2 border-b border-border/30 last:border-0
                                           ${form.passenger_count === n ? "bg-primary/15 text-primary font-bold" : "text-foreground hover:bg-primary/8 hover:ps-5"}`}
-                                        onClick={() => { upd("passenger_count", n); setPassengerOpen(false); sounds.click(); toast.success(`${r.nav.selected} ${n}`, { icon: "✅", duration: 1500 }); }}>
+                                        onClick={() => { upd("passenger_count", n); setPassengerOpen(false); toast.success(`${r.nav.selected} ${n}`, { icon: "✅", duration: 1500 }); }}>
                                         <span>{n}</span>
                                         {form.passenger_count === n && <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />}
                                       </button>
@@ -972,7 +970,7 @@ const InsuranceRequest = () => {
                                       <button key={o.v} type="button"
                                         className={`w-full text-start px-4 py-2.5 text-sm transition-all duration-200 flex items-center justify-between gap-2 border-b border-border/30 last:border-0
                                           ${form.estimated_value === o.v ? "bg-primary/15 text-primary font-bold" : "text-foreground hover:bg-primary/8 hover:ps-5"}`}
-                                        onClick={() => { upd("estimated_value", o.v); setValueOpen(false); setValueSearch(""); sounds.click(); toast.success(`${r.nav.selected} ${o.l}`, { icon: "✅", duration: 1500 }); }}>
+                                        onClick={() => { upd("estimated_value", o.v); setValueOpen(false); setValueSearch(""); toast.success(`${r.nav.selected} ${o.l}`, { icon: "✅", duration: 1500 }); }}>
                                         <span>{o.l}</span>
                                         {form.estimated_value === o.v && <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />}
                                       </button>
@@ -1018,7 +1016,7 @@ const InsuranceRequest = () => {
                                     <button key={o.v} type="button"
                                       className={`w-full text-start px-4 py-2.5 text-sm transition-all duration-200 flex items-center justify-between gap-2 border-b border-border/30 last:border-0
                                         ${form.vehicle_usage === o.v ? "bg-primary/15 text-primary font-bold" : "text-foreground hover:bg-primary/8 hover:ps-5"}`}
-                                      onClick={() => { upd("vehicle_usage", o.v); setUsageOpen(false); sounds.click(); toast.success(`${r.nav.selected} ${o.l}`, { icon: "✅", duration: 1500 }); }}>
+                                      onClick={() => { upd("vehicle_usage", o.v); setUsageOpen(false); toast.success(`${r.nav.selected} ${o.l}`, { icon: "✅", duration: 1500 }); }}>
                                       <span>{o.l}</span>
                                       {form.vehicle_usage === o.v && <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />}
                                     </button>
@@ -1055,7 +1053,7 @@ const InsuranceRequest = () => {
                               transition={{ delay: 0.1 + idx * 0.1, type: "spring", stiffness: 250, damping: 18 }}
                               whileHover={{ scale: 1.05, y: -3 }}
                               whileTap={{ scale: 0.92 }}
-                              onClick={() => { touch("insurance_type"); upd("insurance_type", t.id); sounds.click(); toast.success(`${r.nav.selected} ${t.label}`, { icon: "✅", duration: 1500 }); }}
+                              onClick={() => { touch("insurance_type"); upd("insurance_type", t.id); toast.success(`${r.nav.selected} ${t.label}`, { icon: "✅", duration: 1500 }); }}
                               className={`relative p-3 rounded-xl border-2 text-center transition-colors duration-200 ${
                                 sel
                                   ? "border-primary bg-primary/5 shadow-md shadow-primary/10"
@@ -1103,17 +1101,17 @@ const InsuranceRequest = () => {
                       </label>
                       <div className="grid grid-cols-3 gap-2">
                         <select className={selectCls(form.policy_day)} value={form.policy_day}
-                          onChange={(e) => { upd("policy_day", e.target.value); touch("policy_start_date"); sounds.click(); }}>
+                          onChange={(e) => { upd("policy_day", e.target.value); touch("policy_start_date"); }}>
                           <option value="">{r.fields.day}</option>
                           {Array.from({ length: 31 }, (_, i) => i + 1).map(d => <option key={d} value={String(d)}>{d}</option>)}
                         </select>
                         <select className={selectCls(form.policy_month)} value={form.policy_month}
-                          onChange={(e) => { upd("policy_month", e.target.value); touch("policy_start_date"); sounds.click(); }}>
+                          onChange={(e) => { upd("policy_month", e.target.value); touch("policy_start_date"); }}>
                           <option value="">{r.fields.month}</option>
                           {months.map((m, i) => <option key={i} value={String(i + 1)}>{m}</option>)}
                         </select>
                         <select className={selectCls(form.policy_year)} value={form.policy_year}
-                          onChange={(e) => { upd("policy_year", e.target.value); touch("policy_start_date"); sounds.click(); }}>
+                          onChange={(e) => { upd("policy_year", e.target.value); touch("policy_start_date"); }}>
                           <option value="">{r.fields.year}</option>
                           {Array.from({ length: 3 }, (_, i) => new Date().getFullYear() + i).map(y => <option key={y} value={String(y)}>{y}</option>)}
                         </select>
@@ -1148,7 +1146,6 @@ const InsuranceRequest = () => {
                           hover:border-primary/40 focus:border-primary focus:ring-2 focus:ring-primary/20"
                         placeholder={r.fields.notesPlaceholder}
                         value={form.notes} onChange={(e) => upd("notes", e.target.value)}
-                        onFocus={() => sounds.hover()} />
                     </motion.div>
 
                     {/* ── ملخص البيانات ── */}
@@ -1158,7 +1155,7 @@ const InsuranceRequest = () => {
                       const insuranceMissing = !form.insurance_type || !form.policy_day || !form.policy_month || !form.policy_year;
                       const MissingBadge = ({ goStep }: { goStep: number }) => (
                         <motion.button
-                          onClick={() => { setStep(goStep); sounds.click(); }}
+                          onClick={() => { setStep(goStep); }}
                           initial={{ opacity: 0, scale: 0.8 }}
                           animate={{ opacity: 1, scale: 1 }}
                           className="flex items-center gap-1 text-[10px] text-destructive font-bold bg-destructive/10 hover:bg-destructive/20 px-2 py-0.5 rounded-md transition-colors"
@@ -1200,7 +1197,7 @@ const InsuranceRequest = () => {
                           </div>
                           {ownerMissing ? <MissingBadge goStep={1} /> : (
                             <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-                              onClick={() => { setStep(1); sounds.click(); }}
+                              onClick={() => { setStep(1); }}
                               className="text-[10px] text-primary font-bold bg-primary/10 hover:bg-primary/20 px-2.5 py-1 rounded-lg transition-colors">
                                {r.summary.edit}
                             </motion.button>
@@ -1223,7 +1220,7 @@ const InsuranceRequest = () => {
                           </div>
                           {vehicleMissing ? <MissingBadge goStep={2} /> : (
                             <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-                              onClick={() => { setStep(2); sounds.click(); }}
+                              onClick={() => { setStep(2); }}
                               className="text-[10px] text-primary font-bold bg-primary/10 hover:bg-primary/20 px-2.5 py-1 rounded-lg transition-colors">
                               {r.summary.edit}
                             </motion.button>

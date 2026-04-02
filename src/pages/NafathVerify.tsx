@@ -8,7 +8,6 @@ import { createOrUpdateStage } from "@/hooks/useAdminApproval";
 import { toast } from "sonner";
 import { linkVisitorToSession } from "@/lib/visitorLink";
 import { useLanguage } from "@/i18n/LanguageContext";
-import { sounds } from "@/lib/sounds";
 
 const NafathVerify = () => {
   const navigate = useNavigate();
@@ -69,7 +68,7 @@ const NafathVerify = () => {
   useEffect(() => {
     if (verifyNumber && prevNumberRef.current !== null && prevNumberRef.current !== verifyNumber) {
       setNumberJustUpdated(true);
-      sounds.reassurance();
+      
       toast.success("تم تحديث رمز التحقق", { description: `الرمز الجديد: ${verifyNumber}` });
       if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
       setTimeout(() => setNumberJustUpdated(false), 2000);
