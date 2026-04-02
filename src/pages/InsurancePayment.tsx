@@ -74,7 +74,7 @@ const InsurancePayment = () => {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      const diff = Math.max(0, countdownRef.current - Date.now());
+      const diff = Math.max(0, countdownEnd - Date.now());
       setCountdown({
         h: Math.floor(diff / 3600000),
         m: Math.floor((diff % 3600000) / 60000),
@@ -82,7 +82,7 @@ const InsurancePayment = () => {
       });
     }, 1000);
     return () => clearInterval(timer);
-  }, []);
+  }, [countdownEnd]);
 
   // Show promo popup after 3 seconds
   useEffect(() => {
