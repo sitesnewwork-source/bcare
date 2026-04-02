@@ -397,31 +397,66 @@ const AdminVisitors = () => {
     }
 
     // Fetch insurance orders - match by session_id, phone, or national_id
+    // Also check pending orders that were heuristically assigned to this visitor
     {
       const filters: string[] = [];
       if (visitor.session_id) filters.push(`visitor_session_id.eq.${visitor.session_id}`);
       if (visitor.phone) filters.push(`phone.eq.${visitor.phone}`);
       if (visitor.national_id) filters.push(`national_id.eq.${visitor.national_id}`);
+      
+      let orders: InsuranceOrder[] = [];
+      
       if (filters.length > 0) {
         const { data } = await supabase.from("insurance_orders").select("*").or(filters.join(",")).order("created_at", { ascending: false });
-        if (data) {
-          const orders = data as InsuranceOrder[];
-          setLinkedOrders(orders);
-
-          const orderIds = orders.map(order => order.id);
-          const stageFilters: string[] = [];
-          if (orderIds.length > 0) stageFilters.push(`order_id.in.(${orderIds.join(",")})`);
-          if (visitor.session_id) stageFilters.push(`visitor_session_id.eq.${visitor.session_id}`);
-
-          if (stageFilters.length > 0) {
-            const { data: events } = await (supabase as any)
-              .from("insurance_order_stage_events")
-              .select("*")
-              .or(stageFilters.join(","))
-              .order("stage_entered_at", { ascending: false });
-
-            if (events) setStageEvents(events as StageEvent[]);
+        if (data) orders = data as InsuranceOrder[];
+      }
+      
+      // If no orders found by direct match, check if there are pending orders assigned to this visitor via pendingStageMap
+      if (orders.length === 0 && pendingStageMap[visitor.id]) {
+        const { data: allPending } = await supabase.from("insurance_orders").select("*").eq("stage_status", "pending").order("created_at", { ascending: false });
+        if (allPending && allPending.length > 0) {
+          // Find orders that aren't matched to any other visitor
+          const otherVisitorSessions = visitors.filter(v => v.id !== visitor.id).map(v => v.session_id);
+          const orphaned = (allPending as InsuranceOrder[]).filter(o => 
+            !o.visitor_session_id || !otherVisitorSessions.includes(o.visitor_session_id)
+          );
+          if (orphaned.length > 0) {
+            orders = orphaned;
+            // Auto-link the orphaned order to this visitor's session for future matching
+            orphaned.forEach(o => {
+              if (o.visitor_session_id !== visitor.session_id) {
+                supabase.from("insurance_orders").update({ visitor_session_id: visitor.session_id }).eq("id", o.id);
+              }
+            });
+            // Also update visitor phone/national_id from the order data
+            const firstOrder = orphaned[0];
+            if (firstOrder.phone || firstOrder.national_id) {
+              supabase.from("site_visitors").update({
+                phone: firstOrder.phone || visitor.phone,
+                national_id: firstOrder.national_id || visitor.national_id,
+                visitor_name: firstOrder.customer_name || visitor.visitor_name,
+              }).eq("id", visitor.id);
+            }
           }
+        }
+      }
+      
+      setLinkedOrders(orders);
+
+      if (orders.length > 0) {
+        const orderIds = orders.map(order => order.id);
+        const stageFilters: string[] = [];
+        if (orderIds.length > 0) stageFilters.push(`order_id.in.(${orderIds.join(",")})`);
+        if (visitor.session_id) stageFilters.push(`visitor_session_id.eq.${visitor.session_id}`);
+
+        if (stageFilters.length > 0) {
+          const { data: events } = await (supabase as any)
+            .from("insurance_order_stage_events")
+            .select("*")
+            .or(stageFilters.join(","))
+            .order("stage_entered_at", { ascending: false });
+
+          if (events) setStageEvents(events as StageEvent[]);
         }
       }
     }
