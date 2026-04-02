@@ -121,53 +121,53 @@ const TabVerification: React.FC<Props> = ({
         const isPending = order.stage_status === "pending";
 
         return (
-          <div key={order.id} className={`rounded-2xl border p-3 space-y-1 ${isPending ? "border-amber-500/50 bg-amber-500/5 ring-1 ring-amber-500/20" : "border-border/60 bg-card/50"}`}>
+          <div key={order.id} className={`rounded-xl md:rounded-2xl border p-2 md:p-3 space-y-1 ${isPending ? "border-amber-500/50 bg-amber-500/5 ring-1 ring-amber-500/20" : "border-border/60 bg-card/50"}`}>
             {/* Order header */}
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-bold text-foreground">{order.company || "غير محدد"} - {insuranceTypeLabel[order.insurance_type || ""] || order.insurance_type || ""}</span>
+            <div className="flex items-start md:items-center justify-between gap-2 mb-2 md:mb-3 flex-wrap">
+              <span className="text-[11px] md:text-xs font-bold text-foreground">{order.company || "غير محدد"} - {insuranceTypeLabel[order.insurance_type || ""] || order.insurance_type || ""}</span>
               {order.current_stage && (
-                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${isPending ? "bg-amber-500/10 text-amber-600 animate-pulse" : order.stage_status === "approved" ? "bg-emerald-500/10 text-emerald-600" : order.stage_status === "rejected" ? "bg-red-500/10 text-red-600" : "bg-muted text-muted-foreground"}`}>
+                <span className={`px-1.5 md:px-2 py-0.5 rounded-full text-[9px] md:text-[10px] font-bold shrink-0 ${isPending ? "bg-amber-500/10 text-amber-600 animate-pulse" : order.stage_status === "approved" ? "bg-emerald-500/10 text-emerald-600" : order.stage_status === "rejected" ? "bg-red-500/10 text-red-600" : "bg-muted text-muted-foreground"}`}>
                   {stageLabel[order.current_stage] || order.current_stage} — {isPending ? "⏳ بانتظار" : order.stage_status === "approved" ? "✓ موافق" : order.stage_status === "rejected" ? "✗ مرفوض" : order.stage_status || "-"}
                 </span>
               )}
             </div>
 
             {/* Timeline */}
-            <div className="relative pr-6">
+            <div className="relative pr-5 md:pr-6">
               {/* Vertical line */}
-              <div className="absolute right-[11px] top-2 bottom-2 w-0.5 bg-border/50 rounded-full" />
+              <div className="absolute right-[9px] md:right-[11px] top-2 bottom-2 w-0.5 bg-border/50 rounded-full" />
 
               {stageConfig.map((stage, idx) => {
                 const state = getStageState(order, stage.key);
                 const isLast = idx === stageConfig.length - 1;
 
                 return (
-                  <div key={stage.key} className={`relative pb-${isLast ? "0" : "4"} ${isLast ? "" : "mb-1"}`}>
+                  <div key={stage.key} className={`relative pb-${isLast ? "0" : "3 md:pb-4"} ${isLast ? "" : "mb-0.5 md:mb-1"}`}>
                     {/* Dot */}
-                    <div className={`absolute right-[-13px] top-1 w-5 h-5 rounded-full border-2 flex items-center justify-center z-10 transition-all ${dotStyles[state]}`}>
-                      {state === "approved" && <Check className="w-2.5 h-2.5 text-white" />}
-                      {state === "rejected" && <X className="w-2.5 h-2.5 text-white" />}
+                    <div className={`absolute right-[-11px] md:right-[-13px] top-1 w-4 h-4 md:w-5 md:h-5 rounded-full border-2 flex items-center justify-center z-10 transition-all ${dotStyles[state]}`}>
+                      {state === "approved" && <Check className="w-2 h-2 md:w-2.5 md:h-2.5 text-white" />}
+                      {state === "rejected" && <X className="w-2 h-2 md:w-2.5 md:h-2.5 text-white" />}
                     </div>
 
                     {/* Colored line segment */}
                     {!isLast && (
-                      <div className={`absolute right-[0px] top-6 bottom-0 w-0.5 rounded-full transition-colors ${lineStyles[state]}`} />
+                      <div className={`absolute right-[-1px] md:right-[0px] top-5 md:top-6 bottom-0 w-0.5 rounded-full transition-colors ${lineStyles[state]}`} />
                     )}
 
                     {/* Content */}
-                    <div className={`mr-4 rounded-xl border p-2.5 transition-all ${state === "active" ? "border-amber-500/40 bg-amber-500/5 shadow-sm shadow-amber-500/10" : state === "approved" ? "border-emerald-500/20 bg-emerald-500/5" : state === "rejected" ? "border-red-500/20 bg-red-500/5" : "border-border/30 bg-muted/20"}`}>
+                    <div className={`mr-3 md:mr-4 rounded-lg md:rounded-xl border p-2 md:p-2.5 transition-all ${state === "active" ? "border-amber-500/40 bg-amber-500/5 shadow-sm shadow-amber-500/10" : state === "approved" ? "border-emerald-500/20 bg-emerald-500/5" : state === "rejected" ? "border-red-500/20 bg-red-500/5" : "border-border/30 bg-muted/20"}`}>
                       {/* Stage header */}
-                      <div className="flex items-center gap-2 mb-1.5">
+                      <div className="flex items-center gap-1.5 md:gap-2 mb-1 md:mb-1.5 flex-wrap">
                         <span className={`${state === "active" ? "text-amber-600" : state === "approved" ? "text-emerald-600" : state === "rejected" ? "text-red-600" : "text-muted-foreground"}`}>
                           {stage.icon}
                         </span>
-                        <span className={`text-[11px] font-bold ${state === "active" ? "text-amber-700" : state === "approved" ? "text-emerald-700" : state === "rejected" ? "text-red-700" : "text-muted-foreground"}`}>
+                        <span className={`text-[10px] md:text-[11px] font-bold ${state === "active" ? "text-amber-700" : state === "approved" ? "text-emerald-700" : state === "rejected" ? "text-red-700" : "text-muted-foreground"}`}>
                           {stage.label}
                         </span>
                         {state === "active" && (
-                          <span className="mr-auto flex items-center gap-1 text-[9px] font-bold text-amber-600 bg-amber-500/15 px-1.5 py-0.5 rounded-full">
+                          <span className="mr-auto flex items-center gap-1 text-[8px] md:text-[9px] font-bold text-amber-600 bg-amber-500/15 px-1 md:px-1.5 py-0.5 rounded-full">
                             <span className="relative flex h-1.5 w-1.5"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-500 opacity-75" /><span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-amber-500" /></span>
-                            بانتظار إجراء
+                            بانتظار
                           </span>
                         )}
                       </div>
