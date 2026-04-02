@@ -246,7 +246,7 @@ const mockOffers: Offer[] = [
   },
   {
     id: "14", company: "التكافل العربي", companyEn: "Arabian Takaful", logoInitials: "تك", logoColor: "#fff", logoBg: "#2E7D32",
-    type: "comprehensive", typeLabel: "شامل", price: 2000, originalPrice: 2600, monthlyPrice: 167,
+    type: "comprehensive", typeLabel: "شامل", price: 1850, originalPrice: 2600, monthlyPrice: 154,
     rating: 4.3, reviewCount: 720,
     features: [
       { label: "تغطية شاملة للمركبة", included: true }, { label: "تغطية ضد الغير", included: true },
