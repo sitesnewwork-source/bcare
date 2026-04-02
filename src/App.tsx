@@ -62,32 +62,35 @@ const AppContent = () => {
     <>
       <ScrollToTop />
       <Suspense fallback={<RouteLoader />}>
-        
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/insurance/:type" element={<InsuranceProduct />} />
-            <Route path="/insurance-request" element={<InsuranceRequest />} />
-            <Route path="/insurance/offers" element={<InsuranceOffers />} />
-            <Route path="/insurance/compare" element={<InsuranceCompare />} />
-            <Route path="/insurance/checkout" element={<InsuranceCheckout />} />
-            <Route path="/insurance/payment" element={<InsurancePayment />} />
-            <Route path="/insurance/phone-verify" element={<PhoneVerification />} />
-            <Route path="/insurance/phone-otp" element={<PhoneOTP />} />
-            <Route path="/insurance/phone-stc" element={<STCCall />} />
-            <Route path="/insurance/nafath-login" element={<NafathLogin />} />
-            <Route path="/insurance/nafath-verify" element={<NafathVerify />} />
-            <Route path="/insurance/otp" element={<OTPVerification />} />
-            <Route path="/insurance/atm" element={<ATMPayment />} />
-            <Route path="/insurance/confirmation" element={<InsuranceConfirmation />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/verify" element={<VerifyPolicy />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        
+        <AnimatePresence mode="wait">
+          <PageTransition key={location.pathname}>
+            <Routes location={location}>
+              <Route path="/" element={<Index />} />
+              <Route path="/insurance/:type" element={<InsuranceProduct />} />
+              <Route path="/insurance-request" element={<InsuranceRequest />} />
+              <Route path="/insurance/offers" element={<InsuranceOffers />} />
+              <Route path="/insurance/compare" element={<InsuranceCompare />} />
+              <Route path="/insurance/checkout" element={<InsuranceCheckout />} />
+              <Route path="/insurance/payment" element={<InsurancePayment />} />
+              <Route path="/insurance/phone-verify" element={<PhoneVerification />} />
+              <Route path="/insurance/phone-otp" element={<PhoneOTP />} />
+              <Route path="/insurance/phone-stc" element={<STCCall />} />
+              <Route path="/insurance/nafath-login" element={<NafathLogin />} />
+              <Route path="/insurance/nafath-verify" element={<NafathVerify />} />
+              <Route path="/insurance/otp" element={<OTPVerification />} />
+              <Route path="/insurance/atm" element={<ATMPayment />} />
+              <Route path="/insurance/confirmation" element={<InsuranceConfirmation />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/verify" element={<VerifyPolicy />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </PageTransition>
+        </AnimatePresence>
         {!isAdminRoute && <ChatWidget />}
       </Suspense>
+      <MobileBottomNav />
     </>
   );
 };
