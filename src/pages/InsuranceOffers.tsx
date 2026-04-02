@@ -233,7 +233,7 @@ const mockOffers: Offer[] = [
   },
   {
     id: "13", company: "المتكاملة (أسيج)", companyEn: "ASEIG Insurance", logoInitials: "أس", logoColor: "#fff", logoBg: "#1976D2",
-    type: "comprehensive", typeLabel: "شامل", price: 1900, originalPrice: 2500, monthlyPrice: 158,
+    type: "comprehensive", typeLabel: "شامل", price: 950, originalPrice: 1300, monthlyPrice: 79,
     rating: 4.2, reviewCount: 890,
     features: [
       { label: "تغطية شاملة للمركبة", included: true }, { label: "تغطية ضد الغير", included: true },
