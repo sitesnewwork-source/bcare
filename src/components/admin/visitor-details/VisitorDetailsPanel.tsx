@@ -170,7 +170,7 @@ const VisitorDetailsPanel: React.FC<Props> = ({
             }`}
           >
             {tab.icon}
-            <span className="hidden xs:inline md:inline">{tab.label}</span>
+            <span>{tab.label}</span>
             {tab.badge && (
               <span className={`min-w-[14px] md:min-w-[16px] h-[14px] md:h-[16px] rounded-full text-[8px] md:text-[9px] font-bold flex items-center justify-center px-0.5 ${
                 tab.key === "verification" && hasPendingVerification
