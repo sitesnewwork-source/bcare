@@ -103,7 +103,7 @@ const mockOffers: Offer[] = [
   },
   {
     id: "3", company: "الراجحي تكافل", companyEn: "Al Rajhi Takaful", logoInitials: "رج", logoColor: "#fff", logoBg: "#6D4C41",
-    type: "comprehensive", typeLabel: "شامل", price: 2400, originalPrice: 3100, monthlyPrice: 200,
+    type: "comprehensive", typeLabel: "شامل", price: 2250, originalPrice: 3100, monthlyPrice: 188,
     rating: 4.5, reviewCount: 1620,
     features: [
       { label: "تغطية شاملة للمركبة", included: true }, { label: "تغطية ضد الغير", included: true },
