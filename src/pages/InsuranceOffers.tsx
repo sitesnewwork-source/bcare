@@ -181,7 +181,7 @@ const mockOffers: Offer[] = [
   },
   {
     id: "9", company: "ولاء للتأمين", companyEn: "Walaa Insurance", logoInitials: "ول", logoColor: "#fff", logoBg: "#00695C",
-    type: "comprehensive", typeLabel: "شامل", price: 2200, originalPrice: 2900, monthlyPrice: 183,
+    type: "comprehensive", typeLabel: "شامل", price: 1800, originalPrice: 2400, monthlyPrice: 150,
     rating: 4.3, reviewCount: 870,
     features: [
       { label: "تغطية شاملة للمركبة", included: true }, { label: "تغطية ضد الغير", included: true },
