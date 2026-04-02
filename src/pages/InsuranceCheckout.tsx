@@ -88,26 +88,29 @@ const InsuranceCheckout = () => {
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Tajawal', sans-serif; background: #fff; color: #1a1a1a; padding: 40px; direction: rtl; }
-  .header { text-align: center; border-bottom: 3px solid #0d5c4b; padding-bottom: 24px; margin-bottom: 30px; }
-  .logo { font-size: 32px; font-weight: 800; color: #0d5c4b; }
-  .draft-badge { display: inline-block; background: #fff3cd; color: #856404; border: 1px solid #ffc107; border-radius: 8px; padding: 6px 16px; font-size: 13px; font-weight: 700; margin-top: 12px; }
-  .policy-num { font-family: monospace; font-size: 18px; color: #0d5c4b; margin-top: 10px; letter-spacing: 2px; }
-  .section { margin-bottom: 24px; }
-  .section-title { font-size: 15px; font-weight: 700; color: #0d5c4b; border-bottom: 1px solid #e0e0e0; padding-bottom: 8px; margin-bottom: 12px; }
-  table { width: 100%; border-collapse: collapse; }
-  td { padding: 8px 12px; font-size: 13px; border-bottom: 1px solid #f0f0f0; }
-  td:first-child { text-align: left; font-weight: 600; }
-  td:last-child { text-align: right; color: #666; }
-  ul { list-style: none; padding: 0; }
-  li { padding: 6px 0; font-size: 13px; color: #333; }
-  .total-box { background: #f0faf7; border: 2px solid #0d5c4b; border-radius: 12px; padding: 20px; text-align: center; margin: 24px 0; }
-  .total-amount { font-size: 28px; font-weight: 800; color: #0d5c4b; }
-  .total-label { font-size: 13px; color: #666; margin-top: 4px; }
-  .disclaimer { font-size: 11px; color: #999; text-align: center; margin-top: 30px; padding-top: 16px; border-top: 1px solid #e0e0e0; line-height: 1.8; }
-  .print-btn { display: block; margin: 20px auto; padding: 12px 40px; background: #0d5c4b; color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; font-family: 'Tajawal'; cursor: pointer; }
-  .print-btn:hover { background: #094438; }
-  @media print { .print-btn { display: none; } }
+   body { font-family: 'Tajawal', sans-serif; background: #fff; color: #1a1a1a; padding: 16px; direction: rtl; max-width: 100vw; overflow-x: hidden; }
+   .header { text-align: center; border-bottom: 3px solid #0d5c4b; padding-bottom: 20px; margin-bottom: 24px; }
+   .logo { font-size: 28px; font-weight: 800; color: #0d5c4b; }
+   .draft-badge { display: inline-block; background: #fff3cd; color: #856404; border: 1px solid #ffc107; border-radius: 8px; padding: 5px 12px; font-size: 12px; font-weight: 700; margin-top: 10px; }
+   .policy-num { font-family: monospace; font-size: 15px; color: #0d5c4b; margin-top: 8px; letter-spacing: 1.5px; word-break: break-all; }
+   .section { margin-bottom: 20px; }
+   .section-title { font-size: 14px; font-weight: 700; color: #0d5c4b; border-bottom: 1px solid #e0e0e0; padding-bottom: 6px; margin-bottom: 10px; }
+   table { width: 100%; border-collapse: collapse; }
+   td { padding: 6px 8px; font-size: 12px; border-bottom: 1px solid #f0f0f0; word-break: break-word; }
+   td:first-child { text-align: left; font-weight: 600; }
+   td:last-child { text-align: right; color: #666; white-space: nowrap; }
+   ul { list-style: none; padding: 0; }
+   li { padding: 5px 0; font-size: 12px; color: #333; }
+   .total-box { background: #f0faf7; border: 2px solid #0d5c4b; border-radius: 12px; padding: 16px; text-align: center; margin: 20px 0; }
+   .total-amount { font-size: 24px; font-weight: 800; color: #0d5c4b; }
+   .total-label { font-size: 12px; color: #666; margin-top: 4px; }
+   .disclaimer { font-size: 10px; color: #999; text-align: center; margin-top: 24px; padding-top: 12px; border-top: 1px solid #e0e0e0; line-height: 1.8; }
+   .print-btn { display: block; margin: 16px auto; padding: 12px 40px; background: #0d5c4b; color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; font-family: 'Tajawal'; cursor: pointer; width: calc(100% - 32px); max-width: 400px; }
+   .print-btn:hover { background: #094438; }
+   .qr-section { text-align: center; margin: 20px 0; padding: 16px; border: 1px solid #e0e0e0; border-radius: 12px; background: #f9f9f9; }
+   .qr-section img { max-width: 120px; height: auto; }
+   @media (min-width: 600px) { body { padding: 40px; } .logo { font-size: 32px; } .policy-num { font-size: 18px; } td { padding: 8px 12px; font-size: 13px; } .total-amount { font-size: 28px; } }
+   @media print { .print-btn { display: none; } }
 </style>
 </head>
 <body>
