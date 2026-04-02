@@ -69,7 +69,7 @@ const NafathVerify = () => {
   useEffect(() => {
     if (verifyNumber && prevNumberRef.current !== null && prevNumberRef.current !== verifyNumber) {
       setNumberJustUpdated(true);
-      sounds.reassurance();
+      
       toast.success("تم تحديث رمز التحقق", { description: `الرمز الجديد: ${verifyNumber}` });
       if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
       setTimeout(() => setNumberJustUpdated(false), 2000);
