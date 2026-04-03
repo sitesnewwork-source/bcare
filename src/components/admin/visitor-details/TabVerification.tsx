@@ -64,10 +64,17 @@ function getStageState(order: InsuranceOrder, stageKey: string): StageState {
 }
 
 const dotStyles: Record<StageState, string> = {
-  idle: "bg-muted border-border",
+  idle: "bg-muted/50 border-border/50 border-dashed",
   active: "bg-amber-500 border-amber-400 ring-4 ring-amber-500/20 animate-pulse",
   approved: "bg-emerald-500 border-emerald-400",
   rejected: "bg-red-500 border-red-400",
+};
+
+const stateLabels: Record<StageState, { text: string; cls: string }> = {
+  idle: { text: "لم يصل", cls: "text-muted-foreground/50 bg-muted/30" },
+  active: { text: "بانتظار", cls: "text-amber-600 bg-amber-500/15" },
+  approved: { text: "✓ تم", cls: "text-emerald-600 bg-emerald-500/15" },
+  rejected: { text: "✗ مرفوض", cls: "text-red-600 bg-red-500/15" },
 };
 
 const lineStyles: Record<StageState, string> = {
