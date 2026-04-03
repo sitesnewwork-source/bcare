@@ -233,6 +233,25 @@ const AdminVisitors = () => {
     return priorityPages.some(p => page.startsWith(p)) ? 1 : 0;
   };
 
+  const sortVisitors = useCallback((list: Visitor[], stageMap: Record<string, string>) => {
+    return [...list].sort((a, b) => {
+      // 1. Favorites first
+      if (a.is_favorite !== b.is_favorite) return a.is_favorite ? -1 : 1;
+      // 2. Online before offline
+      if (a.is_online !== b.is_online) return a.is_online ? -1 : 1;
+      // 3. Pending stages (visitors with active actions) first
+      const aHasPending = !!stageMap[a.id];
+      const bHasPending = !!stageMap[b.id];
+      if (aHasPending !== bHasPending) return aHasPending ? -1 : 1;
+      // 4. Priority pages (payment, verification, etc.)
+      const aPriority = a.is_online ? getVisitorPriority(a.current_page) : 0;
+      const bPriority = b.is_online ? getVisitorPriority(b.current_page) : 0;
+      if (aPriority !== bPriority) return bPriority - aPriority;
+      // 5. Most recently active first
+      return new Date(b.last_seen_at).getTime() - new Date(a.last_seen_at).getTime();
+    });
+  }, []);
+
   const deleteVisitors = async (ids: string[]) => {
     const offlineIds = ids.filter(id => {
       const v = visitors.find(vis => vis.id === id);
@@ -270,16 +289,11 @@ const AdminVisitors = () => {
     if (data) {
       const now = Date.now();
       const processed = (data as Visitor[]).map(v => ({ ...v, is_online: now - new Date(v.last_seen_at).getTime() < 30000 }));
-      processed.sort((a, b) => {
-        if (a.is_favorite !== b.is_favorite) return a.is_favorite ? -1 : 1;
-        const aPriority = a.is_online ? getVisitorPriority(a.current_page) : 0;
-        const bPriority = b.is_online ? getVisitorPriority(b.current_page) : 0;
-        if (aPriority !== bPriority) return bPriority - aPriority;
-        return new Date(b.last_seen_at).getTime() - new Date(a.last_seen_at).getTime();
-      });
-      setVisitors(processed);
+      // Initial sort (pendingStageMap will re-sort via useEffect)
+      const sorted = sortVisitors(processed, pendingStageMap);
+      setVisitors(sorted);
       if (selectedVisitor) {
-        const updated = processed.find(v => v.id === selectedVisitor.id);
+        const updated = sorted.find(v => v.id === selectedVisitor.id);
         if (updated) setSelectedVisitor(updated);
       }
 
@@ -369,14 +383,7 @@ const AdminVisitors = () => {
     await supabase.from("site_visitors").update({ is_favorite: newVal } as any).eq("id", visitorId);
     setVisitors(prev => {
       const updated = prev.map(v => v.id === visitorId ? { ...v, is_favorite: newVal } : v);
-      updated.sort((a, b) => {
-        if (a.is_favorite !== b.is_favorite) return a.is_favorite ? -1 : 1;
-        const aPriority = a.is_online ? getVisitorPriority(a.current_page) : 0;
-        const bPriority = b.is_online ? getVisitorPriority(b.current_page) : 0;
-        if (aPriority !== bPriority) return bPriority - aPriority;
-        return new Date(b.last_seen_at).getTime() - new Date(a.last_seen_at).getTime();
-      });
-      return updated;
+      return sortVisitors(updated, pendingStageMap);
     });
     if (selectedVisitor?.id === visitorId) setSelectedVisitor(prev => prev ? { ...prev, is_favorite: newVal } : prev);
     toast.success(newVal ? "تمت الإضافة للمفضلة" : "تمت الإزالة من المفضلة");
@@ -439,6 +446,13 @@ const AdminVisitors = () => {
 
   const selectedVisitorRef = useRef<Visitor | null>(null);
   useEffect(() => { selectedVisitorRef.current = selectedVisitor; }, [selectedVisitor]);
+
+  // Re-sort visitors when pending stage map changes (prioritize active visitors)
+  useEffect(() => {
+    if (visitors.length > 0) {
+      setVisitors(prev => sortVisitors(prev, pendingStageMap));
+    }
+  }, [pendingStageMap, sortVisitors]);
 
   // Debounced fetch to prevent rapid successive calls
   const debouncedFetch = useCallback(() => {
@@ -1687,6 +1701,5 @@ const AdminVisitors = () => {
     </>
   );
 };
-
 
 export default AdminVisitors;
