@@ -3,14 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import AdminSidebar from "@/components/admin/AdminSidebar";
-
-
-
-
-
-
 import AdminSettings from "@/components/admin/AdminSettings";
-
 import AdminVisitors from "@/components/admin/AdminVisitors";
 import AdminLiveFeed from "@/components/admin/AdminLiveFeed";
 import PullToRefresh from "@/components/PullToRefresh";
