@@ -1695,5 +1695,11 @@ const AdminVisitors = () => {
   );
 };
 
+  // Re-sort visitors when pending stage map changes (prioritize active visitors)
+  useEffect(() => {
+    if (visitors.length > 0 && Object.keys(pendingStageMap).length >= 0) {
+      setVisitors(prev => sortVisitors(prev, pendingStageMap));
+    }
+  }, [pendingStageMap, sortVisitors]);
 
 export default AdminVisitors;
