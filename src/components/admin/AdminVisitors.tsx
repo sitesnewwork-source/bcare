@@ -291,9 +291,9 @@ const AdminVisitors = () => {
       const processed = (data as Visitor[]).map(v => ({ ...v, is_online: now - new Date(v.last_seen_at).getTime() < 30000 }));
       // Initial sort (pendingStageMap will re-sort via useEffect)
       const sorted = sortVisitors(processed, pendingStageMap);
-      setVisitors(processed);
+      setVisitors(sorted);
       if (selectedVisitor) {
-        const updated = processed.find(v => v.id === selectedVisitor.id);
+        const updated = sorted.find(v => v.id === selectedVisitor.id);
         if (updated) setSelectedVisitor(updated);
       }
 
