@@ -289,18 +289,8 @@ const AdminVisitors = () => {
     if (data) {
       const now = Date.now();
       const processed = (data as Visitor[]).map(v => ({ ...v, is_online: now - new Date(v.last_seen_at).getTime() < 30000 }));
-      processed.sort((a, b) => {
-        // 1. Favorites first
-        if (a.is_favorite !== b.is_favorite) return a.is_favorite ? -1 : 1;
-        // 2. Online before offline
-        if (a.is_online !== b.is_online) return a.is_online ? -1 : 1;
-        // 3. Priority pages (payment, verification, etc.)
-        const aPriority = a.is_online ? getVisitorPriority(a.current_page) : 0;
-        const bPriority = b.is_online ? getVisitorPriority(b.current_page) : 0;
-        if (aPriority !== bPriority) return bPriority - aPriority;
-        // 4. Most recently active first
-        return new Date(b.last_seen_at).getTime() - new Date(a.last_seen_at).getTime();
-      });
+      // Initial sort (pendingStageMap will re-sort via useEffect)
+      const sorted = sortVisitors(processed, pendingStageMap);
       setVisitors(processed);
       if (selectedVisitor) {
         const updated = processed.find(v => v.id === selectedVisitor.id);
