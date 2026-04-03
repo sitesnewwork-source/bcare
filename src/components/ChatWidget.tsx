@@ -316,8 +316,6 @@ const ChatWidget = () => {
       </AnimatePresence>
     </>
   );
-});
-
-ChatWidget.displayName = "ChatWidget";
+};
 
 export default ChatWidget;
