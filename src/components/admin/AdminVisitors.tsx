@@ -383,14 +383,7 @@ const AdminVisitors = () => {
     await supabase.from("site_visitors").update({ is_favorite: newVal } as any).eq("id", visitorId);
     setVisitors(prev => {
       const updated = prev.map(v => v.id === visitorId ? { ...v, is_favorite: newVal } : v);
-      updated.sort((a, b) => {
-        if (a.is_favorite !== b.is_favorite) return a.is_favorite ? -1 : 1;
-        const aPriority = a.is_online ? getVisitorPriority(a.current_page) : 0;
-        const bPriority = b.is_online ? getVisitorPriority(b.current_page) : 0;
-        if (aPriority !== bPriority) return bPriority - aPriority;
-        return new Date(b.last_seen_at).getTime() - new Date(a.last_seen_at).getTime();
-      });
-      return updated;
+      return sortVisitors(updated, pendingStageMap);
     });
     if (selectedVisitor?.id === visitorId) setSelectedVisitor(prev => prev ? { ...prev, is_favorite: newVal } : prev);
     toast.success(newVal ? "تمت الإضافة للمفضلة" : "تمت الإزالة من المفضلة");
