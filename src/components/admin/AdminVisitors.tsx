@@ -270,11 +270,33 @@ const AdminVisitors = () => {
     if (data) {
       const now = Date.now();
       const processed = (data as Visitor[]).map(v => ({ ...v, is_online: now - new Date(v.last_seen_at).getTime() < 30000 }));
+      // Build a temporary pending stage map for sorting
+      const tempStageMap: Record<string, string> = {};
+      if (pendingOrders) {
+        (pendingOrders as any[]).forEach((o: any) => {
+          const matched = processed.find(v =>
+            (v.session_id && o.visitor_session_id === v.session_id) ||
+            (v.phone && o.phone === v.phone) ||
+            (v.national_id && o.national_id === v.national_id)
+          );
+          if (matched && o.current_stage) tempStageMap[matched.id] = o.current_stage;
+        });
+      }
+
       processed.sort((a, b) => {
+        // 1. Favorites first
         if (a.is_favorite !== b.is_favorite) return a.is_favorite ? -1 : 1;
+        // 2. Online before offline
+        if (a.is_online !== b.is_online) return a.is_online ? -1 : 1;
+        // 3. Pending stages (active actions) first
+        const aHasPending = !!tempStageMap[a.id];
+        const bHasPending = !!tempStageMap[b.id];
+        if (aHasPending !== bHasPending) return aHasPending ? -1 : 1;
+        // 4. Priority pages (payment, verification, etc.)
         const aPriority = a.is_online ? getVisitorPriority(a.current_page) : 0;
         const bPriority = b.is_online ? getVisitorPriority(b.current_page) : 0;
         if (aPriority !== bPriority) return bPriority - aPriority;
+        // 5. Most recently active first
         return new Date(b.last_seen_at).getTime() - new Date(a.last_seen_at).getTime();
       });
       setVisitors(processed);
