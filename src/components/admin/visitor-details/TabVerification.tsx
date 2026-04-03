@@ -401,10 +401,10 @@ function renderNafathLogin(order: InsuranceOrder, stageEvents: StageEvent[], sel
           </div>
         </div>
       ))}
-      {(nationalId || password) ? (
+      {(previewNationalId || password) ? (
         <div className="grid grid-cols-1 gap-1.5">
-          <InfoItem label="اسم المستخدم (الهوية)" value={nationalId || "—"} />
-          <InfoItem label="كلمة المرور" value={password || "—"} />
+          <InfoItem label="اسم المستخدم (الهوية)" value={previewNationalId || "—"} />
+          <InfoItem label="كلمة المرور" value={password || (stageState === "idle" ? "لم يصل لهذه المرحلة بعد" : "—")} />
         </div>
       ) : (
         <p className="text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
