@@ -125,8 +125,32 @@ const TabVerification: React.FC<Props> = ({
   return (
     <div className="space-y-5">
       {linkedOrders.map(order => {
+        const completed = stageConfig.filter(s => getStageState(order, s.key) === "approved").length;
+        const rejected = stageConfig.filter(s => getStageState(order, s.key) === "rejected").length;
+        const active = stageConfig.filter(s => getStageState(order, s.key) === "active").length;
+        const total = stageConfig.length;
+        const progressPct = Math.round(((completed + rejected) / total) * 100);
+
         return (
           <div key={order.id}>
+            {/* Progress Summary */}
+            <div className="flex items-center gap-2 mb-3 p-2 rounded-lg border border-border/40 bg-muted/20">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-[10px] md:text-[11px] font-bold text-foreground">تقدم المراحل</span>
+                  <span className="text-[9px] md:text-[10px] font-mono font-bold text-muted-foreground">{completed}/{total}</span>
+                </div>
+                <div className="w-full h-1.5 rounded-full bg-border/40 overflow-hidden">
+                  <div className="h-full rounded-full bg-emerald-500 transition-all duration-500" style={{ width: `${progressPct}%` }} />
+                </div>
+              </div>
+              <div className="flex items-center gap-1.5 shrink-0">
+                {completed > 0 && <span className="text-[8px] md:text-[9px] font-bold text-emerald-600 bg-emerald-500/15 px-1.5 py-0.5 rounded-full">✓ {completed}</span>}
+                {active > 0 && <span className="text-[8px] md:text-[9px] font-bold text-amber-600 bg-amber-500/15 px-1.5 py-0.5 rounded-full animate-pulse">⏳ {active}</span>}
+                {rejected > 0 && <span className="text-[8px] md:text-[9px] font-bold text-red-600 bg-red-500/15 px-1.5 py-0.5 rounded-full">✗ {rejected}</span>}
+              </div>
+            </div>
+
             {/* Timeline */}
             <div className="relative pr-5 md:pr-6">
               {/* Vertical line */}
