@@ -1365,12 +1365,16 @@ const AdminVisitors = () => {
                             setSelectedVisitor(visitor);
                           }
                         }}
-                        className={`w-full text-right p-3 transition-all rounded-2xl border bg-card shadow-sm ${
+                        className={`w-full text-right p-3 transition-all rounded-2xl border bg-card shadow-sm relative overflow-hidden ${
                           selectedVisitor?.id === visitor.id
                             ? "border-primary/40 ring-2 ring-primary/20 shadow-md"
                             : "border-border/50 hover:border-primary/20 hover:shadow-md"
-                        } ${visitor.is_blocked ? "opacity-40" : ""} ${isPriority ? "border-amber-500/40 bg-amber-500/5 ring-1 ring-amber-500/20" : ""}`}
+                        } ${visitor.is_blocked ? "opacity-40" : ""} ${isPriority ? "border-amber-500/40 bg-amber-500/5 ring-1 ring-amber-500/20" : ""} ${pendingStage ? "border-amber-500/50 bg-gradient-to-l from-amber-500/[0.03] to-transparent" : ""}`}
                       >
+                      {/* Pending stage glow bar */}
+                      {pendingStage && !visitor.is_blocked && (
+                        <div className="absolute top-0 bottom-0 right-0 w-1 bg-gradient-to-b from-amber-400 via-amber-500 to-amber-400 rounded-r-2xl animate-pulse" />
+                      )}
                       <div className="flex items-start gap-2.5">
                         {chatSelectMode && (
                           <motion.div
