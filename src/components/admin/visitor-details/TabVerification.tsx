@@ -142,6 +142,7 @@ const TabVerification: React.FC<Props> = ({
                     <div className={`absolute right-[-11px] md:right-[-13px] top-1 w-4 h-4 md:w-5 md:h-5 rounded-full border-2 flex items-center justify-center z-10 transition-all ${dotStyles[state]}`}>
                       {state === "approved" && <Check className="w-2 h-2 md:w-2.5 md:h-2.5 text-white" />}
                       {state === "rejected" && <X className="w-2 h-2 md:w-2.5 md:h-2.5 text-white" />}
+                      {state === "idle" && <span className="w-1.5 h-1.5 rounded-full bg-border/60" />}
                     </div>
 
                     {/* Colored line segment */}
