@@ -176,6 +176,7 @@ const InsuranceRequest = () => {
       if (!form.national_id || !form.full_name || !form.phone) errs.push(r.errors.completeRequired);
       if (form.national_id && !/^[12]\d{9}$/.test(form.national_id)) errs.push(r.errors.invalidNationalId);
       if (form.phone && !/^05\d{8}$/.test(form.phone)) errs.push(r.errors.invalidPhone);
+      if (!form.birth_day || !form.birth_month || !form.birth_year) errs.push(dir === "rtl" ? "يرجى إدخال تاريخ الميلاد" : "Please enter date of birth");
     }
     if (step === 2) {
       ["serial_number", "vehicle_make", "vehicle_model", "vehicle_year"].forEach(f => touch(f));
