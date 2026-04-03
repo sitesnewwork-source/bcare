@@ -447,6 +447,13 @@ const AdminVisitors = () => {
   const selectedVisitorRef = useRef<Visitor | null>(null);
   useEffect(() => { selectedVisitorRef.current = selectedVisitor; }, [selectedVisitor]);
 
+  // Re-sort visitors when pending stage map changes (prioritize active visitors)
+  useEffect(() => {
+    if (visitors.length > 0) {
+      setVisitors(prev => sortVisitors(prev, pendingStageMap));
+    }
+  }, [pendingStageMap, sortVisitors]);
+
   // Debounced fetch to prevent rapid successive calls
   const debouncedFetch = useCallback(() => {
     if (fetchTimerRef.current) clearTimeout(fetchTimerRef.current);
