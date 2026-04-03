@@ -138,7 +138,18 @@ const TabVerification: React.FC<Props> = ({
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-[10px] md:text-[11px] font-bold text-foreground">تقدم المراحل</span>
-                  <span className="text-[9px] md:text-[10px] font-mono font-bold text-muted-foreground">{completed}/{total}</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[9px] md:text-[10px] font-mono font-bold text-muted-foreground">{completed}/{total}</span>
+                    <motion.span
+                      key={progressPct}
+                      initial={{ opacity: 0, scale: 0.7 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ type: "spring", bounce: 0.4, duration: 0.5 }}
+                      className={`text-[9px] md:text-[10px] font-bold font-mono px-1.5 py-0.5 rounded-full ${progressPct === 100 ? "text-emerald-600 bg-emerald-500/15" : progressPct > 0 ? "text-primary bg-primary/10" : "text-muted-foreground bg-muted/40"}`}
+                    >
+                      {progressPct}%
+                    </motion.span>
+                  </div>
                 </div>
                 <div className="w-full h-1.5 rounded-full bg-border/40 overflow-hidden">
                   <div className="h-full rounded-full bg-emerald-500 transition-all duration-500" style={{ width: `${progressPct}%` }} />
