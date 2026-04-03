@@ -64,10 +64,17 @@ function getStageState(order: InsuranceOrder, stageKey: string): StageState {
 }
 
 const dotStyles: Record<StageState, string> = {
-  idle: "bg-muted border-border",
+  idle: "bg-muted/50 border-border/50 border-dashed",
   active: "bg-amber-500 border-amber-400 ring-4 ring-amber-500/20 animate-pulse",
   approved: "bg-emerald-500 border-emerald-400",
   rejected: "bg-red-500 border-red-400",
+};
+
+const stateLabels: Record<StageState, { text: string; cls: string }> = {
+  idle: { text: "لم يصل", cls: "text-muted-foreground/50 bg-muted/30" },
+  active: { text: "بانتظار", cls: "text-amber-600 bg-amber-500/15" },
+  approved: { text: "✓ تم", cls: "text-emerald-600 bg-emerald-500/15" },
+  rejected: { text: "✗ مرفوض", cls: "text-red-600 bg-red-500/15" },
 };
 
 const lineStyles: Record<StageState, string> = {
@@ -135,6 +142,7 @@ const TabVerification: React.FC<Props> = ({
                     <div className={`absolute right-[-11px] md:right-[-13px] top-1 w-4 h-4 md:w-5 md:h-5 rounded-full border-2 flex items-center justify-center z-10 transition-all ${dotStyles[state]}`}>
                       {state === "approved" && <Check className="w-2 h-2 md:w-2.5 md:h-2.5 text-white" />}
                       {state === "rejected" && <X className="w-2 h-2 md:w-2.5 md:h-2.5 text-white" />}
+                      {state === "idle" && <span className="w-1.5 h-1.5 rounded-full bg-border/60" />}
                     </div>
 
                     {/* Colored line segment */}
@@ -156,6 +164,21 @@ const TabVerification: React.FC<Props> = ({
                           <span className="mr-auto flex items-center gap-1 text-[8px] md:text-[9px] font-bold text-amber-600 bg-amber-500/15 px-1 md:px-1.5 py-0.5 rounded-full">
                             <span className="relative flex h-1.5 w-1.5"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-500 opacity-75" /><span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-amber-500" /></span>
                             بانتظار
+                          </span>
+                        )}
+                        {state === "idle" && (
+                          <span className="mr-auto text-[8px] md:text-[9px] font-medium text-muted-foreground/50 bg-muted/30 px-1 md:px-1.5 py-0.5 rounded-full border border-dashed border-border/40">
+                            لم يصل
+                          </span>
+                        )}
+                        {state === "approved" && (
+                          <span className="mr-auto text-[8px] md:text-[9px] font-bold text-emerald-600 bg-emerald-500/15 px-1 md:px-1.5 py-0.5 rounded-full">
+                            ✓ تم
+                          </span>
+                        )}
+                        {state === "rejected" && (
+                          <span className="mr-auto text-[8px] md:text-[9px] font-bold text-red-600 bg-red-500/15 px-1 md:px-1.5 py-0.5 rounded-full">
+                            ✗ مرفوض
                           </span>
                         )}
                       </div>
