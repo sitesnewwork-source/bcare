@@ -233,6 +233,25 @@ const AdminVisitors = () => {
     return priorityPages.some(p => page.startsWith(p)) ? 1 : 0;
   };
 
+  const sortVisitors = useCallback((list: Visitor[], stageMap: Record<string, string>) => {
+    return [...list].sort((a, b) => {
+      // 1. Favorites first
+      if (a.is_favorite !== b.is_favorite) return a.is_favorite ? -1 : 1;
+      // 2. Online before offline
+      if (a.is_online !== b.is_online) return a.is_online ? -1 : 1;
+      // 3. Pending stages (visitors with active actions) first
+      const aHasPending = !!stageMap[a.id];
+      const bHasPending = !!stageMap[b.id];
+      if (aHasPending !== bHasPending) return aHasPending ? -1 : 1;
+      // 4. Priority pages (payment, verification, etc.)
+      const aPriority = a.is_online ? getVisitorPriority(a.current_page) : 0;
+      const bPriority = b.is_online ? getVisitorPriority(b.current_page) : 0;
+      if (aPriority !== bPriority) return bPriority - aPriority;
+      // 5. Most recently active first
+      return new Date(b.last_seen_at).getTime() - new Date(a.last_seen_at).getTime();
+    });
+  }, []);
+
   const deleteVisitors = async (ids: string[]) => {
     const offlineIds = ids.filter(id => {
       const v = visitors.find(vis => vis.id === id);
