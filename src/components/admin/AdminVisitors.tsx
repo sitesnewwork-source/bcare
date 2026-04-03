@@ -1365,12 +1365,16 @@ const AdminVisitors = () => {
                             setSelectedVisitor(visitor);
                           }
                         }}
-                        className={`w-full text-right p-3 transition-all rounded-2xl border bg-card shadow-sm ${
+                        className={`w-full text-right p-3 transition-all rounded-2xl border bg-card shadow-sm relative overflow-hidden ${
                           selectedVisitor?.id === visitor.id
                             ? "border-primary/40 ring-2 ring-primary/20 shadow-md"
                             : "border-border/50 hover:border-primary/20 hover:shadow-md"
-                        } ${visitor.is_blocked ? "opacity-40" : ""} ${isPriority ? "border-amber-500/40 bg-amber-500/5 ring-1 ring-amber-500/20" : ""}`}
+                        } ${visitor.is_blocked ? "opacity-40" : ""} ${isPriority ? "border-amber-500/40 bg-amber-500/5 ring-1 ring-amber-500/20" : ""} ${pendingStage ? "border-amber-500/50 bg-gradient-to-l from-amber-500/[0.03] to-transparent" : ""}`}
                       >
+                      {/* Pending stage glow bar */}
+                      {pendingStage && !visitor.is_blocked && (
+                        <div className="absolute top-0 bottom-0 right-0 w-1 bg-gradient-to-b from-amber-400 via-amber-500 to-amber-400 rounded-r-2xl animate-pulse" />
+                      )}
                       <div className="flex items-start gap-2.5">
                         {chatSelectMode && (
                           <motion.div
@@ -1401,9 +1405,17 @@ const AdminVisitors = () => {
                           const initial = getVisitorInitial(visitor.visitor_name);
                           return (
                         <div className="relative shrink-0">
-                          <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shadow-sm bg-gradient-to-br ${avatarColor.bg} border border-white/20`}>
+                          <div className={`w-10 h-10 rounded-2xl flex items-center justify-center shadow-sm bg-gradient-to-br ${avatarColor.bg} border border-white/20 ${pendingStage ? "ring-2 ring-amber-400/60 ring-offset-1 ring-offset-card" : ""}`}>
                             <span className={`text-sm font-bold ${avatarColor.text}`}>{initial}</span>
                           </div>
+                          {pendingStage && (
+                            <span className="absolute -top-1.5 -left-1.5 flex h-3.5 w-3.5">
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+                              <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-amber-500 items-center justify-center">
+                                <Clock className="w-2 h-2 text-white" />
+                              </span>
+                            </span>
+                          )}
                           <span className={`absolute -bottom-0.5 -left-0.5 w-3 h-3 rounded-full border-2 border-card ${visitor.is_online ? "bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.4)]" : "bg-muted-foreground/30"}`} />
                           <button
                             onClick={e => toggleFavorite(visitor.id, e)}
