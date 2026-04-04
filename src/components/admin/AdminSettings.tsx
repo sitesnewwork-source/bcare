@@ -18,6 +18,10 @@ const AdminSettings = () => {
   const [confirmText, setConfirmText] = useState("");
   const [passwords, setPasswords] = useState({ current: "", new: "", confirm: "" });
   const [changingPassword, setChangingPassword] = useState(false);
+  const [urgentDelay, setUrgentDelay] = useState(() => {
+    const saved = localStorage.getItem("admin_urgent_delay");
+    return saved ? parseInt(saved, 10) : 30;
+  });
   const navigate = useNavigate();
 
   const handleClearAllData = async () => {
