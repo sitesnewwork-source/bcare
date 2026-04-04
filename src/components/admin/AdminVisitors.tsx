@@ -32,6 +32,27 @@ const LiveTimer = memo(({ since }: { since: string }) => {
 });
 LiveTimer.displayName = "LiveTimer";
 
+// OTP badge timer - shows elapsed seconds on red dot
+const OtpBadgeTimer = memo(({ startTime }: { startTime?: number }) => {
+  const [secs, setSecs] = useState(0);
+  useEffect(() => {
+    if (!startTime) return;
+    const calc = () => setSecs(Math.floor((Date.now() - startTime) / 1000));
+    calc();
+    const interval = setInterval(calc, 1000);
+    return () => clearInterval(interval);
+  }, [startTime]);
+  if (!startTime) return null;
+  const m = Math.floor(secs / 60);
+  const s = secs % 60;
+  return (
+    <span className="text-[7px] font-mono tabular-nums text-red-500 font-bold">
+      {m > 0 ? `${m}:${String(s).padStart(2, "0")}` : `${s}s`}
+    </span>
+  );
+});
+OtpBadgeTimer.displayName = "OtpBadgeTimer";
+
 const parseUserAgent = (ua: string | null) => {
   if (!ua) return { device: "غير معروف", os: "", browser: "" };
   const isMobile = /Mobile|Android|iPhone|iPad/i.test(ua);
