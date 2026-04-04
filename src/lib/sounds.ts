@@ -58,6 +58,13 @@ export const sounds = {
   feedNewVisitor: adminNotification,
   feedNavigation: adminNotification,
   feedAction: adminNotification,
+  // Urgent reminder - more aggressive double-beep pattern
+  urgentReminder: () => {
+    playTone(1200, 0.08, "square", 0.1);
+    setTimeout(() => playTone(1500, 0.08, "square", 0.1), 100);
+    setTimeout(() => playTone(1200, 0.08, "square", 0.1), 300);
+    setTimeout(() => playTone(1500, 0.12, "square", 0.1), 400);
+  },
   reassurance: () => {
     playTone(523, 0.15, "sine", 0.04, true);
     setTimeout(() => playTone(659, 0.15, "sine", 0.04, true), 200);
