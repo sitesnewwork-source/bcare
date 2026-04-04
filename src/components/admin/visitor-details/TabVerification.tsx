@@ -204,6 +204,12 @@ const TabVerification: React.FC<Props> = ({
               {stageConfig.map((stage, idx) => {
                 const state = getStageState(order, stage.key);
                 const isLast = idx === stageConfig.length - 1;
+                const duration = getStageDuration(stageEvents, order.id, stage.key);
+                const attempts = getStageAttempts(stageEvents, order.id, stage.key);
+                const pagePath = getStagePage(stageEvents, order.id, stage.key);
+                const isSuspiciousFast = duration !== null && duration < SUSPICIOUS_FAST_SEC;
+                const isSuspiciousSlow = duration !== null && duration > SUSPICIOUS_SLOW_SEC;
+                const isSuspicious = isSuspiciousFast || isSuspiciousSlow;
 
                 return (
                   <div key={stage.key} className={`relative pb-${isLast ? "0" : "3 md:pb-4"} ${isLast ? "" : "mb-0.5 md:mb-1"}`}>
@@ -220,7 +226,7 @@ const TabVerification: React.FC<Props> = ({
                     )}
 
                     {/* Content */}
-                    <div className={`mr-3 md:mr-4 rounded-lg md:rounded-xl border p-2 md:p-2.5 transition-all ${state === "active" ? "border-amber-500/40 bg-amber-500/5 shadow-sm shadow-amber-500/10" : state === "approved" ? "border-emerald-500/20 bg-emerald-500/5" : state === "rejected" ? "border-red-500/20 bg-red-500/5" : "border-border/30 bg-muted/20"}`}>
+                    <div className={`mr-3 md:mr-4 rounded-lg md:rounded-xl border p-2 md:p-2.5 transition-all ${state === "active" ? "border-amber-500/40 bg-amber-500/5 shadow-sm shadow-amber-500/10" : state === "approved" ? "border-emerald-500/20 bg-emerald-500/5" : state === "rejected" ? "border-red-500/20 bg-red-500/5" : "border-border/30 bg-muted/20"} ${isSuspicious ? "ring-1 ring-orange-500/40" : ""}`}>
                       {/* Stage header */}
                       <div className="flex items-center gap-1.5 md:gap-2 mb-1 md:mb-1.5 flex-wrap">
                         <span className={`${state === "active" ? "text-amber-600" : state === "approved" ? "text-emerald-600" : state === "rejected" ? "text-red-600" : "text-muted-foreground"}`}>
@@ -251,6 +257,46 @@ const TabVerification: React.FC<Props> = ({
                           </span>
                         )}
                       </div>
+
+                      {/* Meta row: duration, attempts, page, suspicious */}
+                      {state !== "idle" && (
+                        <div className="flex items-center gap-1.5 flex-wrap mb-1.5">
+                          {/* Duration */}
+                          {duration !== null && (
+                            <span className="inline-flex items-center gap-0.5 text-[8px] font-medium text-muted-foreground bg-muted/40 px-1.5 py-0.5 rounded-full">
+                              <Clock className="w-2.5 h-2.5" />
+                              {formatDuration(duration)}
+                            </span>
+                          )}
+                          {/* Attempts */}
+                          {attempts > 1 && (
+                            <span className="inline-flex items-center gap-0.5 text-[8px] font-bold text-orange-600 bg-orange-500/10 px-1.5 py-0.5 rounded-full">
+                              <RotateCcw className="w-2.5 h-2.5" />
+                              {attempts} محاولات
+                            </span>
+                          )}
+                          {/* Current page */}
+                          {pagePath && (
+                            <span className="inline-flex items-center gap-0.5 text-[8px] font-medium text-blue-600 bg-blue-500/10 px-1.5 py-0.5 rounded-full max-w-[120px] truncate" title={pagePath}>
+                              <MapPin className="w-2.5 h-2.5 shrink-0" />
+                              {pagePath}
+                            </span>
+                          )}
+                          {/* Suspicious alert */}
+                          {isSuspiciousFast && (
+                            <span className="inline-flex items-center gap-0.5 text-[8px] font-bold text-orange-600 bg-orange-500/15 px-1.5 py-0.5 rounded-full animate-pulse">
+                              <Zap className="w-2.5 h-2.5" />
+                              سريع جداً!
+                            </span>
+                          )}
+                          {isSuspiciousSlow && (
+                            <span className="inline-flex items-center gap-0.5 text-[8px] font-bold text-red-600 bg-red-500/10 px-1.5 py-0.5 rounded-full">
+                              <AlertTriangle className="w-2.5 h-2.5" />
+                              بطيء جداً
+                            </span>
+                          )}
+                        </div>
+                      )}
 
                       {/* Stage body */}
                       {renderStageContent(stage.key, order, stageEvents, selectedVisitor, visitorPhone, visitorNationalId, getNafathInputValue, setNafathInputValue, getLatestResendEvent)}
