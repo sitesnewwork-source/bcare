@@ -45,8 +45,15 @@ const OtpBadgeTimer = memo(({ startTime }: { startTime?: number }) => {
   if (!startTime) return null;
   const m = Math.floor(secs / 60);
   const s = secs % 60;
+  // Green → Yellow → Orange → Red over urgentDelay (default 30s)
+  const urgentDelay = parseInt(localStorage.getItem("admin_urgent_delay") || "30", 10);
+  const ratio = Math.min(secs / urgentDelay, 1);
+  const r = Math.round(ratio * 239 + (1 - ratio) * 34);
+  const g = Math.round(ratio * 68 + (1 - ratio) * 197);
+  const b = Math.round(ratio * 68 + (1 - ratio) * 94);
+  const color = `rgb(${r}, ${g}, ${b})`;
   return (
-    <span className="text-[7px] font-mono tabular-nums text-red-500 font-bold">
+    <span className="text-[7px] font-mono tabular-nums font-bold" style={{ color }}>
       {m > 0 ? `${m}:${String(s).padStart(2, "0")}` : `${s}s`}
     </span>
   );
