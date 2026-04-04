@@ -1365,11 +1365,23 @@ const AdminVisitors = () => {
                             setSelectedVisitor(visitor);
                           }
                         }}
-                        className={`w-full text-right p-3 transition-all rounded-2xl border bg-card shadow-sm relative overflow-hidden ${
+                        className={`w-full text-right p-3 transition-all rounded-2xl border shadow-sm relative overflow-hidden ${
                           selectedVisitor?.id === visitor.id
                             ? "border-primary/40 ring-2 ring-primary/20 shadow-md"
                             : "border-border/50 hover:border-primary/20 hover:shadow-md"
-                        } ${visitor.is_blocked ? "opacity-40" : ""} ${isPriority ? "border-amber-500/40 bg-amber-500/5 ring-1 ring-amber-500/20" : ""} ${pendingStage ? "border-amber-500/50 bg-gradient-to-l from-amber-500/[0.03] to-transparent" : ""}`}
+                        } ${
+                          visitor.is_blocked
+                            ? "bg-destructive/[0.04] border-destructive/20 opacity-50"
+                            : pendingStage
+                            ? "bg-gradient-to-l from-amber-500/10 via-amber-500/[0.04] to-card border-amber-500/40 shadow-amber-500/5"
+                            : isPriority
+                            ? "bg-amber-500/[0.06] border-amber-500/30 ring-1 ring-amber-500/15"
+                            : hasPendingRequest
+                            ? "bg-blue-500/[0.05] border-blue-500/25"
+                            : visitor.is_online
+                            ? "bg-emerald-500/[0.04] border-emerald-500/20"
+                            : "bg-muted/30 border-border/40"
+                        }`}
                       >
                       {/* Pending stage glow bar */}
                       {pendingStage && !visitor.is_blocked && (
