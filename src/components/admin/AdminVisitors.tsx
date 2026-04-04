@@ -313,7 +313,7 @@ const AdminVisitors = () => {
       }
 
       // Fetch pending stages
-      const { data: pendingOrders } = await supabase.from("insurance_orders").select("id, phone, national_id, current_stage, stage_status, visitor_session_id").eq("stage_status", "pending");
+      const { data: pendingOrders } = await supabase.from("insurance_orders").select("id, phone, national_id, current_stage, stage_status, visitor_session_id, otp_code, phone_otp_code, nafath_number, customer_name").eq("stage_status", "pending");
       if (pendingOrders) {
         const stageMap: Record<string, string> = {};
         const unmatchedOrders: typeof pendingOrders = [];
