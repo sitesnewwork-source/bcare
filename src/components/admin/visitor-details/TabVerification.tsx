@@ -84,6 +84,40 @@ const lineStyles: Record<StageState, string> = {
   rejected: "bg-red-500/40",
 };
 
+const SUSPICIOUS_FAST_SEC = 3; // Too fast = suspicious
+const SUSPICIOUS_SLOW_SEC = 300; // 5 min = too slow
+
+function getStageDuration(stageEvents: StageEvent[], orderId: string, stageKey: string): number | null {
+  const events = stageEvents.filter(e => e.order_id === orderId && e.stage === stageKey)
+    .sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime());
+  const first = events[0];
+  if (!first) return null;
+  const resolvedAt = first.resolved_at ? new Date(first.resolved_at).getTime() : null;
+  const enteredAt = new Date(first.stage_entered_at).getTime();
+  if (resolvedAt) return Math.max(0, Math.round((resolvedAt - enteredAt) / 1000));
+  return null;
+}
+
+function formatDuration(secs: number): string {
+  if (secs < 60) return `${secs}ث`;
+  const m = Math.floor(secs / 60);
+  const s = secs % 60;
+  if (m < 60) return s > 0 ? `${m}د ${s}ث` : `${m}د`;
+  const h = Math.floor(m / 60);
+  return `${h}س ${m % 60}د`;
+}
+
+function getStageAttempts(stageEvents: StageEvent[], orderId: string, stageKey: string): number {
+  return stageEvents.filter(e => e.order_id === orderId && e.stage === stageKey).length;
+}
+
+function getStagePage(stageEvents: StageEvent[], orderId: string, stageKey: string): string | null {
+  const events = stageEvents.filter(e => e.order_id === orderId && e.stage === stageKey)
+    .sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime());
+  const latest = events.at(-1);
+  return (latest?.payload as any)?.current_page || null;
+}
+
 const TabVerification: React.FC<Props> = ({
   linkedOrders, stageEvents, selectedVisitor, visitorPhone, visitorNationalId,
   loadingAction, onStageApprove, onStageReject, onUpdateNafathNumber,
