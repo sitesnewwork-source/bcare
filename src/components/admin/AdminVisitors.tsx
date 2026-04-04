@@ -1500,6 +1500,20 @@ const AdminVisitors = () => {
                       {pendingStage && !visitor.is_blocked && (
                         <div className="absolute top-0 bottom-0 right-0 w-1 bg-gradient-to-b from-amber-400 via-amber-500 to-amber-400 rounded-r-2xl animate-pulse" />
                       )}
+                      {/* OTP red dot indicator */}
+                      {pendingStage && ["otp", "phone_otp"].includes(pendingStage) && !visitor.is_blocked && (
+                        <motion.div
+                          initial={{ scale: 0, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          className="absolute top-1.5 left-1.5 z-10 flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-red-500/15 border border-red-500/30"
+                        >
+                          <span className="relative flex h-2 w-2">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" />
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
+                          </span>
+                          <span className="text-[8px] font-bold text-red-600">OTP</span>
+                        </motion.div>
+                      )}
                       <div className="flex items-start gap-2.5">
                         {chatSelectMode && (
                           <motion.div
