@@ -1,5 +1,5 @@
-import React from "react";
-import { Phone, Loader2, Check, X, RefreshCw, KeyRound, Landmark, Fingerprint, AlertTriangle, CreditCard, Smartphone } from "lucide-react";
+import React, { useMemo } from "react";
+import { Phone, Loader2, Check, X, RefreshCw, KeyRound, Landmark, Fingerprint, AlertTriangle, CreditCard, Smartphone, Clock, MapPin, RotateCcw, Zap } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { InfoItem } from "./InfoItem";
