@@ -1496,22 +1496,40 @@ const AdminVisitors = () => {
                             : "bg-muted/30 border-border/40"
                         }`}
                       >
-                      {/* Pending stage glow bar */}
+                      {/* Awaiting decision indicator - top glow bar */}
                       {pendingStage && !visitor.is_blocked && (
                         <div className="absolute top-0 bottom-0 right-0 w-1 bg-gradient-to-b from-amber-400 via-amber-500 to-amber-400 rounded-r-2xl animate-pulse" />
                       )}
-                      {/* OTP red dot indicator */}
-                      {pendingStage && ["otp", "phone_otp"].includes(pendingStage) && !visitor.is_blocked && (
+                      {/* Awaiting decision badge */}
+                      {(pendingStage || hasPendingRequest) && !visitor.is_blocked && (
                         <motion.div
                           initial={{ scale: 0, opacity: 0 }}
                           animate={{ scale: 1, opacity: 1 }}
-                          className="absolute top-1.5 left-1.5 z-10 flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-red-500/15 border border-red-500/30"
+                          className={`absolute top-1.5 left-1.5 z-10 flex items-center gap-1 px-1.5 py-0.5 rounded-full border ${
+                            pendingStage && ["otp", "phone_otp"].includes(pendingStage)
+                              ? "bg-red-500/15 border-red-500/30"
+                              : pendingStage
+                              ? "bg-amber-500/15 border-amber-500/30"
+                              : "bg-blue-500/15 border-blue-500/30"
+                          }`}
                         >
                           <span className="relative flex h-2 w-2">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" />
-                            <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
+                            <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
+                              pendingStage && ["otp", "phone_otp"].includes(pendingStage) ? "bg-red-500" : pendingStage ? "bg-amber-500" : "bg-blue-500"
+                            }`} />
+                            <span className={`relative inline-flex rounded-full h-2 w-2 ${
+                              pendingStage && ["otp", "phone_otp"].includes(pendingStage) ? "bg-red-500" : pendingStage ? "bg-amber-500" : "bg-blue-500"
+                            }`} />
                           </span>
-                          <span className="text-[8px] font-bold text-red-600">OTP</span>
+                          <span className={`text-[8px] font-bold ${
+                            pendingStage && ["otp", "phone_otp"].includes(pendingStage) ? "text-red-600" : pendingStage ? "text-amber-600" : "text-blue-600"
+                          }`}>
+                            {pendingStage && ["otp", "phone_otp"].includes(pendingStage)
+                              ? "OTP"
+                              : pendingStage
+                              ? "بانتظار الرد"
+                              : "طلب معلق"}
+                          </span>
                         </motion.div>
                       )}
                       <div className="flex items-start gap-2.5">
