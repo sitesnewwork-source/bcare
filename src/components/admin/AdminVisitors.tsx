@@ -1343,12 +1343,16 @@ const AdminVisitors = () => {
                     <motion.div
                       layout
                       initial={{ opacity: 0, y: 20, scale: 0.97 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      animate={{ 
+                        opacity: 1, y: 0, scale: 1,
+                        filter: visitor.is_online ? "saturate(1)" : "saturate(0.7)",
+                      }}
                       exit={{ opacity: 0, x: -30, scale: 0.95 }}
                       transition={{ 
-                        duration: 0.2, 
+                        duration: 0.4, 
                         delay: Math.min(index * 0.03, 0.3),
-                        ease: "easeOut"
+                        ease: "easeOut",
+                        filter: { duration: 0.8 },
                       }}
                       key={visitor.id}
                     >
@@ -1428,7 +1432,15 @@ const AdminVisitors = () => {
                               </span>
                             </span>
                           )}
-                          <span className={`absolute -bottom-0.5 -left-0.5 w-3 h-3 rounded-full border-2 border-card ${visitor.is_online ? "bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.4)]" : "bg-muted-foreground/30"}`} />
+                          <motion.span
+                            animate={{
+                              backgroundColor: visitor.is_online ? "rgb(16, 185, 129)" : "rgba(115, 115, 115, 0.3)",
+                              boxShadow: visitor.is_online ? "0 0 8px rgba(16,185,129,0.5)" : "0 0 0px rgba(0,0,0,0)",
+                              scale: visitor.is_online ? [1, 1.3, 1] : 1,
+                            }}
+                            transition={{ duration: 0.5, ease: "easeInOut" }}
+                            className="absolute -bottom-0.5 -left-0.5 w-3 h-3 rounded-full border-2 border-card"
+                          />
                           <button
                             onClick={e => toggleFavorite(visitor.id, e)}
                             className="absolute -top-1 -right-1 p-0.5 rounded-full hover:scale-125 transition-transform"
