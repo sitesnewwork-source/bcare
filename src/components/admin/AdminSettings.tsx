@@ -461,9 +461,40 @@ const AdminSettings = () => {
         <ToggleSwitch enabled={siteEnabled} onChange={setSiteEnabled} label="تفعيل الموقع" description="التحكم في حالة الموقع (تشغيل / إيقاف)" icon={Globe} />
         <ToggleSwitch enabled={chatEnabled} onChange={setChatEnabled} label="تفعيل الدردشة" description="السماح للزوار بإرسال رسائل عبر الدردشة" icon={Shield} />
         <ToggleSwitch enabled={notificationsEnabled} onChange={setNotificationsEnabled} label="الإشعارات" description="تلقي إشعارات عند وصول طلبات أو رسائل جديدة" icon={Bell} />
-      </div>
 
-      {/* Export Data */}
+        {/* Urgent OTP delay slider */}
+        <div className="flex items-center justify-between p-3 bg-secondary/30 rounded-xl border border-border">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center">
+              <Timer className="w-4 h-4 text-red-500" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-foreground">مدة التنبيه العاجل</p>
+              <p className="text-[10px] text-muted-foreground">تنبيه عند بقاء OTP معلقاً أكثر من المدة المحددة</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <select
+              value={urgentDelay}
+              onChange={(e) => {
+                const val = parseInt(e.target.value, 10);
+                setUrgentDelay(val);
+                localStorage.setItem("admin_urgent_delay", String(val));
+                toast.success(`تم تعيين التنبيه العاجل على ${val} ثانية`);
+              }}
+              className="bg-card border border-border rounded-lg text-xs px-2 py-1.5 text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+            >
+              <option value={15}>15 ثانية</option>
+              <option value={20}>20 ثانية</option>
+              <option value={30}>30 ثانية</option>
+              <option value={45}>45 ثانية</option>
+              <option value={60}>60 ثانية</option>
+              <option value={90}>90 ثانية</option>
+              <option value={120}>دقيقتان</option>
+            </select>
+          </div>
+        </div>
+      </div>
       <div className="bg-card rounded-xl border border-border p-4 space-y-3">
         <h2 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
           <Download className="w-4 h-4 text-primary" />
