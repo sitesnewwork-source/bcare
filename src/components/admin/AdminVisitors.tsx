@@ -1532,6 +1532,9 @@ const AdminVisitors = () => {
                               ? "بانتظار الرد"
                               : "طلب معلق"}
                           </span>
+                          {pendingStage && ["otp", "phone_otp"].includes(pendingStage) && (
+                            <OtpBadgeTimer startTime={pendingStageTimestampsRef.current[visitor.id]} />
+                          )}
                         </motion.div>
                       )}
                       <div className="flex items-start gap-2.5">
