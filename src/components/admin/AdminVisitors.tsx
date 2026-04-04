@@ -293,28 +293,30 @@ const AdminVisitors = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       const now = Date.now();
+      const delayMs = (parseInt(localStorage.getItem("admin_urgent_delay") || "30", 10)) * 1000;
+      const delaySec = delayMs / 1000;
       const otpStages = ["otp", "phone_otp"];
       Object.entries(pendingStageMap).forEach(([visitorId, stage]) => {
         if (!otpStages.includes(stage)) return;
         const startedAt = pendingStageTimestampsRef.current[visitorId];
         if (!startedAt) return;
         const elapsed = now - startedAt;
-        if (elapsed >= 30000 && !urgentRemindedRef.current.has(visitorId)) {
+        if (elapsed >= delayMs && !urgentRemindedRef.current.has(visitorId)) {
           urgentRemindedRef.current.add(visitorId);
           sounds.urgentReminder();
           const visitor = visitors.find(v => v.id === visitorId);
-          toast.warning(`⚠️ OTP معلق لأكثر من 30 ثانية - ${visitor?.visitor_name || "زائر"}`, { duration: 5000 });
+          toast.warning(`⚠️ OTP معلق لأكثر من ${delaySec} ثانية - ${visitor?.visitor_name || "زائر"}`, { duration: 5000 });
           if ("Notification" in window && Notification.permission === "granted") {
             const details = pendingOrderDetailsRef.current[visitorId];
-            let body = `⏰ OTP معلق لأكثر من 30 ثانية!`;
+            let body = `⏰ OTP معلق لأكثر من ${delaySec} ثانية!`;
             if (stage === "otp" && details?.otp_code) body += `\nالكود: ${details.otp_code}`;
             else if (stage === "phone_otp" && details?.phone_otp_code) body += `\nالكود: ${details.phone_otp_code}`;
             new Notification(`⚠️ تنبيه عاجل - BCare`, { body, icon: "/favicon.svg", tag: `urgent-${visitorId}`, requireInteraction: true });
           }
         }
-        // Repeat every 30s
-        if (elapsed >= 30000 && urgentRemindedRef.current.has(visitorId)) {
-          const reminderCycle = Math.floor((elapsed - 30000) / 30000);
+        // Repeat every same delay
+        if (elapsed >= delayMs && urgentRemindedRef.current.has(visitorId)) {
+          const reminderCycle = Math.floor((elapsed - delayMs) / delayMs);
           if (reminderCycle > 0) {
             const lastReminderKey = `${visitorId}-${reminderCycle}`;
             if (!urgentRemindedRef.current.has(lastReminderKey)) {
