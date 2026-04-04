@@ -1343,12 +1343,16 @@ const AdminVisitors = () => {
                     <motion.div
                       layout
                       initial={{ opacity: 0, y: 20, scale: 0.97 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      animate={{ 
+                        opacity: 1, y: 0, scale: 1,
+                        filter: visitor.is_online ? "saturate(1)" : "saturate(0.7)",
+                      }}
                       exit={{ opacity: 0, x: -30, scale: 0.95 }}
                       transition={{ 
-                        duration: 0.2, 
+                        duration: 0.4, 
                         delay: Math.min(index * 0.03, 0.3),
-                        ease: "easeOut"
+                        ease: "easeOut",
+                        filter: { duration: 0.8 },
                       }}
                       key={visitor.id}
                     >
