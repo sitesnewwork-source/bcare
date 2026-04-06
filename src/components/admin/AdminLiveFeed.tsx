@@ -9,7 +9,8 @@ interface FeedItem {
   title: string;
   description: string;
   time: Date;
-  type: "visitor" | "request" | "action";
+  type: "visitor" | "request" | "action" | "smart_alert";
+  severity?: "info" | "warning" | "critical";
 }
 
 interface AdminLiveFeedProps {
