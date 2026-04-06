@@ -26,23 +26,6 @@ interface Props {
 }
 
 const RedirectPrompt: React.FC<Props> = ({ targetPath, onAccept, onDismiss }) => {
-  const [countdown, setCountdown] = useState(15);
-
-  useEffect(() => {
-    if (!targetPath) return;
-    setCountdown(15);
-    const timer = setInterval(() => {
-      setCountdown(prev => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          onAccept();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [targetPath, onAccept]);
 
   const label = targetPath ? (PAGE_LABELS[targetPath] || targetPath) : "";
 
