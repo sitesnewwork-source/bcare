@@ -125,9 +125,14 @@ const AdminLiveFeed = ({ isOpen, onOpenChange, onCountChange }: AdminLiveFeedPro
   const typeColors: Record<string, string> = {
     visitor: "border-r-emerald-500",
     request: "border-r-primary",
-    
-    
     action: "border-r-purple-500",
+    smart_alert: "border-r-amber-500",
+  };
+
+  const severityBg: Record<string, string> = {
+    critical: "bg-red-500/10",
+    warning: "bg-amber-500/10",
+    info: "bg-sky-500/10",
   };
 
   if (collapsed) {
