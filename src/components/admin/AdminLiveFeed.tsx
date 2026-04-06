@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { sounds } from "@/lib/sounds";
-import { Activity, X, ChevronLeft, ChevronRight, Settings, Volume2, VolumeX } from "lucide-react";
+import { Activity, X, ChevronLeft, ChevronRight, Settings, Volume2, VolumeX, Zap } from "lucide-react";
+import { useSmartAlerts, type SmartAlert } from "@/hooks/useSmartAlerts";
 
 interface FeedItem {
   id: string;
