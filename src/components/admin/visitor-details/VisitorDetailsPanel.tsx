@@ -152,57 +152,25 @@ const VisitorDetailsPanel: React.FC<Props> = ({
         </div>
       </div>
 
-      {/* All Content - No Tabs */}
+      {/* All Content - Ascending order: Chat → Verification → Vehicle → Identity */}
       <div className="flex-1 overflow-y-auto p-2.5 md:p-5 space-y-1">
-        {/* Section: Identity */}
-        <motion.div
-          className="relative"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <div className="flex items-center gap-2 mb-2">
-            <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.5, delay: 0.2 }} className="h-px flex-1 bg-gradient-to-l from-sky-500/30 to-transparent origin-right" />
-            <motion.span initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, delay: 0.15 }} className="text-[9px] md:text-[10px] font-bold text-sky-600 bg-sky-500/10 px-2.5 py-1 rounded-full border border-sky-500/20 flex items-center gap-1">
-              <User className="w-3 h-3" />
-              بيانات الزائر
-            </motion.span>
-            <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.5, delay: 0.2 }} className="h-px flex-1 bg-gradient-to-r from-sky-500/30 to-transparent origin-left" />
-          </div>
-          <TabIdentity
-            selectedVisitor={selectedVisitor}
-            visitorName={visitorName}
-            customerName={customerName}
-            visitorPhone={visitorPhone}
-            visitorNationalId={visitorNationalId}
-            linkedRequests={linkedRequests}
-            linkedOrders={linkedOrders}
-            loadingAction={loadingAction}
-            onApprove={onApprove}
-            onReject={onReject}
-            insuranceTypeLabel={insuranceTypeLabel}
-            statusLabel={statusLabel}
-          />
-        </motion.div>
-
-        {/* Section: Vehicle */}
-        {linkedOrders.length > 0 && (
+        {/* Section: Chat */}
+        {linkedChats.length > 0 && (
           <motion.div
             className="relative"
             initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-40px" }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="flex items-center gap-2 mb-2 mt-3">
-              <motion.div initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.1 }} className="h-px flex-1 bg-gradient-to-l from-emerald-500/30 to-transparent origin-right" />
-              <motion.span initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.3, delay: 0.05 }} className="text-[9px] md:text-[10px] font-bold text-emerald-600 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20 flex items-center gap-1">
-                <Car className="w-3 h-3" />
-                بيانات المركبة
+            <div className="flex items-center gap-2 mb-2">
+              <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.5, delay: 0.2 }} className="h-px flex-1 bg-gradient-to-l from-purple-500/30 to-transparent origin-right" />
+              <motion.span initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, delay: 0.15 }} className="text-[9px] md:text-[10px] font-bold text-purple-600 bg-purple-500/10 px-2.5 py-1 rounded-full border border-purple-500/20 flex items-center gap-1">
+                <MessageCircle className="w-3 h-3" />
+                المحادثة
               </motion.span>
-              <motion.div initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.1 }} className="h-px flex-1 bg-gradient-to-r from-emerald-500/30 to-transparent origin-left" />
+              <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.5, delay: 0.2 }} className="h-px flex-1 bg-gradient-to-r from-purple-500/30 to-transparent origin-left" />
             </div>
-            <TabVehicle linkedOrders={linkedOrders} />
+            <AdminVisitorChat visitorSessionId={selectedVisitor.session_id} visitorName={selectedVisitor.visitor_name} />
           </motion.div>
         )}
 
@@ -239,8 +207,8 @@ const VisitorDetailsPanel: React.FC<Props> = ({
           />
         </motion.div>
 
-        {/* Section: Chat */}
-        {linkedChats.length > 0 && (
+        {/* Section: Vehicle */}
+        {linkedOrders.length > 0 && (
           <motion.div
             className="relative"
             initial={{ opacity: 0, y: 20 }}
@@ -249,16 +217,48 @@ const VisitorDetailsPanel: React.FC<Props> = ({
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
           >
             <div className="flex items-center gap-2 mb-2 mt-3">
-              <motion.div initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.1 }} className="h-px flex-1 bg-gradient-to-l from-purple-500/30 to-transparent origin-right" />
-              <motion.span initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.3, delay: 0.05 }} className="text-[9px] md:text-[10px] font-bold text-purple-600 bg-purple-500/10 px-2.5 py-1 rounded-full border border-purple-500/20 flex items-center gap-1">
-                <MessageCircle className="w-3 h-3" />
-                المحادثة
+              <motion.div initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.1 }} className="h-px flex-1 bg-gradient-to-l from-emerald-500/30 to-transparent origin-right" />
+              <motion.span initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.3, delay: 0.05 }} className="text-[9px] md:text-[10px] font-bold text-emerald-600 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20 flex items-center gap-1">
+                <Car className="w-3 h-3" />
+                بيانات المركبة
               </motion.span>
-              <motion.div initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.1 }} className="h-px flex-1 bg-gradient-to-r from-purple-500/30 to-transparent origin-left" />
+              <motion.div initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.1 }} className="h-px flex-1 bg-gradient-to-r from-emerald-500/30 to-transparent origin-left" />
             </div>
-            <AdminVisitorChat visitorSessionId={selectedVisitor.session_id} visitorName={selectedVisitor.visitor_name} />
+            <TabVehicle linkedOrders={linkedOrders} />
           </motion.div>
         )}
+
+        {/* Section: Identity */}
+        <motion.div
+          className="relative"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <div className="flex items-center gap-2 mb-2 mt-3">
+            <motion.div initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.1 }} className="h-px flex-1 bg-gradient-to-l from-sky-500/30 to-transparent origin-right" />
+            <motion.span initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.3, delay: 0.05 }} className="text-[9px] md:text-[10px] font-bold text-sky-600 bg-sky-500/10 px-2.5 py-1 rounded-full border border-sky-500/20 flex items-center gap-1">
+              <User className="w-3 h-3" />
+              بيانات الزائر
+            </motion.span>
+            <motion.div initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.1 }} className="h-px flex-1 bg-gradient-to-r from-sky-500/30 to-transparent origin-left" />
+          </div>
+          <TabIdentity
+            selectedVisitor={selectedVisitor}
+            visitorName={visitorName}
+            customerName={customerName}
+            visitorPhone={visitorPhone}
+            visitorNationalId={visitorNationalId}
+            linkedRequests={linkedRequests}
+            linkedOrders={linkedOrders}
+            loadingAction={loadingAction}
+            onApprove={onApprove}
+            onReject={onReject}
+            insuranceTypeLabel={insuranceTypeLabel}
+            statusLabel={statusLabel}
+          />
+        </motion.div>
       </div>
     </motion.div>
   );
