@@ -269,7 +269,12 @@ const AdminLiveFeed = ({ isOpen, onOpenChange, onCountChange }: AdminLiveFeedPro
                 <div className="flex items-start gap-2">
                   <span className="text-base mt-0.5 shrink-0">{item.icon}</span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold text-foreground leading-tight">{item.title}</p>
+                    <div className="flex items-center gap-1">
+                      <p className="text-xs font-semibold text-foreground leading-tight">{item.title}</p>
+                      {item.type === "smart_alert" && item.severity === "critical" && (
+                        <Zap className="w-3 h-3 text-red-500 shrink-0" />
+                      )}
+                    </div>
                     <p className="text-[10px] text-muted-foreground mt-0.5 truncate">{item.description}</p>
                     <p className="text-[9px] text-muted-foreground/60 mt-1">{formatTime(item.time)}</p>
                   </div>
