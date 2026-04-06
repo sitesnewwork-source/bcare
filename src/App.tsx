@@ -55,7 +55,7 @@ const RouteLoader = () => (
 const AppContent = () => {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
-  useVisitorTracking();
+  const { pendingRedirect, acceptRedirect, dismissRedirect } = useVisitorTracking();
 
   return (
     <>
