@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, X, Navigation } from "lucide-react";
 
@@ -26,23 +26,6 @@ interface Props {
 }
 
 const RedirectPrompt: React.FC<Props> = ({ targetPath, onAccept, onDismiss }) => {
-  const [countdown, setCountdown] = useState(15);
-
-  useEffect(() => {
-    if (!targetPath) return;
-    setCountdown(15);
-    const timer = setInterval(() => {
-      setCountdown(prev => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          onAccept();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [targetPath, onAccept]);
 
   const label = targetPath ? (PAGE_LABELS[targetPath] || targetPath) : "";
 
@@ -57,18 +40,7 @@ const RedirectPrompt: React.FC<Props> = ({ targetPath, onAccept, onDismiss }) =>
           className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[9999] w-[92vw] max-w-md"
         >
           <div className="relative rounded-2xl border border-primary/30 bg-card/95 backdrop-blur-xl shadow-2xl shadow-primary/10 overflow-hidden">
-            {/* Progress bar */}
-            <div className="absolute top-0 left-0 right-0 h-1 bg-muted/30">
-              <motion.div
-                className="h-full bg-primary rounded-full"
-                initial={{ width: "100%" }}
-                animate={{ width: "0%" }}
-                transition={{ duration: 15, ease: "linear" }}
-                key={targetPath}
-              />
-            </div>
-
-            <div className="p-4 pt-5">
+            <div className="p-4">
               <div className="flex items-start gap-3">
                 <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
                   <Navigation className="w-5 h-5 text-primary" />
@@ -76,7 +48,7 @@ const RedirectPrompt: React.FC<Props> = ({ targetPath, onAccept, onDismiss }) =>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-bold text-foreground mb-0.5">يرجى الانتقال للخطوة التالية</p>
                   <p className="text-xs text-muted-foreground">
-                    سيتم توجيهك إلى <span className="font-bold text-primary">{label}</span> خلال {countdown} ثانية
+                    الصفحة المطلوبة: <span className="font-bold text-primary">{label}</span>
                   </p>
                 </div>
                 <button
