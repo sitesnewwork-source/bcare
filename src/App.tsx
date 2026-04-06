@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { LanguageProvider } from "@/i18n/LanguageContext";
 import { useVisitorTracking } from "./hooks/useVisitorTracking";
 import ScrollToTop from "./components/ScrollToTop";
+import RedirectPrompt from "./components/RedirectPrompt";
 
 // Eagerly load the homepage for instant first paint
 import Index from "./pages/Index.tsx";
