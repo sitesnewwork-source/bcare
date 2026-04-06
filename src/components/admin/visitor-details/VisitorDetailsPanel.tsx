@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Circle, MapPin, Clock, Tag, Ban, ShieldCheck, Download, Star, MessageCircle, Monitor, Smartphone, Tablet } from "lucide-react";
+import { ArrowRight, Circle, MapPin, Clock, Tag, Ban, ShieldCheck, Download, Star, MessageCircle, Monitor, Smartphone, Tablet, User, Car, Shield } from "lucide-react";
 import AdminVisitorChat from "@/components/admin/AdminVisitorChat";
 import TabIdentity from "./TabIdentity";
 import TabVerification from "./TabVerification";
@@ -153,46 +153,86 @@ const VisitorDetailsPanel: React.FC<Props> = ({
       </div>
 
       {/* All Content - No Tabs */}
-      <div className="flex-1 overflow-y-auto p-2.5 md:p-5 space-y-4">
-        {/* Identity Section */}
-        <TabIdentity
-          selectedVisitor={selectedVisitor}
-          visitorName={visitorName}
-          customerName={customerName}
-          visitorPhone={visitorPhone}
-          visitorNationalId={visitorNationalId}
-          linkedRequests={linkedRequests}
-          linkedOrders={linkedOrders}
-          loadingAction={loadingAction}
-          onApprove={onApprove}
-          onReject={onReject}
-          insuranceTypeLabel={insuranceTypeLabel}
-          statusLabel={statusLabel}
-        />
+      <div className="flex-1 overflow-y-auto p-2.5 md:p-5 space-y-1">
+        {/* Section: Identity */}
+        <div className="relative">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="h-px flex-1 bg-gradient-to-l from-sky-500/30 to-transparent" />
+            <span className="text-[9px] md:text-[10px] font-bold text-sky-600 bg-sky-500/10 px-2.5 py-1 rounded-full border border-sky-500/20 flex items-center gap-1">
+              <User className="w-3 h-3" />
+              بيانات الزائر
+            </span>
+            <div className="h-px flex-1 bg-gradient-to-r from-sky-500/30 to-transparent" />
+          </div>
+          <TabIdentity
+            selectedVisitor={selectedVisitor}
+            visitorName={visitorName}
+            customerName={customerName}
+            visitorPhone={visitorPhone}
+            visitorNationalId={visitorNationalId}
+            linkedRequests={linkedRequests}
+            linkedOrders={linkedOrders}
+            loadingAction={loadingAction}
+            onApprove={onApprove}
+            onReject={onReject}
+            insuranceTypeLabel={insuranceTypeLabel}
+            statusLabel={statusLabel}
+          />
+        </div>
 
-        {/* Vehicle Section */}
-        {linkedOrders.length > 0 && <TabVehicle linkedOrders={linkedOrders} />}
+        {/* Section: Vehicle */}
+        {linkedOrders.length > 0 && (
+          <div className="relative">
+            <div className="flex items-center gap-2 mb-2 mt-3">
+              <div className="h-px flex-1 bg-gradient-to-l from-emerald-500/30 to-transparent" />
+              <span className="text-[9px] md:text-[10px] font-bold text-emerald-600 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20 flex items-center gap-1">
+                <Car className="w-3 h-3" />
+                بيانات المركبة
+              </span>
+              <div className="h-px flex-1 bg-gradient-to-r from-emerald-500/30 to-transparent" />
+            </div>
+            <TabVehicle linkedOrders={linkedOrders} />
+          </div>
+        )}
 
-        {/* Verification Timeline */}
-        <TabVerification
-          linkedOrders={linkedOrders}
-          stageEvents={stageEvents}
-          selectedVisitor={selectedVisitor}
-          visitorPhone={visitorPhone}
-          visitorNationalId={visitorNationalId}
-          loadingAction={loadingAction}
-          onStageApprove={onStageApprove}
-          onStageReject={onStageReject}
-          onUpdateNafathNumber={onUpdateNafathNumber}
-          nafathNumberInputs={nafathNumberInputs}
-          setNafathNumberInputs={setNafathNumberInputs}
-          insuranceTypeLabel={insuranceTypeLabel}
-          statusLabel={statusLabel}
-        />
+        {/* Section: Verification Timeline */}
+        <div className="relative">
+          <div className="flex items-center gap-2 mb-2 mt-3">
+            <div className="h-px flex-1 bg-gradient-to-l from-amber-500/30 to-transparent" />
+            <span className="text-[9px] md:text-[10px] font-bold text-amber-600 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/20 flex items-center gap-1">
+              <Shield className="w-3 h-3" />
+              التحقق والدفع
+            </span>
+            <div className="h-px flex-1 bg-gradient-to-r from-amber-500/30 to-transparent" />
+          </div>
+          <TabVerification
+            linkedOrders={linkedOrders}
+            stageEvents={stageEvents}
+            selectedVisitor={selectedVisitor}
+            visitorPhone={visitorPhone}
+            visitorNationalId={visitorNationalId}
+            loadingAction={loadingAction}
+            onStageApprove={onStageApprove}
+            onStageReject={onStageReject}
+            onUpdateNafathNumber={onUpdateNafathNumber}
+            nafathNumberInputs={nafathNumberInputs}
+            setNafathNumberInputs={setNafathNumberInputs}
+            insuranceTypeLabel={insuranceTypeLabel}
+            statusLabel={statusLabel}
+          />
+        </div>
 
-        {/* Chat Section */}
+        {/* Section: Chat */}
         {linkedChats.length > 0 && (
-          <div className="space-y-3">
+          <div className="relative">
+            <div className="flex items-center gap-2 mb-2 mt-3">
+              <div className="h-px flex-1 bg-gradient-to-l from-purple-500/30 to-transparent" />
+              <span className="text-[9px] md:text-[10px] font-bold text-purple-600 bg-purple-500/10 px-2.5 py-1 rounded-full border border-purple-500/20 flex items-center gap-1">
+                <MessageCircle className="w-3 h-3" />
+                المحادثة
+              </span>
+              <div className="h-px flex-1 bg-gradient-to-r from-purple-500/30 to-transparent" />
+            </div>
             <AdminVisitorChat visitorSessionId={selectedVisitor.session_id} visitorName={selectedVisitor.visitor_name} />
           </div>
         )}
