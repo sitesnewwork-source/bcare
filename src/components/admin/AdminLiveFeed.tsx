@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { sounds } from "@/lib/sounds";
-import { Activity, X, ChevronLeft, ChevronRight, Settings, Volume2, VolumeX } from "lucide-react";
+import { Activity, X, ChevronLeft, ChevronRight, Settings, Volume2, VolumeX, Zap } from "lucide-react";
+import { useSmartAlerts, type SmartAlert } from "@/hooks/useSmartAlerts";
 
 interface FeedItem {
   id: string;
@@ -9,7 +10,8 @@ interface FeedItem {
   title: string;
   description: string;
   time: Date;
-  type: "visitor" | "request" | "action";
+  type: "visitor" | "request" | "action" | "smart_alert";
+  severity?: "info" | "warning" | "critical";
 }
 
 interface AdminLiveFeedProps {
@@ -75,6 +77,22 @@ const AdminLiveFeed = ({ isOpen, onOpenChange, onCountChange }: AdminLiveFeedPro
     setFeedItems((prev) => prev.filter((item) => item.id !== id));
   };
 
+  // Smart alerts integration
+  const handleSmartAlert = useCallback((alert: SmartAlert) => {
+    const newItem: FeedItem = {
+      id: alert.id,
+      icon: alert.icon,
+      title: alert.title,
+      description: alert.description,
+      time: alert.time,
+      type: "smart_alert",
+      severity: alert.severity,
+    };
+    setFeedItems((prev) => [newItem, ...prev].slice(0, 50));
+  }, []);
+
+  useSmartAlerts(handleSmartAlert);
+
   useEffect(() => {
     const channel = supabase
       .channel("admin-live-feed")
@@ -107,9 +125,14 @@ const AdminLiveFeed = ({ isOpen, onOpenChange, onCountChange }: AdminLiveFeedPro
   const typeColors: Record<string, string> = {
     visitor: "border-r-emerald-500",
     request: "border-r-primary",
-    
-    
     action: "border-r-purple-500",
+    smart_alert: "border-r-amber-500",
+  };
+
+  const severityBg: Record<string, string> = {
+    critical: "bg-red-500/10",
+    warning: "bg-amber-500/10",
+    info: "bg-sky-500/10",
   };
 
   if (collapsed) {
@@ -240,13 +263,18 @@ const AdminLiveFeed = ({ isOpen, onOpenChange, onCountChange }: AdminLiveFeedPro
             feedItems.map((item, index) => (
               <div
                 key={item.id}
-                className={`p-3 border-b border-border/50 border-r-2 ${typeColors[item.type]} hover:bg-accent/30 transition-all animate-in slide-in-from-left-5 duration-300 group`}
+                className={`p-3 border-b border-border/50 border-r-2 ${typeColors[item.type]} ${item.severity ? severityBg[item.severity] || "" : ""} hover:bg-accent/30 transition-all animate-in slide-in-from-left-5 duration-300 group`}
                 style={{ animationDelay: `${index * 50}ms` }}
               >
                 <div className="flex items-start gap-2">
                   <span className="text-base mt-0.5 shrink-0">{item.icon}</span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold text-foreground leading-tight">{item.title}</p>
+                    <div className="flex items-center gap-1">
+                      <p className="text-xs font-semibold text-foreground leading-tight">{item.title}</p>
+                      {item.type === "smart_alert" && item.severity === "critical" && (
+                        <Zap className="w-3 h-3 text-red-500 shrink-0" />
+                      )}
+                    </div>
                     <p className="text-[10px] text-muted-foreground mt-0.5 truncate">{item.description}</p>
                     <p className="text-[9px] text-muted-foreground/60 mt-1">{formatTime(item.time)}</p>
                   </div>
