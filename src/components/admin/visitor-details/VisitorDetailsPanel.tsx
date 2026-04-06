@@ -1,14 +1,12 @@
-import React, { useState, useRef } from "react";
+import React, { useRef } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Circle, MapPin, Clock, Timer, Tag, Ban, ShieldCheck, Download, Trash2, Star, MessageCircle, Loader2, User, Shield, CreditCard, Car, Monitor, Smartphone, Tablet } from "lucide-react";
+import { ArrowRight, Circle, MapPin, Clock, Tag, Ban, ShieldCheck, Download, Star, MessageCircle, Monitor, Smartphone, Tablet } from "lucide-react";
 import AdminVisitorChat from "@/components/admin/AdminVisitorChat";
 import TabIdentity from "./TabIdentity";
 import TabVerification from "./TabVerification";
 import TabVehicle from "./TabVehicle";
 import type { Visitor, InsuranceRequest, InsuranceOrder, Claim, ChatConv, StageEvent } from "./types";
-import { getVisitorAvatar, getVisitorInitial, getSessionDuration, parseUserAgent, countryFlag, formatDate, formatTime, VISITOR_TAGS, insuranceTypeLabel, statusLabel } from "./types";
-
-type DetailsTab = "identity" | "verification" | "vehicle" | "chat";
+import { getVisitorAvatar, getVisitorInitial, getSessionDuration, parseUserAgent, countryFlag, insuranceTypeLabel, statusLabel } from "./types";
 
 interface Props {
   selectedVisitor: Visitor;
@@ -40,6 +38,13 @@ interface Props {
   setRedirectPage: (val: string) => void;
 }
 
+const VISITOR_TAGS = [
+  { key: "vip", label: "VIP", color: "text-amber-500 bg-amber-500/10" },
+  { key: "suspicious", label: "مشبوه", color: "text-red-500 bg-red-500/10" },
+  { key: "returning", label: "زائر عائد", color: "text-blue-500 bg-blue-500/10" },
+  { key: "potential", label: "عميل محتمل", color: "text-emerald-500 bg-emerald-500/10" },
+];
+
 const VisitorDetailsPanel: React.FC<Props> = ({
   selectedVisitor, linkedRequests, linkedOrders, linkedClaims, linkedChats, stageEvents,
   visitorName, customerName, visitorPhone, visitorNationalId,
@@ -48,17 +53,7 @@ const VisitorDetailsPanel: React.FC<Props> = ({
   onBlockToggle, onExportPDF, onClearChat, onToggleFavorite, onToggleTag,
   onRedirect, redirectPage, setRedirectPage,
 }) => {
-  const [activeTab, setActiveTab] = useState<DetailsTab>("identity");
   const panelRef = useRef<HTMLDivElement>(null);
-
-  const hasPendingVerification = linkedOrders.some(o => o.stage_status === "pending");
-
-  const tabs: { key: DetailsTab; label: string; icon: React.ReactNode; badge?: number }[] = [
-    { key: "identity", label: "الهوية", icon: <User className="w-3.5 h-3.5" /> },
-    { key: "verification", label: "التحقق والدفع", icon: <Shield className="w-3.5 h-3.5" />, badge: hasPendingVerification ? 1 : undefined },
-    { key: "vehicle", label: "المركبة", icon: <Car className="w-3.5 h-3.5" /> },
-    { key: "chat", label: "المحادثة", icon: <MessageCircle className="w-3.5 h-3.5" />, badge: linkedChats.length > 0 ? linkedChats.length : undefined },
-  ];
 
   const avatarColor = getVisitorAvatar(selectedVisitor.session_id);
   const initial = getVisitorInitial(selectedVisitor.visitor_name);
@@ -157,79 +152,46 @@ const VisitorDetailsPanel: React.FC<Props> = ({
         </div>
       </div>
 
-      {/* Horizontal Tabs */}
-      <div className="flex items-center border-b border-border bg-card/50 shrink-0 overflow-x-auto scrollbar-none" dir="rtl">
-        {tabs.map(tab => (
-          <button
-            key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
-            className={`relative flex items-center gap-1 md:gap-1.5 px-2.5 md:px-4 py-2 md:py-2.5 text-[10px] md:text-xs font-bold transition-all whitespace-nowrap ${
-              activeTab === tab.key
-                ? "text-primary"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            {tab.icon}
-            <span>{tab.label}</span>
-            {tab.badge && (
-              <span className={`min-w-[14px] md:min-w-[16px] h-[14px] md:h-[16px] rounded-full text-[8px] md:text-[9px] font-bold flex items-center justify-center px-0.5 ${
-                tab.key === "verification" && hasPendingVerification
-                  ? "bg-amber-500 text-white animate-pulse"
-                  : "bg-primary/10 text-primary"
-              }`}>
-                {tab.badge}
-              </span>
-            )}
-            {activeTab === tab.key && (
-              <motion.div
-                layoutId="tab-indicator"
-                className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-t-full"
-                transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
-              />
-            )}
-          </button>
-        ))}
-      </div>
+      {/* All Content - No Tabs */}
+      <div className="flex-1 overflow-y-auto p-2.5 md:p-5 space-y-4">
+        {/* Identity Section */}
+        <TabIdentity
+          selectedVisitor={selectedVisitor}
+          visitorName={visitorName}
+          customerName={customerName}
+          visitorPhone={visitorPhone}
+          visitorNationalId={visitorNationalId}
+          linkedRequests={linkedRequests}
+          linkedOrders={linkedOrders}
+          loadingAction={loadingAction}
+          onApprove={onApprove}
+          onReject={onReject}
+          insuranceTypeLabel={insuranceTypeLabel}
+          statusLabel={statusLabel}
+        />
 
-      {/* Tab Content */}
-      <div className="flex-1 overflow-y-auto p-2.5 md:p-5">
-        {activeTab === "identity" && (
-          <TabIdentity
-            selectedVisitor={selectedVisitor}
-            visitorName={visitorName}
-            customerName={customerName}
-            visitorPhone={visitorPhone}
-            visitorNationalId={visitorNationalId}
-            linkedRequests={linkedRequests}
-            linkedOrders={linkedOrders}
-            loadingAction={loadingAction}
-            onApprove={onApprove}
-            onReject={onReject}
-            insuranceTypeLabel={insuranceTypeLabel}
-            statusLabel={statusLabel}
-          />
-        )}
-        {activeTab === "verification" && (
-          <TabVerification
-            linkedOrders={linkedOrders}
-            stageEvents={stageEvents}
-            selectedVisitor={selectedVisitor}
-            visitorPhone={visitorPhone}
-            visitorNationalId={visitorNationalId}
-            loadingAction={loadingAction}
-            onStageApprove={onStageApprove}
-            onStageReject={onStageReject}
-            onUpdateNafathNumber={onUpdateNafathNumber}
-            nafathNumberInputs={nafathNumberInputs}
-            setNafathNumberInputs={setNafathNumberInputs}
-            insuranceTypeLabel={insuranceTypeLabel}
-            statusLabel={statusLabel}
-          />
-        )}
-        {activeTab === "vehicle" && (
-          <TabVehicle linkedOrders={linkedOrders} />
-        )}
-        {activeTab === "chat" && (
+        {/* Vehicle Section */}
+        {linkedOrders.length > 0 && <TabVehicle linkedOrders={linkedOrders} />}
+
+        {/* Verification Timeline */}
+        <TabVerification
+          linkedOrders={linkedOrders}
+          stageEvents={stageEvents}
+          selectedVisitor={selectedVisitor}
+          visitorPhone={visitorPhone}
+          visitorNationalId={visitorNationalId}
+          loadingAction={loadingAction}
+          onStageApprove={onStageApprove}
+          onStageReject={onStageReject}
+          onUpdateNafathNumber={onUpdateNafathNumber}
+          nafathNumberInputs={nafathNumberInputs}
+          setNafathNumberInputs={setNafathNumberInputs}
+          insuranceTypeLabel={insuranceTypeLabel}
+          statusLabel={statusLabel}
+        />
+
+        {/* Chat Section */}
+        {linkedChats.length > 0 && (
           <div className="space-y-3">
             <AdminVisitorChat visitorSessionId={selectedVisitor.session_id} visitorName={selectedVisitor.visitor_name} />
           </div>
