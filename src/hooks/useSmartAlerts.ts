@@ -58,7 +58,7 @@ export function useSmartAlerts(onAlert: (alert: SmartAlert) => void) {
     // Play alert sound based on severity
     const muteAll = localStorage.getItem("admin_feed_mute") === "true";
     if (!muteAll) {
-      if (alert.severity === "critical") sounds.urgentOtp?.();
+      if (alert.severity === "critical") sounds.urgentReminder?.();
       else if (alert.severity === "warning") sounds.feedAction?.();
       else sounds.feedNavigation?.();
     }
