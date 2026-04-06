@@ -263,7 +263,7 @@ const AdminLiveFeed = ({ isOpen, onOpenChange, onCountChange }: AdminLiveFeedPro
             feedItems.map((item, index) => (
               <div
                 key={item.id}
-                className={`p-3 border-b border-border/50 border-r-2 ${typeColors[item.type]} hover:bg-accent/30 transition-all animate-in slide-in-from-left-5 duration-300 group`}
+                className={`p-3 border-b border-border/50 border-r-2 ${typeColors[item.type]} ${item.severity ? severityBg[item.severity] || "" : ""} hover:bg-accent/30 transition-all animate-in slide-in-from-left-5 duration-300 group`}
                 style={{ animationDelay: `${index * 50}ms` }}
               >
                 <div className="flex items-start gap-2">
