@@ -77,6 +77,22 @@ const AdminLiveFeed = ({ isOpen, onOpenChange, onCountChange }: AdminLiveFeedPro
     setFeedItems((prev) => prev.filter((item) => item.id !== id));
   };
 
+  // Smart alerts integration
+  const handleSmartAlert = useCallback((alert: SmartAlert) => {
+    const newItem: FeedItem = {
+      id: alert.id,
+      icon: alert.icon,
+      title: alert.title,
+      description: alert.description,
+      time: alert.time,
+      type: "smart_alert",
+      severity: alert.severity,
+    };
+    setFeedItems((prev) => [newItem, ...prev].slice(0, 50));
+  }, []);
+
+  useSmartAlerts(handleSmartAlert);
+
   useEffect(() => {
     const channel = supabase
       .channel("admin-live-feed")
