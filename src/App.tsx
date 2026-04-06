@@ -86,6 +86,13 @@ const AppContent = () => {
           </Routes>
         
         {!isAdminRoute && <ChatWidget />}
+        {!isAdminRoute && (
+          <RedirectPrompt
+            targetPath={pendingRedirect}
+            onAccept={acceptRedirect}
+            onDismiss={dismissRedirect}
+          />
+        )}
       </Suspense>
     </>
   );
