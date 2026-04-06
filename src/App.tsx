@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { LanguageProvider } from "@/i18n/LanguageContext";
 import { useVisitorTracking } from "./hooks/useVisitorTracking";
 import ScrollToTop from "./components/ScrollToTop";
+import RedirectPrompt from "./components/RedirectPrompt";
 
 // Eagerly load the homepage for instant first paint
 import Index from "./pages/Index.tsx";
@@ -54,7 +55,7 @@ const RouteLoader = () => (
 const AppContent = () => {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
-  useVisitorTracking();
+  const { pendingRedirect, acceptRedirect, dismissRedirect } = useVisitorTracking();
 
   return (
     <>
@@ -85,6 +86,13 @@ const AppContent = () => {
           </Routes>
         
         {!isAdminRoute && <ChatWidget />}
+        {!isAdminRoute && (
+          <RedirectPrompt
+            targetPath={pendingRedirect}
+            onAccept={acceptRedirect}
+            onDismiss={dismissRedirect}
+          />
+        )}
       </Suspense>
     </>
   );

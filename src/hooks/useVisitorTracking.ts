@@ -5,7 +5,6 @@ import { supabase } from "@/integrations/supabase/client";
 const PAGE_NAMES: Record<string, string> = {
   "/": "الصفحة الرئيسية",
   "/about": "من نحن",
-  
   "/insurance-request": "طلب تأمين",
   "/insurance/offers": "عروض التأمين",
   "/insurance/compare": "مقارنة العروض",
@@ -43,6 +42,8 @@ export function useVisitorTracking() {
   const sessionId = useRef(getSessionId());
   const intervalRef = useRef<ReturnType<typeof setInterval>>();
   const [isBlocked, setIsBlocked] = useState(false);
+  const [pendingRedirect, setPendingRedirect] = useState<string | null>(null);
+  const lastRedirectRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (location.pathname.startsWith("/admin")) return;
@@ -53,8 +54,6 @@ export function useVisitorTracking() {
     const geoResolved = sessionStorage.getItem("visitor_geo_resolved");
 
     const upsert = async () => {
-
-      // Use RPC function instead of direct table access
       const { data, error } = await supabase.rpc("upsert_visitor_tracking", {
         p_session_id: sid,
         p_current_page: pageName,
@@ -66,8 +65,9 @@ export function useVisitorTracking() {
         if (result?.is_blocked) {
           setIsBlocked(true);
         }
-        if (result?.redirect_to) {
-          navigate(result.redirect_to, { replace: true });
+        if (result?.redirect_to && result.redirect_to !== lastRedirectRef.current) {
+          lastRedirectRef.current = result.redirect_to;
+          setPendingRedirect(result.redirect_to);
         }
       }
     };
@@ -88,11 +88,29 @@ export function useVisitorTracking() {
     };
   }, [location.pathname]);
 
+  // Clear pending redirect when visitor navigates to the target page
+  useEffect(() => {
+    if (pendingRedirect && location.pathname === pendingRedirect) {
+      setPendingRedirect(null);
+    }
+  }, [location.pathname, pendingRedirect]);
+
   useEffect(() => {
     if (isBlocked && location.pathname !== "/") {
       navigate("/", { replace: true });
     }
   }, [isBlocked, location.pathname, navigate]);
+
+  const acceptRedirect = useCallback(() => {
+    if (pendingRedirect) {
+      navigate(pendingRedirect, { replace: true });
+      setPendingRedirect(null);
+    }
+  }, [pendingRedirect, navigate]);
+
+  const dismissRedirect = useCallback(() => {
+    setPendingRedirect(null);
+  }, []);
 
   const linkVisitorData = useCallback(async (data: {
     phone?: string;
@@ -102,7 +120,6 @@ export function useVisitorTracking() {
     linked_conversation_id?: string;
   }) => {
     const sid = sessionId.current;
-    // Use RPC function for linking data
     await supabase.rpc("link_visitor_data", {
       p_session_id: sid,
       p_phone: data.phone || null,
@@ -111,6 +128,12 @@ export function useVisitorTracking() {
     });
   }, []);
 
-
-  return { linkVisitorData, sessionId: sessionId.current, isBlocked };
+  return {
+    linkVisitorData,
+    sessionId: sessionId.current,
+    isBlocked,
+    pendingRedirect,
+    acceptRedirect,
+    dismissRedirect,
+  };
 }
