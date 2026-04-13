@@ -63,18 +63,21 @@ interface Props {
 /* ═══════════════════════════════════════════════
    Card Colors
    ═══════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════
+   Card Colors — richer, deeper, with gradients
+   ═══════════════════════════════════════════════ */
 const cardThemes = {
-  sky:     { border: "border-sky-500/30", bg: "bg-sky-500/5", header: "bg-sky-500/10", text: "text-sky-700 dark:text-sky-400", line: "bg-sky-500" },
-  amber:   { border: "border-amber-500/30", bg: "bg-amber-500/5", header: "bg-amber-500/10", text: "text-amber-700 dark:text-amber-400", line: "bg-amber-500" },
-  emerald: { border: "border-emerald-500/30", bg: "bg-emerald-500/5", header: "bg-emerald-500/10", text: "text-emerald-700 dark:text-emerald-400", line: "bg-emerald-500" },
-  blue:    { border: "border-blue-500/30", bg: "bg-blue-500/5", header: "bg-blue-500/10", text: "text-blue-700 dark:text-blue-400", line: "bg-blue-500" },
-  violet:  { border: "border-violet-500/30", bg: "bg-violet-500/5", header: "bg-violet-500/10", text: "text-violet-700 dark:text-violet-400", line: "bg-violet-500" },
-  purple:  { border: "border-purple-500/30", bg: "bg-purple-500/5", header: "bg-purple-500/10", text: "text-purple-700 dark:text-purple-400", line: "bg-purple-500" },
-  teal:    { border: "border-teal-500/30", bg: "bg-teal-500/5", header: "bg-teal-500/10", text: "text-teal-700 dark:text-teal-400", line: "bg-teal-500" },
-  cyan:    { border: "border-cyan-500/30", bg: "bg-cyan-500/5", header: "bg-cyan-500/10", text: "text-cyan-700 dark:text-cyan-400", line: "bg-cyan-500" },
-  red:     { border: "border-red-500/30", bg: "bg-red-500/5", header: "bg-red-500/10", text: "text-red-700 dark:text-red-400", line: "bg-red-500" },
-  indigo:  { border: "border-indigo-500/30", bg: "bg-indigo-500/5", header: "bg-indigo-500/10", text: "text-indigo-700 dark:text-indigo-400", line: "bg-indigo-500" },
-  rose:    { border: "border-rose-500/30", bg: "bg-rose-500/5", header: "bg-rose-500/10", text: "text-rose-700 dark:text-rose-400", line: "bg-rose-500" },
+  sky:     { border: "border-sky-400/40",     bg: "bg-sky-500/5",     header: "bg-gradient-to-l from-sky-500/20 to-sky-400/10",     text: "text-sky-700 dark:text-sky-300",     line: "bg-gradient-to-b from-sky-400 to-sky-600",     shadow: "shadow-sky-500/10" },
+  amber:   { border: "border-amber-400/40",   bg: "bg-amber-500/5",   header: "bg-gradient-to-l from-amber-500/20 to-amber-400/10",   text: "text-amber-700 dark:text-amber-300",   line: "bg-gradient-to-b from-amber-400 to-amber-600",   shadow: "shadow-amber-500/10" },
+  emerald: { border: "border-emerald-400/40", bg: "bg-emerald-500/5", header: "bg-gradient-to-l from-emerald-500/20 to-emerald-400/10", text: "text-emerald-700 dark:text-emerald-300", line: "bg-gradient-to-b from-emerald-400 to-emerald-600", shadow: "shadow-emerald-500/10" },
+  blue:    { border: "border-blue-400/40",    bg: "bg-blue-500/5",    header: "bg-gradient-to-l from-blue-500/20 to-blue-400/10",    text: "text-blue-700 dark:text-blue-300",    line: "bg-gradient-to-b from-blue-400 to-blue-600",    shadow: "shadow-blue-500/10" },
+  violet:  { border: "border-violet-400/40",  bg: "bg-violet-500/5",  header: "bg-gradient-to-l from-violet-500/20 to-violet-400/10",  text: "text-violet-700 dark:text-violet-300",  line: "bg-gradient-to-b from-violet-400 to-violet-600",  shadow: "shadow-violet-500/10" },
+  purple:  { border: "border-purple-400/40",  bg: "bg-purple-500/5",  header: "bg-gradient-to-l from-purple-500/20 to-purple-400/10",  text: "text-purple-700 dark:text-purple-300",  line: "bg-gradient-to-b from-purple-400 to-purple-600",  shadow: "shadow-purple-500/10" },
+  teal:    { border: "border-teal-400/40",    bg: "bg-teal-500/5",    header: "bg-gradient-to-l from-teal-500/20 to-teal-400/10",    text: "text-teal-700 dark:text-teal-300",    line: "bg-gradient-to-b from-teal-400 to-teal-600",    shadow: "shadow-teal-500/10" },
+  cyan:    { border: "border-cyan-400/40",    bg: "bg-cyan-500/5",    header: "bg-gradient-to-l from-cyan-500/20 to-cyan-400/10",    text: "text-cyan-700 dark:text-cyan-300",    line: "bg-gradient-to-b from-cyan-400 to-cyan-600",    shadow: "shadow-cyan-500/10" },
+  red:     { border: "border-red-400/40",     bg: "bg-red-500/5",     header: "bg-gradient-to-l from-red-500/20 to-red-400/10",     text: "text-red-700 dark:text-red-300",     line: "bg-gradient-to-b from-red-400 to-red-600",     shadow: "shadow-red-500/10" },
+  indigo:  { border: "border-indigo-400/40",  bg: "bg-indigo-500/5",  header: "bg-gradient-to-l from-indigo-500/20 to-indigo-400/10",  text: "text-indigo-700 dark:text-indigo-300",  line: "bg-gradient-to-b from-indigo-400 to-indigo-600",  shadow: "shadow-indigo-500/10" },
+  rose:    { border: "border-rose-400/40",    bg: "bg-rose-500/5",    header: "bg-gradient-to-l from-rose-500/20 to-rose-400/10",    text: "text-rose-700 dark:text-rose-300",    line: "bg-gradient-to-b from-rose-400 to-rose-600",    shadow: "shadow-rose-500/10" },
 };
 
 type CardColor = keyof typeof cardThemes;
@@ -91,24 +94,29 @@ const DataCard: React.FC<{
   const t = cardThemes[color];
   return (
     <motion.div
-      initial={{ opacity: 0, y: 8 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.2 }}
-      className={`rounded-xl border ${t.border} overflow-hidden bg-card shadow-sm`}
+      transition={{ duration: 0.25, ease: "easeOut" }}
+      className={`rounded-2xl border ${t.border} overflow-hidden bg-card shadow-md ${t.shadow} hover:shadow-lg transition-shadow duration-300`}
     >
-      <div className={`flex items-center gap-2 px-3 py-2 ${t.header} border-b ${t.border}`}>
-        <span className={t.text}>{icon}</span>
-        <h3 className={`text-xs font-bold ${t.text} flex-1`}>{title}</h3>
+      {/* Gradient header */}
+      <div className={`flex items-center gap-2.5 px-4 py-3 ${t.header} border-b ${t.border}`}>
+        <div className={`w-7 h-7 rounded-lg ${t.bg} border ${t.border} flex items-center justify-center`}>
+          <span className={t.text}>{icon}</span>
+        </div>
+        <h3 className={`text-sm font-bold ${t.text} flex-1`}>{title}</h3>
         {badge}
       </div>
+      {/* Body with accent line */}
       <div className="relative">
-        <div className={`absolute right-0 top-0 bottom-0 w-1 ${t.line} rounded-bl-full rounded-tl-full`} />
-        <div className="pr-3 pl-2 py-2.5 space-y-2">
+        <div className={`absolute right-0 top-0 bottom-0 w-1.5 ${t.line} rounded-bl-full rounded-tl-full`} />
+        <div className="pr-4 pl-3 py-3 space-y-2.5">
           {children}
         </div>
       </div>
+      {/* Actions footer */}
       {actions && (
-        <div className={`px-3 py-2 border-t ${t.border} bg-muted/10`}>
+        <div className={`px-4 py-3 border-t ${t.border} bg-muted/20 backdrop-blur-sm`}>
           {actions}
         </div>
       )}
