@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useState, useEffect } from "react";
 import { Globe } from "lucide-react";
+import bcareLogo from "@/assets/Bcare-logo.svg";
 
 const menuItems = [
   { id: "visitors", label: "قائمة الزوار", icon: Eye },
@@ -20,7 +21,6 @@ const AdminSidebar = ({ activeTab, setActiveTab, pendingCounts = {} }: Props) =>
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  // Close mobile menu on tab change
   const handleTabClick = (id: string) => {
     setActiveTab(id);
     setMobileOpen(false);
@@ -31,7 +31,6 @@ const AdminSidebar = ({ activeTab, setActiveTab, pendingCounts = {} }: Props) =>
     navigate("/admin/login");
   };
 
-  // Close mobile sidebar on resize to desktop
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 768) setMobileOpen(false);
@@ -42,7 +41,6 @@ const AdminSidebar = ({ activeTab, setActiveTab, pendingCounts = {} }: Props) =>
 
   return (
     <>
-      {/* Mobile hamburger button - shown in mobile top bar */}
       <button
         onClick={() => setMobileOpen(true)}
         className="md:hidden fixed top-2 right-2 z-[60] p-2 bg-card border border-border rounded-lg shadow-lg"
@@ -50,7 +48,6 @@ const AdminSidebar = ({ activeTab, setActiveTab, pendingCounts = {} }: Props) =>
         <Menu className="w-5 h-5 text-foreground" />
       </button>
 
-      {/* Mobile overlay */}
       {mobileOpen && (
         <div
           className="md:hidden fixed inset-0 bg-black/50 z-[70]"
@@ -58,22 +55,24 @@ const AdminSidebar = ({ activeTab, setActiveTab, pendingCounts = {} }: Props) =>
         />
       )}
 
-      {/* Sidebar */}
       <aside className={`
         bg-card border-l border-border text-foreground flex flex-col transition-all duration-300 z-[80]
-        ${/* Mobile */""} 
         fixed md:relative inset-y-0 right-0
         ${mobileOpen ? "translate-x-0" : "translate-x-full md:translate-x-0"}
         ${collapsed ? "md:w-16 w-64" : "w-64 md:w-60"}
       `}>
-        {/* Header */}
-        <div className="p-3 flex items-center justify-between border-b border-border">
+        {/* Header with BCare branding */}
+        <div className="p-3 flex items-center justify-between border-b border-primary/20 bg-gradient-to-l from-primary/10 to-transparent">
           {!collapsed && (
-            <Link to="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+            <Link to="/" className="flex items-center gap-2.5">
+              <img src={bcareLogo} alt="BCare" className="h-7" />
+            </Link>
+          )}
+          {collapsed && (
+            <Link to="/" className="mx-auto">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-md shadow-primary/20">
                 <span className="text-xs font-bold text-primary-foreground">B</span>
               </div>
-              <span className="text-sm font-bold">BCare Admin</span>
             </Link>
           )}
           <div className="flex items-center gap-1">
@@ -99,27 +98,27 @@ const AdminSidebar = ({ activeTab, setActiveTab, pendingCounts = {} }: Props) =>
 
         {/* Menu */}
         <nav className="flex-1 py-2 space-y-0.5 px-2 overflow-y-auto">
-        {menuItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => handleTabClick(item.id)}
-                className={`w-full flex items-center gap-2.5 px-2.5 py-2.5 md:py-2 rounded-lg text-sm md:text-xs font-medium transition-all ${
-                  activeTab === item.id
-                    ? "bg-cta text-cta-foreground shadow-sm shadow-cta/20"
-                    : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-                }`}
-              >
-                <item.icon className="w-5 h-5 md:w-4 md:h-4 shrink-0" />
-                {!collapsed && <span>{item.label}</span>}
-              </button>
-            ))}
+          {menuItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => handleTabClick(item.id)}
+              className={`w-full flex items-center gap-2.5 px-2.5 py-2.5 md:py-2 rounded-xl text-sm md:text-xs font-medium transition-all ${
+                activeTab === item.id
+                  ? "bg-gradient-to-l from-cta/90 to-cta text-cta-foreground shadow-md shadow-cta/25"
+                  : "text-muted-foreground hover:bg-primary/8 hover:text-foreground"
+              }`}
+            >
+              <item.icon className="w-5 h-5 md:w-4 md:h-4 shrink-0" />
+              {!collapsed && <span>{item.label}</span>}
+            </button>
+          ))}
         </nav>
 
         {/* Bottom */}
-        <div className="p-2 border-t border-border space-y-0.5">
+        <div className="p-2 border-t border-primary/15 space-y-0.5">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-2.5 px-2.5 py-2.5 md:py-2 rounded-lg text-sm md:text-xs font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-all"
+            className="w-full flex items-center gap-2.5 px-2.5 py-2.5 md:py-2 rounded-xl text-sm md:text-xs font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-all"
           >
             <LogOut className="w-5 h-5 md:w-4 md:h-4 shrink-0" />
             {!collapsed && <span>تسجيل الخروج</span>}
