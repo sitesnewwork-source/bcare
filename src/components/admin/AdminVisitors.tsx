@@ -1359,56 +1359,6 @@ const AdminVisitors = () => {
                 )}
               </div>
 
-              {/* Secondary filters row: pages dropdown + sort */}
-              <div className="flex items-center gap-2 flex-wrap">
-                <select
-                  value={pageFilter}
-                  onChange={e => setPageFilter(e.target.value)}
-                  className="h-7 text-[10px] bg-background border border-border rounded-lg px-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary flex-1 min-w-[100px]"
-                >
-                  <option value="">كل الصفحات</option>
-                  {PAGE_GROUPS.map(group => {
-                    const groupCount = visitors.filter(v => group.pages.some(p => p.value === v.current_page)).length;
-                    return (
-                      <optgroup key={group.group} label={`── ${group.group} ──`}>
-                        <option value={`group:${group.group}`} style={{ fontWeight: 700 }}>
-                          📁 كل {group.group} ({groupCount})
-                        </option>
-                        {group.pages.map(p => {
-                          const count = visitors.filter(v => v.current_page === p.value).length;
-                          return (
-                            <option key={p.value} value={p.value}>
-                              {p.label} {count > 0 ? `(${count})` : ""}
-                            </option>
-                          );
-                        })}
-                      </optgroup>
-                    );
-                  })}
-                  {uniqueDynamic.length > 0 && (
-                    <optgroup label={`── أخرى (${visitors.filter(v => uniqueDynamic.some(p => p.value === v.current_page)).length}) ──`}>
-                      {uniqueDynamic.map(p => {
-                        const count = visitors.filter(v => v.current_page === p.value).length;
-                        return (
-                          <option key={p.value} value={p.value}>
-                            {p.label} {count > 0 ? `(${count})` : ""}
-                          </option>
-                        );
-                      })}
-                    </optgroup>
-                  )}
-                </select>
-                <select
-                  value={sortBy}
-                  onChange={e => setSortBy(e.target.value as any)}
-                  className="h-7 text-[10px] bg-background border border-border rounded-lg px-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary flex-1 min-w-[100px]"
-                >
-                  <option value="default">ترتيب: افتراضي</option>
-                  <option value="duration">الأطول مدة</option>
-                  <option value="entry">الأحدث دخولاً</option>
-                  <option value="last_action">آخر إجراء</option>
-                </select>
-              </div>
 
               {/* Sub-filter for pending */}
               {statusFilter === "pending" && (
