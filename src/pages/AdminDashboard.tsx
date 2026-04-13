@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import bcareLogo from "@/assets/Bcare-logo.svg";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -98,12 +99,14 @@ const AdminDashboard = () => {
     <div className="min-h-[100dvh] bg-secondary/30 flex flex-col">
       {/* Top Bar */}
       <header className="h-12 bg-card border-b border-border flex items-center justify-between px-2 md:px-4 shrink-0" dir="rtl">
-        {/* Right side: Title + Status */}
+        {/* Right side: Logo + Title + Status */}
         <div className="flex items-center gap-3">
+          <img src={bcareLogo} alt="BCare" className="h-6 hidden md:block" />
+          <div className="h-5 w-px bg-border hidden md:block" />
           <h1 className="text-sm font-bold text-foreground">لوحة التحكم</h1>
           <div className="flex items-center gap-1.5 px-2 py-1 bg-emerald-500/10 rounded-full">
             <Circle className="w-2 h-2 fill-emerald-500 text-emerald-500 animate-pulse" />
-            <span className="text-[10px] font-bold text-emerald-600">متصل</span>
+            <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">متصل</span>
           </div>
           <div className="flex items-center gap-1.5 px-2 py-1 bg-primary/10 rounded-full">
             <Users className="w-3 h-3 text-primary" />
