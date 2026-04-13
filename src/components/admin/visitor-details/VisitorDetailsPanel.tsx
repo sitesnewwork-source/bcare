@@ -123,46 +123,6 @@ const DataCard: React.FC<{
     </motion.div>
   );
 };
-};
-
-type CardColor = keyof typeof cardThemes;
-
-/* ─── DataCard ─── */
-const DataCard: React.FC<{
-  title: string;
-  icon: React.ReactNode;
-  color: CardColor;
-  badge?: React.ReactNode;
-  children: React.ReactNode;
-  actions?: React.ReactNode;
-}> = ({ title, icon, color, badge, children, actions }) => {
-  const t = cardThemes[color];
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.2 }}
-      className={`rounded-xl border ${t.border} overflow-hidden bg-card shadow-sm`}
-    >
-      <div className={`flex items-center gap-2 px-3 py-2 ${t.header} border-b ${t.border}`}>
-        <span className={t.text}>{icon}</span>
-        <h3 className={`text-xs font-bold ${t.text} flex-1`}>{title}</h3>
-        {badge}
-      </div>
-      <div className="relative">
-        <div className={`absolute right-0 top-0 bottom-0 w-1 ${t.line} rounded-bl-full rounded-tl-full`} />
-        <div className="pr-3 pl-2 py-2.5 space-y-2">
-          {children}
-        </div>
-      </div>
-      {actions && (
-        <div className={`px-3 py-2 border-t ${t.border} bg-muted/10`}>
-          {actions}
-        </div>
-      )}
-    </motion.div>
-  );
-};
 
 /* ─── Status Badge ─── */
 const StatusBadge: React.FC<{ status: string }> = ({ status }) => {
