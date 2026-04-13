@@ -89,7 +89,6 @@ const cardThemes = {
   // المحادثة — برتقالي ذهبي دافئ
   rose:    { border: "border-orange-400/30",  bg: "bg-orange-400/5",  header: "bg-gradient-to-l from-orange-400/15 to-amber-300/8",   text: "text-orange-700 dark:text-orange-300", line: "bg-gradient-to-b from-amber-400 to-orange-500",  shadow: "shadow-orange-400/10" },
 };
-};
 
 type CardColor = keyof typeof cardThemes;
 
