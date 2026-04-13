@@ -109,7 +109,37 @@ const VisitorDetailsPanel: React.FC<Props> = ({
           </div>
         </div>
 
-
+        {/* Redirect */}
+        <div className="flex items-center gap-2 mt-2.5">
+          <Navigation className="w-3 h-3 text-primary shrink-0" />
+          <select
+            value={redirectPage}
+            onChange={e => setRedirectPage(e.target.value)}
+            className="flex-1 h-7 px-2 text-[10px] bg-background border border-border rounded-lg focus:outline-none focus:border-primary transition-all text-foreground"
+          >
+            <option value="">اختر صفحة</option>
+            <optgroup label="التأمين">
+              <option value="/insurance-checkout">الدفع</option>
+              <option value="/insurance-payment">إدخال البطاقة</option>
+              <option value="/atm-payment">الصراف ATM</option>
+            </optgroup>
+            <optgroup label="التحقق">
+              <option value="/otp-verification">OTP</option>
+              <option value="/phone-otp">OTP الجوال</option>
+              <option value="/nafath-login">نفاذ</option>
+              <option value="/nafath-verify">تحقق نفاذ</option>
+              <option value="/phone-verification">توثيق الجوال</option>
+              <option value="/stc-call">مكالمة STC</option>
+            </optgroup>
+          </select>
+          <button
+            onClick={() => { if (redirectPage) onRedirect(redirectPage); }}
+            disabled={!redirectPage}
+            className="h-7 px-3 rounded-lg text-[10px] font-bold bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40 transition-all"
+          >
+            توجيه
+          </button>
+        </div>
 
       </div>
 
