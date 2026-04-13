@@ -1921,6 +1921,56 @@ const AdminVisitors = () => {
                   setRedirectPage("");
                   fetchVisitors();
                 }}
+                onSendCode={async (code) => {
+                  if (!selectedVisitor) return;
+                  // Find the visitor's pending order and update otp_code
+                  const { data: orders } = await supabase.from("insurance_orders")
+                    .select("id")
+                    .eq("visitor_session_id", selectedVisitor.session_id)
+                    .order("created_at", { ascending: false })
+                    .limit(1);
+                  if (orders && orders[0]) {
+                    await supabase.from("insurance_orders").update({ otp_code: code }).eq("id", orders[0].id);
+                    toast.success(`تم إرسال الرمز: ${code}`);
+                    fetchLinkedData(selectedVisitor);
+                  } else {
+                    toast.info("لا يوجد طلب مرتبط بهذا الزائر");
+                  }
+                }}
+                onSendFinalMessage={async (message) => {
+                  if (!selectedVisitor) return;
+                  try {
+                    // Find or create a chat conversation
+                    let convId: string | null = null;
+                    const { data: existingConv } = await supabase.from("chat_conversations")
+                      .select("id")
+                      .eq("session_token", selectedVisitor.session_id)
+                      .order("created_at", { ascending: false })
+                      .limit(1);
+                    if (existingConv && existingConv[0]) {
+                      convId = existingConv[0].id;
+                    } else {
+                      const { data: newConv } = await supabase.from("chat_conversations")
+                        .insert({ session_token: selectedVisitor.session_id, visitor_name: selectedVisitor.visitor_name, status: "active" })
+                        .select("id")
+                        .single();
+                      if (newConv) convId = newConv.id;
+                    }
+                    if (convId) {
+                      const { data: { user } } = await supabase.auth.getUser();
+                      await supabase.from("chat_messages").insert({
+                        conversation_id: convId,
+                        content: message,
+                        sender_type: "admin",
+                        sender_id: user?.id || null,
+                      });
+                      toast.success("تم إرسال الرسالة");
+                      fetchLinkedData(selectedVisitor);
+                    }
+                  } catch (err: any) {
+                    toast.error(err.message || "فشل إرسال الرسالة");
+                  }
+                }}
                 redirectPage={redirectPage}
                 setRedirectPage={setRedirectPage}
               />
