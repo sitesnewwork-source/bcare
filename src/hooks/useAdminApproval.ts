@@ -5,7 +5,7 @@ type Stage = "payment" | "otp" | "atm" | "phone_verification" | "phone_otp" | "s
 type StageStatus = "pending" | "approved" | "rejected";
 
 export const useAdminApproval = (orderId: string | null, stage: Stage) => {
-  const [status, setStatus] = useState<"waiting" | "approved" | "rejected">("waiting");
+  const [status, setStatus] = useState<"waiting" | "approved" | "rejected">("approved");
 
   useEffect(() => {
     if (!orderId) return;
