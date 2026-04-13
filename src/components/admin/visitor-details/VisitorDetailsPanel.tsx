@@ -160,44 +160,35 @@ const VisitorDetailsPanel: React.FC<Props> = ({
           </button>
         </div>
 
-      </div>
-
-      {/* Actions Section */}
-      <div className="border-b border-border/60 p-3 md:p-4 space-y-3 shrink-0">
-        <h3 className="text-xs font-bold text-foreground">إجراءات</h3>
-
-
-
-
         {/* Send Final Message */}
-        <div className="flex items-center gap-2">
-          <span className="text-[10px] text-muted-foreground whitespace-nowrap min-w-[70px]">إرسال رسالة نهائية</span>
+        <div className="flex items-center gap-2 mt-2">
+          <Send className="w-3 h-3 text-emerald-600 shrink-0" />
           <input
             type="text"
             placeholder="أدخل الرسالة"
             value={messageInput}
             onChange={e => setMessageInput(e.target.value)}
-            className="flex-1 h-8 px-3 text-xs bg-background border border-border rounded-lg focus:outline-none focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
+            className="flex-1 h-7 px-2 text-[10px] bg-background border border-border rounded-lg focus:outline-none focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
           />
           <button
             onClick={() => { if (messageInput.trim() && onSendFinalMessage) { onSendFinalMessage(messageInput.trim()); setMessageInput(""); } }}
             disabled={!messageInput.trim()}
-            className="h-8 px-4 rounded-lg text-[10px] font-bold bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-40 transition-all inline-flex items-center gap-1"
+            className="h-7 px-3 rounded-lg text-[10px] font-bold bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-40 transition-all"
           >
-            <Send className="w-3 h-3" />
             إرسال
           </button>
         </div>
 
         {/* Block / Unblock + Export */}
-        <div className="flex items-center gap-2">
-          <button onClick={onBlockToggle} disabled={loadingAction === "block"} className={`h-8 px-4 rounded-lg text-[10px] font-bold transition-all inline-flex items-center gap-1 ${selectedVisitor.is_blocked ? "bg-muted text-muted-foreground hover:bg-muted/80" : "bg-destructive text-destructive-foreground hover:bg-destructive/90"}`}>
+        <div className="flex items-center gap-2 mt-2">
+          <button onClick={onBlockToggle} disabled={loadingAction === "block"} className={`h-7 px-3 rounded-lg text-[10px] font-bold transition-all inline-flex items-center gap-1 ${selectedVisitor.is_blocked ? "bg-muted text-muted-foreground hover:bg-muted/80" : "bg-destructive text-destructive-foreground hover:bg-destructive/90"}`}>
             {selectedVisitor.is_blocked ? <><ShieldCheck className="w-3 h-3" />فك الحظر</> : <><Ban className="w-3 h-3" />حظر</>}
           </button>
-          <button onClick={onExportPDF} className="h-8 px-4 rounded-lg text-[10px] font-bold bg-muted/40 text-muted-foreground border border-transparent hover:bg-muted transition-all inline-flex items-center gap-1 mr-auto">
+          <button onClick={onExportPDF} className="h-7 px-3 rounded-lg text-[10px] font-bold bg-muted/40 text-muted-foreground border border-transparent hover:bg-muted transition-all inline-flex items-center gap-1 mr-auto">
             <Download className="w-3 h-3" />تصدير PDF
           </button>
         </div>
+
       </div>
 
       {/* All Content - Ascending order: Chat → Verification → Vehicle → Identity */}
