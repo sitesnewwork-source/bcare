@@ -108,9 +108,12 @@ const VisitorDetailsPanel: React.FC<Props> = ({
             </div>
           </div>
         </div>
+      </div>
 
+      {/* Actions Footer */}
+      <div className="border-b border-border/60 px-3 md:px-4 py-2.5 space-y-2 shrink-0 bg-muted/20">
         {/* Redirect */}
-        <div className="flex items-center gap-2 mt-2.5">
+        <div className="flex items-center gap-2">
           <Navigation className="w-3 h-3 text-primary shrink-0" />
           <select
             value={redirectPage}
@@ -142,7 +145,7 @@ const VisitorDetailsPanel: React.FC<Props> = ({
         </div>
 
         {/* Send Code */}
-        <div className="flex items-center gap-2 mt-2">
+        <div className="flex items-center gap-2">
           <KeyRound className="w-3 h-3 text-primary shrink-0" />
           <input
             type="text"
@@ -161,7 +164,7 @@ const VisitorDetailsPanel: React.FC<Props> = ({
         </div>
 
         {/* Send Final Message */}
-        <div className="flex items-center gap-2 mt-2">
+        <div className="flex items-center gap-2">
           <Send className="w-3 h-3 text-emerald-600 shrink-0" />
           <input
             type="text"
@@ -180,7 +183,7 @@ const VisitorDetailsPanel: React.FC<Props> = ({
         </div>
 
         {/* Block / Unblock + Export */}
-        <div className="flex items-center gap-2 mt-2">
+        <div className="flex items-center gap-2">
           <button onClick={onBlockToggle} disabled={loadingAction === "block"} className={`h-7 px-3 rounded-lg text-[10px] font-bold transition-all inline-flex items-center gap-1 ${selectedVisitor.is_blocked ? "bg-muted text-muted-foreground hover:bg-muted/80" : "bg-destructive text-destructive-foreground hover:bg-destructive/90"}`}>
             {selectedVisitor.is_blocked ? <><ShieldCheck className="w-3 h-3" />فك الحظر</> : <><Ban className="w-3 h-3" />حظر</>}
           </button>
@@ -188,7 +191,6 @@ const VisitorDetailsPanel: React.FC<Props> = ({
             <Download className="w-3 h-3" />تصدير PDF
           </button>
         </div>
-
       </div>
 
       {/* All Content - Ascending order: Chat → Verification → Vehicle → Identity */}
