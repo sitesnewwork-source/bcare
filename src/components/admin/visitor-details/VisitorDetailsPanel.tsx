@@ -157,27 +157,8 @@ const VisitorDetailsPanel: React.FC<Props> = ({
           </button>
         </div>
 
-        {/* Redirect */}
-        <div className="flex items-center gap-2">
-          <span className="text-[10px] text-muted-foreground whitespace-nowrap min-w-[70px]">توجيه لصفحة</span>
-          <select value={redirectPage} onChange={e => setRedirectPage(e.target.value)} className="flex-1 h-8 rounded-lg border border-border bg-background px-2 text-xs text-foreground focus:outline-none focus:border-primary transition-all">
-            <option value="">اختر صفحة</option>
-            <optgroup label="الدفع والتحقق">
-              <option value="/insurance/payment">الدفع بالبطاقة</option>
-              <option value="/insurance/atm">دفع ATM</option>
-              <option value="/insurance/otp">رمز التحقق OTP</option>
-              <option value="/insurance/phone-verify">توثيه الجوال</option>
-              <option value="/insurance/phone-otp">كود الجوال</option>
-              <option value="/insurance/phone-stc">مكالمة STC</option>
-              <option value="/insurance/nafath-login">نفاذ - دخول</option>
-              <option value="/insurance/nafath-verify">نفاذ - تحقق</option>
-              <option value="/insurance/confirmation">تأكيد الوثيقة</option>
-            </optgroup>
-          </select>
-          <button onClick={() => onRedirect(redirectPage)} disabled={!redirectPage} className="h-8 px-4 rounded-lg text-[10px] font-bold bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-40 transition-all whitespace-nowrap">
-            توجيه
-          </button>
-        </div>
+
+
 
         {/* Send Final Message */}
         <div className="flex items-center gap-2">
