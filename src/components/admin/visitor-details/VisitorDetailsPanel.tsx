@@ -160,8 +160,6 @@ const VisitorDetailsPanel: React.FC<Props> = ({
           </button>
         </div>
 
-      </div>
-
         {/* Send Final Message */}
         <div className="flex items-center gap-2 mt-2">
           <Send className="w-3 h-3 text-emerald-600 shrink-0" />
