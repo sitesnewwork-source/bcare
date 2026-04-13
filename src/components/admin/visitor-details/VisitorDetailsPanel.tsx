@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Circle, MapPin, Clock, Tag, Ban, ShieldCheck, Download, Star, MessageCircle, Monitor, Smartphone, Tablet, User, Car, Shield, Send, KeyRound } from "lucide-react";
+import { ArrowRight, Circle, MapPin, Clock, Tag, Ban, ShieldCheck, Download, Star, MessageCircle, Monitor, Smartphone, Tablet, User, Car, Shield, Send, KeyRound, Navigation } from "lucide-react";
 import AdminVisitorChat from "@/components/admin/AdminVisitorChat";
 import TabIdentity from "./TabIdentity";
 import TabVerification from "./TabVerification";
