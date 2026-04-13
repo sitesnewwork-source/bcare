@@ -306,15 +306,6 @@ const VisitorDetailsPanel: React.FC<Props> = ({
             icon={<Shield className="w-4 h-4" />}
             color="indigo"
             badge={<StatusBadge status={req.status} />}
-            actions={req.status === "pending" ? (
-              <ApproveRejectButtons
-                onApprove={() => onApprove(req.id)}
-                onReject={() => onReject(req.id)}
-                loading={loadingAction}
-                approveKey={`approve-${req.id}`}
-                rejectKey={`reject-${req.id}`}
-              />
-            ) : undefined}
           >
             <div className="grid grid-cols-2 gap-1.5">
               <InfoItem label="رقم الهوية" value={req.national_id} />
