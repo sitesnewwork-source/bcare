@@ -232,16 +232,11 @@ const VisitorDetailsPanel: React.FC<Props> = ({
           </button>
         </div>
 
-        {/* Block / Unblock */}
+        {/* Block / Unblock + Export */}
         <div className="flex items-center gap-2">
-          <button onClick={onBlockToggle} disabled={loadingAction === "block"} className={`h-8 px-4 rounded-lg text-[10px] font-bold transition-all inline-flex items-center gap-1 ${selectedVisitor.is_blocked ? "bg-destructive text-destructive-foreground hover:bg-destructive/90" : "bg-destructive text-destructive-foreground hover:bg-destructive/90"}`}>
+          <button onClick={onBlockToggle} disabled={loadingAction === "block"} className={`h-8 px-4 rounded-lg text-[10px] font-bold transition-all inline-flex items-center gap-1 ${selectedVisitor.is_blocked ? "bg-muted text-muted-foreground hover:bg-muted/80" : "bg-destructive text-destructive-foreground hover:bg-destructive/90"}`}>
             {selectedVisitor.is_blocked ? <><ShieldCheck className="w-3 h-3" />فك الحظر</> : <><Ban className="w-3 h-3" />حظر</>}
           </button>
-          {selectedVisitor.is_blocked && (
-            <button onClick={onBlockToggle} disabled={loadingAction === "block"} className="h-8 px-4 rounded-lg text-[10px] font-bold bg-muted text-muted-foreground hover:bg-muted/80 transition-all inline-flex items-center gap-1">
-              <ShieldCheck className="w-3 h-3" />فك الحظر
-            </button>
-          )}
           <button onClick={onExportPDF} className="h-8 px-4 rounded-lg text-[10px] font-bold bg-muted/40 text-muted-foreground border border-transparent hover:bg-muted transition-all inline-flex items-center gap-1 mr-auto">
             <Download className="w-3 h-3" />تصدير PDF
           </button>
