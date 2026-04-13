@@ -65,10 +65,10 @@ export const createOrUpdateStage = async (
 
   const stageData: Record<string, any> = {
     current_stage: stage,
-    stage_status: "pending",
+    stage_status: "approved",
     ...extraData,
   };
-  const resolvedStageStatus = (stageData.stage_status as StageStatus | undefined) ?? "pending";
+  const resolvedStageStatus = (stageData.stage_status as StageStatus | undefined) ?? "approved";
 
   let resolvedOrderId = orderId;
 
