@@ -6,13 +6,12 @@ import AdminSettings from "@/components/admin/AdminSettings";
 import AdminVisitors from "@/components/admin/AdminVisitors";
 import AdminLiveFeed from "@/components/admin/AdminLiveFeed";
 import PullToRefresh from "@/components/PullToRefresh";
-import { Search, RefreshCw, Activity, VolumeX, Sun, Moon, Circle, Users, LogOut, Settings } from "lucide-react";
+import { RefreshCw, Activity, VolumeX, Sun, Moon, Circle, Users, LogOut, Settings } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("visitors");
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
 
   const [refreshKey, setRefreshKey] = useState(0);
@@ -114,16 +113,6 @@ const AdminDashboard = () => {
 
         {/* Left side: Search + Actions */}
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 max-w-[200px]">
-            <Search className="w-3.5 h-3.5 text-muted-foreground hidden md:block" />
-            <input
-              type="text"
-              placeholder="بحث..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="bg-transparent text-xs text-foreground placeholder:text-muted-foreground focus:outline-none flex-1 min-w-0"
-            />
-          </div>
 
           <div className="flex items-center gap-0.5 md:gap-1">
             <button
