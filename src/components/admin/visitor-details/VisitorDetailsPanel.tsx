@@ -62,32 +62,33 @@ interface Props {
 
 /* ═══════════════════════════════════════════════
    BCare Brand Card Colors
-   Primary: Petrol Teal hsl(193 72% 38%)
-   Accent:  Orange/Gold hsl(37 91% 55%)
+   Primary: Petrol Teal → teal/cyan
+   Accent:  Orange/Gold → amber/orange
    ═══════════════════════════════════════════════ */
 const cardThemes = {
   // بيانات الزائر — بترولي رئيسي
-  sky:     { border: "border-[hsl(193,72%,38%)]/30", bg: "bg-[hsl(193,72%,38%)]/5",  header: "bg-gradient-to-l from-[hsl(193,72%,38%)]/15 to-[hsl(193,72%,48%)]/8",  text: "text-[hsl(193,72%,30%)] dark:text-[hsl(193,60%,65%)]", line: "bg-gradient-to-b from-[hsl(193,72%,45%)] to-[hsl(193,72%,30%)]", shadow: "shadow-[hsl(193,72%,38%)]/8" },
+  sky:     { border: "border-teal-500/35",    bg: "bg-teal-500/5",    header: "bg-gradient-to-l from-teal-600/18 to-teal-400/8",    text: "text-teal-800 dark:text-teal-300",    line: "bg-gradient-to-b from-teal-400 to-teal-700",    shadow: "shadow-teal-600/10" },
   // بطاقة الدفع — برتقالي ذهبي
-  amber:   { border: "border-[hsl(37,91%,55%)]/30",  bg: "bg-[hsl(37,91%,55%)]/5",   header: "bg-gradient-to-l from-[hsl(37,91%,55%)]/15 to-[hsl(37,91%,65%)]/8",   text: "text-[hsl(37,91%,35%)] dark:text-[hsl(37,80%,65%)]",  line: "bg-gradient-to-b from-[hsl(37,91%,60%)] to-[hsl(37,91%,40%)]",  shadow: "shadow-[hsl(37,91%,55%)]/8" },
-  // المركبة / ATM — بترولي فاتح
-  emerald: { border: "border-[hsl(180,50%,40%)]/30", bg: "bg-[hsl(180,50%,40%)]/5",  header: "bg-gradient-to-l from-[hsl(180,50%,40%)]/15 to-[hsl(180,50%,50%)]/8",  text: "text-[hsl(180,50%,28%)] dark:text-[hsl(180,45%,60%)]", line: "bg-gradient-to-b from-[hsl(180,50%,48%)] to-[hsl(180,50%,32%)]", shadow: "shadow-[hsl(180,50%,40%)]/8" },
+  amber:   { border: "border-amber-500/35",   bg: "bg-amber-500/5",   header: "bg-gradient-to-l from-amber-500/18 to-orange-400/8",  text: "text-amber-800 dark:text-amber-300",  line: "bg-gradient-to-b from-amber-400 to-orange-600",  shadow: "shadow-amber-500/10" },
+  // المركبة / ATM — بترولي مخضر
+  emerald: { border: "border-teal-400/30",    bg: "bg-teal-400/5",    header: "bg-gradient-to-l from-teal-500/15 to-cyan-400/8",     text: "text-teal-700 dark:text-teal-300",    line: "bg-gradient-to-b from-teal-300 to-teal-600",    shadow: "shadow-teal-400/10" },
   // OTP البطاقة / STC — أزرق بترولي غامق
-  blue:    { border: "border-[hsl(200,65%,42%)]/30", bg: "bg-[hsl(200,65%,42%)]/5",  header: "bg-gradient-to-l from-[hsl(200,65%,42%)]/15 to-[hsl(200,65%,52%)]/8",  text: "text-[hsl(200,65%,30%)] dark:text-[hsl(200,55%,62%)]", line: "bg-gradient-to-b from-[hsl(200,65%,50%)] to-[hsl(200,65%,34%)]", shadow: "shadow-[hsl(200,65%,42%)]/8" },
-  // OTP الجوال — بترولي مائل للبنفسجي
-  violet:  { border: "border-[hsl(210,55%,45%)]/30", bg: "bg-[hsl(210,55%,45%)]/5",  header: "bg-gradient-to-l from-[hsl(210,55%,45%)]/15 to-[hsl(210,55%,55%)]/8",  text: "text-[hsl(210,55%,32%)] dark:text-[hsl(210,50%,65%)]", line: "bg-gradient-to-b from-[hsl(210,55%,52%)] to-[hsl(210,55%,36%)]", shadow: "shadow-[hsl(210,55%,45%)]/8" },
+  blue:    { border: "border-cyan-600/30",    bg: "bg-cyan-600/5",    header: "bg-gradient-to-l from-cyan-600/15 to-teal-500/8",     text: "text-cyan-800 dark:text-cyan-300",    line: "bg-gradient-to-b from-cyan-500 to-cyan-700",    shadow: "shadow-cyan-600/10" },
+  // OTP الجوال — بترولي أزرق
+  violet:  { border: "border-sky-600/30",     bg: "bg-sky-600/5",     header: "bg-gradient-to-l from-sky-600/15 to-teal-500/8",      text: "text-sky-800 dark:text-sky-300",      line: "bg-gradient-to-b from-sky-400 to-sky-700",      shadow: "shadow-sky-600/10" },
   // توثيق الجوال — بترولي دافئ
-  purple:  { border: "border-[hsl(188,60%,40%)]/30", bg: "bg-[hsl(188,60%,40%)]/5",  header: "bg-gradient-to-l from-[hsl(188,60%,40%)]/15 to-[hsl(188,60%,50%)]/8",  text: "text-[hsl(188,60%,28%)] dark:text-[hsl(188,50%,60%)]", line: "bg-gradient-to-b from-[hsl(188,60%,48%)] to-[hsl(188,60%,32%)]", shadow: "shadow-[hsl(188,60%,40%)]/8" },
-  // العرض والأسعار / نفاذ دخول — برتقالي داكن
-  teal:    { border: "border-[hsl(30,80%,50%)]/30",  bg: "bg-[hsl(30,80%,50%)]/5",   header: "bg-gradient-to-l from-[hsl(30,80%,50%)]/15 to-[hsl(30,80%,60%)]/8",   text: "text-[hsl(30,80%,35%)] dark:text-[hsl(30,70%,62%)]",  line: "bg-gradient-to-b from-[hsl(30,80%,55%)] to-[hsl(30,80%,38%)]",  shadow: "shadow-[hsl(30,80%,50%)]/8" },
-  // رمز نفاذ — بترولي سماوي
-  cyan:    { border: "border-[hsl(195,65%,42%)]/30", bg: "bg-[hsl(195,65%,42%)]/5",  header: "bg-gradient-to-l from-[hsl(195,65%,42%)]/15 to-[hsl(195,65%,52%)]/8",  text: "text-[hsl(195,65%,30%)] dark:text-[hsl(195,55%,62%)]", line: "bg-gradient-to-b from-[hsl(195,65%,50%)] to-[hsl(195,65%,34%)]", shadow: "shadow-[hsl(195,65%,42%)]/8" },
-  // غير مستخدم حاليًا
-  red:     { border: "border-red-400/40",             bg: "bg-red-500/5",             header: "bg-gradient-to-l from-red-500/20 to-red-400/10",                       text: "text-red-700 dark:text-red-300",                       line: "bg-gradient-to-b from-red-400 to-red-600",                       shadow: "shadow-red-500/10" },
+  purple:  { border: "border-teal-500/30",    bg: "bg-teal-500/4",    header: "bg-gradient-to-l from-teal-500/14 to-emerald-400/7",   text: "text-teal-700 dark:text-teal-300",    line: "bg-gradient-to-b from-emerald-400 to-teal-600",  shadow: "shadow-teal-500/10" },
+  // العرض والأسعار / نفاذ دخول — برتقالي غامق
+  teal:    { border: "border-orange-500/30",  bg: "bg-orange-500/5",  header: "bg-gradient-to-l from-orange-500/15 to-amber-400/8",   text: "text-orange-800 dark:text-orange-300", line: "bg-gradient-to-b from-orange-400 to-orange-600", shadow: "shadow-orange-500/10" },
+  // رمز نفاذ — سماوي بترولي
+  cyan:    { border: "border-cyan-500/30",    bg: "bg-cyan-500/5",    header: "bg-gradient-to-l from-cyan-500/15 to-teal-400/8",     text: "text-cyan-700 dark:text-cyan-300",    line: "bg-gradient-to-b from-cyan-400 to-teal-600",    shadow: "shadow-cyan-500/10" },
+  // حالات الرفض
+  red:     { border: "border-red-400/35",     bg: "bg-red-500/5",     header: "bg-gradient-to-l from-red-500/15 to-red-400/8",       text: "text-red-700 dark:text-red-300",      line: "bg-gradient-to-b from-red-400 to-red-600",      shadow: "shadow-red-500/10" },
   // طلبات التأمين — بترولي متوسط
-  indigo:  { border: "border-[hsl(193,60%,44%)]/30", bg: "bg-[hsl(193,60%,44%)]/5",  header: "bg-gradient-to-l from-[hsl(193,60%,44%)]/15 to-[hsl(193,60%,54%)]/8",  text: "text-[hsl(193,60%,32%)] dark:text-[hsl(193,50%,62%)]", line: "bg-gradient-to-b from-[hsl(193,60%,52%)] to-[hsl(193,60%,36%)]", shadow: "shadow-[hsl(193,60%,44%)]/8" },
+  indigo:  { border: "border-teal-600/30",    bg: "bg-teal-600/5",    header: "bg-gradient-to-l from-teal-600/15 to-cyan-500/8",     text: "text-teal-800 dark:text-teal-300",    line: "bg-gradient-to-b from-teal-500 to-teal-700",    shadow: "shadow-teal-600/10" },
   // المحادثة — برتقالي ذهبي دافئ
-  rose:    { border: "border-[hsl(25,75%,50%)]/30",  bg: "bg-[hsl(25,75%,50%)]/5",   header: "bg-gradient-to-l from-[hsl(25,75%,50%)]/15 to-[hsl(25,75%,60%)]/8",   text: "text-[hsl(25,75%,35%)] dark:text-[hsl(25,65%,62%)]",  line: "bg-gradient-to-b from-[hsl(25,75%,55%)] to-[hsl(25,75%,38%)]",  shadow: "shadow-[hsl(25,75%,50%)]/8" },
+  rose:    { border: "border-orange-400/30",  bg: "bg-orange-400/5",  header: "bg-gradient-to-l from-orange-400/15 to-amber-300/8",   text: "text-orange-700 dark:text-orange-300", line: "bg-gradient-to-b from-amber-400 to-orange-500",  shadow: "shadow-orange-400/10" },
+};
 };
 
 type CardColor = keyof typeof cardThemes;
