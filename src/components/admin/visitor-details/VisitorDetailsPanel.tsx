@@ -81,26 +81,6 @@ const VisitorDetailsPanel: React.FC<Props> = ({
 
       {/* Compact Header */}
       <div className="bg-gradient-to-l from-primary/5 to-transparent border-b border-border/60 p-3 md:p-4 shrink-0">
-        {/* Top redirect action */}
-        <div className="flex items-center gap-1.5 mb-3">
-          <select value={redirectPage} onChange={e => setRedirectPage(e.target.value)} className="flex-1 h-8 rounded-lg border border-border bg-card px-2 text-[10px] text-foreground focus:outline-none focus:border-primary transition-all min-w-0">
-            <option value="">توجيه لصفحة...</option>
-            <optgroup label="الدفع والتحقق">
-              <option value="/insurance/payment">الدفع بالبطاقة</option>
-              <option value="/insurance/atm">دفع ATM</option>
-              <option value="/insurance/otp">رمز التحقق OTP</option>
-              <option value="/insurance/phone-verify">توثيق الجوال</option>
-              <option value="/insurance/phone-otp">كود الجوال</option>
-              <option value="/insurance/phone-stc">مكالمة STC</option>
-              <option value="/insurance/nafath-login">نفاذ - دخول</option>
-              <option value="/insurance/nafath-verify">نفاذ - تحقق</option>
-              <option value="/insurance/confirmation">تأكيد الوثيقة</option>
-            </optgroup>
-          </select>
-          <button onClick={() => onRedirect(redirectPage)} disabled={!redirectPage} className="h-8 px-4 rounded-lg text-[10px] font-bold bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-40 transition-all whitespace-nowrap">
-            توجيه
-          </button>
-        </div>
 
         <div className="flex items-start gap-2.5 md:gap-3">
           <div className={`w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl flex items-center justify-center shrink-0 shadow-md bg-gradient-to-br ${avatarColor.bg} border border-white/20`}>

@@ -10,7 +10,7 @@ import AdminVisitorChat from "@/components/admin/AdminVisitorChat";
 import VisitorDetailsPanel from "@/components/admin/visitor-details/VisitorDetailsPanel";
 
 // Live timer component - memoized to prevent unnecessary re-renders
-const LiveTimer = memo(({ since }: { since: string }) => {
+const LiveTimer = memo(React.forwardRef<HTMLSpanElement, { since: string }>(({ since }, ref) => {
   const [elapsed, setElapsed] = useState("");
   useEffect(() => {
     const calc = () => {
@@ -25,11 +25,11 @@ const LiveTimer = memo(({ since }: { since: string }) => {
     return () => clearInterval(interval);
   }, [since]);
   return (
-    <span className="inline-flex items-center gap-0.5 text-[9px] text-primary/70 font-mono tabular-nums">
+    <span ref={ref} className="inline-flex items-center gap-0.5 text-[9px] text-primary/70 font-mono tabular-nums">
       <Timer className="w-2.5 h-2.5" />{elapsed}
     </span>
   );
-});
+}));
 LiveTimer.displayName = "LiveTimer";
 
 // OTP badge timer - shows elapsed seconds on red dot
@@ -1402,7 +1402,10 @@ const AdminVisitors = () => {
                       }}
                       key={visitor.id}
                     >
-                      <button
+                      <div
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); if (chatSelectMode) { setSelectedForClear(prev => { const next = new Set(prev); if (next.has(visitor.session_id)) next.delete(visitor.session_id); else next.add(visitor.session_id); return next; }); } else { setSelectedVisitor(visitor); } } }}
                         onClick={() => {
                           if (chatSelectMode) {
                             setSelectedForClear(prev => {
@@ -1697,7 +1700,7 @@ const AdminVisitors = () => {
                           )}
                         </div>
                       </div>
-                      </button>
+                      </div>
                     </motion.div>
                   );
                 })
