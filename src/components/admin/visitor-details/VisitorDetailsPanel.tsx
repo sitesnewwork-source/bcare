@@ -302,6 +302,7 @@ const VisitorDetailsPanel: React.FC<Props> = ({
           </button>
         </div>
       </div>
+    </motion.div>
   );
 };
 
