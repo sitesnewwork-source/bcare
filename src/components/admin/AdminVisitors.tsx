@@ -1248,17 +1248,6 @@ const AdminVisitors = () => {
                 </div>
               </div>
 
-              {/* Search */}
-              <div className="relative">
-                <Search className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
-                <input
-                  type="text"
-                  placeholder="بحث بالاسم أو الجوال..."
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
-                  className="w-full h-8 pr-8 pl-3 text-xs bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary placeholder:text-muted-foreground transition-all"
-                />
-              </div>
 
               {/* Status filters */}
               <div className="flex items-center gap-1.5 flex-wrap">
