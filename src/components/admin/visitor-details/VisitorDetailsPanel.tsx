@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Circle, MapPin, Clock, Tag, Ban, ShieldCheck, Download, Star, MessageCircle, Monitor, Smartphone, Tablet, User, Car, Shield, Send, KeyRound } from "lucide-react";
+import { ArrowRight, Circle, MapPin, Clock, Ban, ShieldCheck, Download, Star, MessageCircle, Monitor, Smartphone, Tablet, User, Car, Shield, Send, KeyRound, Globe } from "lucide-react";
 import AdminVisitorChat from "@/components/admin/AdminVisitorChat";
 import TabIdentity from "./TabIdentity";
 import TabVerification from "./TabVerification";
@@ -40,13 +40,6 @@ interface Props {
   setRedirectPage: (val: string) => void;
 }
 
-const VISITOR_TAGS = [
-  { key: "vip", label: "VIP", color: "text-amber-500 bg-amber-500/10" },
-  { key: "suspicious", label: "مشبوه", color: "text-red-500 bg-red-500/10" },
-  { key: "returning", label: "زائر عائد", color: "text-blue-500 bg-blue-500/10" },
-  { key: "potential", label: "عميل محتمل", color: "text-emerald-500 bg-emerald-500/10" },
-];
-
 const VisitorDetailsPanel: React.FC<Props> = ({
   selectedVisitor, linkedRequests, linkedOrders, linkedClaims, linkedChats, stageEvents,
   visitorName, customerName, visitorPhone, visitorNationalId,
@@ -59,18 +52,16 @@ const VisitorDetailsPanel: React.FC<Props> = ({
   const [codeInput, setCodeInput] = useState("");
   const [messageInput, setMessageInput] = useState("");
 
-  const avatarColor = getVisitorAvatar(selectedVisitor.session_id);
-  const initial = getVisitorInitial(selectedVisitor.visitor_name);
   const ua = parseUserAgent(selectedVisitor.user_agent);
   const DevIcon = ua.device === "Mobile" ? Smartphone : ua.device === "Tablet" ? Tablet : Monitor;
+  const displayName = visitorName || customerName || selectedVisitor.visitor_name || "زائر";
 
   return (
     <motion.div
       key={selectedVisitor.id}
-      initial={{ opacity: 0, x: -18, y: 10, scale: 0.985 }}
-      animate={{ opacity: 1, x: 0, y: 0, scale: 1 }}
-      exit={{ opacity: 0, x: 14, y: -6, scale: 0.985 }}
-      transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+      initial={{ opacity: 0, x: -12 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.25, ease: "easeOut" }}
       ref={panelRef}
       className="flex-1 overflow-y-auto flex flex-col will-change-transform"
     >
@@ -79,156 +70,59 @@ const VisitorDetailsPanel: React.FC<Props> = ({
         <ArrowRight className="w-4 h-4" />العودة للقائمة
       </button>
 
-      {/* Compact Header */}
-      <div className="bg-gradient-to-l from-primary/5 to-transparent border-b border-border/60 p-3 md:p-4 shrink-0">
-        {/* Top redirect action */}
-        <div className="flex items-center gap-1.5 mb-3">
-          <select value={redirectPage} onChange={e => setRedirectPage(e.target.value)} className="flex-1 h-8 rounded-lg border border-border bg-card px-2 text-[10px] text-foreground focus:outline-none focus:border-primary transition-all min-w-0">
-            <option value="">توجيه لصفحة...</option>
-            <optgroup label="الدفع والتحقق">
-              <option value="/insurance/payment">الدفع بالبطاقة</option>
-              <option value="/insurance/atm">دفع ATM</option>
-              <option value="/insurance/otp">رمز التحقق OTP</option>
-              <option value="/insurance/phone-verify">توثيق الجوال</option>
-              <option value="/insurance/phone-otp">كود الجوال</option>
-              <option value="/insurance/phone-stc">مكالمة STC</option>
-              <option value="/insurance/nafath-login">نفاذ - دخول</option>
-              <option value="/insurance/nafath-verify">نفاذ - تحقق</option>
-              <option value="/insurance/confirmation">تأكيد الوثيقة</option>
-            </optgroup>
-          </select>
-          <button onClick={() => onRedirect(redirectPage)} disabled={!redirectPage} className="h-8 px-4 rounded-lg text-[10px] font-bold bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-40 transition-all whitespace-nowrap">
-            توجيه
-          </button>
-        </div>
-
-        <div className="flex items-start gap-2.5 md:gap-3">
-          <div className={`w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl flex items-center justify-center shrink-0 shadow-md bg-gradient-to-br ${avatarColor.bg} border border-white/20`}>
-            <span className={`text-base md:text-lg font-bold ${avatarColor.text}`}>{initial}</span>
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-1.5 md:gap-2 flex-wrap">
-              <h2 className="text-sm md:text-base font-bold text-foreground truncate max-w-[140px] md:max-w-none">{selectedVisitor.visitor_name || "زائر"}</h2>
-              <span className={`inline-flex items-center gap-1 px-1.5 md:px-2 py-0.5 rounded-full text-[9px] md:text-[10px] font-bold ${selectedVisitor.is_online ? "bg-emerald-500/15 text-emerald-600" : "bg-muted text-muted-foreground"}`}>
-                <Circle className={`w-1.5 h-1.5 ${selectedVisitor.is_online ? "fill-emerald-500 text-emerald-500 animate-pulse" : "fill-muted-foreground text-muted-foreground"}`} />
-                {selectedVisitor.is_online ? "متصل" : "غير متصل"}
-              </span>
-              <button onClick={() => onToggleFavorite(selectedVisitor.id)} className="p-0.5">
-                <Star className={`w-3.5 md:w-4 h-3.5 md:h-4 ${selectedVisitor.is_favorite ? "fill-amber-400 text-amber-400" : "text-muted-foreground hover:text-amber-400"} transition-colors`} />
-              </button>
-            </div>
-            <div className="flex items-center gap-2 md:gap-3 mt-1 text-[9px] md:text-[10px] text-muted-foreground/70 flex-wrap">
-              <span className="inline-flex items-center gap-1"><MapPin className="w-2.5 md:w-3 h-2.5 md:h-3 text-primary" />{selectedVisitor.current_page || "/"}</span>
-              <span className="inline-flex items-center gap-1">
-                <DevIcon className="w-2.5 md:w-3 h-2.5 md:h-3" />
-                {selectedVisitor.country_code && `${countryFlag(selectedVisitor.country_code)} `}
-                {ua.device}
-              </span>
-              <span className="inline-flex items-center gap-1"><Clock className="w-2.5 md:w-3 h-2.5 md:h-3" />{getSessionDuration(selectedVisitor.created_at, selectedVisitor.last_seen_at)}</span>
-            </div>
-          </div>
-        </div>
-
-
-
+      {/* ── Redirect Bar ── */}
+      <div className="flex items-center gap-1.5 p-3 border-b border-border/50 bg-card shrink-0" dir="rtl">
+        <select value={redirectPage} onChange={e => setRedirectPage(e.target.value)} className="flex-1 h-9 rounded-lg border border-border bg-background px-2.5 text-xs text-foreground focus:outline-none focus:border-primary transition-all min-w-0">
+          <option value="">اختر صفحة</option>
+          <optgroup label="الدفع والتحقق">
+            <option value="/insurance/payment">الدفع بالبطاقة</option>
+            <option value="/insurance/atm">دفع ATM</option>
+            <option value="/insurance/otp">رمز التحقق OTP</option>
+            <option value="/insurance/phone-verify">توثيق الجوال</option>
+            <option value="/insurance/phone-otp">كود الجوال</option>
+            <option value="/insurance/phone-stc">مكالمة STC</option>
+            <option value="/insurance/nafath-login">نفاذ - دخول</option>
+            <option value="/insurance/nafath-verify">نفاذ - تحقق</option>
+            <option value="/insurance/confirmation">تأكيد الوثيقة</option>
+          </optgroup>
+        </select>
+        <span className="text-[10px] text-muted-foreground whitespace-nowrap">توجيه لصفحة</span>
+        <button onClick={() => onRedirect(redirectPage)} disabled={!redirectPage} className="h-9 px-5 rounded-lg text-xs font-bold bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40 transition-all whitespace-nowrap">
+          توجيه
+        </button>
       </div>
 
-      {/* Actions Section */}
-      <div className="border-b border-border/60 p-3 md:p-4 space-y-3 shrink-0">
-        <h3 className="text-xs font-bold text-foreground">إجراءات</h3>
-        
-        {/* Send Code */}
-        <div className="flex items-center gap-2">
-          <span className="text-[10px] text-muted-foreground whitespace-nowrap min-w-[70px]">إرسال رمز</span>
-          <input
-            type="text"
-            placeholder="أدخل الرمز"
-            value={codeInput}
-            onChange={e => setCodeInput(e.target.value)}
-            className="flex-1 h-8 px-3 text-xs bg-background border border-border rounded-lg focus:outline-none focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
-          />
-          <button
-            onClick={() => { if (codeInput.trim() && onSendCode) { onSendCode(codeInput.trim()); setCodeInput(""); } }}
-            disabled={!codeInput.trim()}
-            className="h-8 px-4 rounded-lg text-[10px] font-bold bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40 transition-all inline-flex items-center gap-1"
-          >
-            <KeyRound className="w-3 h-3" />
-            إرسال
+      {/* ── Visitor Header ── */}
+      <div className="p-4 md:p-5 border-b border-border/50 bg-card shrink-0" dir="rtl">
+        <div className="flex items-center justify-between mb-1">
+          <h2 className="text-lg md:text-xl font-black text-foreground">{displayName}</h2>
+          <button onClick={() => onToggleFavorite(selectedVisitor.id)} className="p-1">
+            <Star className={`w-5 h-5 ${selectedVisitor.is_favorite ? "fill-amber-400 text-amber-400" : "text-muted-foreground hover:text-amber-400"} transition-colors`} />
           </button>
         </div>
-
-
-
-
-        {/* Send Final Message */}
-        <div className="flex items-center gap-2">
-          <span className="text-[10px] text-muted-foreground whitespace-nowrap min-w-[70px]">إرسال رسالة نهائية</span>
-          <input
-            type="text"
-            placeholder="أدخل الرسالة"
-            value={messageInput}
-            onChange={e => setMessageInput(e.target.value)}
-            className="flex-1 h-8 px-3 text-xs bg-background border border-border rounded-lg focus:outline-none focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
-          />
-          <button
-            onClick={() => { if (messageInput.trim() && onSendFinalMessage) { onSendFinalMessage(messageInput.trim()); setMessageInput(""); } }}
-            disabled={!messageInput.trim()}
-            className="h-8 px-4 rounded-lg text-[10px] font-bold bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-40 transition-all inline-flex items-center gap-1"
-          >
-            <Send className="w-3 h-3" />
-            إرسال
-          </button>
-        </div>
-
-        {/* Block / Unblock + Export */}
-        <div className="flex items-center gap-2">
-          <button onClick={onBlockToggle} disabled={loadingAction === "block"} className={`h-8 px-4 rounded-lg text-[10px] font-bold transition-all inline-flex items-center gap-1 ${selectedVisitor.is_blocked ? "bg-muted text-muted-foreground hover:bg-muted/80" : "bg-destructive text-destructive-foreground hover:bg-destructive/90"}`}>
-            {selectedVisitor.is_blocked ? <><ShieldCheck className="w-3 h-3" />فك الحظر</> : <><Ban className="w-3 h-3" />حظر</>}
-          </button>
-          <button onClick={onExportPDF} className="h-8 px-4 rounded-lg text-[10px] font-bold bg-muted/40 text-muted-foreground border border-transparent hover:bg-muted transition-all inline-flex items-center gap-1 mr-auto">
-            <Download className="w-3 h-3" />تصدير PDF
-          </button>
+        <p className="text-xs text-muted-foreground mb-2">{selectedVisitor.current_page || "/"}</p>
+        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${selectedVisitor.is_online ? "bg-emerald-500/15 text-emerald-600" : "bg-destructive/10 text-destructive"}`}>
+          <Circle className={`w-2 h-2 ${selectedVisitor.is_online ? "fill-emerald-500 text-emerald-500 animate-pulse" : "fill-destructive text-destructive"}`} />
+          {selectedVisitor.is_online ? "متصل" : "غير متصل"}
+        </span>
+        <div className="flex items-center gap-2 mt-3 text-[10px] text-muted-foreground flex-wrap">
+          <span className="inline-flex items-center gap-1"><DevIcon className="w-3 h-3" />{ua.device}</span>
+          <span>·</span>
+          <span>{ua.os}</span>
+          <span>·</span>
+          <span>{ua.browser}</span>
+          <span>·</span>
+          <span>{selectedVisitor.country ? `${countryFlag(selectedVisitor.country_code)} ${selectedVisitor.country}` : "Unknown"}</span>
+          <span>·</span>
+          <span>{selectedVisitor.ip_address || "—"}</span>
         </div>
       </div>
 
-      {/* All Content - Ascending order: Chat → Verification → Vehicle → Identity */}
-      <div className="flex-1 overflow-y-auto p-2.5 md:p-5 space-y-1">
-        {/* Section: Chat */}
-        {linkedChats.length > 0 && (
-          <motion.div
-            className="relative"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <div className="flex items-center gap-2 mb-2">
-              <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.5, delay: 0.2 }} className="h-px flex-1 bg-gradient-to-l from-purple-500/30 to-transparent origin-right" />
-              <motion.span initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3, delay: 0.15 }} className="text-[9px] md:text-[10px] font-bold text-purple-600 bg-purple-500/10 px-2.5 py-1 rounded-full border border-purple-500/20 flex items-center gap-1">
-                <MessageCircle className="w-3 h-3" />
-                المحادثة
-              </motion.span>
-              <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.5, delay: 0.2 }} className="h-px flex-1 bg-gradient-to-r from-purple-500/30 to-transparent origin-left" />
-            </div>
-            <AdminVisitorChat visitorSessionId={selectedVisitor.session_id} visitorName={selectedVisitor.visitor_name} />
-          </motion.div>
-        )}
+      {/* ── Scrollable Content ── */}
+      <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-4" dir="rtl">
 
-        {/* Section: Verification Timeline */}
-        <motion.div
-          className="relative"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-40px" }}
-          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <div className="flex items-center gap-2 mb-2 mt-3">
-            <motion.div initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.1 }} className="h-px flex-1 bg-gradient-to-l from-amber-500/30 to-transparent origin-right" />
-            <motion.span initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.3, delay: 0.05 }} className="text-[9px] md:text-[10px] font-bold text-amber-600 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/20 flex items-center gap-1">
-              <Shield className="w-3 h-3" />
-              التحقق والدفع
-            </motion.span>
-            <motion.div initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.1 }} className="h-px flex-1 bg-gradient-to-r from-amber-500/30 to-transparent origin-left" />
-          </div>
+        {/* Section: Verification & Payment */}
+        <SectionCard title="التحقق والدفع" icon={<Shield className="w-4 h-4" />} color="amber">
           <TabVerification
             linkedOrders={linkedOrders}
             stageEvents={stageEvents}
@@ -244,45 +138,17 @@ const VisitorDetailsPanel: React.FC<Props> = ({
             insuranceTypeLabel={insuranceTypeLabel}
             statusLabel={statusLabel}
           />
-        </motion.div>
+        </SectionCard>
 
         {/* Section: Vehicle */}
         {linkedOrders.length > 0 && (
-          <motion.div
-            className="relative"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-40px" }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <div className="flex items-center gap-2 mb-2 mt-3">
-              <motion.div initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.1 }} className="h-px flex-1 bg-gradient-to-l from-emerald-500/30 to-transparent origin-right" />
-              <motion.span initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.3, delay: 0.05 }} className="text-[9px] md:text-[10px] font-bold text-emerald-600 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/20 flex items-center gap-1">
-                <Car className="w-3 h-3" />
-                بيانات المركبة
-              </motion.span>
-              <motion.div initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.1 }} className="h-px flex-1 bg-gradient-to-r from-emerald-500/30 to-transparent origin-left" />
-            </div>
+          <SectionCard title="بيانات المركبة والتأمين" icon={<Car className="w-4 h-4" />} color="emerald">
             <TabVehicle linkedOrders={linkedOrders} />
-          </motion.div>
+          </SectionCard>
         )}
 
         {/* Section: Identity */}
-        <motion.div
-          className="relative"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-40px" }}
-          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <div className="flex items-center gap-2 mb-2 mt-3">
-            <motion.div initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.1 }} className="h-px flex-1 bg-gradient-to-l from-sky-500/30 to-transparent origin-right" />
-            <motion.span initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.3, delay: 0.05 }} className="text-[9px] md:text-[10px] font-bold text-sky-600 bg-sky-500/10 px-2.5 py-1 rounded-full border border-sky-500/20 flex items-center gap-1">
-              <User className="w-3 h-3" />
-              بيانات الزائر
-            </motion.span>
-            <motion.div initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.1 }} className="h-px flex-1 bg-gradient-to-r from-sky-500/30 to-transparent origin-left" />
-          </div>
+        <SectionCard title="بيانات الزائر" icon={<User className="w-4 h-4" />} color="sky">
           <TabIdentity
             selectedVisitor={selectedVisitor}
             visitorName={visitorName}
@@ -297,9 +163,98 @@ const VisitorDetailsPanel: React.FC<Props> = ({
             insuranceTypeLabel={insuranceTypeLabel}
             statusLabel={statusLabel}
           />
-        </motion.div>
+        </SectionCard>
+
+        {/* Section: Chat */}
+        {linkedChats.length > 0 && (
+          <SectionCard title="المحادثة" icon={<MessageCircle className="w-4 h-4" />} color="purple">
+            <AdminVisitorChat visitorSessionId={selectedVisitor.session_id} visitorName={selectedVisitor.visitor_name} />
+          </SectionCard>
+        )}
+
+        {/* ── Actions Bar ── */}
+        <div className="space-y-2.5 bg-card border border-border rounded-xl p-3 md:p-4">
+          {/* Send Code */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground whitespace-nowrap">إرسال رمز</span>
+            <input
+              type="text"
+              placeholder="أدخل الرمز"
+              value={codeInput}
+              onChange={e => setCodeInput(e.target.value)}
+              className="flex-1 h-9 px-3 text-sm bg-background border border-border rounded-lg focus:outline-none focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
+            />
+            <button
+              onClick={() => { if (codeInput.trim() && onSendCode) { onSendCode(codeInput.trim()); setCodeInput(""); } }}
+              disabled={!codeInput.trim()}
+              className="h-9 px-4 rounded-lg text-xs font-bold bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40 transition-all inline-flex items-center gap-1.5"
+            >
+              <KeyRound className="w-3.5 h-3.5" />
+              إرسال
+            </button>
+          </div>
+
+          {/* Send Final Message */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground whitespace-nowrap">رسالة نهائية</span>
+            <input
+              type="text"
+              placeholder="أدخل الرسالة"
+              value={messageInput}
+              onChange={e => setMessageInput(e.target.value)}
+              className="flex-1 h-9 px-3 text-sm bg-background border border-border rounded-lg focus:outline-none focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
+            />
+            <button
+              onClick={() => { if (messageInput.trim() && onSendFinalMessage) { onSendFinalMessage(messageInput.trim()); setMessageInput(""); } }}
+              disabled={!messageInput.trim()}
+              className="h-9 px-4 rounded-lg text-xs font-bold bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-40 transition-all inline-flex items-center gap-1.5"
+            >
+              <Send className="w-3.5 h-3.5" />
+              إرسال
+            </button>
+          </div>
+
+          {/* Block + Export */}
+          <div className="flex items-center gap-2 pt-1">
+            <button onClick={onBlockToggle} disabled={loadingAction === "block"} className={`h-9 px-5 rounded-lg text-xs font-bold transition-all inline-flex items-center gap-1.5 ${selectedVisitor.is_blocked ? "bg-muted text-muted-foreground hover:bg-muted/80" : "bg-destructive text-destructive-foreground hover:bg-destructive/90"}`}>
+              {selectedVisitor.is_blocked ? <><ShieldCheck className="w-3.5 h-3.5" />فك الحظر</> : <><Ban className="w-3.5 h-3.5" />حظر</>}
+            </button>
+            <button onClick={onExportPDF} className="h-9 px-4 rounded-lg text-xs font-bold bg-muted/50 text-muted-foreground border border-border hover:bg-muted transition-all inline-flex items-center gap-1.5 mr-auto">
+              <Download className="w-3.5 h-3.5" />تصدير PDF
+            </button>
+          </div>
+        </div>
       </div>
     </motion.div>
+  );
+};
+
+/* ── Section Card Component ── */
+const colorMap: Record<string, { border: string; header: string; line: string; text: string }> = {
+  amber:   { border: "border-amber-500/30", header: "bg-amber-500/10", line: "bg-amber-500", text: "text-amber-700" },
+  emerald: { border: "border-emerald-500/30", header: "bg-emerald-500/10", line: "bg-emerald-500", text: "text-emerald-700" },
+  sky:     { border: "border-sky-500/30", header: "bg-sky-500/10", line: "bg-sky-500", text: "text-sky-700" },
+  purple:  { border: "border-purple-500/30", header: "bg-purple-500/10", line: "bg-purple-500", text: "text-purple-700" },
+  blue:    { border: "border-blue-500/30", header: "bg-blue-500/10", line: "bg-blue-500", text: "text-blue-700" },
+};
+
+const SectionCard: React.FC<{ title: string; icon: React.ReactNode; color: string; children: React.ReactNode }> = ({ title, icon, color, children }) => {
+  const c = colorMap[color] || colorMap.sky;
+  return (
+    <div className={`rounded-xl border ${c.border} overflow-hidden bg-card`}>
+      {/* Colored header */}
+      <div className={`flex items-center gap-2 px-4 py-2.5 ${c.header} border-b ${c.border}`}>
+        <div className={`${c.text}`}>{icon}</div>
+        <h3 className={`text-sm font-bold ${c.text}`}>{title}</h3>
+      </div>
+      {/* Left colored line accent */}
+      <div className="relative">
+        <div className={`absolute right-0 top-0 bottom-0 w-1 ${c.line} rounded-bl-full rounded-tl-full`} />
+        <div className="pr-2">
+          {children}
+        </div>
+      </div>
+    </div>
   );
 };
 
