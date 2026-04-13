@@ -1197,59 +1197,6 @@ const AdminVisitors = () => {
       )}
 
       <div className="h-[calc(100dvh-120px)] flex flex-col gap-2 md:gap-3" dir="rtl">
-        {/* Compact stats bar */}
-        <div className="flex flex-wrap items-center gap-2 bg-card border border-border rounded-xl p-2 md:p-3 shrink-0">
-          <div className="flex items-center gap-1.5 px-2 py-1 bg-emerald-500/10 rounded-lg">
-            <Circle className="w-2 h-2 fill-emerald-500 text-emerald-500 animate-pulse" />
-            <span className="text-xs font-bold text-emerald-600">{onlineCount}</span>
-            <span className="text-[10px] text-muted-foreground">متصل</span>
-          </div>
-          <div className="flex items-center gap-1.5 px-2 py-1 bg-primary/10 rounded-lg">
-            <User className="w-3 h-3 text-primary" />
-            <span className="text-xs font-bold text-primary">{totalCount}</span>
-            <span className="text-[10px] text-muted-foreground">إجمالي</span>
-          </div>
-          {pendingCount > 0 && (
-            <div className="flex items-center gap-1.5 px-2 py-1 bg-amber-500/10 rounded-lg">
-              <Clock className="w-3 h-3 text-amber-600" />
-              <span className="text-xs font-bold text-amber-600">{pendingCount}</span>
-              <span className="text-[10px] text-muted-foreground">بانتظار</span>
-            </div>
-          )}
-
-          {/* Country chips - inline in stats bar */}
-          {countries.length > 0 && (
-            <>
-              <div className="w-px h-5 bg-border hidden md:block" />
-              <div className="flex items-center gap-1 flex-wrap">
-                <Globe className="w-3 h-3 text-muted-foreground" />
-                {(() => {
-                  const countryStats: Record<string, { count: number; online: number; code: string | null }> = {};
-                  visitors.forEach(v => {
-                    const c = v.country || "غير معروف";
-                    if (c === "غير معروف") return;
-                    if (!countryStats[c]) countryStats[c] = { count: 0, online: 0, code: v.country_code };
-                    countryStats[c].count++;
-                    if (v.is_online) countryStats[c].online++;
-                  });
-                  return Object.entries(countryStats).sort((a, b) => b[1].count - a[1].count).map(([country, data]) => (
-                    <button
-                      key={country}
-                      onClick={() => setCountryFilter(countryFilter === country ? "" : country)}
-                      className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] transition-all ${
-                        countryFilter === country ? "bg-primary/20 ring-1 ring-primary text-primary font-bold" : "bg-muted/50 text-muted-foreground hover:bg-muted"
-                      }`}
-                    >
-                      <span>{countryFlag(data.code)}</span>
-                      <span>{data.count}</span>
-                      {data.online > 0 && <Circle className="w-1.5 h-1.5 fill-emerald-500 text-emerald-500" />}
-                    </button>
-                  ));
-                })()}
-              </div>
-            </>
-          )}
-        </div>
 
         <div className="flex-1 flex flex-col md:flex-row gap-2 md:gap-3 min-h-0">
           {/* Visitors list */}
