@@ -129,41 +129,8 @@ const VisitorDetailsPanel: React.FC<Props> = ({
           </div>
         </div>
 
-        {/* Tags row */}
-        <div className="flex items-center gap-1 md:gap-1.5 flex-wrap mt-2.5 md:mt-3">
-          {VISITOR_TAGS.map(tag => {
-            const isActive = (selectedVisitor.tags || []).includes(tag.key);
-            return (
-              <button
-                key={tag.key}
-                onClick={() => onToggleTag(selectedVisitor.id, tag.key)}
-                className={`inline-flex items-center gap-0.5 md:gap-1 px-1.5 md:px-2 py-0.5 md:py-1 rounded-md md:rounded-lg text-[9px] md:text-[10px] font-bold border transition-all ${
-                  isActive ? `${tag.color} border-current` : "bg-muted/40 text-muted-foreground border-transparent hover:bg-muted"
-                }`}
-              >
-                {tag.label}
-              </button>
-            );
-          })}
-        </div>
 
-        {/* Device info */}
-        <div className="flex items-center gap-2 mt-2 text-[9px] text-muted-foreground/60">
-          <DevIcon className="w-3 h-3" />
-          <span>{[ua.device, ua.os, ua.browser].filter(Boolean).join(" · ")}</span>
-          {selectedVisitor.country && (
-            <>
-              <span>·</span>
-              <span>{countryFlag(selectedVisitor.country_code)} {selectedVisitor.country}</span>
-            </>
-          )}
-          {selectedVisitor.ip_address && (
-            <>
-              <span>·</span>
-              <span>{selectedVisitor.ip_address}</span>
-            </>
-          )}
-        </div>
+
       </div>
 
       {/* Actions Section */}
