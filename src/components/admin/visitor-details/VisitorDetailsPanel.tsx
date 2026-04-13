@@ -61,23 +61,33 @@ interface Props {
 }
 
 /* ═══════════════════════════════════════════════
-   Card Colors
-   ═══════════════════════════════════════════════ */
-/* ═══════════════════════════════════════════════
-   Card Colors — richer, deeper, with gradients
+   BCare Brand Card Colors
+   Primary: Petrol Teal → teal/cyan
+   Accent:  Orange/Gold → amber/orange
    ═══════════════════════════════════════════════ */
 const cardThemes = {
-  sky:     { border: "border-sky-400/40",     bg: "bg-sky-500/5",     header: "bg-gradient-to-l from-sky-500/20 to-sky-400/10",     text: "text-sky-700 dark:text-sky-300",     line: "bg-gradient-to-b from-sky-400 to-sky-600",     shadow: "shadow-sky-500/10" },
-  amber:   { border: "border-amber-400/40",   bg: "bg-amber-500/5",   header: "bg-gradient-to-l from-amber-500/20 to-amber-400/10",   text: "text-amber-700 dark:text-amber-300",   line: "bg-gradient-to-b from-amber-400 to-amber-600",   shadow: "shadow-amber-500/10" },
-  emerald: { border: "border-emerald-400/40", bg: "bg-emerald-500/5", header: "bg-gradient-to-l from-emerald-500/20 to-emerald-400/10", text: "text-emerald-700 dark:text-emerald-300", line: "bg-gradient-to-b from-emerald-400 to-emerald-600", shadow: "shadow-emerald-500/10" },
-  blue:    { border: "border-blue-400/40",    bg: "bg-blue-500/5",    header: "bg-gradient-to-l from-blue-500/20 to-blue-400/10",    text: "text-blue-700 dark:text-blue-300",    line: "bg-gradient-to-b from-blue-400 to-blue-600",    shadow: "shadow-blue-500/10" },
-  violet:  { border: "border-violet-400/40",  bg: "bg-violet-500/5",  header: "bg-gradient-to-l from-violet-500/20 to-violet-400/10",  text: "text-violet-700 dark:text-violet-300",  line: "bg-gradient-to-b from-violet-400 to-violet-600",  shadow: "shadow-violet-500/10" },
-  purple:  { border: "border-purple-400/40",  bg: "bg-purple-500/5",  header: "bg-gradient-to-l from-purple-500/20 to-purple-400/10",  text: "text-purple-700 dark:text-purple-300",  line: "bg-gradient-to-b from-purple-400 to-purple-600",  shadow: "shadow-purple-500/10" },
-  teal:    { border: "border-teal-400/40",    bg: "bg-teal-500/5",    header: "bg-gradient-to-l from-teal-500/20 to-teal-400/10",    text: "text-teal-700 dark:text-teal-300",    line: "bg-gradient-to-b from-teal-400 to-teal-600",    shadow: "shadow-teal-500/10" },
-  cyan:    { border: "border-cyan-400/40",    bg: "bg-cyan-500/5",    header: "bg-gradient-to-l from-cyan-500/20 to-cyan-400/10",    text: "text-cyan-700 dark:text-cyan-300",    line: "bg-gradient-to-b from-cyan-400 to-cyan-600",    shadow: "shadow-cyan-500/10" },
-  red:     { border: "border-red-400/40",     bg: "bg-red-500/5",     header: "bg-gradient-to-l from-red-500/20 to-red-400/10",     text: "text-red-700 dark:text-red-300",     line: "bg-gradient-to-b from-red-400 to-red-600",     shadow: "shadow-red-500/10" },
-  indigo:  { border: "border-indigo-400/40",  bg: "bg-indigo-500/5",  header: "bg-gradient-to-l from-indigo-500/20 to-indigo-400/10",  text: "text-indigo-700 dark:text-indigo-300",  line: "bg-gradient-to-b from-indigo-400 to-indigo-600",  shadow: "shadow-indigo-500/10" },
-  rose:    { border: "border-rose-400/40",    bg: "bg-rose-500/5",    header: "bg-gradient-to-l from-rose-500/20 to-rose-400/10",    text: "text-rose-700 dark:text-rose-300",    line: "bg-gradient-to-b from-rose-400 to-rose-600",    shadow: "shadow-rose-500/10" },
+  // بيانات الزائر — بترولي رئيسي
+  sky:     { border: "border-teal-500/35",    bg: "bg-teal-500/5",    header: "bg-gradient-to-l from-teal-600/18 to-teal-400/8",    text: "text-teal-800 dark:text-teal-300",    line: "bg-gradient-to-b from-teal-400 to-teal-700",    shadow: "shadow-teal-600/10" },
+  // بطاقة الدفع — برتقالي ذهبي
+  amber:   { border: "border-amber-500/35",   bg: "bg-amber-500/5",   header: "bg-gradient-to-l from-amber-500/18 to-orange-400/8",  text: "text-amber-800 dark:text-amber-300",  line: "bg-gradient-to-b from-amber-400 to-orange-600",  shadow: "shadow-amber-500/10" },
+  // المركبة / ATM — بترولي مخضر
+  emerald: { border: "border-teal-400/30",    bg: "bg-teal-400/5",    header: "bg-gradient-to-l from-teal-500/15 to-cyan-400/8",     text: "text-teal-700 dark:text-teal-300",    line: "bg-gradient-to-b from-teal-300 to-teal-600",    shadow: "shadow-teal-400/10" },
+  // OTP البطاقة / STC — أزرق بترولي غامق
+  blue:    { border: "border-cyan-600/30",    bg: "bg-cyan-600/5",    header: "bg-gradient-to-l from-cyan-600/15 to-teal-500/8",     text: "text-cyan-800 dark:text-cyan-300",    line: "bg-gradient-to-b from-cyan-500 to-cyan-700",    shadow: "shadow-cyan-600/10" },
+  // OTP الجوال — بترولي أزرق
+  violet:  { border: "border-sky-600/30",     bg: "bg-sky-600/5",     header: "bg-gradient-to-l from-sky-600/15 to-teal-500/8",      text: "text-sky-800 dark:text-sky-300",      line: "bg-gradient-to-b from-sky-400 to-sky-700",      shadow: "shadow-sky-600/10" },
+  // توثيق الجوال — بترولي دافئ
+  purple:  { border: "border-teal-500/30",    bg: "bg-teal-500/4",    header: "bg-gradient-to-l from-teal-500/14 to-emerald-400/7",   text: "text-teal-700 dark:text-teal-300",    line: "bg-gradient-to-b from-emerald-400 to-teal-600",  shadow: "shadow-teal-500/10" },
+  // العرض والأسعار / نفاذ دخول — برتقالي غامق
+  teal:    { border: "border-orange-500/30",  bg: "bg-orange-500/5",  header: "bg-gradient-to-l from-orange-500/15 to-amber-400/8",   text: "text-orange-800 dark:text-orange-300", line: "bg-gradient-to-b from-orange-400 to-orange-600", shadow: "shadow-orange-500/10" },
+  // رمز نفاذ — سماوي بترولي
+  cyan:    { border: "border-cyan-500/30",    bg: "bg-cyan-500/5",    header: "bg-gradient-to-l from-cyan-500/15 to-teal-400/8",     text: "text-cyan-700 dark:text-cyan-300",    line: "bg-gradient-to-b from-cyan-400 to-teal-600",    shadow: "shadow-cyan-500/10" },
+  // حالات الرفض
+  red:     { border: "border-red-400/35",     bg: "bg-red-500/5",     header: "bg-gradient-to-l from-red-500/15 to-red-400/8",       text: "text-red-700 dark:text-red-300",      line: "bg-gradient-to-b from-red-400 to-red-600",      shadow: "shadow-red-500/10" },
+  // طلبات التأمين — بترولي متوسط
+  indigo:  { border: "border-teal-600/30",    bg: "bg-teal-600/5",    header: "bg-gradient-to-l from-teal-600/15 to-cyan-500/8",     text: "text-teal-800 dark:text-teal-300",    line: "bg-gradient-to-b from-teal-500 to-teal-700",    shadow: "shadow-teal-600/10" },
+  // المحادثة — برتقالي ذهبي دافئ
+  rose:    { border: "border-orange-400/30",  bg: "bg-orange-400/5",  header: "bg-gradient-to-l from-orange-400/15 to-amber-300/8",   text: "text-orange-700 dark:text-orange-300", line: "bg-gradient-to-b from-amber-400 to-orange-500",  shadow: "shadow-orange-400/10" },
 };
 
 type CardColor = keyof typeof cardThemes;
