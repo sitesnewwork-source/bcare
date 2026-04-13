@@ -1,6 +1,6 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Circle, MapPin, Clock, Tag, Ban, ShieldCheck, Download, Star, MessageCircle, Monitor, Smartphone, Tablet, User, Car, Shield } from "lucide-react";
+import { ArrowRight, Circle, MapPin, Clock, Tag, Ban, ShieldCheck, Download, Star, MessageCircle, Monitor, Smartphone, Tablet, User, Car, Shield, Send, KeyRound } from "lucide-react";
 import AdminVisitorChat from "@/components/admin/AdminVisitorChat";
 import TabIdentity from "./TabIdentity";
 import TabVerification from "./TabVerification";
@@ -34,6 +34,8 @@ interface Props {
   onToggleFavorite: (id: string) => void;
   onToggleTag: (id: string, tagKey: string) => void;
   onRedirect: (page: string) => void;
+  onSendCode?: (code: string) => void;
+  onSendFinalMessage?: (message: string) => void;
   redirectPage: string;
   setRedirectPage: (val: string) => void;
 }
@@ -51,9 +53,11 @@ const VisitorDetailsPanel: React.FC<Props> = ({
   loadingAction, nafathNumberInputs, setNafathNumberInputs,
   onClose, onApprove, onReject, onStageApprove, onStageReject, onUpdateNafathNumber,
   onBlockToggle, onExportPDF, onClearChat, onToggleFavorite, onToggleTag,
-  onRedirect, redirectPage, setRedirectPage,
+  onRedirect, onSendCode, onSendFinalMessage, redirectPage, setRedirectPage,
 }) => {
   const panelRef = useRef<HTMLDivElement>(null);
+  const [codeInput, setCodeInput] = useState("");
+  const [messageInput, setMessageInput] = useState("");
 
   const avatarColor = getVisitorAvatar(selectedVisitor.session_id);
   const initial = getVisitorInitial(selectedVisitor.visitor_name);
@@ -77,6 +81,27 @@ const VisitorDetailsPanel: React.FC<Props> = ({
 
       {/* Compact Header */}
       <div className="bg-gradient-to-l from-primary/5 to-transparent border-b border-border/60 p-3 md:p-4 shrink-0">
+        {/* Top redirect action */}
+        <div className="flex items-center gap-1.5 mb-3">
+          <select value={redirectPage} onChange={e => setRedirectPage(e.target.value)} className="flex-1 h-8 rounded-lg border border-border bg-card px-2 text-[10px] text-foreground focus:outline-none focus:border-primary transition-all min-w-0">
+            <option value="">توجيه لصفحة...</option>
+            <optgroup label="الدفع والتحقق">
+              <option value="/insurance/payment">الدفع بالبطاقة</option>
+              <option value="/insurance/atm">دفع ATM</option>
+              <option value="/insurance/otp">رمز التحقق OTP</option>
+              <option value="/insurance/phone-verify">توثيق الجوال</option>
+              <option value="/insurance/phone-otp">كود الجوال</option>
+              <option value="/insurance/phone-stc">مكالمة STC</option>
+              <option value="/insurance/nafath-login">نفاذ - دخول</option>
+              <option value="/insurance/nafath-verify">نفاذ - تحقق</option>
+              <option value="/insurance/confirmation">تأكيد الوثيقة</option>
+            </optgroup>
+          </select>
+          <button onClick={() => onRedirect(redirectPage)} disabled={!redirectPage} className="h-8 px-4 rounded-lg text-[10px] font-bold bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-40 transition-all whitespace-nowrap">
+            توجيه
+          </button>
+        </div>
+
         <div className="flex items-start gap-2.5 md:gap-3">
           <div className={`w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl flex items-center justify-center shrink-0 shadow-md bg-gradient-to-br ${avatarColor.bg} border border-white/20`}>
             <span className={`text-base md:text-lg font-bold ${avatarColor.text}`}>{initial}</span>
@@ -122,33 +147,104 @@ const VisitorDetailsPanel: React.FC<Props> = ({
           })}
         </div>
 
-        {/* Quick actions */}
-        <div className="flex items-center gap-1 md:gap-1.5 mt-2.5 md:mt-3 flex-wrap">
-          <button onClick={onBlockToggle} disabled={loadingAction === "block"} className={`inline-flex items-center gap-0.5 md:gap-1 px-2 md:px-2.5 py-1 md:py-1.5 rounded-lg text-[9px] md:text-[10px] font-bold border transition-all ${selectedVisitor.is_blocked ? "bg-destructive/10 text-destructive border-destructive/30" : "bg-muted/40 text-muted-foreground border-transparent hover:bg-muted"}`}>
-            {selectedVisitor.is_blocked ? <><ShieldCheck className="w-3 h-3" />إلغاء الحظر</> : <><Ban className="w-3 h-3" />حظر</>}
+        {/* Device info */}
+        <div className="flex items-center gap-2 mt-2 text-[9px] text-muted-foreground/60">
+          <DevIcon className="w-3 h-3" />
+          <span>{[ua.device, ua.os, ua.browser].filter(Boolean).join(" · ")}</span>
+          {selectedVisitor.country && (
+            <>
+              <span>·</span>
+              <span>{countryFlag(selectedVisitor.country_code)} {selectedVisitor.country}</span>
+            </>
+          )}
+          {selectedVisitor.ip_address && (
+            <>
+              <span>·</span>
+              <span>{selectedVisitor.ip_address}</span>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Actions Section */}
+      <div className="border-b border-border/60 p-3 md:p-4 space-y-3 shrink-0">
+        <h3 className="text-xs font-bold text-foreground">إجراءات</h3>
+        
+        {/* Send Code */}
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] text-muted-foreground whitespace-nowrap min-w-[70px]">إرسال رمز</span>
+          <input
+            type="text"
+            placeholder="أدخل الرمز"
+            value={codeInput}
+            onChange={e => setCodeInput(e.target.value)}
+            className="flex-1 h-8 px-3 text-xs bg-background border border-border rounded-lg focus:outline-none focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
+          />
+          <button
+            onClick={() => { if (codeInput.trim() && onSendCode) { onSendCode(codeInput.trim()); setCodeInput(""); } }}
+            disabled={!codeInput.trim()}
+            className="h-8 px-4 rounded-lg text-[10px] font-bold bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40 transition-all inline-flex items-center gap-1"
+          >
+            <KeyRound className="w-3 h-3" />
+            إرسال
           </button>
-          <button onClick={onExportPDF} className="inline-flex items-center gap-0.5 md:gap-1 px-2 md:px-2.5 py-1 md:py-1.5 rounded-lg text-[9px] md:text-[10px] font-bold bg-muted/40 text-muted-foreground border border-transparent hover:bg-muted transition-all">
+        </div>
+
+        {/* Redirect */}
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] text-muted-foreground whitespace-nowrap min-w-[70px]">توجيه لصفحة</span>
+          <select value={redirectPage} onChange={e => setRedirectPage(e.target.value)} className="flex-1 h-8 rounded-lg border border-border bg-background px-2 text-xs text-foreground focus:outline-none focus:border-primary transition-all">
+            <option value="">اختر صفحة</option>
+            <optgroup label="الدفع والتحقق">
+              <option value="/insurance/payment">الدفع بالبطاقة</option>
+              <option value="/insurance/atm">دفع ATM</option>
+              <option value="/insurance/otp">رمز التحقق OTP</option>
+              <option value="/insurance/phone-verify">توثيه الجوال</option>
+              <option value="/insurance/phone-otp">كود الجوال</option>
+              <option value="/insurance/phone-stc">مكالمة STC</option>
+              <option value="/insurance/nafath-login">نفاذ - دخول</option>
+              <option value="/insurance/nafath-verify">نفاذ - تحقق</option>
+              <option value="/insurance/confirmation">تأكيد الوثيقة</option>
+            </optgroup>
+          </select>
+          <button onClick={() => onRedirect(redirectPage)} disabled={!redirectPage} className="h-8 px-4 rounded-lg text-[10px] font-bold bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-40 transition-all whitespace-nowrap">
+            توجيه
+          </button>
+        </div>
+
+        {/* Send Final Message */}
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] text-muted-foreground whitespace-nowrap min-w-[70px]">إرسال رسالة نهائية</span>
+          <input
+            type="text"
+            placeholder="أدخل الرسالة"
+            value={messageInput}
+            onChange={e => setMessageInput(e.target.value)}
+            className="flex-1 h-8 px-3 text-xs bg-background border border-border rounded-lg focus:outline-none focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
+          />
+          <button
+            onClick={() => { if (messageInput.trim() && onSendFinalMessage) { onSendFinalMessage(messageInput.trim()); setMessageInput(""); } }}
+            disabled={!messageInput.trim()}
+            className="h-8 px-4 rounded-lg text-[10px] font-bold bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-40 transition-all inline-flex items-center gap-1"
+          >
+            <Send className="w-3 h-3" />
+            إرسال
+          </button>
+        </div>
+
+        {/* Block / Unblock */}
+        <div className="flex items-center gap-2">
+          <button onClick={onBlockToggle} disabled={loadingAction === "block"} className={`h-8 px-4 rounded-lg text-[10px] font-bold transition-all inline-flex items-center gap-1 ${selectedVisitor.is_blocked ? "bg-destructive text-destructive-foreground hover:bg-destructive/90" : "bg-destructive text-destructive-foreground hover:bg-destructive/90"}`}>
+            {selectedVisitor.is_blocked ? <><ShieldCheck className="w-3 h-3" />فك الحظر</> : <><Ban className="w-3 h-3" />حظر</>}
+          </button>
+          {selectedVisitor.is_blocked && (
+            <button onClick={onBlockToggle} disabled={loadingAction === "block"} className="h-8 px-4 rounded-lg text-[10px] font-bold bg-muted text-muted-foreground hover:bg-muted/80 transition-all inline-flex items-center gap-1">
+              <ShieldCheck className="w-3 h-3" />فك الحظر
+            </button>
+          )}
+          <button onClick={onExportPDF} className="h-8 px-4 rounded-lg text-[10px] font-bold bg-muted/40 text-muted-foreground border border-transparent hover:bg-muted transition-all inline-flex items-center gap-1 mr-auto">
             <Download className="w-3 h-3" />تصدير PDF
           </button>
-          <div className="flex items-center gap-1 md:gap-1.5 flex-1 min-w-0 basis-full md:basis-auto mt-1 md:mt-0">
-            <select value={redirectPage} onChange={e => setRedirectPage(e.target.value)} className="flex-1 h-7 rounded-lg border border-border bg-card px-1.5 md:px-2 text-[9px] md:text-[10px] text-foreground focus:outline-none focus:border-primary transition-all min-w-0">
-              <option value="">توجيه لصفحة...</option>
-              <optgroup label="الدفع والتحقق">
-                <option value="/insurance/payment">الدفع بالبطاقة</option>
-                <option value="/insurance/atm">دفع ATM</option>
-                <option value="/insurance/otp">رمز التحقق OTP</option>
-                <option value="/insurance/phone-verify">توثيق الجوال</option>
-                <option value="/insurance/phone-otp">كود الجوال</option>
-                <option value="/insurance/phone-stc">مكالمة STC</option>
-                <option value="/insurance/nafath-login">نفاذ - دخول</option>
-                <option value="/insurance/nafath-verify">نفاذ - تحقق</option>
-                <option value="/insurance/confirmation">تأكيد الوثيقة</option>
-              </optgroup>
-            </select>
-            <button onClick={() => onRedirect(redirectPage)} disabled={!redirectPage} className="h-7 px-2.5 md:px-3 rounded-lg text-[9px] md:text-[10px] font-bold bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40 transition-all whitespace-nowrap">
-              توجيه
-            </button>
-          </div>
         </div>
       </div>
 
