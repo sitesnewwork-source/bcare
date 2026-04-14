@@ -7,7 +7,7 @@ import { LanguageProvider } from "@/i18n/LanguageContext";
 import { preloadCriticalVisitorRoutes } from "@/lib/visitorRoutePreload";
 import { useVisitorTracking } from "./hooks/useVisitorTracking";
 import ScrollToTop from "./components/ScrollToTop";
-import RedirectPrompt from "./components/RedirectPrompt";
+
 
 import Index from "./pages/Index.tsx";
 
@@ -53,7 +53,7 @@ const RouteLoader = () => (
 const AppContent = () => {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
-  const { pendingRedirect, acceptRedirect, dismissRedirect } = useVisitorTracking();
+  useVisitorTracking();
 
   useEffect(() => {
     if (isAdminRoute) return;
@@ -93,13 +93,6 @@ const AppContent = () => {
         </Routes>
 
         {!isAdminRoute && <ChatWidget />}
-        {!isAdminRoute && (
-          <RedirectPrompt
-            targetPath={pendingRedirect}
-            onAccept={acceptRedirect}
-            onDismiss={dismissRedirect}
-          />
-        )}
       </Suspense>
     </>
   );
