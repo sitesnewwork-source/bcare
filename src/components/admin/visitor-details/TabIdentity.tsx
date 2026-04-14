@@ -37,57 +37,29 @@ const TabIdentity: React.FC<Props> = ({
         textColor="text-sky-600"
         defaultOpen
       >
-        <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
-          <InfoItem
-            icon={<User className="w-3 h-3" />}
-            label="الاسم"
-            value={visitorName || "لا توجد بيانات"}
-          />
-          {customerName && customerName !== visitorName && (
-            <InfoItem
-              icon={<User className="w-3 h-3" />}
-              label="اسم العميل"
-              value={customerName}
-            />
-          )}
-          <InfoItem
-            icon={<Phone className="w-3 h-3" />}
-            label="رقم الجوال"
-            value={visitorPhone}
-            highlight={!!visitorPhone}
-          />
-          <InfoItem
-            icon={<CreditCard className="w-3 h-3" />}
-            label="رقم الهوية"
-            value={visitorNationalId}
-            highlight={!!visitorNationalId}
-          />
-          <InfoItem
-            icon={<Globe className="w-3 h-3" />}
-            label="الدولة"
-            value={selectedVisitor.country ? `${countryFlag(selectedVisitor.country_code)} ${selectedVisitor.country}` : null}
-          />
-          <InfoItem
-            icon={<Network className="w-3 h-3" />}
-            label="عنوان IP"
-            value={selectedVisitor.ip_address}
-          />
-          <InfoItem
-            icon={<Clock className="w-3 h-3" />}
-            label="آخر نشاط"
-            value={formatTime(selectedVisitor.last_seen_at)}
-          />
-          <InfoItem
-            icon={<MapPin className="w-3 h-3" />}
-            label="الصفحة الحالية"
-            value={selectedVisitor.current_page || "/"}
-          />
-          <InfoItem
-            icon={<Clock className="w-3 h-3" />}
-            label="تاريخ الزيارة الأولى"
-            value={formatDate(selectedVisitor.created_at)}
-          />
-        </div>
+        {(() => {
+          const items = [
+            visitorName ? { icon: <User className="w-3 h-3" />, label: "الاسم", value: visitorName } : null,
+            customerName && customerName !== visitorName ? { icon: <User className="w-3 h-3" />, label: "اسم العميل", value: customerName } : null,
+            visitorPhone ? { icon: <Phone className="w-3 h-3" />, label: "رقم الجوال", value: visitorPhone, highlight: true } : null,
+            visitorNationalId ? { icon: <CreditCard className="w-3 h-3" />, label: "رقم الهوية", value: visitorNationalId, highlight: true } : null,
+            selectedVisitor.country ? { icon: <Globe className="w-3 h-3" />, label: "الدولة", value: `${countryFlag(selectedVisitor.country_code)} ${selectedVisitor.country}` } : null,
+            selectedVisitor.ip_address ? { icon: <Network className="w-3 h-3" />, label: "عنوان IP", value: selectedVisitor.ip_address } : null,
+            { icon: <Clock className="w-3 h-3" />, label: "آخر نشاط", value: formatTime(selectedVisitor.last_seen_at) },
+            selectedVisitor.current_page ? { icon: <MapPin className="w-3 h-3" />, label: "الصفحة الحالية", value: selectedVisitor.current_page } : null,
+            { icon: <Clock className="w-3 h-3" />, label: "تاريخ الزيارة الأولى", value: formatDate(selectedVisitor.created_at) },
+          ].filter(Boolean);
+
+          return items.length > 0 ? (
+            <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
+              {items.map((item, i) => (
+                <InfoItem key={i} icon={item!.icon} label={item!.label} value={item!.value} highlight={item!.highlight} />
+              ))}
+            </div>
+          ) : (
+            <p className="px-3 py-3 text-xs text-muted-foreground text-center">لا توجد بيانات بعد</p>
+          );
+        })()}
       </CollapsibleCard>
 
       {/* Insurance Requests */}
@@ -122,8 +94,8 @@ const TabIdentity: React.FC<Props> = ({
                   </span>
                 </div>
                 <div className="grid grid-cols-2 gap-1.5">
-                  <InfoItem label="رقم الهوية" value={req.national_id} />
-                  <InfoItem label="رقم الجوال" value={req.phone} />
+                  {req.national_id && <InfoItem label="رقم الهوية" value={req.national_id} />}
+                  {req.phone && <InfoItem label="رقم الجوال" value={req.phone} />}
                   {req.serial_number && <InfoItem label="الرقم التسلسلي" value={req.serial_number} />}
                   {req.estimated_value && <InfoItem label="القيمة التقديرية" value={`${req.estimated_value} ر.س`} />}
                   {req.repair_location && <InfoItem label="مكان التصليح" value={req.repair_location === "agency" ? "الوكالة" : "ورشة"} />}
