@@ -75,7 +75,7 @@ const VisitorDetailsPanel: React.FC<Props> = ({
   const redirectTargetRef = useRef<string | null>(null);
 
   // Auto-scroll to top when new data arrives
-  const dataFingerprint = `${stageEvents.length}-${linkedOrders.length}-${linkedRequests.length}-${linkedChats.length}-${visitorPhone}-${visitorNationalId}`;
+  const dataFingerprint = `${stageEvents.length}-${linkedOrders.length}-${linkedRequests.length}-${linkedChats.length}-${visitorPhone}-${visitorNationalId}-${selectedVisitor.current_page}`;
   const prevFingerprint = useRef(dataFingerprint);
   useEffect(() => {
     if (prevFingerprint.current !== dataFingerprint) {
