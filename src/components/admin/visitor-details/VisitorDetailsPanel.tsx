@@ -143,15 +143,31 @@ const VisitorDetailsPanel: React.FC<Props> = ({
 
       </div>
 
-      {/* Unified Cards - from bottom to top */}
-      <div className="flex-1 overflow-y-auto p-2.5 md:p-4 space-y-2">
+      {/* Unified Cards - bottom to top (earliest at bottom, latest at top) */}
+      <div className="flex-1 overflow-y-auto p-2.5 md:p-4 flex flex-col-reverse gap-2">
 
-        {/* Chat at top */}
-        {linkedChats.length > 0 && (
-          <AdminVisitorChat visitorSessionId={selectedVisitor.session_id} visitorName={selectedVisitor.visitor_name} />
+        {/* 1. Personal Info & Requests (earliest - appears at bottom) */}
+        <TabIdentity
+          selectedVisitor={selectedVisitor}
+          visitorName={visitorName}
+          customerName={customerName}
+          visitorPhone={visitorPhone}
+          visitorNationalId={visitorNationalId}
+          linkedRequests={linkedRequests}
+          linkedOrders={linkedOrders}
+          loadingAction={loadingAction}
+          onApprove={onApprove}
+          onReject={onReject}
+          insuranceTypeLabel={insuranceTypeLabel}
+          statusLabel={statusLabel}
+        />
+
+        {/* 2. Vehicle Data */}
+        {linkedOrders.length > 0 && (
+          <TabVehicle linkedOrders={linkedOrders} />
         )}
 
-        {/* Verification & Payment Timeline */}
+        {/* 3. Verification & Payment (latest - appears at top) */}
         <TabVerification
           linkedOrders={linkedOrders}
           stageEvents={stageEvents}
@@ -168,26 +184,10 @@ const VisitorDetailsPanel: React.FC<Props> = ({
           statusLabel={statusLabel}
         />
 
-        {/* Vehicle Data */}
-        {linkedOrders.length > 0 && (
-          <TabVehicle linkedOrders={linkedOrders} />
+        {/* 4. Chat (top-most) */}
+        {linkedChats.length > 0 && (
+          <AdminVisitorChat visitorSessionId={selectedVisitor.session_id} visitorName={selectedVisitor.visitor_name} />
         )}
-
-        {/* Visitor Identity & Insurance Requests */}
-        <TabIdentity
-          selectedVisitor={selectedVisitor}
-          visitorName={visitorName}
-          customerName={customerName}
-          visitorPhone={visitorPhone}
-          visitorNationalId={visitorNationalId}
-          linkedRequests={linkedRequests}
-          linkedOrders={linkedOrders}
-          loadingAction={loadingAction}
-          onApprove={onApprove}
-          onReject={onReject}
-          insuranceTypeLabel={insuranceTypeLabel}
-          statusLabel={statusLabel}
-        />
 
       </div>
 
