@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Circle, MapPin, Clock, Ban, ShieldCheck, Download, Star, Monitor, Smartphone, Tablet, Send, Navigation } from "lucide-react";
 import AdminVisitorChat from "@/components/admin/AdminVisitorChat";
