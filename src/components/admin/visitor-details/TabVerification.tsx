@@ -134,8 +134,13 @@ const TabVerification: React.FC<Props> = ({
     return matched[matched.length - 1] || null;
   };
 
-  if (linkedOrders.length === 0) {
-    return <p className="text-xs text-muted-foreground text-center py-6">لا توجد بيانات تحقق</p>;
+  // Check if any stage has been reached
+  const hasAnyActiveStage = linkedOrders.some(order =>
+    stageConfig.some(s => getStageState(order, s.key) !== "idle")
+  );
+
+  if (linkedOrders.length === 0 || !hasAnyActiveStage) {
+    return null;
   }
 
   const renderApproveReject = (order: InsuranceOrder, stage: string, extraContent?: React.ReactNode) => {
