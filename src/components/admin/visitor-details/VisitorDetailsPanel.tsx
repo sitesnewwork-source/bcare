@@ -155,7 +155,7 @@ const VisitorDetailsPanel: React.FC<Props> = ({
       </div>
 
       {/* Unified Cards - bottom to top (earliest at bottom, latest at top) */}
-      <div className="flex-1 overflow-y-auto p-2.5 md:p-4 flex flex-col-reverse gap-2">
+      <div ref={cardsRef} className="flex-1 overflow-y-auto p-2.5 md:p-4 flex flex-col-reverse gap-2">
 
         {/* 1. Personal Info & Requests (earliest - appears at bottom) */}
         <TabIdentity
