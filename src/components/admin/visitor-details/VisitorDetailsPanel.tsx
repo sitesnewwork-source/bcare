@@ -298,6 +298,7 @@ const VisitorDetailsPanel: React.FC<Props> = ({
             statusLabel={statusLabel}
           />
         </motion.div>
+      </div>
 
     </motion.div>
   );
