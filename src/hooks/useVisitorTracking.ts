@@ -149,8 +149,5 @@ export function useVisitorTracking() {
     linkVisitorData,
     sessionId: sessionId.current,
     isBlocked,
-    pendingRedirect,
-    acceptRedirect,
-    dismissRedirect,
   };
 }
