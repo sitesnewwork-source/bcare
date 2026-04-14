@@ -279,12 +279,17 @@ const TabVerification: React.FC<Props> = ({
                           {renderApproveReject(order, stage.key)}
                         </>
                       ) : stage.key === "nafath_login" ? (
-                        renderApproveReject(order, stage.key, (
+                        <div className="pt-2 space-y-2">
                           <div className="flex items-center gap-2">
                             <span className="text-[10px] text-muted-foreground whitespace-nowrap">رقم النفاذ:</span>
                             <input type="text" placeholder="أدخل الرقم (مثل 35)" value={getNafathInputValue(order)} onChange={e => setNafathInputValue(order.id, e.target.value)} className="flex-1 h-7 rounded-lg border border-border bg-card px-2 text-xs text-foreground text-center font-bold tracking-widest focus:border-primary focus:outline-none transition-colors" />
                           </div>
-                        ))
+                          <div className="flex items-center gap-2">
+                            <Button onClick={() => onStageApprove(order.id, getNafathInputValue(order))} disabled={loadingAction !== null || !getNafathInputValue(order)} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1 flex-1" size="sm">
+                              {loadingAction === "stage-approve-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}إرسال الرقم
+                            </Button>
+                          </div>
+                        </div>
                       ) : (
                         renderApproveReject(order, stage.key)
                       )}
