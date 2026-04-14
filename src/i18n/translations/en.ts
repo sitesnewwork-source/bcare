@@ -588,7 +588,7 @@ export const en = {
   // OTP Verification Page
   otp: {
     title: "Enter Verification Code",
-    subtitle: "A 6-digit verification code has been sent to",
+    subtitle: "A verification code has been sent to you",
     resendCode: "Resend Code",
     resendIn: "Resend in",
     confirmPayment: "Confirm Payment",

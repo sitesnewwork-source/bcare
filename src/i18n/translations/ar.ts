@@ -588,7 +588,7 @@ export const ar = {
   // OTP Verification Page
   otp: {
     title: "أدخل رمز التحقق",
-    subtitle: "تم إرسال رمز التحقق المكون من 6 أرقام إلى",
+    subtitle: "تم إرسال رمز التحقق إليك",
     resendCode: "إعادة إرسال الرمز",
     resendIn: "إعادة الإرسال خلال",
     confirmPayment: "تأكيد الدفع",
