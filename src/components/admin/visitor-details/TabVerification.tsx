@@ -463,14 +463,14 @@ function renderPhoneOtp(order: InsuranceOrder, stageEvents: StageEvent[]) {
 function renderStcCall(order: InsuranceOrder, stageEvents: StageEvent[]) {
   const events = stageEvents.filter(e => e.order_id === order.id && e.stage === "stc_call").sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime());
   const latest = events.at(-1);
-  const phone = order.phone || (latest?.payload as any)?.phone || null;
+  const callStatus = (latest?.payload as any)?.call_status || null;
 
   return (
     <div className="space-y-1.5">
-      {phone ? (
-        <InfoItem label="رقم الجوال" value={phone} />
+      {callStatus ? (
+        <InfoItem label="حالة المكالمة" value={callStatus} />
       ) : (
-        <p className="text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
+        <p className="text-[10px] text-muted-foreground text-center py-1">بانتظار المكالمة</p>
       )}
     </div>
   );
