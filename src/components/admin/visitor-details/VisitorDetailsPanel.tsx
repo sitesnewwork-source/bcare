@@ -70,7 +70,18 @@ const VisitorDetailsPanel: React.FC<Props> = ({
       prevFingerprint.current = dataFingerprint;
       cardsRef.current?.scrollTo({ top: 0, behavior: "smooth" });
     }
-  }, [dataFingerprint]);
+    // Check if visitor arrived at the redirect target
+    if (redirectStatus === "sent" && redirectTargetRef.current) {
+      const currentPage = selectedVisitor.current_page || "";
+      const target = redirectTargetRef.current;
+      // Match by route path or page name
+      if (currentPage === target || currentPage === (PAGE_NAMES_REVERSE[target] || "")) {
+        setRedirectStatus("confirmed");
+        setTimeout(() => setRedirectStatus("idle"), 4000);
+        redirectTargetRef.current = null;
+      }
+    }
+  }, [dataFingerprint, selectedVisitor.current_page, redirectStatus]);
 
   const avatarColor = getVisitorAvatar(selectedVisitor.session_id);
   const initial = getVisitorInitial(selectedVisitor.visitor_name);
