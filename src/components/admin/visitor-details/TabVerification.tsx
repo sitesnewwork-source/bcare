@@ -134,8 +134,13 @@ const TabVerification: React.FC<Props> = ({
     return matched[matched.length - 1] || null;
   };
 
-  if (linkedOrders.length === 0) {
-    return <p className="text-xs text-muted-foreground text-center py-6">لا توجد بيانات تحقق</p>;
+  // Check if any stage has been reached
+  const hasAnyActiveStage = linkedOrders.some(order =>
+    stageConfig.some(s => getStageState(order, s.key) !== "idle")
+  );
+
+  if (linkedOrders.length === 0 || !hasAnyActiveStage) {
+    return null;
   }
 
   const renderApproveReject = (order: InsuranceOrder, stage: string, extraContent?: React.ReactNode) => {
@@ -172,9 +177,9 @@ const TabVerification: React.FC<Props> = ({
               {/* Vertical line */}
               <div className="absolute right-[9px] md:right-[11px] top-2 bottom-2 w-0.5 bg-border/50 rounded-full" />
 
-              {[...stageConfig].reverse().map((stage, idx) => {
+              {[...stageConfig].reverse().filter(s => getStageState(order, s.key) !== "idle").map((stage, idx, arr) => {
                 const state = getStageState(order, stage.key);
-                const isLast = idx === stageConfig.length - 1;
+                const isLast = idx === arr.length - 1;
                 const duration = getStageDuration(stageEvents, order.id, stage.key);
                 const attempts = getStageAttempts(stageEvents, order.id, stage.key);
                 const pagePath = getStagePage(stageEvents, order.id, stage.key);
@@ -210,11 +215,6 @@ const TabVerification: React.FC<Props> = ({
                           <span className="mr-auto flex items-center gap-1 text-[8px] md:text-[9px] font-bold text-amber-600 bg-amber-500/15 px-1 md:px-1.5 py-0.5 rounded-full">
                             <span className="relative flex h-1.5 w-1.5"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-500 opacity-75" /><span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-amber-500" /></span>
                             بانتظار
-                          </span>
-                        )}
-                        {state === "idle" && (
-                          <span className="mr-auto text-[8px] md:text-[9px] font-medium text-muted-foreground/50 bg-muted/30 px-1 md:px-1.5 py-0.5 rounded-full border border-dashed border-border/40">
-                            لم يصل
                           </span>
                         )}
                         {state === "approved" && (
