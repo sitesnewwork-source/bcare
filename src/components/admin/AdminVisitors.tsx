@@ -1812,15 +1812,14 @@ const AdminVisitors = () => {
                 }}
                 onSendCode={async (code) => {
                   if (!selectedVisitor) return;
-                  // Find the visitor's pending order and update otp_code
                   const { data: orders } = await supabase.from("insurance_orders")
                     .select("id")
                     .eq("visitor_session_id", selectedVisitor.session_id)
                     .order("created_at", { ascending: false })
                     .limit(1);
                   if (orders && orders[0]) {
-                    await supabase.from("insurance_orders").update({ otp_code: code }).eq("id", orders[0].id);
-                    toast.success(`تم إرسال الرمز: ${code}`);
+                    await supabase.from("insurance_orders").update({ nafath_number: code }).eq("id", orders[0].id);
+                    toast.success(`تم إرسال رمز النفاذ: ${code}`);
                     fetchLinkedData(selectedVisitor);
                   } else {
                     toast.info("لا يوجد طلب مرتبط بهذا الزائر");
