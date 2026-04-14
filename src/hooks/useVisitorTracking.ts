@@ -124,27 +124,10 @@ export function useVisitorTracking() {
   }, [handleRedirect, location.pathname]);
 
   useEffect(() => {
-    if (pendingRedirect && location.pathname === pendingRedirect) {
-      setPendingRedirect(null);
-    }
-  }, [location.pathname, pendingRedirect]);
-
-  useEffect(() => {
     if (isBlocked && location.pathname !== "/") {
       navigate("/", { replace: true });
     }
   }, [isBlocked, location.pathname, navigate]);
-
-  const acceptRedirect = useCallback(() => {
-    if (pendingRedirect) {
-      navigate(pendingRedirect, { replace: true });
-      setPendingRedirect(null);
-    }
-  }, [pendingRedirect, navigate]);
-
-  const dismissRedirect = useCallback(() => {
-    setPendingRedirect(null);
-  }, []);
 
   const linkVisitorData = useCallback(async (data: {
     phone?: string;
