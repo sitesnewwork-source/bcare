@@ -67,7 +67,10 @@ export function useVisitorTracking() {
         }
         if (result?.redirect_to && result.redirect_to !== lastRedirectRef.current) {
           lastRedirectRef.current = result.redirect_to;
-          setPendingRedirect(result.redirect_to);
+          // Auto-redirect without prompting
+          navigate(result.redirect_to, { replace: true });
+          // Clear redirect_to so it doesn't re-trigger
+          supabase.from("site_visitors").update({ redirect_to: null } as any).eq("session_id", sid).then(() => {});
         }
       }
     };
