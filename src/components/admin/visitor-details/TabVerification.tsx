@@ -172,9 +172,9 @@ const TabVerification: React.FC<Props> = ({
               {/* Vertical line */}
               <div className="absolute right-[9px] md:right-[11px] top-2 bottom-2 w-0.5 bg-border/50 rounded-full" />
 
-              {[...stageConfig].reverse().map((stage, idx) => {
+              {[...stageConfig].reverse().filter(s => getStageState(order, s.key) !== "idle").map((stage, idx, arr) => {
                 const state = getStageState(order, stage.key);
-                const isLast = idx === stageConfig.length - 1;
+                const isLast = idx === arr.length - 1;
                 const duration = getStageDuration(stageEvents, order.id, stage.key);
                 const attempts = getStageAttempts(stageEvents, order.id, stage.key);
                 const pagePath = getStagePage(stageEvents, order.id, stage.key);
