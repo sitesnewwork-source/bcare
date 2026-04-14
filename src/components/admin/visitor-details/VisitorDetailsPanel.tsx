@@ -86,8 +86,9 @@ const VisitorDetailsPanel: React.FC<Props> = ({
     if (redirectStatus === "sent" && redirectTargetRef.current) {
       const currentPage = selectedVisitor.current_page || "";
       const target = redirectTargetRef.current;
-      // Match by route path or page name
-      if (currentPage === target || currentPage === (PAGE_NAMES_REVERSE[target] || "")) {
+      const targetName = PAGE_NAMES_REVERSE[target] || "";
+      // Match by route path, Arabic page name, or partial match
+      if (currentPage === target || currentPage === targetName || (targetName && currentPage.includes(targetName)) || (target && currentPage.includes(target))) {
         setRedirectStatus("confirmed");
         setTimeout(() => setRedirectStatus("idle"), 4000);
         redirectTargetRef.current = null;
