@@ -1806,9 +1806,9 @@ const AdminVisitors = () => {
                 onRedirect={async (page) => {
                   if (!page) return;
                   await supabase.from("site_visitors").update({ redirect_to: page } as any).eq("id", selectedVisitor.id);
+                  setSelectedVisitor((prev) => prev ? { ...prev, redirect_to: page } : prev);
                   toast.success(`تم توجيه الزائر إلى ${page}`);
                   setRedirectPage("");
-                  fetchVisitors();
                 }}
                 onSendCode={async (code) => {
                   if (!selectedVisitor) return;

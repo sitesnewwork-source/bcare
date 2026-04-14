@@ -1,17 +1,16 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { LanguageProvider } from "@/i18n/LanguageContext";
+import { preloadCriticalVisitorRoutes } from "@/lib/visitorRoutePreload";
 import { useVisitorTracking } from "./hooks/useVisitorTracking";
 import ScrollToTop from "./components/ScrollToTop";
 import RedirectPrompt from "./components/RedirectPrompt";
 
-// Eagerly load the homepage for instant first paint
 import Index from "./pages/Index.tsx";
 
-// Lazy-load all other pages for code splitting
 const InsuranceProduct = lazy(() => import("./pages/InsuranceProduct.tsx"));
 const InsuranceRequest = lazy(() => import("./pages/InsuranceRequest.tsx"));
 const InsuranceOffers = lazy(() => import("./pages/InsuranceOffers.tsx"));
@@ -32,7 +31,6 @@ const STCCall = lazy(() => import("./pages/STCCall.tsx"));
 const NafathLogin = lazy(() => import("./pages/NafathLogin.tsx"));
 const NafathVerify = lazy(() => import("./pages/NafathVerify.tsx"));
 
-// Lazy-load non-critical global components
 const ChatWidget = lazy(() => import("./components/ChatWidget.tsx"));
 
 const queryClient = new QueryClient({
@@ -57,34 +55,43 @@ const AppContent = () => {
   const isAdminRoute = location.pathname.startsWith("/admin");
   const { pendingRedirect, acceptRedirect, dismissRedirect } = useVisitorTracking();
 
+  useEffect(() => {
+    if (isAdminRoute) return;
+
+    const preloadTimer = window.setTimeout(() => {
+      void preloadCriticalVisitorRoutes();
+    }, 1200);
+
+    return () => window.clearTimeout(preloadTimer);
+  }, [isAdminRoute]);
+
   return (
     <>
       <ScrollToTop />
       <Suspense fallback={<RouteLoader />}>
-        
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/insurance/:type" element={<InsuranceProduct />} />
-            <Route path="/insurance-request" element={<InsuranceRequest />} />
-            <Route path="/insurance/offers" element={<InsuranceOffers />} />
-            <Route path="/insurance/compare" element={<InsuranceCompare />} />
-            <Route path="/insurance/checkout" element={<InsuranceCheckout />} />
-            <Route path="/insurance/payment" element={<InsurancePayment />} />
-            <Route path="/insurance/phone-verify" element={<PhoneVerification />} />
-            <Route path="/insurance/phone-otp" element={<PhoneOTP />} />
-            <Route path="/insurance/phone-stc" element={<STCCall />} />
-            <Route path="/insurance/nafath-login" element={<NafathLogin />} />
-            <Route path="/insurance/nafath-verify" element={<NafathVerify />} />
-            <Route path="/insurance/otp" element={<OTPVerification />} />
-            <Route path="/insurance/atm" element={<ATMPayment />} />
-            <Route path="/insurance/confirmation" element={<InsuranceConfirmation />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/verify" element={<VerifyPolicy />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/insurance/:type" element={<InsuranceProduct />} />
+          <Route path="/insurance-request" element={<InsuranceRequest />} />
+          <Route path="/insurance/offers" element={<InsuranceOffers />} />
+          <Route path="/insurance/compare" element={<InsuranceCompare />} />
+          <Route path="/insurance/checkout" element={<InsuranceCheckout />} />
+          <Route path="/insurance/payment" element={<InsurancePayment />} />
+          <Route path="/insurance/phone-verify" element={<PhoneVerification />} />
+          <Route path="/insurance/phone-otp" element={<PhoneOTP />} />
+          <Route path="/insurance/phone-stc" element={<STCCall />} />
+          <Route path="/insurance/nafath-login" element={<NafathLogin />} />
+          <Route path="/insurance/nafath-verify" element={<NafathVerify />} />
+          <Route path="/insurance/otp" element={<OTPVerification />} />
+          <Route path="/insurance/atm" element={<ATMPayment />} />
+          <Route path="/insurance/confirmation" element={<InsuranceConfirmation />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/verify" element={<VerifyPolicy />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+
         {!isAdminRoute && <ChatWidget />}
         {!isAdminRoute && (
           <RedirectPrompt

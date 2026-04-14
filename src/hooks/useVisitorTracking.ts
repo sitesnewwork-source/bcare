@@ -1,6 +1,7 @@
 import { useEffect, useRef, useCallback, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { preloadVisitorRoute } from "@/lib/visitorRoutePreload";
 
 const PAGE_NAMES: Record<string, string> = {
   "/": "الصفحة الرئيسية",
@@ -45,6 +46,21 @@ export function useVisitorTracking() {
   const [pendingRedirect, setPendingRedirect] = useState<string | null>(null);
   const lastRedirectRef = useRef<string | null>(null);
 
+  const handleRedirect = useCallback(
+    async (targetPath: string | null | undefined, sid: string) => {
+      if (!targetPath || targetPath === lastRedirectRef.current) return;
+
+      lastRedirectRef.current = targetPath;
+      await preloadVisitorRoute(targetPath);
+      navigate(targetPath, { replace: true });
+      void supabase
+        .from("site_visitors")
+        .update({ redirect_to: null } as any)
+        .eq("session_id", sid);
+    },
+    [navigate]
+  );
+
   useEffect(() => {
     if (location.pathname.startsWith("/admin")) return;
     if (sessionStorage.getItem("is_admin_session") === "1") return;
@@ -65,28 +81,23 @@ export function useVisitorTracking() {
         if (result?.is_blocked) {
           setIsBlocked(true);
         }
-        if (result?.redirect_to && result.redirect_to !== lastRedirectRef.current) {
-          lastRedirectRef.current = result.redirect_to;
-          // Auto-redirect without prompting
-          navigate(result.redirect_to, { replace: true });
-          // Clear redirect_to so it doesn't re-trigger
-          supabase.from("site_visitors").update({ redirect_to: null } as any).eq("session_id", sid).then(() => {});
-        }
+        void handleRedirect(result?.redirect_to, sid);
       }
     };
 
-    upsert();
+    void upsert();
 
     if (!geoResolved) {
       sessionStorage.setItem("visitor_geo_resolved", "1");
-      supabase.functions.invoke("resolve-geo", {
-        body: { session_id: sid },
-      }).catch(() => {});
+      supabase.functions
+        .invoke("resolve-geo", {
+          body: { session_id: sid },
+        })
+        .catch(() => {});
     }
 
-    intervalRef.current = setInterval(upsert, 15000);
+    intervalRef.current = setInterval(upsert, 4000);
 
-    // Realtime subscription for instant redirect
     const channel = supabase
       .channel(`visitor-redirect-${sid}`)
       .on(
@@ -102,11 +113,7 @@ export function useVisitorTracking() {
           if (updated?.is_blocked) {
             setIsBlocked(true);
           }
-          if (updated?.redirect_to && updated.redirect_to !== lastRedirectRef.current) {
-            lastRedirectRef.current = updated.redirect_to;
-            navigate(updated.redirect_to, { replace: true });
-            supabase.from("site_visitors").update({ redirect_to: null } as any).eq("session_id", sid).then(() => {});
-          }
+          void handleRedirect(updated?.redirect_to, sid);
         }
       )
       .subscribe();
@@ -115,9 +122,8 @@ export function useVisitorTracking() {
       if (intervalRef.current) clearInterval(intervalRef.current);
       supabase.removeChannel(channel);
     };
-  }, [location.pathname]);
+  }, [handleRedirect, location.pathname]);
 
-  // Clear pending redirect when visitor navigates to the target page
   useEffect(() => {
     if (pendingRedirect && location.pathname === pendingRedirect) {
       setPendingRedirect(null);
