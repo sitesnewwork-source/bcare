@@ -59,6 +59,8 @@ const VisitorDetailsPanel: React.FC<Props> = ({
   const cardsRef = useRef<HTMLDivElement>(null);
   const [codeInput, setCodeInput] = useState("");
   const [messageInput, setMessageInput] = useState("");
+  const [redirectStatus, setRedirectStatus] = useState<"idle" | "sent" | "confirmed">("idle");
+  const redirectTargetRef = useRef<string | null>(null);
 
   // Auto-scroll to top when new data arrives
   const dataFingerprint = `${stageEvents.length}-${linkedOrders.length}-${linkedRequests.length}-${linkedChats.length}-${visitorPhone}-${visitorNationalId}`;
