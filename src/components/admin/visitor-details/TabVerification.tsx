@@ -217,11 +217,6 @@ const TabVerification: React.FC<Props> = ({
                             بانتظار
                           </span>
                         )}
-                        {state === "idle" && (
-                          <span className="mr-auto text-[8px] md:text-[9px] font-medium text-muted-foreground/50 bg-muted/30 px-1 md:px-1.5 py-0.5 rounded-full border border-dashed border-border/40">
-                            لم يصل
-                          </span>
-                        )}
                         {state === "approved" && (
                           <span className="mr-auto text-[8px] md:text-[9px] font-bold text-emerald-600 bg-emerald-500/15 px-1 md:px-1.5 py-0.5 rounded-full">
                             ✓ تم
