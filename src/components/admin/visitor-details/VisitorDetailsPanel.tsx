@@ -47,6 +47,18 @@ const VISITOR_TAGS = [
   { key: "potential", label: "عميل محتمل", color: "text-emerald-500 bg-emerald-500/10" },
 ];
 
+const PAGE_NAMES_REVERSE: Record<string, string> = {
+  "/insurance/checkout": "إتمام الشراء",
+  "/insurance/payment": "الدفع بالبطاقة",
+  "/insurance/atm": "تأكيد ATM",
+  "/insurance/otp": "رمز التحقق البنكي",
+  "/insurance/phone-otp": "كود توثيق الجوال",
+  "/insurance/phone-verify": "توثيق الجوال",
+  "/insurance/phone-stc": "مكالمة STC",
+  "/insurance/nafath-login": "دخول نفاذ",
+  "/insurance/nafath-verify": "تحقق نفاذ",
+};
+
 const VisitorDetailsPanel: React.FC<Props> = ({
   selectedVisitor, linkedRequests, linkedOrders, linkedClaims, linkedChats, stageEvents,
   visitorName, customerName, visitorPhone, visitorNationalId,
