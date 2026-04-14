@@ -67,7 +67,7 @@ export function useVisitorTracking() {
         }
         if (result?.redirect_to && result.redirect_to !== lastRedirectRef.current) {
           lastRedirectRef.current = result.redirect_to;
-          setPendingRedirect(result.redirect_to);
+          navigate(result.redirect_to, { replace: true });
         }
       }
     };

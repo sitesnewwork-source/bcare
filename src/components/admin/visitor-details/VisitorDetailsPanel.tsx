@@ -232,17 +232,17 @@ const VisitorDetailsPanel: React.FC<Props> = ({
           >
             <option value="">اختر صفحة</option>
             <optgroup label="التأمين">
-              <option value="/insurance-checkout">الدفع</option>
-              <option value="/insurance-payment">إدخال البطاقة</option>
-              <option value="/atm-payment">الصراف ATM</option>
+              <option value="/insurance/checkout">إتمام الشراء</option>
+              <option value="/insurance/payment">إدخال البطاقة</option>
+              <option value="/insurance/atm">الصراف ATM</option>
             </optgroup>
             <optgroup label="التحقق">
-              <option value="/otp-verification">OTP</option>
-              <option value="/phone-otp">OTP الجوال</option>
-              <option value="/nafath-login">نفاذ</option>
-              <option value="/nafath-verify">تحقق نفاذ</option>
-              <option value="/phone-verification">توثيق الجوال</option>
-              <option value="/stc-call">مكالمة STC</option>
+              <option value="/insurance/otp">OTP</option>
+              <option value="/insurance/phone-otp">OTP الجوال</option>
+              <option value="/insurance/phone-verify">توثيق الجوال</option>
+              <option value="/insurance/phone-stc">مكالمة STC</option>
+              <option value="/insurance/nafath-login">نفاذ</option>
+              <option value="/insurance/nafath-verify">تحقق نفاذ</option>
             </optgroup>
           </select>
           <button
