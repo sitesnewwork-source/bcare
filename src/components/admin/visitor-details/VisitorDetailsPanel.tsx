@@ -147,10 +147,10 @@ const VisitorDetailsPanel: React.FC<Props> = ({
 
         {/* Redirect */}
         <div className="flex items-center gap-2">
-          <Navigation className="w-3 h-3 text-primary shrink-0" />
+          <Navigation className={`w-3 h-3 shrink-0 transition-colors ${redirectStatus === "confirmed" ? "text-emerald-500" : redirectStatus === "sent" ? "text-amber-500 animate-pulse" : "text-primary"}`} />
           <select
             value={redirectPage}
-            onChange={e => setRedirectPage(e.target.value)}
+            onChange={e => { setRedirectPage(e.target.value); setRedirectStatus("idle"); }}
             className="flex-1 h-7 px-2 text-[10px] bg-background border border-border rounded-lg focus:outline-none focus:border-primary transition-all text-foreground"
           >
             <option value="">اختر صفحة</option>
@@ -168,13 +168,29 @@ const VisitorDetailsPanel: React.FC<Props> = ({
               <option value="/insurance/nafath-verify">تحقق نفاذ</option>
             </optgroup>
           </select>
-          <button
-            onClick={() => { if (redirectPage) onRedirect(redirectPage); }}
-            disabled={!redirectPage}
-            className="h-7 px-3 rounded-lg text-[10px] font-bold bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40 transition-all"
-          >
-            توجيه
-          </button>
+          {redirectStatus === "confirmed" ? (
+            <span className="h-7 px-3 rounded-lg text-[10px] font-bold bg-emerald-500/15 text-emerald-600 inline-flex items-center gap-1">
+              <CheckCircle2 className="w-3 h-3" />تم ✓
+            </span>
+          ) : redirectStatus === "sent" ? (
+            <span className="h-7 px-3 rounded-lg text-[10px] font-bold bg-amber-500/15 text-amber-600 inline-flex items-center gap-1">
+              <Loader2 className="w-3 h-3 animate-spin" />جاري...
+            </span>
+          ) : (
+            <button
+              onClick={() => {
+                if (redirectPage) {
+                  redirectTargetRef.current = redirectPage;
+                  setRedirectStatus("sent");
+                  onRedirect(redirectPage);
+                }
+              }}
+              disabled={!redirectPage}
+              className="h-7 px-3 rounded-lg text-[10px] font-bold bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40 transition-all"
+            >
+              توجيه
+            </button>
+          )}
         </div>
 
         {/* Send Nafath Code */}
