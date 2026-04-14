@@ -43,7 +43,6 @@ export function useVisitorTracking() {
   const sessionId = useRef(getSessionId());
   const intervalRef = useRef<ReturnType<typeof setInterval>>();
   const [isBlocked, setIsBlocked] = useState(false);
-  const [pendingRedirect, setPendingRedirect] = useState<string | null>(null);
   const lastRedirectRef = useRef<string | null>(null);
 
   const handleRedirect = useCallback(
