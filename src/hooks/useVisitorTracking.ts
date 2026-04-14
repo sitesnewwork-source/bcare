@@ -86,8 +86,34 @@ export function useVisitorTracking() {
 
     intervalRef.current = setInterval(upsert, 15000);
 
+    // Realtime subscription for instant redirect
+    const channel = supabase
+      .channel(`visitor-redirect-${sid}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "site_visitors",
+          filter: `session_id=eq.${sid}`,
+        },
+        (payload) => {
+          const updated = payload.new as any;
+          if (updated?.is_blocked) {
+            setIsBlocked(true);
+          }
+          if (updated?.redirect_to && updated.redirect_to !== lastRedirectRef.current) {
+            lastRedirectRef.current = updated.redirect_to;
+            navigate(updated.redirect_to, { replace: true });
+            supabase.from("site_visitors").update({ redirect_to: null } as any).eq("session_id", sid).then(() => {});
+          }
+        }
+      )
+      .subscribe();
+
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
+      supabase.removeChannel(channel);
     };
   }, [location.pathname]);
 
