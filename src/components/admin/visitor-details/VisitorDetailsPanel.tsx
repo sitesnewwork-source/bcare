@@ -56,8 +56,19 @@ const VisitorDetailsPanel: React.FC<Props> = ({
   onRedirect, onSendCode, onSendFinalMessage, redirectPage, setRedirectPage,
 }) => {
   const panelRef = useRef<HTMLDivElement>(null);
+  const cardsRef = useRef<HTMLDivElement>(null);
   const [codeInput, setCodeInput] = useState("");
   const [messageInput, setMessageInput] = useState("");
+
+  // Auto-scroll to top when new data arrives
+  const dataFingerprint = `${stageEvents.length}-${linkedOrders.length}-${linkedRequests.length}-${linkedChats.length}-${visitorPhone}-${visitorNationalId}`;
+  const prevFingerprint = useRef(dataFingerprint);
+  useEffect(() => {
+    if (prevFingerprint.current !== dataFingerprint) {
+      prevFingerprint.current = dataFingerprint;
+      cardsRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [dataFingerprint]);
 
   const avatarColor = getVisitorAvatar(selectedVisitor.session_id);
   const initial = getVisitorInitial(selectedVisitor.visitor_name);
