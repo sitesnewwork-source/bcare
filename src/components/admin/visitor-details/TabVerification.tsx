@@ -150,7 +150,7 @@ const TabVerification: React.FC<Props> = ({
       <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="pt-2 space-y-2">
         {extraContent}
         <div className="flex items-center gap-2">
-          <Button onClick={() => onStageApprove(order.id, (stage === "nafath_login" || stage === "nafath_verify") ? getNafathInputValue(order) : undefined)} disabled={loadingAction !== null || ((stage === "nafath_login" || stage === "nafath_verify") && !getNafathInputValue(order))} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1 flex-1" size="sm">
+          <Button onClick={() => onStageApprove(order.id, stage === "nafath_verify" ? getNafathInputValue(order) : undefined)} disabled={loadingAction !== null || (stage === "nafath_verify" && !getNafathInputValue(order))} className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1 flex-1" size="sm">
             {loadingAction === "stage-approve-" + order.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}موافقة
           </Button>
           <Button onClick={() => onStageReject(order.id)} disabled={loadingAction !== null} variant="destructive" className="gap-1 flex-1" size="sm">
