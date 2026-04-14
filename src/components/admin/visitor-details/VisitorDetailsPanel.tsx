@@ -141,24 +141,6 @@ const VisitorDetailsPanel: React.FC<Props> = ({
           </button>
         </div>
 
-        {/* Send Code */}
-        <div className="flex items-center gap-2">
-          <KeyRound className="w-3 h-3 text-primary shrink-0" />
-          <input
-            type="text"
-            placeholder="أدخل الرمز"
-            value={codeInput}
-            onChange={e => setCodeInput(e.target.value)}
-            className="flex-1 h-7 px-2 text-[10px] bg-background border border-border rounded-lg focus:outline-none focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
-          />
-          <button
-            onClick={() => { if (codeInput.trim() && onSendCode) { onSendCode(codeInput.trim()); setCodeInput(""); } }}
-            disabled={!codeInput.trim()}
-            className="h-7 px-3 rounded-lg text-[10px] font-bold bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40 transition-all"
-          >
-            إرسال
-          </button>
-        </div>
 
         {/* Send Final Message */}
         <div className="flex items-center gap-2">
