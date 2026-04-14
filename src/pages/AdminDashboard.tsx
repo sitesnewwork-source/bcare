@@ -4,9 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import AdminSettings from "@/components/admin/AdminSettings";
 import AdminVisitors from "@/components/admin/AdminVisitors";
-import AdminLiveFeed from "@/components/admin/AdminLiveFeed";
 import PullToRefresh from "@/components/PullToRefresh";
-import { RefreshCw, Activity, VolumeX, Sun, Moon, Circle, Users, LogOut, Settings } from "lucide-react";
+import { RefreshCw, VolumeX, Sun, Moon, Circle, Users, LogOut, Settings } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
 
 const AdminDashboard = () => {
@@ -15,8 +14,6 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
 
   const [refreshKey, setRefreshKey] = useState(0);
-  const [liveFeedOpen, setLiveFeedOpen] = useState(false);
-  const [liveFeedCount, setLiveFeedCount] = useState(0);
   const [isMuted, setIsMuted] = useState(() => localStorage.getItem("admin_feed_mute") === "true");
   const { theme, toggleTheme } = useTheme();
 
@@ -95,9 +92,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-[100dvh] bg-secondary/30 flex flex-col">
-      {/* Top Bar */}
       <header className="h-12 bg-card border-b border-border flex items-center justify-between px-2 md:px-4 shrink-0" dir="rtl">
-        {/* Right side: Title + Status */}
         <div className="flex items-center gap-3">
           <h1 className="text-sm font-bold text-foreground">لوحة التحكم</h1>
           <div className="flex items-center gap-1.5 px-2 py-1 bg-emerald-500/10 rounded-full">
@@ -111,9 +106,7 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        {/* Left side: Search + Actions */}
         <div className="flex items-center gap-2">
-
           <div className="flex items-center gap-0.5 md:gap-1">
             <button
               onClick={() => setActiveTab(activeTab === "settings" ? "visitors" : "settings")}
@@ -139,18 +132,6 @@ const AdminDashboard = () => {
               </div>
             )}
             <button
-              onClick={() => setLiveFeedOpen(true)}
-              className="md:hidden relative p-1.5 rounded-lg hover:bg-secondary/70 transition-colors"
-              title="التنبيهات المباشرة"
-            >
-              <Activity className="w-4 h-4 text-primary" />
-              {liveFeedCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-[16px] bg-primary text-primary-foreground text-[9px] font-bold rounded-full flex items-center justify-center px-0.5">
-                  {liveFeedCount > 9 ? "9+" : liveFeedCount}
-                </span>
-              )}
-            </button>
-            <button
               onClick={handleLogout}
               className="p-1.5 rounded-lg hover:bg-destructive/10 transition-colors"
               title="تسجيل الخروج"
@@ -161,16 +142,12 @@ const AdminDashboard = () => {
         </div>
       </header>
 
-      {/* Content */}
       <PullToRefresh onRefresh={handlePullRefresh}>
         <main className="flex-1 p-2 md:p-4 lg:p-6">
           {activeTab === "settings" && <AdminSettings />}
           {activeTab === "visitors" && <AdminVisitors key={refreshKey} />}
         </main>
       </PullToRefresh>
-
-      {/* Live Feed Panel */}
-      <AdminLiveFeed isOpen={liveFeedOpen} onOpenChange={setLiveFeedOpen} onCountChange={setLiveFeedCount} />
     </div>
   );
 };
