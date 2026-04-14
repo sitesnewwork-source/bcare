@@ -407,9 +407,15 @@ function renderAtm(order: InsuranceOrder) {
 function renderPhoneVerification(order: InsuranceOrder, stageEvents: StageEvent[], selectedVisitor: Visitor, visitorPhone: string | null, visitorNationalId: string | null) {
   const phoneEvent = stageEvents.filter(e => e.order_id === order.id && e.stage === "phone_verification").sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime()).at(-1);
   const carrierName = (phoneEvent?.payload as any)?.carrier || null;
+  const phone = order.phone || visitorPhone || selectedVisitor?.phone || null;
+  const nationalId = order.national_id || visitorNationalId || selectedVisitor?.national_id || null;
 
   return (
     <div className="space-y-1.5">
+      <div className="grid grid-cols-2 gap-1.5">
+        {phone && <InfoItem label="رقم الجوال" value={phone} highlight />}
+        {nationalId && <InfoItem label="رقم الهوية" value={nationalId} highlight />}
+      </div>
       {carrierName && (
         <div className="flex items-center gap-2 bg-muted/30 rounded-lg p-2">
           {carrierLogos[carrierName] ? (
@@ -420,7 +426,7 @@ function renderPhoneVerification(order: InsuranceOrder, stageEvents: StageEvent[
           <span className="text-xs font-medium text-foreground">{carrierName}</span>
         </div>
       )}
-      {!carrierName && <p className="text-[10px] text-muted-foreground text-center py-1">بانتظار بيانات الشبكة</p>}
+      {!phone && !nationalId && !carrierName && <p className="text-[10px] text-muted-foreground text-center py-1">بانتظار بيانات التوثيق</p>}
     </div>
   );
 }
