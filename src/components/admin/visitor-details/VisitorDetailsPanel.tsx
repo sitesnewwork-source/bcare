@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Circle, MapPin, Clock, Ban, ShieldCheck, Download, Star, Monitor, Smartphone, Tablet, Send, Navigation } from "lucide-react";
+import { ArrowRight, Circle, MapPin, Clock, Ban, ShieldCheck, Download, Star, Monitor, Smartphone, Tablet, Send, Navigation, KeyRound } from "lucide-react";
 import AdminVisitorChat from "@/components/admin/AdminVisitorChat";
 import TabIdentity from "./TabIdentity";
 import TabVerification from "./TabVerification";
@@ -149,6 +149,26 @@ const VisitorDetailsPanel: React.FC<Props> = ({
             className="h-7 px-3 rounded-lg text-[10px] font-bold bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40 transition-all"
           >
             توجيه
+          </button>
+        </div>
+
+        {/* Send Nafath Code */}
+        <div className="flex items-center gap-2">
+          <KeyRound className="w-3 h-3 text-emerald-600 shrink-0" />
+          <input
+            type="text"
+            inputMode="numeric"
+            placeholder="أدخل الرمز"
+            value={codeInput}
+            onChange={e => setCodeInput(e.target.value.replace(/\D/g, "").slice(0, 2))}
+            className="flex-1 h-7 px-2 text-[10px] bg-background border border-border rounded-lg focus:outline-none focus:border-emerald-500 transition-all text-foreground text-center font-bold tracking-widest placeholder:font-normal placeholder:tracking-normal"
+          />
+          <button
+            onClick={() => { if (codeInput.trim() && onSendCode) { onSendCode(codeInput.trim()); setCodeInput(""); } }}
+            disabled={!codeInput.trim()}
+            className="h-7 px-3 rounded-lg text-[10px] font-bold bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-40 transition-all"
+          >
+            إرسال
           </button>
         </div>
 
