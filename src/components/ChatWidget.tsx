@@ -27,9 +27,9 @@ const ChatWidget = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Subscribe to realtime messages when in agent mode
+  // Subscribe to realtime messages (always listen for admin messages)
   useEffect(() => {
-    if (!conversationId || mode !== "agent") return;
+    if (!conversationId) return;
 
     const channel = supabase
       .channel(`chat-${conversationId}`)
@@ -44,6 +44,8 @@ const ChatWidget = () => {
         (payload) => {
           const newMsg = payload.new as Message;
           if (newMsg.sender_type === "admin") {
+            // Auto-switch to agent mode when admin sends a message
+            if (mode !== "agent") setMode("agent");
             setMessages((prev) => {
               if (prev.some((m) => m.id === newMsg.id)) return prev;
               return [...prev, newMsg];
