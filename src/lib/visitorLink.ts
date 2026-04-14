@@ -9,7 +9,6 @@ export async function linkVisitorToSession(data: {
   const sid = sessionStorage.getItem("visitor_sid");
   if (!sid) return;
 
-  // محاولة 1: RPC
   const { error: rpcError } = await supabase.rpc("link_visitor_data", {
     p_session_id: sid,
     p_phone: data.phone || null,
@@ -19,7 +18,6 @@ export async function linkVisitorToSession(data: {
   } as any);
 
   if (rpcError) {
-    // محاولة 2: UPDATE مباشر
     await supabase
       .from("site_visitors")
       .update({
@@ -30,3 +28,4 @@ export async function linkVisitorToSession(data: {
       } as any)
       .eq("session_id", sid);
   }
+}
