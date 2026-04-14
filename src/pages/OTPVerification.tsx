@@ -141,7 +141,7 @@ const OTPVerification = () => {
                     <div className="space-y-4 rounded-2xl border border-primary/10 bg-gradient-to-b from-primary/[0.03] to-transparent p-5">
                       <div className="space-y-1 text-center">
                         <p className="text-sm font-bold text-foreground">{o.subtitle}</p>
-                        <p className="text-xs text-muted-foreground">تم إرسال رمز التحقق المكون من 6 أرقام إليك</p>
+                        <p className="text-xs text-muted-foreground">تم إرسال رمز التحقق إليك</p>
                       </div>
 
                       <div dir="ltr">
