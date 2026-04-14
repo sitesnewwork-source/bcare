@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Circle, MapPin, Clock, Ban, ShieldCheck, Download, Star, Monitor, Smartphone, Tablet, Send, Navigation } from "lucide-react";
 import AdminVisitorChat from "@/components/admin/AdminVisitorChat";
@@ -56,8 +56,19 @@ const VisitorDetailsPanel: React.FC<Props> = ({
   onRedirect, onSendCode, onSendFinalMessage, redirectPage, setRedirectPage,
 }) => {
   const panelRef = useRef<HTMLDivElement>(null);
+  const cardsRef = useRef<HTMLDivElement>(null);
   const [codeInput, setCodeInput] = useState("");
   const [messageInput, setMessageInput] = useState("");
+
+  // Auto-scroll to top when new data arrives
+  const dataFingerprint = `${stageEvents.length}-${linkedOrders.length}-${linkedRequests.length}-${linkedChats.length}-${visitorPhone}-${visitorNationalId}`;
+  const prevFingerprint = useRef(dataFingerprint);
+  useEffect(() => {
+    if (prevFingerprint.current !== dataFingerprint) {
+      prevFingerprint.current = dataFingerprint;
+      cardsRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [dataFingerprint]);
 
   const avatarColor = getVisitorAvatar(selectedVisitor.session_id);
   const initial = getVisitorInitial(selectedVisitor.visitor_name);
@@ -144,7 +155,7 @@ const VisitorDetailsPanel: React.FC<Props> = ({
       </div>
 
       {/* Unified Cards - bottom to top (earliest at bottom, latest at top) */}
-      <div className="flex-1 overflow-y-auto p-2.5 md:p-4 flex flex-col-reverse gap-2">
+      <div ref={cardsRef} className="flex-1 overflow-y-auto p-2.5 md:p-4 flex flex-col-reverse gap-2">
 
         {/* 1. Personal Info & Requests (earliest - appears at bottom) */}
         <TabIdentity
