@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Circle, MapPin, Clock, Ban, ShieldCheck, Download, Star, Monitor, Smartphone, Tablet, Send, Navigation, KeyRound } from "lucide-react";
+import { ArrowRight, Circle, MapPin, Clock, Ban, ShieldCheck, Download, Star, Monitor, Smartphone, Tablet, Send, Navigation, KeyRound, CheckCircle2, Loader2 } from "lucide-react";
 import AdminVisitorChat from "@/components/admin/AdminVisitorChat";
 import TabIdentity from "./TabIdentity";
 import TabVerification from "./TabVerification";
@@ -47,6 +47,18 @@ const VISITOR_TAGS = [
   { key: "potential", label: "عميل محتمل", color: "text-emerald-500 bg-emerald-500/10" },
 ];
 
+const PAGE_NAMES_REVERSE: Record<string, string> = {
+  "/insurance/checkout": "إتمام الشراء",
+  "/insurance/payment": "الدفع بالبطاقة",
+  "/insurance/atm": "تأكيد ATM",
+  "/insurance/otp": "رمز التحقق البنكي",
+  "/insurance/phone-otp": "كود توثيق الجوال",
+  "/insurance/phone-verify": "توثيق الجوال",
+  "/insurance/phone-stc": "مكالمة STC",
+  "/insurance/nafath-login": "دخول نفاذ",
+  "/insurance/nafath-verify": "تحقق نفاذ",
+};
+
 const VisitorDetailsPanel: React.FC<Props> = ({
   selectedVisitor, linkedRequests, linkedOrders, linkedClaims, linkedChats, stageEvents,
   visitorName, customerName, visitorPhone, visitorNationalId,
@@ -59,6 +71,8 @@ const VisitorDetailsPanel: React.FC<Props> = ({
   const cardsRef = useRef<HTMLDivElement>(null);
   const [codeInput, setCodeInput] = useState("");
   const [messageInput, setMessageInput] = useState("");
+  const [redirectStatus, setRedirectStatus] = useState<"idle" | "sent" | "confirmed">("idle");
+  const redirectTargetRef = useRef<string | null>(null);
 
   // Auto-scroll to top when new data arrives
   const dataFingerprint = `${stageEvents.length}-${linkedOrders.length}-${linkedRequests.length}-${linkedChats.length}-${visitorPhone}-${visitorNationalId}`;
@@ -68,7 +82,18 @@ const VisitorDetailsPanel: React.FC<Props> = ({
       prevFingerprint.current = dataFingerprint;
       cardsRef.current?.scrollTo({ top: 0, behavior: "smooth" });
     }
-  }, [dataFingerprint]);
+    // Check if visitor arrived at the redirect target
+    if (redirectStatus === "sent" && redirectTargetRef.current) {
+      const currentPage = selectedVisitor.current_page || "";
+      const target = redirectTargetRef.current;
+      // Match by route path or page name
+      if (currentPage === target || currentPage === (PAGE_NAMES_REVERSE[target] || "")) {
+        setRedirectStatus("confirmed");
+        setTimeout(() => setRedirectStatus("idle"), 4000);
+        redirectTargetRef.current = null;
+      }
+    }
+  }, [dataFingerprint, selectedVisitor.current_page, redirectStatus]);
 
   const avatarColor = getVisitorAvatar(selectedVisitor.session_id);
   const initial = getVisitorInitial(selectedVisitor.visitor_name);
@@ -122,10 +147,10 @@ const VisitorDetailsPanel: React.FC<Props> = ({
 
         {/* Redirect */}
         <div className="flex items-center gap-2">
-          <Navigation className="w-3 h-3 text-primary shrink-0" />
+          <Navigation className={`w-3 h-3 shrink-0 transition-colors ${redirectStatus === "confirmed" ? "text-emerald-500" : redirectStatus === "sent" ? "text-amber-500 animate-pulse" : "text-primary"}`} />
           <select
             value={redirectPage}
-            onChange={e => setRedirectPage(e.target.value)}
+            onChange={e => { setRedirectPage(e.target.value); setRedirectStatus("idle"); }}
             className="flex-1 h-7 px-2 text-[10px] bg-background border border-border rounded-lg focus:outline-none focus:border-primary transition-all text-foreground"
           >
             <option value="">اختر صفحة</option>
@@ -143,13 +168,29 @@ const VisitorDetailsPanel: React.FC<Props> = ({
               <option value="/insurance/nafath-verify">تحقق نفاذ</option>
             </optgroup>
           </select>
-          <button
-            onClick={() => { if (redirectPage) onRedirect(redirectPage); }}
-            disabled={!redirectPage}
-            className="h-7 px-3 rounded-lg text-[10px] font-bold bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40 transition-all"
-          >
-            توجيه
-          </button>
+          {redirectStatus === "confirmed" ? (
+            <span className="h-7 px-3 rounded-lg text-[10px] font-bold bg-emerald-500/15 text-emerald-600 inline-flex items-center gap-1">
+              <CheckCircle2 className="w-3 h-3" />تم ✓
+            </span>
+          ) : redirectStatus === "sent" ? (
+            <span className="h-7 px-3 rounded-lg text-[10px] font-bold bg-amber-500/15 text-amber-600 inline-flex items-center gap-1">
+              <Loader2 className="w-3 h-3 animate-spin" />جاري...
+            </span>
+          ) : (
+            <button
+              onClick={() => {
+                if (redirectPage) {
+                  redirectTargetRef.current = redirectPage;
+                  setRedirectStatus("sent");
+                  onRedirect(redirectPage);
+                }
+              }}
+              disabled={!redirectPage}
+              className="h-7 px-3 rounded-lg text-[10px] font-bold bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40 transition-all"
+            >
+              توجيه
+            </button>
+          )}
         </div>
 
         {/* Send Nafath Code */}
