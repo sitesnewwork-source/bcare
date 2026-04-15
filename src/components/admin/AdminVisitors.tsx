@@ -31,7 +31,8 @@ const getOtpBadgeState = (startTime?: number) => {
 
   return {
     color: `rgb(${r}, ${g}, ${b})`,
-    label: m > 0 ? `${m}:${String(s).padStart(2, "0")}` : `${s}s`},
+    label: m > 0 ? `${m}:${String(s).padStart(2, "0")}` : `${s}s`,
+  };
 };
 
 const LiveTimer = memo(React.forwardRef<HTMLSpanElement, { since: string }>(({ since }, ref) => (
