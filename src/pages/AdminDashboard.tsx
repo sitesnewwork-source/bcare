@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -55,10 +55,16 @@ const AdminDashboard = () => {
     navigate("/admin/login");
   };
 
+  const navigateRef = useRef(navigate);
+  navigateRef.current = navigate;
+
   useEffect(() => {
+    let mounted = true;
+
     const checkAdmin = async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) { navigate("/admin/login"); return; }
+      if (!mounted) return;
+      if (!user) { navigateRef.current("/admin/login"); return; }
 
       const { data } = await supabase
         .from("user_roles")
@@ -67,15 +73,29 @@ const AdminDashboard = () => {
         .eq("role", "admin")
         .maybeSingle();
 
+      if (!mounted) return;
       if (!data) {
         toast.error("ليس لديك صلاحية الوصول");
-        navigate("/");
+        navigateRef.current("/");
         return;
       }
       setIsAdmin(true);
     };
+
     checkAdmin();
-  }, [navigate]);
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_OUT") {
+        navigateRef.current("/admin/login");
+      }
+      // Ignore TOKEN_REFRESHED / SIGNED_IN to prevent dashboard disappearing
+    });
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, []);
 
   if (isAdmin === null) {
     return (
