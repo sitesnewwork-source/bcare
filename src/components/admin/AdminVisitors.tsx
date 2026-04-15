@@ -80,7 +80,7 @@ interface Visitor {
   national_id: string | null; linked_request_id: string | null; linked_conversation_id: string | null;
   is_blocked: boolean; user_agent: string | null; ip_address: string | null;
   is_favorite: boolean; country: string | null; country_code: string | null;
-  tags?: string[] | null;
+  tags?: string[] | null; redirect_to?: string | null;
 }
 
 const VISITOR_TAGS = [
