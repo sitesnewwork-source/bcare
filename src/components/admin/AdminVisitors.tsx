@@ -949,15 +949,16 @@ const AdminVisitors = () => {
     toast.success(currentTags.includes(tagKey) ? "تمت إزالة التصنيف" : "تم إضافة التصنيف");
   };
 
-  const onlineCount = visitors.filter(v => v.is_online).length;
-  const offlineCount = visitors.filter(v => !v.is_online).length;
-  const favoriteCount = visitors.filter(v => v.is_favorite).length;
-  const hasRequestCount = visitors.filter(v => v.linked_request_id || pendingRequestMap[v.id]).length;
-  const totalCount = visitors.length;
-  const awaitingDecisionVisitorIds = new Set<string>([
+  const { onlineCount, offlineCount, favoriteCount, totalCount } = useMemo(() => {
+    let online = 0, offline = 0, fav = 0;
+    visitors.forEach(v => { if (v.is_online) online++; else offline++; if (v.is_favorite) fav++; });
+    return { onlineCount: online, offlineCount: offline, favoriteCount: fav, totalCount: visitors.length };
+  }, [visitors]);
+
+  const awaitingDecisionVisitorIds = useMemo(() => new Set<string>([
     ...Object.keys(pendingRequestMap),
     ...Object.keys(pendingStageMap),
-  ]);
+  ]), [pendingRequestMap, pendingStageMap]);
   const pendingCount = awaitingDecisionVisitorIds.size;
   const pendingRequestsCount = Object.keys(pendingRequestMap).length;
   const pendingStagesCount = Object.keys(pendingStageMap).length;
