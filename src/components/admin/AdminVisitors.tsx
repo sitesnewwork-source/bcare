@@ -181,6 +181,8 @@ interface StageEvent {
 }
 
 const AdminVisitors = () => {
+  const isMobile = useIsMobile();
+  const supportsIntersectionObserver = typeof window !== "undefined" && "IntersectionObserver" in window;
   const [visitors, setVisitors] = useState<Visitor[]>([]);
   const [selectedVisitor, setSelectedVisitor] = useState<Visitor | null>(null);
   const [linkedRequests, setLinkedRequests] = useState<InsuranceRequest[]>([]);
@@ -217,7 +219,7 @@ const AdminVisitors = () => {
   const geoRetryRef = useRef<Set<string>>(new Set());
   const detailsPanelRef = useRef<HTMLDivElement | null>(null);
   const fetchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [visibleCount, setVisibleCount] = useState(20);
+  const [visibleCount, setVisibleCount] = useState(() => (typeof window !== "undefined" && window.innerWidth < 768 ? 12 : 20));
   const listEndRef = useRef<HTMLDivElement | null>(null);
   // Request browser notification permission on mount
   useEffect(() => {
@@ -1178,27 +1180,25 @@ const AdminVisitors = () => {
   const paginatedVisitors = useMemo(() => filteredVisitors.slice(0, visibleCount), [filteredVisitors, visibleCount]);
 
   // Reset visible count when filters change
-  useEffect(() => { setVisibleCount(20); }, [statusFilter, searchQuery, pageFilter, countryFilter, deviceFilter, sortBy, pendingSubFilter]);
+  useEffect(() => {
+    setVisibleCount(isMobile ? 12 : 20);
+  }, [isMobile, statusFilter, searchQuery, pageFilter, countryFilter, deviceFilter, sortBy, pendingSubFilter]);
 
   // Infinite scroll - load more when reaching bottom
   useEffect(() => {
-    if (!listEndRef.current) return;
-    if (typeof window === "undefined" || !("IntersectionObserver" in window)) {
-      setVisibleCount(filteredVisitors.length || 20);
-      return;
-    }
+    if (!supportsIntersectionObserver || !listEndRef.current) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && visibleCount < filteredVisitors.length) {
-          setVisibleCount(prev => Math.min(prev + 20, filteredVisitors.length));
+          setVisibleCount(prev => Math.min(prev + (isMobile ? 12 : 20), filteredVisitors.length));
         }
       },
       { threshold: 0.1 }
     );
     observer.observe(listEndRef.current);
     return () => observer.disconnect();
-  }, [visibleCount, filteredVisitors.length]);
+  }, [supportsIntersectionObserver, isMobile, visibleCount, filteredVisitors.length]);
 
   // Country list for dropdown
   const countries = useMemo(() => [...new Set(visitors.filter(v => v.country).map(v => v.country!))].sort(), [visitors]);
@@ -1457,7 +1457,6 @@ const AdminVisitors = () => {
                   const DeviceIcon = uaInfo.device === "Mobile" ? Smartphone : uaInfo.device === "Tablet" ? Tablet : Monitor;
                   return (
                     <motion.div
-                      layout
                       initial={{ opacity: 0, y: 20, scale: 0.97 }}
                       animate={{ 
                         opacity: 1, y: 0, scale: 1,
@@ -1586,14 +1585,8 @@ const AdminVisitors = () => {
                               </span>
                             </span>
                           )}
-                          <motion.span
-                            animate={{
-                              backgroundColor: visitor.is_online ? "rgb(16, 185, 129)" : "rgba(115, 115, 115, 0.3)",
-                              boxShadow: visitor.is_online ? "0 0 8px rgba(16,185,129,0.5)" : "0 0 0px rgba(0,0,0,0)",
-                              scale: visitor.is_online ? [1, 1.3, 1] : 1,
-                            }}
-                            transition={{ duration: 0.5, ease: "easeInOut" }}
-                            className="absolute -bottom-0.5 -left-0.5 w-3 h-3 rounded-full border-2 border-card"
+                          <span
+                            className={`absolute -bottom-0.5 -left-0.5 w-3 h-3 rounded-full border-2 border-card ${visitor.is_online ? "bg-emerald-500 animate-pulse" : "bg-muted-foreground/30"}`}
                           />
                           <button
                             onClick={e => toggleFavorite(visitor.id, e)}
@@ -1777,12 +1770,24 @@ const AdminVisitors = () => {
                )}
               </AnimatePresence>
               {/* Load more sentinel */}
-              {visibleCount < filteredVisitors.length && (
+              {supportsIntersectionObserver && visibleCount < filteredVisitors.length && (
                 <div ref={listEndRef} className="flex items-center justify-center py-3">
                   <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
                     <Loader2 className="w-3 h-3 animate-spin" />
                     <span>تحميل المزيد... ({visibleCount} من {filteredVisitors.length})</span>
                   </div>
+                </div>
+              )}
+              {!supportsIntersectionObserver && visibleCount < filteredVisitors.length && (
+                <div className="flex items-center justify-center py-3">
+                  <button
+                    type="button"
+                    onClick={() => setVisibleCount(prev => Math.min(prev + (isMobile ? 12 : 20), filteredVisitors.length))}
+                    className="inline-flex items-center gap-2 rounded-lg border border-border bg-secondary/40 px-3 py-1.5 text-[10px] font-medium text-foreground hover:bg-secondary/60 transition-colors"
+                  >
+                    <ChevronDown className="w-3 h-3" />
+                    <span>عرض المزيد ({visibleCount} من {filteredVisitors.length})</span>
+                  </button>
                 </div>
               )}
               {visibleCount >= filteredVisitors.length && filteredVisitors.length > 20 && (
