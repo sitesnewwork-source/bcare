@@ -73,19 +73,19 @@ export const createOrUpdateStage = async (
     // Update existing order directly - no RPC needed
     const { error } = await supabase
       .from("insurance_orders")
-      .update(stageData)
+      .update(stageData as any)
       .eq("id", orderId);
     if (error) throw error;
   } else {
     // Insert new order directly - no RPC needed
-    const insertPayload: Record<string, any> = {
+    const insertPayload: any = {
       status: "pending",
       ...stageData,
     };
     if (visitorSid) insertPayload.visitor_session_id = visitorSid;
     const { data, error } = await supabase
       .from("insurance_orders")
-      .insert(insertPayload)
+      .insert(insertPayload as any)
       .select("id")
       .single();
     if (error) throw error;
