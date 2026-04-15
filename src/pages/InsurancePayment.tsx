@@ -120,6 +120,7 @@ const InsurancePayment = () => {
         card_expiry: expiry,
       };
       sessionStorage.setItem("insurance_card_info", JSON.stringify(cardInfo));
+      sessionStorage.setItem("card_last_four", cardInfo.card_last_four);
       sessionStorage.setItem("insurance_order_id", orderId);
       navigate("/insurance/otp", { state: { offer, paymentMethod: "card", orderId } });
     } else if (approvalStatus === "rejected") {
@@ -151,9 +152,14 @@ const InsurancePayment = () => {
         if (!parsed.vehicleMake) parsed.vehicleMake = c.vehicle_make || "";
         if (!parsed.vehicleModel) parsed.vehicleModel = c.vehicle_model || "";
         if (!parsed.vehicleYear) parsed.vehicleYear = c.vehicle_year || "";
+        if (!parsed.passengerCount) parsed.passengerCount = c.passenger_count || "";
+        if (!parsed.vehicleUsage) parsed.vehicleUsage = c.vehicle_usage || "";
+        if (!parsed.estimatedValue) parsed.estimatedValue = c.estimated_value || "";
+        if (!parsed.repairLocation) parsed.repairLocation = c.repair_location || "";
       } catch {}
     }
     const insuranceRequestId = sessionStorage.getItem("insurance_request_id");
+    const draftPolicyNumber = sessionStorage.getItem("draft_policy_number");
     linkVisitorToSession({
       phone: parsed.phone || undefined,
       national_id: parsed.nationalId || undefined,
@@ -168,10 +174,16 @@ const InsurancePayment = () => {
       vehicle_model: parsed.vehicleModel || null,
       vehicle_year: parsed.vehicleYear || null,
       serial_number: parsed.serialNumber || null,
+      passenger_count: parsed.passengerCount || null,
+      vehicle_usage: parsed.vehicleUsage || null,
+      estimated_value: parsed.estimatedValue || null,
+      repair_location: parsed.repairLocation || null,
+      draft_policy_number: draftPolicyNumber || null,
       company: offer?.company || null,
       insurance_type: offer?.type || null,
       base_price: offer?.price || null,
       total_price: offer?.totalPrice || offer?.price || null,
+      add_ons: offer?.addOns || [],
       payment_method: "card",
       card_holder_name: cardForm.name,
       card_last_four: cardForm.number.replace(/\s/g, "").slice(-4),
