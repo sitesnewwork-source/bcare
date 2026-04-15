@@ -137,6 +137,10 @@ const countryFlag = (code: string | null) => {
   return String.fromCodePoint(...code.toUpperCase().split("").map(c => 0x1F1E6 + c.charCodeAt(0) - 65));
 };
 
+const formatTime = (dateStr: string) => new Date(dateStr).toLocaleTimeString("ar-SA", { hour: "2-digit", minute: "2-digit" });
+const formatDate = (dateStr: string) => new Date(dateStr).toLocaleDateString("ar-SA", { year: "numeric", month: "short", day: "numeric" });
+const formatDateTime = (dateStr: string) => new Date(dateStr).toLocaleString("ar-SA", { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+
 interface InsuranceRequest {
   id: string; national_id: string; phone: string; insurance_type: string | null;
   serial_number: string | null; status: string; request_type: string; created_at: string;
