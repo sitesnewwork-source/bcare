@@ -688,10 +688,11 @@ const AdminVisitors = () => {
   useEffect(() => {
     const missingGeo = visitors.filter(v => v.ip_address && !v.country && !geoRetryRef.current.has(v.id));
     if (missingGeo.length === 0) return;
-    missingGeo.forEach(v => geoRetryRef.current.add(v.id));
-    supabase.functions.invoke("resolve-geo", { body: { visitor_ids: missingGeo.map(v => v.id) } })
-      .then(() => setTimeout(fetchVisitors, 2000)).catch(() => {});
-  }, [visitors]);
+    const ids = missingGeo.map(v => v.id);
+    ids.forEach(id => geoRetryRef.current.add(id));
+    supabase.functions.invoke("resolve-geo", { body: { visitor_ids: ids } }).catch(() => {});
+    // No fetchVisitors call here — realtime will handle the update
+  }, [visitors.map(v => v.id).join(",")]);
 
   useEffect(() => {
     if (selectedVisitor) {
