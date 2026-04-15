@@ -968,7 +968,6 @@ const AdminVisitors = () => {
   const pendingStagesCount = Object.keys(pendingStageMap).length;
 
   const hasRequestCount = useMemo(() => visitors.filter(v => v.linked_request_id || pendingRequestMap[v.id]).length, [visitors, pendingRequestMap]);
-  const formatDateTime = (dateStr: string) => new Date(dateStr).toLocaleString("ar-SA", { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
 
   const insuranceTypeLabel: Record<string, string> = { comprehensive: "شامل", third_party: "ضد الغير", custom: "مخصص" };
   const statusLabel: Record<string, { text: string; cls: string }> = {
