@@ -276,6 +276,8 @@ const AdminVisitors = () => {
   const detailsPanelRef = useRef<HTMLDivElement | null>(null);
   const fullRefreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const visitorsRefreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const visitorRealtimeFlushTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pendingVisitorUpdatesRef = useRef<Record<string, Visitor>>({});
   const visitorsRef = useRef<Visitor[]>([]);
   const linkedOrdersRef = useRef<InsuranceOrder[]>([]);
   const [visibleCount, setVisibleCount] = useState(() => (typeof window !== "undefined" && window.innerWidth < 768 ? 12 : 20));
@@ -496,6 +498,38 @@ const AdminVisitors = () => {
 
     if (!targetId) return;
     if (eventType === "UPDATE" && nextRow && !hasMeaningfulVisitorChange(nextRow, previousRow)) return;
+
+    if (eventType === "UPDATE" && nextRow) {
+      pendingVisitorUpdatesRef.current[nextRow.id] = nextRow;
+
+      if (visitorRealtimeFlushTimerRef.current) {
+        clearTimeout(visitorRealtimeFlushTimerRef.current);
+      }
+
+      visitorRealtimeFlushTimerRef.current = setTimeout(() => {
+        const queuedUpdates = { ...pendingVisitorUpdatesRef.current };
+        pendingVisitorUpdatesRef.current = {};
+
+        setVisitors((currentVisitors) => {
+          const nextVisitors = currentVisitors.map((visitor) => queuedUpdates[visitor.id]
+            ? { ...visitor, ...queuedUpdates[visitor.id] }
+            : visitor
+          );
+
+          return sortVisitors(nextVisitors, pendingStageMapRef.current);
+        });
+
+        const selectedVisitor = selectedVisitorRef.current;
+        if (selectedVisitor && queuedUpdates[selectedVisitor.id]) {
+          setSelectedVisitor((currentVisitor) => currentVisitor
+            ? { ...currentVisitor, ...queuedUpdates[currentVisitor.id] }
+            : currentVisitor
+          );
+        }
+      }, 250);
+
+      return;
+    }
 
     setVisitors((currentVisitors) => {
       let nextVisitors = currentVisitors;
@@ -939,6 +973,7 @@ const AdminVisitors = () => {
       clearInterval(interval);
       if (fullRefreshTimerRef.current) clearTimeout(fullRefreshTimerRef.current);
       if (visitorsRefreshTimerRef.current) clearTimeout(visitorsRefreshTimerRef.current);
+      if (visitorRealtimeFlushTimerRef.current) clearTimeout(visitorRealtimeFlushTimerRef.current);
       supabase.removeChannel(visitorsChannel);
       supabase.removeChannel(ordersChannel);
       supabase.removeChannel(stageEventsChannel);
@@ -1721,21 +1756,7 @@ const AdminVisitors = () => {
                   const uaInfo = parseUserAgent(visitor.user_agent);
                   const DeviceIcon = uaInfo.device === "Mobile" ? Smartphone : uaInfo.device === "Tablet" ? Tablet : Monitor;
                   return (
-                    <motion.div
-                      initial={{ opacity: 0, y: 20, scale: 0.97 }}
-                      animate={{ 
-                        opacity: 1, y: 0, scale: 1,
-                        filter: visitor.is_online ? "saturate(1)" : "saturate(0.7)",
-                      }}
-                      exit={{ opacity: 0, x: -30, scale: 0.95 }}
-                      transition={{ 
-                        duration: 0.4, 
-                        delay: Math.min(index * 0.03, 0.3),
-                        ease: "easeOut",
-                        filter: { duration: 0.8 },
-                      }}
-                      key={visitor.id}
-                    >
+                    <div key={visitor.id}>
                       <div
                         role="button"
                         tabIndex={0}
@@ -2029,7 +2050,7 @@ const AdminVisitors = () => {
                         </div>
                       </div>
                       </div>
-                    </motion.div>
+                    </div>
                   );
                 })
                )}
