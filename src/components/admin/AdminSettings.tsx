@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Globe, Shield, Bell, Database, Save, KeyRound, Trash2, LogOut, Settings, FileText, FileSpreadsheet, Download, CreditCard, Timer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -427,8 +427,9 @@ const AdminSettings = () => {
     </div>
   );
 
-  const SettingsAction = ({ icon: Icon, label, onClick, variant = "default" }: { icon: any; label: string; onClick: () => void; variant?: "default" | "danger" }) => (
+  const SettingsAction = React.forwardRef<HTMLButtonElement, { icon: any; label: string; onClick: () => void; variant?: "default" | "danger" }>(({ icon: Icon, label, onClick, variant = "default" }, ref) => (
     <button
+      ref={ref}
       onClick={onClick}
       className={`w-full flex items-center gap-3 p-3 rounded-xl border transition-all text-right ${
         variant === "danger"
@@ -443,7 +444,7 @@ const AdminSettings = () => {
       </div>
       <span className={`text-xs font-bold ${variant === "danger" ? "text-red-500" : "text-foreground"}`}>{label}</span>
     </button>
-  );
+  ));
 
   return (
     <div className="space-y-6">
