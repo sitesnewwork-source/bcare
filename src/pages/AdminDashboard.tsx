@@ -215,7 +215,6 @@ const AdminDashboard = () => {
             >
               <LogOut className="w-4 h-4 text-destructive" />
             </button>
-          </div>
         </div>
       </header>
 
