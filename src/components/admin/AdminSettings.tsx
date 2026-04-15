@@ -427,7 +427,7 @@ const AdminSettings = () => {
     </div>
   );
 
-  const SettingsAction = ({ icon: Icon, label, onClick, variant = "default" }: { icon: any; label: string; onClick: () => void; variant?: "default" | "danger" }) => (
+  const SettingsAction = React.forwardRef<HTMLButtonElement, { icon: any; label: string; onClick: () => void; variant?: "default" | "danger" }>(({ icon: Icon, label, onClick, variant = "default" }, ref) => (
     <button
       onClick={onClick}
       className={`w-full flex items-center gap-3 p-3 rounded-xl border transition-all text-right ${
