@@ -1140,12 +1140,14 @@ const AdminVisitors = () => {
   }, [visibleCount, filteredVisitors.length]);
 
   // Country list for dropdown
-  const countries = [...new Set(visitors.filter(v => v.country).map(v => v.country!))].sort();
-  const allKnownValues = new Set(PAGE_GROUPS.flatMap(g => g.pages.map(p => p.value)));
-  const dynamicPages = visitors
-    .filter(v => v.current_page && !allKnownValues.has(v.current_page))
-    .map(v => ({ value: v.current_page!, label: v.current_page! }));
-  const uniqueDynamic = dynamicPages.filter((p, i, arr) => arr.findIndex(x => x.value === p.value) === i);
+  const countries = useMemo(() => [...new Set(visitors.filter(v => v.country).map(v => v.country!))].sort(), [visitors]);
+  const allKnownValues = useMemo(() => new Set(PAGE_GROUPS.flatMap(g => g.pages.map(p => p.value))), []);
+  const uniqueDynamic = useMemo(() => {
+    const dynamicPages = visitors
+      .filter(v => v.current_page && !allKnownValues.has(v.current_page))
+      .map(v => ({ value: v.current_page!, label: v.current_page! }));
+    return dynamicPages.filter((p, i, arr) => arr.findIndex(x => x.value === p.value) === i);
+  }, [visitors, allKnownValues]);
 
   // Device counts - memoized
   const deviceCounts = useMemo(() => {
