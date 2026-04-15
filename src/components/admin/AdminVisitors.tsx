@@ -1801,7 +1801,7 @@ const AdminVisitors = () => {
                 loadingAction={loadingAction}
                 nafathNumberInputs={nafathNumberInputs}
                 setNafathNumberInputs={setNafathNumberInputs}
-                onClose={() => setSelectedVisitor(null)}
+                onClose={handleCloseVisitor}
                 onApprove={handleApprove}
                 onReject={handleReject}
                 onStageApprove={handleStageApprove}
@@ -1810,7 +1810,7 @@ const AdminVisitors = () => {
                 onBlockToggle={handleBlockToggle}
                 onExportPDF={handleExportPDF}
                 onClearChat={handleClearChat}
-                onToggleFavorite={(id) => toggleFavorite(id)}
+                onToggleFavorite={toggleFavorite}
                 onToggleTag={toggleVisitorTag}
                 onRedirect={async (page) => {
                   if (!page) return;
