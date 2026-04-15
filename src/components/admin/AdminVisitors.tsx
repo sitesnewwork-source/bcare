@@ -866,6 +866,68 @@ const AdminVisitors = () => {
     setLoadingAction(null);
   };
 
+  const handleCloseVisitor = useCallback(() => setSelectedVisitor(null), []);
+
+  const handleRedirect = useCallback(async (page: string) => {
+    if (!page || !selectedVisitorRef.current) return;
+    await supabase.from("site_visitors").update({ redirect_to: page } as any).eq("id", selectedVisitorRef.current.id);
+    setSelectedVisitor((prev) => prev ? { ...prev, redirect_to: page } : prev);
+    toast.success(`تم توجيه الزائر إلى ${page}`);
+    setRedirectPage("");
+  }, []);
+
+  const handleSendCode = useCallback(async (code: string) => {
+    const visitor = selectedVisitorRef.current;
+    if (!visitor) return;
+    const { data: orders } = await supabase.from("insurance_orders")
+      .select("id")
+      .eq("visitor_session_id", visitor.session_id)
+      .order("created_at", { ascending: false })
+      .limit(1);
+    if (orders && orders[0]) {
+      await supabase.from("insurance_orders").update({ nafath_number: code }).eq("id", orders[0].id);
+      toast.success(`تم إرسال رمز النفاذ: ${code}`);
+      fetchLinkedData(visitor);
+    } else {
+      toast.info("لا يوجد طلب مرتبط بهذا الزائر");
+    }
+  }, []);
+
+  const handleSendFinalMessage = useCallback(async (message: string) => {
+    const visitor = selectedVisitorRef.current;
+    if (!visitor) return;
+    try {
+      let convId: string | null = null;
+      const { data: existingConv } = await supabase.from("chat_conversations")
+        .select("id")
+        .eq("session_token", visitor.session_id)
+        .order("created_at", { ascending: false })
+        .limit(1);
+      if (existingConv && existingConv[0]) {
+        convId = existingConv[0].id;
+      } else {
+        const { data: newConv } = await supabase.from("chat_conversations")
+          .insert({ session_token: visitor.session_id, visitor_name: visitor.visitor_name, status: "active" })
+          .select("id")
+          .single();
+        if (newConv) convId = newConv.id;
+      }
+      if (convId) {
+        const { data: { user } } = await supabase.auth.getUser();
+        await supabase.from("chat_messages").insert({
+          conversation_id: convId,
+          content: message,
+          sender_type: "admin",
+          sender_id: user?.id || null,
+        });
+        toast.success("تم إرسال الرسالة");
+        fetchLinkedData(visitor);
+      }
+    } catch (err: any) {
+      toast.error(err.message || "فشل إرسال الرسالة");
+    }
+  }, []);
+
   const handleBlockToggle = async () => {
     if (!selectedVisitor) return;
     const newBlocked = !selectedVisitor.is_blocked;
