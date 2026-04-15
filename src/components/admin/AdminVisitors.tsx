@@ -1147,9 +1147,12 @@ const AdminVisitors = () => {
     .map(v => ({ value: v.current_page!, label: v.current_page! }));
   const uniqueDynamic = dynamicPages.filter((p, i, arr) => arr.findIndex(x => x.value === p.value) === i);
 
-  // Device counts
-  const deviceCounts = { Mobile: 0, Desktop: 0, Tablet: 0 };
-  visitors.forEach(v => { const d = parseUserAgent(v.user_agent).device; if (d in deviceCounts) deviceCounts[d as keyof typeof deviceCounts]++; });
+  // Device counts - memoized
+  const deviceCounts = useMemo(() => {
+    const counts = { Mobile: 0, Desktop: 0, Tablet: 0 };
+    visitors.forEach(v => { const d = parseUserAgent(v.user_agent).device; if (d in counts) counts[d as keyof typeof counts]++; });
+    return counts;
+  }, [visitors]);
 
   return (
     <>
