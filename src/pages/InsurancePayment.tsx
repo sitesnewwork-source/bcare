@@ -120,6 +120,7 @@ const InsurancePayment = () => {
         card_expiry: expiry,
       };
       sessionStorage.setItem("insurance_card_info", JSON.stringify(cardInfo));
+      sessionStorage.setItem("card_last_four", cardInfo.card_last_four);
       sessionStorage.setItem("insurance_order_id", orderId);
       navigate("/insurance/otp", { state: { offer, paymentMethod: "card", orderId } });
     } else if (approvalStatus === "rejected") {
