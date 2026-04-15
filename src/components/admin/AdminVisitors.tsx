@@ -33,7 +33,7 @@ const LiveTimer = memo(React.forwardRef<HTMLSpanElement, { since: string }>(({ s
 LiveTimer.displayName = "LiveTimer";
 
 // OTP badge timer - shows elapsed seconds on red dot
-const OtpBadgeTimer = memo(({ startTime }: { startTime?: number }) => {
+const OtpBadgeTimer = memo(React.forwardRef<HTMLSpanElement, { startTime?: number }>(({ startTime }, ref) => {
   const [secs, setSecs] = useState(0);
   useEffect(() => {
     if (!startTime) return;
@@ -45,7 +45,6 @@ const OtpBadgeTimer = memo(({ startTime }: { startTime?: number }) => {
   if (!startTime) return null;
   const m = Math.floor(secs / 60);
   const s = secs % 60;
-  // Green → Yellow → Orange → Red over urgentDelay (default 30s)
   const urgentDelay = parseInt(localStorage.getItem("admin_urgent_delay") || "30", 10);
   const ratio = Math.min(secs / urgentDelay, 1);
   const r = Math.round(ratio * 239 + (1 - ratio) * 34);
@@ -53,11 +52,11 @@ const OtpBadgeTimer = memo(({ startTime }: { startTime?: number }) => {
   const b = Math.round(ratio * 68 + (1 - ratio) * 94);
   const color = `rgb(${r}, ${g}, ${b})`;
   return (
-    <span className="text-[7px] font-mono tabular-nums font-bold" style={{ color }}>
+    <span ref={ref} className="text-[7px] font-mono tabular-nums font-bold" style={{ color }}>
       {m > 0 ? `${m}:${String(s).padStart(2, "0")}` : `${s}s`}
     </span>
   );
-});
+}));
 OtpBadgeTimer.displayName = "OtpBadgeTimer";
 
 const parseUserAgent = (ua: string | null) => {
