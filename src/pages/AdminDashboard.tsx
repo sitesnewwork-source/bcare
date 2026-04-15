@@ -30,12 +30,26 @@ const AdminDashboard = () => {
         setTotalVisitorCount(data.length);
       }
     };
-    fetchCounts();
+
+    void fetchCounts();
+    const interval = setInterval(() => {
+      void fetchCounts();
+    }, 15000);
+
     const channel = supabase
       .channel("header-visitor-count")
-      .on("postgres_changes", { event: "*", schema: "public", table: "site_visitors" }, () => fetchCounts())
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "site_visitors" }, () => {
+        void fetchCounts();
+      })
+      .on("postgres_changes", { event: "DELETE", schema: "public", table: "site_visitors" }, () => {
+        void fetchCounts();
+      })
       .subscribe();
-    return () => { supabase.removeChannel(channel); };
+
+    return () => {
+      clearInterval(interval);
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   useEffect(() => {
