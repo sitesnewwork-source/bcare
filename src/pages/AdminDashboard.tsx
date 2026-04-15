@@ -170,21 +170,21 @@ const AdminDashboard = () => {
   return (
     <div className="min-h-[100dvh] bg-secondary/30 flex flex-col">
       <header className="h-12 bg-card border-b border-border flex items-center justify-between px-2 md:px-4 shrink-0" dir="rtl">
-        <div className="flex items-center gap-3">
-          <h1 className="text-sm font-bold text-foreground">لوحة التحكم</h1>
-          <div className="flex items-center gap-1.5 px-2 py-1 bg-emerald-500/10 rounded-full">
+        <div className="flex items-center gap-1.5 md:gap-3 min-w-0">
+          <h1 className="text-xs md:text-sm font-bold text-foreground shrink-0">لوحة التحكم</h1>
+          <div className="hidden md:flex items-center gap-1.5 px-2 py-1 bg-emerald-500/10 rounded-full">
             <Circle className="w-2 h-2 fill-emerald-500 text-emerald-500 animate-pulse" />
             <span className="text-[10px] font-bold text-emerald-600">متصل</span>
           </div>
           <div className="flex items-center gap-1.5 px-2 py-1 bg-primary/10 rounded-full">
-            <Users className="w-3 h-3 text-primary" />
+            <Circle className="w-1.5 h-1.5 fill-emerald-500 text-emerald-500 md:hidden" />
+            <Users className="w-3 h-3 text-primary hidden md:block" />
             <span className="text-[10px] font-bold text-primary">{onlineCount} نشط</span>
-            <span className="text-[10px] text-muted-foreground">/ {totalVisitorCount} زائر</span>
+            <span className="text-[10px] text-muted-foreground hidden sm:inline">/ {totalVisitorCount} زائر</span>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-0.5 md:gap-1">
+        <div className="flex items-center gap-0.5 md:gap-1 shrink-0">
             <button
               onClick={() => setActiveTab(activeTab === "settings" ? "visitors" : "settings")}
               className={`p-1.5 rounded-lg hover:bg-secondary/70 transition-colors ${activeTab === "settings" ? "bg-secondary" : ""}`}
@@ -215,12 +215,11 @@ const AdminDashboard = () => {
             >
               <LogOut className="w-4 h-4 text-destructive" />
             </button>
-          </div>
         </div>
       </header>
 
       <PullToRefresh onRefresh={handlePullRefresh}>
-        <main className="flex-1 p-2 md:p-4 lg:p-6">
+        <main className="flex-1 p-1.5 md:p-4 lg:p-6">
           {activeTab === "settings" && <AdminSettings />}
           {activeTab === "visitors" && <AdminVisitors key={refreshKey} />}
         </main>
