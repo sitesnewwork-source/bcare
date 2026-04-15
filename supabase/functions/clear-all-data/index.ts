@@ -41,6 +41,7 @@ serve(async (req) => {
     // Delete all data from tables (order matters for foreign keys)
     await adminClient.from("chat_messages").delete().neq("id", "00000000-0000-0000-0000-000000000000");
     await adminClient.from("chat_conversations").delete().neq("id", "00000000-0000-0000-0000-000000000000");
+    await adminClient.from("insurance_order_stage_events").delete().neq("id", "00000000-0000-0000-0000-000000000000");
     await adminClient.from("insurance_orders").delete().neq("id", "00000000-0000-0000-0000-000000000000");
     await adminClient.from("insurance_requests").delete().neq("id", "00000000-0000-0000-0000-000000000000");
     await adminClient.from("claims").delete().neq("id", "00000000-0000-0000-0000-000000000000");
