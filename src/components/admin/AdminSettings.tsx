@@ -27,6 +27,8 @@ const SettingsAction = React.forwardRef<HTMLButtonElement, { icon: any; label: s
   </button>
 ));
 SettingsAction.displayName = "SettingsAction";
+
+const AdminSettings = () => {
   const [chatEnabled, setChatEnabled] = useState(true);
   const [siteEnabled, setSiteEnabled] = useState(true);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
