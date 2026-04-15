@@ -41,8 +41,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const checkMute = () => setIsMuted(localStorage.getItem("admin_feed_mute") === "true");
     window.addEventListener("storage", checkMute);
-    const interval = setInterval(checkMute, 1000);
-    return () => { window.removeEventListener("storage", checkMute); clearInterval(interval); };
+    return () => { window.removeEventListener("storage", checkMute); };
   }, []);
 
   const handlePullRefresh = useCallback(async () => {
