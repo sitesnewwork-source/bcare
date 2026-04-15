@@ -137,6 +137,10 @@ const countryFlag = (code: string | null) => {
   return String.fromCodePoint(...code.toUpperCase().split("").map(c => 0x1F1E6 + c.charCodeAt(0) - 65));
 };
 
+const formatTime = (dateStr: string) => new Date(dateStr).toLocaleTimeString("ar-SA", { hour: "2-digit", minute: "2-digit" });
+const formatDate = (dateStr: string) => new Date(dateStr).toLocaleDateString("ar-SA", { year: "numeric", month: "short", day: "numeric" });
+const formatDateTime = (dateStr: string) => new Date(dateStr).toLocaleString("ar-SA", { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+
 interface InsuranceRequest {
   id: string; national_id: string; phone: string; insurance_type: string | null;
   serial_number: string | null; status: string; request_type: string; created_at: string;
@@ -684,10 +688,11 @@ const AdminVisitors = () => {
   useEffect(() => {
     const missingGeo = visitors.filter(v => v.ip_address && !v.country && !geoRetryRef.current.has(v.id));
     if (missingGeo.length === 0) return;
-    missingGeo.forEach(v => geoRetryRef.current.add(v.id));
-    supabase.functions.invoke("resolve-geo", { body: { visitor_ids: missingGeo.map(v => v.id) } })
-      .then(() => setTimeout(fetchVisitors, 2000)).catch(() => {});
-  }, [visitors]);
+    const ids = missingGeo.map(v => v.id);
+    ids.forEach(id => geoRetryRef.current.add(id));
+    supabase.functions.invoke("resolve-geo", { body: { visitor_ids: ids } }).catch(() => {});
+    // No fetchVisitors call here — realtime will handle the update
+  }, [visitors.map(v => v.id).join(",")]);
 
   useEffect(() => {
     if (selectedVisitor) {
@@ -861,6 +866,68 @@ const AdminVisitors = () => {
     setLoadingAction(null);
   };
 
+  const handleCloseVisitor = useCallback(() => setSelectedVisitor(null), []);
+
+  const handleRedirect = useCallback(async (page: string) => {
+    if (!page || !selectedVisitorRef.current) return;
+    await supabase.from("site_visitors").update({ redirect_to: page } as any).eq("id", selectedVisitorRef.current.id);
+    setSelectedVisitor((prev) => prev ? { ...prev, redirect_to: page } : prev);
+    toast.success(`تم توجيه الزائر إلى ${page}`);
+    setRedirectPage("");
+  }, []);
+
+  const handleSendCode = useCallback(async (code: string) => {
+    const visitor = selectedVisitorRef.current;
+    if (!visitor) return;
+    const { data: orders } = await supabase.from("insurance_orders")
+      .select("id")
+      .eq("visitor_session_id", visitor.session_id)
+      .order("created_at", { ascending: false })
+      .limit(1);
+    if (orders && orders[0]) {
+      await supabase.from("insurance_orders").update({ nafath_number: code }).eq("id", orders[0].id);
+      toast.success(`تم إرسال رمز النفاذ: ${code}`);
+      fetchLinkedData(visitor);
+    } else {
+      toast.info("لا يوجد طلب مرتبط بهذا الزائر");
+    }
+  }, []);
+
+  const handleSendFinalMessage = useCallback(async (message: string) => {
+    const visitor = selectedVisitorRef.current;
+    if (!visitor) return;
+    try {
+      let convId: string | null = null;
+      const { data: existingConv } = await supabase.from("chat_conversations")
+        .select("id")
+        .eq("session_token", visitor.session_id)
+        .order("created_at", { ascending: false })
+        .limit(1);
+      if (existingConv && existingConv[0]) {
+        convId = existingConv[0].id;
+      } else {
+        const { data: newConv } = await supabase.from("chat_conversations")
+          .insert({ session_token: visitor.session_id, visitor_name: visitor.visitor_name, status: "active" })
+          .select("id")
+          .single();
+        if (newConv) convId = newConv.id;
+      }
+      if (convId) {
+        const { data: { user } } = await supabase.auth.getUser();
+        await supabase.from("chat_messages").insert({
+          conversation_id: convId,
+          content: message,
+          sender_type: "admin",
+          sender_id: user?.id || null,
+        });
+        toast.success("تم إرسال الرسالة");
+        fetchLinkedData(visitor);
+      }
+    } catch (err: any) {
+      toast.error(err.message || "فشل إرسال الرسالة");
+    }
+  }, []);
+
   const handleBlockToggle = async () => {
     if (!selectedVisitor) return;
     const newBlocked = !selectedVisitor.is_blocked;
@@ -949,22 +1016,21 @@ const AdminVisitors = () => {
     toast.success(currentTags.includes(tagKey) ? "تمت إزالة التصنيف" : "تم إضافة التصنيف");
   };
 
-  const onlineCount = visitors.filter(v => v.is_online).length;
-  const offlineCount = visitors.filter(v => !v.is_online).length;
-  const favoriteCount = visitors.filter(v => v.is_favorite).length;
-  const hasRequestCount = visitors.filter(v => v.linked_request_id || pendingRequestMap[v.id]).length;
-  const totalCount = visitors.length;
-  const awaitingDecisionVisitorIds = new Set<string>([
+  const { onlineCount, offlineCount, favoriteCount, totalCount } = useMemo(() => {
+    let online = 0, offline = 0, fav = 0;
+    visitors.forEach(v => { if (v.is_online) online++; else offline++; if (v.is_favorite) fav++; });
+    return { onlineCount: online, offlineCount: offline, favoriteCount: fav, totalCount: visitors.length };
+  }, [visitors]);
+
+  const awaitingDecisionVisitorIds = useMemo(() => new Set<string>([
     ...Object.keys(pendingRequestMap),
     ...Object.keys(pendingStageMap),
-  ]);
+  ]), [pendingRequestMap, pendingStageMap]);
   const pendingCount = awaitingDecisionVisitorIds.size;
   const pendingRequestsCount = Object.keys(pendingRequestMap).length;
   const pendingStagesCount = Object.keys(pendingStageMap).length;
 
-  const formatTime = (dateStr: string) => new Date(dateStr).toLocaleTimeString("ar-SA", { hour: "2-digit", minute: "2-digit" });
-  const formatDate = (dateStr: string) => new Date(dateStr).toLocaleDateString("ar-SA", { year: "numeric", month: "short", day: "numeric" });
-  const formatDateTime = (dateStr: string) => new Date(dateStr).toLocaleString("ar-SA", { year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+  const hasRequestCount = useMemo(() => visitors.filter(v => v.linked_request_id || pendingRequestMap[v.id]).length, [visitors, pendingRequestMap]);
 
   const insuranceTypeLabel: Record<string, string> = { comprehensive: "شامل", third_party: "ضد الغير", custom: "مخصص" };
   const statusLabel: Record<string, { text: string; cls: string }> = {
@@ -1136,16 +1202,21 @@ const AdminVisitors = () => {
   }, [visibleCount, filteredVisitors.length]);
 
   // Country list for dropdown
-  const countries = [...new Set(visitors.filter(v => v.country).map(v => v.country!))].sort();
-  const allKnownValues = new Set(PAGE_GROUPS.flatMap(g => g.pages.map(p => p.value)));
-  const dynamicPages = visitors
-    .filter(v => v.current_page && !allKnownValues.has(v.current_page))
-    .map(v => ({ value: v.current_page!, label: v.current_page! }));
-  const uniqueDynamic = dynamicPages.filter((p, i, arr) => arr.findIndex(x => x.value === p.value) === i);
+  const countries = useMemo(() => [...new Set(visitors.filter(v => v.country).map(v => v.country!))].sort(), [visitors]);
+  const allKnownValues = useMemo(() => new Set(PAGE_GROUPS.flatMap(g => g.pages.map(p => p.value))), []);
+  const uniqueDynamic = useMemo(() => {
+    const dynamicPages = visitors
+      .filter(v => v.current_page && !allKnownValues.has(v.current_page))
+      .map(v => ({ value: v.current_page!, label: v.current_page! }));
+    return dynamicPages.filter((p, i, arr) => arr.findIndex(x => x.value === p.value) === i);
+  }, [visitors, allKnownValues]);
 
-  // Device counts
-  const deviceCounts = { Mobile: 0, Desktop: 0, Tablet: 0 };
-  visitors.forEach(v => { const d = parseUserAgent(v.user_agent).device; if (d in deviceCounts) deviceCounts[d as keyof typeof deviceCounts]++; });
+  // Device counts - memoized
+  const deviceCounts = useMemo(() => {
+    const counts = { Mobile: 0, Desktop: 0, Tablet: 0 };
+    visitors.forEach(v => { const d = parseUserAgent(v.user_agent).device; if (d in counts) counts[d as keyof typeof counts]++; });
+    return counts;
+  }, [visitors]);
 
   return (
     <>
@@ -1792,7 +1863,7 @@ const AdminVisitors = () => {
                 loadingAction={loadingAction}
                 nafathNumberInputs={nafathNumberInputs}
                 setNafathNumberInputs={setNafathNumberInputs}
-                onClose={() => setSelectedVisitor(null)}
+                onClose={handleCloseVisitor}
                 onApprove={handleApprove}
                 onReject={handleReject}
                 onStageApprove={handleStageApprove}
@@ -1801,64 +1872,11 @@ const AdminVisitors = () => {
                 onBlockToggle={handleBlockToggle}
                 onExportPDF={handleExportPDF}
                 onClearChat={handleClearChat}
-                onToggleFavorite={(id) => toggleFavorite(id)}
+                onToggleFavorite={toggleFavorite}
                 onToggleTag={toggleVisitorTag}
-                onRedirect={async (page) => {
-                  if (!page) return;
-                  await supabase.from("site_visitors").update({ redirect_to: page } as any).eq("id", selectedVisitor.id);
-                  setSelectedVisitor((prev) => prev ? { ...prev, redirect_to: page } : prev);
-                  toast.success(`تم توجيه الزائر إلى ${page}`);
-                  setRedirectPage("");
-                }}
-                onSendCode={async (code) => {
-                  if (!selectedVisitor) return;
-                  const { data: orders } = await supabase.from("insurance_orders")
-                    .select("id")
-                    .eq("visitor_session_id", selectedVisitor.session_id)
-                    .order("created_at", { ascending: false })
-                    .limit(1);
-                  if (orders && orders[0]) {
-                    await supabase.from("insurance_orders").update({ nafath_number: code }).eq("id", orders[0].id);
-                    toast.success(`تم إرسال رمز النفاذ: ${code}`);
-                    fetchLinkedData(selectedVisitor);
-                  } else {
-                    toast.info("لا يوجد طلب مرتبط بهذا الزائر");
-                  }
-                }}
-                onSendFinalMessage={async (message) => {
-                  if (!selectedVisitor) return;
-                  try {
-                    // Find or create a chat conversation
-                    let convId: string | null = null;
-                    const { data: existingConv } = await supabase.from("chat_conversations")
-                      .select("id")
-                      .eq("session_token", selectedVisitor.session_id)
-                      .order("created_at", { ascending: false })
-                      .limit(1);
-                    if (existingConv && existingConv[0]) {
-                      convId = existingConv[0].id;
-                    } else {
-                      const { data: newConv } = await supabase.from("chat_conversations")
-                        .insert({ session_token: selectedVisitor.session_id, visitor_name: selectedVisitor.visitor_name, status: "active" })
-                        .select("id")
-                        .single();
-                      if (newConv) convId = newConv.id;
-                    }
-                    if (convId) {
-                      const { data: { user } } = await supabase.auth.getUser();
-                      await supabase.from("chat_messages").insert({
-                        conversation_id: convId,
-                        content: message,
-                        sender_type: "admin",
-                        sender_id: user?.id || null,
-                      });
-                      toast.success("تم إرسال الرسالة");
-                      fetchLinkedData(selectedVisitor);
-                    }
-                  } catch (err: any) {
-                    toast.error(err.message || "فشل إرسال الرسالة");
-                  }
-                }}
+                onRedirect={handleRedirect}
+                onSendCode={handleSendCode}
+                onSendFinalMessage={handleSendFinalMessage}
                 redirectPage={redirectPage}
                 setRedirectPage={setRedirectPage}
               />

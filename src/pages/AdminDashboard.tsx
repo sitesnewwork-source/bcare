@@ -31,19 +31,17 @@ const AdminDashboard = () => {
       }
     };
     fetchCounts();
-    const interval = setInterval(fetchCounts, 10000);
     const channel = supabase
       .channel("header-visitor-count")
       .on("postgres_changes", { event: "*", schema: "public", table: "site_visitors" }, () => fetchCounts())
       .subscribe();
-    return () => { clearInterval(interval); supabase.removeChannel(channel); };
+    return () => { supabase.removeChannel(channel); };
   }, []);
 
   useEffect(() => {
     const checkMute = () => setIsMuted(localStorage.getItem("admin_feed_mute") === "true");
     window.addEventListener("storage", checkMute);
-    const interval = setInterval(checkMute, 1000);
-    return () => { window.removeEventListener("storage", checkMute); clearInterval(interval); };
+    return () => { window.removeEventListener("storage", checkMute); };
   }, []);
 
   const handlePullRefresh = useCallback(async () => {
