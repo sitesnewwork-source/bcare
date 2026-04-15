@@ -1189,6 +1189,11 @@ const AdminVisitors = () => {
   // Infinite scroll - load more when reaching bottom
   useEffect(() => {
     if (!listEndRef.current) return;
+    if (typeof window === "undefined" || !("IntersectionObserver" in window)) {
+      setVisibleCount(filteredVisitors.length || 20);
+      return;
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && visibleCount < filteredVisitors.length) {
@@ -1437,7 +1442,7 @@ const AdminVisitors = () => {
 
             {/* Visitor items */}
             <div className="flex-1 overflow-y-auto p-2 space-y-2">
-              <AnimatePresence mode="popLayout">
+              <AnimatePresence initial={false}>
               {filteredVisitors.length === 0 ? (
                 <motion.div
                   key="empty"
@@ -1831,7 +1836,6 @@ const AdminVisitors = () => {
 
           {/* Visitor details panel */}
           <div className={`${selectedVisitor ? "flex" : "hidden md:flex"} flex-1 bg-card border border-border rounded-xl overflow-hidden flex-col`}>
-            <AnimatePresence mode="wait">
             {!selectedVisitor ? (
               <motion.div
                 key="empty-state"
@@ -1881,7 +1885,6 @@ const AdminVisitors = () => {
                 setRedirectPage={setRedirectPage}
               />
             )}
-            </AnimatePresence>
           </div>
         </div>
       </div>
