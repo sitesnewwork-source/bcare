@@ -56,39 +56,98 @@ const AdminDashboard = () => {
   };
 
   const navigateRef = useRef(navigate);
+  const hasValidatedAccessRef = useRef(false);
+  const authCheckSequenceRef = useRef(0);
   navigateRef.current = navigate;
 
   useEffect(() => {
     let mounted = true;
 
-    const checkAdmin = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!mounted) return;
-      if (!user) { navigateRef.current("/admin/login"); return; }
+    const checkAdmin = async (shouldRedirectOnMissingSession = true) => {
+      const sequence = ++authCheckSequenceRef.current;
 
-      const { data } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", user.id)
-        .eq("role", "admin")
-        .maybeSingle();
+      try {
+        const {
+          data: { session },
+          error: sessionError,
+        } = await supabase.auth.getSession();
 
-      if (!mounted) return;
-      if (!data) {
-        toast.error("ليس لديك صلاحية الوصول");
-        navigateRef.current("/");
-        return;
+        if (!mounted || sequence !== authCheckSequenceRef.current) return;
+
+        if (sessionError) {
+          console.error("Admin session check failed", sessionError);
+          if (hasValidatedAccessRef.current) {
+            setIsAdmin(true);
+          }
+          return;
+        }
+
+        const user = session?.user;
+
+        if (!user) {
+          if (hasValidatedAccessRef.current && !shouldRedirectOnMissingSession) {
+            setIsAdmin(true);
+            return;
+          }
+
+          setIsAdmin(false);
+          if (shouldRedirectOnMissingSession) {
+            navigateRef.current("/admin/login");
+          }
+          return;
+        }
+
+        const { data: hasRole, error: roleError } = await supabase.rpc("has_role", {
+          _user_id: user.id,
+          _role: "admin",
+        });
+
+        if (!mounted || sequence !== authCheckSequenceRef.current) return;
+
+        if (roleError) {
+          console.error("Admin role check failed", roleError);
+          if (hasValidatedAccessRef.current) {
+            setIsAdmin(true);
+          }
+          return;
+        }
+
+        if (!hasRole) {
+          hasValidatedAccessRef.current = false;
+          setIsAdmin(false);
+          toast.error("ليس لديك صلاحية الوصول");
+          navigateRef.current("/");
+          return;
+        }
+
+        hasValidatedAccessRef.current = true;
+        setIsAdmin(true);
+      } catch (error) {
+        console.error("Unexpected admin auth check error", error);
+        if (hasValidatedAccessRef.current) {
+          setIsAdmin(true);
+        }
       }
-      setIsAdmin(true);
     };
 
-    checkAdmin();
+    void checkAdmin();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "SIGNED_OUT") {
+        hasValidatedAccessRef.current = false;
+        setIsAdmin(false);
         navigateRef.current("/admin/login");
+        return;
       }
-      // Ignore TOKEN_REFRESHED / SIGNED_IN to prevent dashboard disappearing
+
+      if (event === "SIGNED_IN" || event === "INITIAL_SESSION") {
+        void checkAdmin(false);
+        return;
+      }
+
+      if (event === "TOKEN_REFRESHED" && session?.user && !hasValidatedAccessRef.current) {
+        void checkAdmin(false);
+      }
     });
 
     return () => {
