@@ -8,41 +8,19 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import AdminVisitorChat from "@/components/admin/AdminVisitorChat";
 import VisitorDetailsPanel from "@/components/admin/visitor-details/VisitorDetailsPanel";
+import { useIsMobile } from "@/hooks/use-mobile";
 
-// Live timer component - memoized to prevent unnecessary re-renders
-const LiveTimer = memo(React.forwardRef<HTMLSpanElement, { since: string }>(({ since }, ref) => {
-  const [elapsed, setElapsed] = useState("");
-  useEffect(() => {
-    const calc = () => {
-      const diff = Math.max(0, Math.floor((Date.now() - new Date(since).getTime()) / 1000));
-      const h = Math.floor(diff / 3600);
-      const m = Math.floor((diff % 3600) / 60);
-      const s = diff % 60;
-      setElapsed(h > 0 ? `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}` : `${m}:${String(s).padStart(2, "0")}`);
-    };
-    calc();
-    const interval = setInterval(calc, 1000);
-    return () => clearInterval(interval);
-  }, [since]);
-  return (
-    <span ref={ref} className="inline-flex items-center gap-0.5 text-[9px] text-primary/70 font-mono tabular-nums">
-      <Timer className="w-2.5 h-2.5" />{elapsed}
-    </span>
-  );
-}));
-LiveTimer.displayName = "LiveTimer";
+const getElapsedLabel = (since: string) => {
+  const diff = Math.max(0, Math.floor((Date.now() - new Date(since).getTime()) / 1000));
+  const h = Math.floor(diff / 3600);
+  const m = Math.floor((diff % 3600) / 60);
+  const s = diff % 60;
+  return h > 0 ? `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}` : `${m}:${String(s).padStart(2, "0")}`;
+};
 
-// OTP badge timer - shows elapsed seconds on red dot
-const OtpBadgeTimer = memo(React.forwardRef<HTMLSpanElement, { startTime?: number }>(({ startTime }, ref) => {
-  const [secs, setSecs] = useState(0);
-  useEffect(() => {
-    if (!startTime) return;
-    const calc = () => setSecs(Math.floor((Date.now() - startTime) / 1000));
-    calc();
-    const interval = setInterval(calc, 1000);
-    return () => clearInterval(interval);
-  }, [startTime]);
+const getOtpBadgeState = (startTime?: number) => {
   if (!startTime) return null;
+  const secs = Math.max(0, Math.floor((Date.now() - startTime) / 1000));
   const m = Math.floor(secs / 60);
   const s = secs % 60;
   const urgentDelay = parseInt(localStorage.getItem("admin_urgent_delay") || "30", 10);
@@ -50,10 +28,26 @@ const OtpBadgeTimer = memo(React.forwardRef<HTMLSpanElement, { startTime?: numbe
   const r = Math.round(ratio * 239 + (1 - ratio) * 34);
   const g = Math.round(ratio * 68 + (1 - ratio) * 197);
   const b = Math.round(ratio * 68 + (1 - ratio) * 94);
-  const color = `rgb(${r}, ${g}, ${b})`;
+
+  return {
+    color: `rgb(${r}, ${g}, ${b})`,
+    label: m > 0 ? `${m}:${String(s).padStart(2, "0")}` : `${s}s`},
+};
+
+const LiveTimer = memo(React.forwardRef<HTMLSpanElement, { since: string }>(({ since }, ref) => (
+  <span ref={ref} className="inline-flex items-center gap-0.5 text-[9px] text-primary/70 font-mono tabular-nums">
+    <Timer className="w-2.5 h-2.5" />{getElapsedLabel(since)}
+  </span>
+)));
+LiveTimer.displayName = "LiveTimer";
+
+const OtpBadgeTimer = memo(React.forwardRef<HTMLSpanElement, { startTime?: number }>(({ startTime }, ref) => {
+  const badge = getOtpBadgeState(startTime);
+  if (!badge) return null;
+
   return (
-    <span ref={ref} className="text-[7px] font-mono tabular-nums font-bold" style={{ color }}>
-      {m > 0 ? `${m}:${String(s).padStart(2, "0")}` : `${s}s`}
+    <span ref={ref} className="text-[7px] font-mono tabular-nums font-bold" style={{ color: badge.color }}>
+      {badge.label}
     </span>
   );
 }));
