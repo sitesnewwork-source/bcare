@@ -219,7 +219,7 @@ const AdminDashboard = () => {
       </header>
 
       <PullToRefresh onRefresh={handlePullRefresh}>
-        <main className="flex-1 p-2 md:p-4 lg:p-6">
+        <main className="flex-1 p-1.5 md:p-4 lg:p-6">
           {activeTab === "settings" && <AdminSettings />}
           {activeTab === "visitors" && <AdminVisitors key={refreshKey} />}
         </main>
