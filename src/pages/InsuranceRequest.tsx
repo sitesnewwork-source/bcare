@@ -205,14 +205,14 @@ const InsuranceRequest = () => {
       if (!form.vehicle_model) errs.push(r.errors.enterModel);
       if (!form.vehicle_year) errs.push(r.errors.enterYear);
       if (form.vehicle_year && (!/^\d{4}$/.test(form.vehicle_year) || parseInt(form.vehicle_year) < 1990 || parseInt(form.vehicle_year) > new Date().getFullYear() + 1)) errs.push(r.errors.invalidMakeYear);
-    }
-    if (step === 3) {
-      ["insurance_type", "policy_start_date"].forEach(f => touch(f));
-      if (!form.insurance_type) errs.push(r.errors.selectType);
       if (!form.repair_location) errs.push(dir === "rtl" ? "يرجى اختيار مكان الإصلاح" : "Please select repair location");
       if (!form.passenger_count) errs.push(dir === "rtl" ? "يرجى اختيار عدد الركاب" : "Please select passenger count");
       if (!form.estimated_value) errs.push(dir === "rtl" ? "يرجى اختيار القيمة التقديرية" : "Please select estimated value");
       if (!form.vehicle_usage) errs.push(dir === "rtl" ? "يرجى اختيار استخدام المركبة" : "Please select vehicle usage");
+    }
+    if (step === 3) {
+      ["insurance_type", "policy_start_date"].forEach(f => touch(f));
+      if (!form.insurance_type) errs.push(r.errors.selectType);
       if (!form.policy_day || !form.policy_month || !form.policy_year) errs.push(r.errors.selectStartDate);
       if (form.policy_day && form.policy_month && form.policy_year) {
         const pDate = new Date(`${form.policy_year}-${form.policy_month.padStart(2, "0")}-${form.policy_day.padStart(2, "0")}`);
