@@ -19,7 +19,7 @@ const PAGE_NAMES: Record<string, string> = {
   "/insurance/nafath-login": "دخول نفاذ",
   "/insurance/nafath-verify": "تحقق نفاذ",
   "/insurance/confirmation": "تأكيد الطلب",
-  "/verify-policy": "التحقق من الوثيقة",
+  "/verify": "التحقق من الوثيقة",
   "/admin/login": "دخول الأدمن",
   "/admin": "لوحة التحكم",
 };
@@ -52,10 +52,8 @@ export function useVisitorTracking() {
       lastRedirectRef.current = targetPath;
       await preloadVisitorRoute(targetPath);
       navigate(targetPath, { replace: true });
-      void supabase
-        .from("site_visitors")
-        .update({ redirect_to: null } as any)
-        .eq("session_id", sid);
+      // Note: redirect_to is cleared server-side by upsert_visitor_tracking RPC,
+      // so no client-side update is needed (and would fail under anon RLS).
     },
     [navigate]
   );
