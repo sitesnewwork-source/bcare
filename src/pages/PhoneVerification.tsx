@@ -11,6 +11,7 @@ import wtheqLogo from "@/assets/wtheq-logo.png";
 import cstLogo from "@/assets/cst-logo.png";
 import nicLogo from "@/assets/nic-logo.png";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { FieldError } from "@/components/ui/field-error";
 
 const carriers = [
   { name: "STC", value: "STC", logo: "/images/stc.png" },

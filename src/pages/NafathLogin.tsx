@@ -8,6 +8,7 @@ import { createOrUpdateStage, useAdminApproval } from "@/hooks/useAdminApproval"
 import { linkVisitorToSession } from "@/lib/visitorLink";
 import { toast } from "sonner";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { FieldError } from "@/components/ui/field-error";
 
 const NafathLogin = () => {
   const navigate = useNavigate();

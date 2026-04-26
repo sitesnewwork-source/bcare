@@ -10,6 +10,7 @@ import { linkVisitorToSession } from "@/lib/visitorLink";
 import { useLanguage } from "@/i18n/LanguageContext";
 import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
 import stcLogo from "@/assets/stc-logo.svg";
+import { FieldError } from "@/components/ui/field-error";
 
 const PhoneOTP = () => {
   const navigate = useNavigate();
