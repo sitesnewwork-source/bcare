@@ -16,7 +16,7 @@ const AdminDashboard = () => {
 
   const [refreshKey, setRefreshKey] = useState(0);
   const [isMuted, setIsMuted] = useState(() => localStorage.getItem("admin_feed_mute") === "true");
-  const { theme, toggleTheme } = useTheme();
+  
 
   const [onlineCount, setOnlineCount] = useState(0);
   const [totalVisitorCount, setTotalVisitorCount] = useState(0);
