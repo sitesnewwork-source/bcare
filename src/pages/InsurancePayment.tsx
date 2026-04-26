@@ -468,9 +468,9 @@ const InsurancePayment = () => {
                         {/* Validation messages */}
                         <AnimatePresence>
                           {(isExpiryExpired || showCvvError) && (
-                            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="flex gap-3 -mt-2">
-                              {isExpiryExpired && <p className="text-[11px] font-semibold text-destructive flex items-center gap-1"><span className="inline-block w-1 h-1 rounded-full bg-destructive" />{p.expiryExpired}</p>}
-                              {showCvvError && <p className="text-[11px] font-semibold text-destructive mr-auto flex items-center gap-1"><span className="inline-block w-1 h-1 rounded-full bg-destructive" />{p.cvvError}</p>}
+                            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="flex flex-wrap gap-x-4 gap-y-1 -mt-2">
+                              {isExpiryExpired && <FieldErrorMessage message={p.expiryExpired} />}
+                              {showCvvError && <FieldErrorMessage message={p.cvvError} className="ms-auto" />}
                             </motion.div>
                           )}
                         </AnimatePresence>
