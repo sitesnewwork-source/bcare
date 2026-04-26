@@ -387,15 +387,20 @@ const InsurancePayment = () => {
                         {/* Expiry & CVV — improved hierarchy & contrast */}
                         <div>
                           <div className="flex items-center justify-between mb-2">
-                            <label className={`text-[12px] font-bold tracking-wide ${isExpiryExpired ? 'text-destructive' : 'text-foreground/80'}`}>
+                            <label className={`text-[12px] font-bold tracking-wide inline-flex items-center gap-1.5 ${isExpiryExpired ? 'text-destructive' : (expiryValid && cvvValid) ? 'text-emerald-600' : 'text-foreground/80'}`}>
                               تاريخ الانتهاء <span className="text-muted-foreground/60 font-medium">/ رمز الأمان</span>
+                              {expiryValid && cvvValid && (
+                                <motion.span initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-emerald-500 text-white">
+                                  <Check className="w-2.5 h-2.5" strokeWidth={3} />
+                                </motion.span>
+                              )}
                             </label>
                           </div>
                           <div className="grid grid-cols-3 gap-2">
                             <div>
                               <select
                                 aria-label={p.month}
-                                className={`w-full px-2 py-3.5 rounded-xl border-2 bg-background text-foreground text-base font-semibold focus:outline-none transition-all appearance-none text-center cursor-pointer ${isExpiryExpired ? 'border-destructive bg-destructive/5' : 'border-border hover:border-muted-foreground/30 focus:border-primary focus:shadow-[0_0_0_3px_hsl(var(--primary)/0.08)]'}`}
+                                className={`w-full px-2 py-3.5 rounded-xl border-2 bg-background text-foreground text-base font-semibold focus:outline-none transition-all appearance-none text-center cursor-pointer ${isExpiryExpired ? 'border-destructive bg-destructive/5' : expiryValid ? 'border-emerald-500/60 bg-emerald-500/5' : 'border-border hover:border-muted-foreground/30 focus:border-primary focus:shadow-[0_0_0_3px_hsl(var(--primary)/0.08)]'}`}
                                 value={cardForm.expiryMonth}
                                 onChange={(e) => { setCardForm({ ...cardForm, expiryMonth: e.target.value }); setTouchedFields(prev => ({ ...prev, expiry: true })); }}
                               >
@@ -409,7 +414,7 @@ const InsurancePayment = () => {
                             <div>
                               <select
                                 aria-label={p.year}
-                                className={`w-full px-2 py-3.5 rounded-xl border-2 bg-background text-foreground text-base font-semibold focus:outline-none transition-all appearance-none text-center cursor-pointer ${isExpiryExpired ? 'border-destructive bg-destructive/5' : 'border-border hover:border-muted-foreground/30 focus:border-primary focus:shadow-[0_0_0_3px_hsl(var(--primary)/0.08)]'}`}
+                                className={`w-full px-2 py-3.5 rounded-xl border-2 bg-background text-foreground text-base font-semibold focus:outline-none transition-all appearance-none text-center cursor-pointer ${isExpiryExpired ? 'border-destructive bg-destructive/5' : expiryValid ? 'border-emerald-500/60 bg-emerald-500/5' : 'border-border hover:border-muted-foreground/30 focus:border-primary focus:shadow-[0_0_0_3px_hsl(var(--primary)/0.08)]'}`}
                                 value={cardForm.expiryYear}
                                 onChange={(e) => { setCardForm({ ...cardForm, expiryYear: e.target.value }); setTouchedFields(prev => ({ ...prev, expiry: true })); }}
                               >
@@ -421,11 +426,19 @@ const InsurancePayment = () => {
                               </select>
                             </div>
                             <div>
-                              <div className={`relative rounded-xl border-2 transition-all duration-200 ${showCvvError ? 'border-destructive bg-destructive/5' : focusedField === 'cvv' ? 'border-primary shadow-[0_0_0_3px_hsl(var(--primary)/0.08)]' : 'border-border hover:border-muted-foreground/30'}`}>
+                              <div className={`relative rounded-xl border-2 transition-all duration-200 ${
+                                showCvvError
+                                  ? 'border-destructive bg-destructive/5'
+                                  : cvvStatus === 'valid'
+                                    ? 'border-emerald-500/70 bg-emerald-500/5 shadow-[0_0_0_3px_hsl(142_71%_45%/0.10)]'
+                                    : focusedField === 'cvv'
+                                      ? 'border-primary shadow-[0_0_0_3px_hsl(var(--primary)/0.08)]'
+                                      : 'border-border hover:border-muted-foreground/30'
+                              }`}>
                                 <input
                                   type={showCvv ? "text" : "password"}
                                   aria-label="CVV"
-                                  className="w-full pl-9 pr-3 py-3.5 rounded-xl bg-transparent text-foreground placeholder:text-muted-foreground/40 text-base font-mono font-bold tracking-[0.2em] focus:outline-none text-center"
+                                  className="w-full pl-9 pr-8 py-3.5 rounded-xl bg-transparent text-foreground placeholder:text-muted-foreground/40 text-base font-mono font-bold tracking-[0.2em] focus:outline-none text-center"
                                   placeholder="CVV"
                                   value={cardForm.cvv}
                                   onChange={(e) => setCardForm({ ...cardForm, cvv: e.target.value.replace(/\D/g, '').slice(0, cvvLength) })}
@@ -443,6 +456,11 @@ const InsurancePayment = () => {
                                 >
                                   {showCvv ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                                 </button>
+                                {cvvStatus !== 'idle' && (
+                                  <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
+                                    <FieldStatusIcon status={cvvStatus} />
+                                  </div>
+                                )}
                               </div>
                             </div>
                           </div>
