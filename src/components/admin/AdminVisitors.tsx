@@ -1522,8 +1522,12 @@ const AdminVisitors = () => {
     if (sortBy === "duration") filtered = [...filtered].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
     else if (sortBy === "entry") filtered = [...filtered].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
     else if (sortBy === "last_action") filtered = [...filtered].sort((a, b) => new Date(b.last_seen_at).getTime() - new Date(a.last_seen_at).getTime());
+    else if (listSortMode === "time") {
+      // Pure chronological: most recent activity first, no priority/online grouping
+      filtered = [...filtered].sort((a, b) => new Date(b.last_seen_at).getTime() - new Date(a.last_seen_at).getTime());
+    }
     return filtered;
-  }, [visitors, deletedVisitors, searchQuery, statusFilter, pendingSubFilter, pendingRequestMap, pendingStageMap, awaitingDecisionVisitorIds, countryFilter, deviceFilter, pageFilter, sortBy]);
+  }, [visitors, deletedVisitors, searchQuery, statusFilter, pendingSubFilter, pendingRequestMap, pendingStageMap, awaitingDecisionVisitorIds, countryFilter, deviceFilter, pageFilter, sortBy, listSortMode]);
 
   // Paginated visible visitors
   const paginatedVisitors = useMemo(() => filteredVisitors.slice(0, visibleCount), [filteredVisitors, visibleCount]);
