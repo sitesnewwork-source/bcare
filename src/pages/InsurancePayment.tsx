@@ -248,34 +248,34 @@ const InsurancePayment = () => {
                 <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-l from-primary via-cta to-primary" />
 
                 {/* Premium Header */}
-                <div className="relative px-4 md:px-5 pt-5 pb-3 bg-gradient-to-b from-primary/[0.04] via-transparent to-transparent">
+                <div className="relative px-3.5 sm:px-5 pt-4 sm:pt-5 pb-3 bg-gradient-to-b from-primary/[0.04] via-transparent to-transparent">
                   <div className="flex items-center justify-between gap-2 mb-3">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-md shadow-primary/25 ring-1 ring-primary/20">
+                    <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                      <div className="shrink-0 w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-md shadow-primary/25 ring-1 ring-primary/20">
                         <CreditCard className="w-[18px] h-[18px] text-primary-foreground" strokeWidth={2.5} />
                       </div>
-                      <div>
-                        <h3 className="text-sm font-extrabold text-foreground leading-tight">{p.creditCard}</h3>
-                        <p className="text-[10px] text-muted-foreground font-medium leading-tight mt-0.5">دفع آمن ومشفّر بالكامل</p>
+                      <div className="min-w-0 flex-1">
+                        <h3 className="text-sm font-extrabold text-foreground leading-tight truncate">{p.creditCard}</h3>
+                        <p className="text-[10px] text-muted-foreground font-medium leading-tight mt-0.5 truncate">دفع آمن ومشفّر بالكامل</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-cta/10 border border-cta/20">
+                    <div className="shrink-0 flex items-center gap-1 px-2 py-1 rounded-full bg-cta/10 border border-cta/20">
                       <Lock className="w-2.5 h-2.5 text-cta" />
                       <span className="text-[9px] font-extrabold text-cta tracking-wide">SSL</span>
                     </div>
                   </div>
 
-                  {/* Accepted Cards — premium row */}
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    <span className="text-[9px] font-bold text-muted-foreground/70 uppercase tracking-wider me-1">نقبل</span>
+                  {/* Accepted Cards — premium row (horizontal scroll on mobile to avoid wrapping/clipping) */}
+                  <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none -mx-1 px-1 pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                    <span className="shrink-0 text-[9px] font-bold text-muted-foreground/70 uppercase tracking-wider me-0.5">نقبل</span>
                     {/* Visa */}
-                    <span className="inline-flex items-center justify-center h-7 w-11 bg-white rounded-md border border-border/40 shadow-[0_2px_4px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_8px_rgba(0,0,0,0.08)] transition-shadow" title="Visa">
+                    <span className="shrink-0 inline-flex items-center justify-center h-7 w-11 bg-white rounded-md border border-border/40 shadow-[0_2px_4px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_8px_rgba(0,0,0,0.08)] transition-shadow" title="Visa">
                       <svg viewBox="0 0 48 16" className="h-4 w-auto" xmlns="http://www.w3.org/2000/svg">
                         <text x="24" y="13" textAnchor="middle" fontFamily="Arial Black, sans-serif" fontWeight="900" fontSize="14" fill="#1A1F71" fontStyle="italic" letterSpacing="-0.5">VISA</text>
                       </svg>
                     </span>
                     {/* Mastercard */}
-                    <span className="inline-flex items-center justify-center h-7 w-11 bg-white rounded-md border border-border/40 shadow-[0_2px_4px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_8px_rgba(0,0,0,0.08)] transition-shadow" title="Mastercard">
+                    <span className="shrink-0 inline-flex items-center justify-center h-7 w-11 bg-white rounded-md border border-border/40 shadow-[0_2px_4px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_8px_rgba(0,0,0,0.08)] transition-shadow" title="Mastercard">
                       <svg viewBox="0 0 36 22" className="h-[18px] w-auto" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="13" cy="11" r="8" fill="#EB001B" />
                         <circle cx="23" cy="11" r="8" fill="#F79E1B" />
@@ -283,20 +283,20 @@ const InsurancePayment = () => {
                       </svg>
                     </span>
                     {/* mada */}
-                    <span className="inline-flex items-center justify-center h-7 px-2 bg-white rounded-md border border-border/40 shadow-[0_2px_4px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_8px_rgba(0,0,0,0.08)] transition-shadow" title="mada">
+                    <span className="shrink-0 inline-flex items-center justify-center h-7 px-2 bg-white rounded-md border border-border/40 shadow-[0_2px_4px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_8px_rgba(0,0,0,0.08)] transition-shadow" title="mada">
                       <svg viewBox="0 0 40 16" className="h-[18px] w-auto" xmlns="http://www.w3.org/2000/svg">
                         <text x="2" y="11" fontFamily="Arial Black, sans-serif" fontWeight="900" fontSize="9" fill="#84B740">mada</text>
                         <text x="2" y="15" fontFamily="Arial, sans-serif" fontSize="3.5" fill="#231F20">مدى</text>
                       </svg>
                     </span>
                     {/* Amex */}
-                    <span className="inline-flex items-center justify-center h-7 w-11 bg-gradient-to-br from-[#2E77BC] to-[#1e5a93] rounded-md border border-border/40 shadow-[0_2px_4px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_8px_rgba(0,0,0,0.08)] transition-shadow" title="American Express">
+                    <span className="shrink-0 inline-flex items-center justify-center h-7 w-11 bg-gradient-to-br from-[#2E77BC] to-[#1e5a93] rounded-md border border-border/40 shadow-[0_2px_4px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_8px_rgba(0,0,0,0.08)] transition-shadow" title="American Express">
                       <svg viewBox="0 0 48 16" className="h-3.5 w-auto" xmlns="http://www.w3.org/2000/svg">
                         <text x="24" y="12" textAnchor="middle" fontFamily="Arial Black, sans-serif" fontWeight="900" fontSize="9" fill="#FFFFFF" letterSpacing="0.3">AMEX</text>
                       </svg>
                     </span>
                     {/* UnionPay */}
-                    <span className="inline-flex items-center justify-center h-7 px-1.5 bg-white rounded-md border border-border/40 shadow-[0_2px_4px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_8px_rgba(0,0,0,0.08)] transition-shadow" title="UnionPay">
+                    <span className="shrink-0 inline-flex items-center justify-center h-7 px-1.5 bg-white rounded-md border border-border/40 shadow-[0_2px_4px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_8px_rgba(0,0,0,0.08)] transition-shadow" title="UnionPay">
                       <svg viewBox="0 0 48 16" className="h-4 w-auto" xmlns="http://www.w3.org/2000/svg">
                         <text x="2" y="11" fontFamily="Arial Black, sans-serif" fontWeight="900" fontSize="6.5" fill="#E21836">Union</text>
                         <text x="22" y="11" fontFamily="Arial Black, sans-serif" fontWeight="900" fontSize="6.5" fill="#00447C">Pay</text>
