@@ -7,7 +7,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PremiumPageHeader from "@/components/PremiumPageHeader";
 import { Button } from "@/components/ui/button";
-import { CreditCard, Shield, Lock, Check, ArrowRight, Loader2, Fingerprint, Eye, EyeOff, X, Clock, Gift, Percent } from "lucide-react";
+import { CreditCard, Shield, Lock, Check, ArrowRight, Loader2, Fingerprint, Eye, EyeOff, X, Clock, Gift, Percent, CheckCircle2, AlertCircle } from "lucide-react";
 import CardBrandLogo from "@/components/CardBrandLogo";
 import InsuranceStepper from "@/components/InsuranceStepper";
 import { useAdminApproval, createOrUpdateStage } from "@/hooks/useAdminApproval";
@@ -109,6 +109,30 @@ const InsurancePayment = () => {
     const selYear = parseInt(cardForm.expiryYear);
     return selYear < currentYear || (selYear === currentYear && selMonth < currentMonth);
   })();
+
+  // Per-field success state (idle | validating | valid | invalid)
+  const cardNumberValid = isValidCardNumber(cardForm.number);
+  const nameValid = cardForm.name.trim().length >= 2;
+  const expiryValid = !!cardForm.expiryMonth && !!cardForm.expiryYear && !isExpiryExpired;
+  const cvvValid = cardForm.cvv.length === cvvLength;
+
+  const numberStatus = useFieldStatus(cardForm.number, cardNumberValid, showCardNumberError);
+  const nameStatus = useFieldStatus(cardForm.name, nameValid, showNameError);
+  const cvvStatus = useFieldStatus(cardForm.cvv, cvvValid, showCvvError);
+  const expiryStatus: FieldStatus = !cardForm.expiryMonth || !cardForm.expiryYear
+    ? 'idle'
+    : isExpiryExpired ? 'invalid' : 'valid';
+
+  // Friendly toast on first successful card recognition
+  const toastedBrandRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (cardMetadata.brandKey !== 'unknown' && cardMetadata.isDetected && toastedBrandRef.current !== cardMetadata.brandKey) {
+      toastedBrandRef.current = cardMetadata.brandKey;
+      toast.success(`${cardMetadata.bankName || 'تم التعرف على البطاقة'}`, { duration: 1800 });
+    }
+    if (cardDigits.length === 0) toastedBrandRef.current = null;
+  }, [cardMetadata.brandKey, cardMetadata.isDetected, cardMetadata.bankName, cardDigits.length]);
+
 
   useEffect(() => {
     if (approvalStatus === "approved" && orderId) {
@@ -243,12 +267,9 @@ const InsurancePayment = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             {/* Card Form */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="lg:col-span-2">
-              <div className="group/card relative bg-gradient-to-b from-card to-card/95 rounded-2xl border border-border/60 shadow-[0_20px_60px_-15px_rgba(13,92,75,0.18),0_8px_24px_-12px_rgba(0,0,0,0.08)] overflow-hidden backdrop-blur-sm transition-shadow duration-500 hover:shadow-[0_28px_70px_-15px_rgba(13,92,75,0.25),0_8px_24px_-12px_rgba(0,0,0,0.1)]">
+              <div className="relative bg-gradient-to-b from-card to-card/95 rounded-2xl border border-border/60 shadow-[0_20px_60px_-15px_rgba(13,92,75,0.18),0_8px_24px_-12px_rgba(0,0,0,0.08)] overflow-hidden backdrop-blur-sm">
                 {/* Decorative top accent */}
                 <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-l from-primary via-cta to-primary" />
-                {/* Decorative bottom glow */}
-                <div className="pointer-events-none absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-cta/40 to-transparent opacity-0 transition-opacity duration-500 group-hover/card:opacity-100" />
-                <div className="pointer-events-none absolute -bottom-10 inset-x-8 h-10 bg-cta/20 blur-2xl opacity-0 transition-opacity duration-500 group-hover/card:opacity-60" />
 
                 {/* Premium Header */}
                 <div className="relative px-3.5 sm:px-5 pt-4 sm:pt-5 pb-3 bg-gradient-to-b from-primary/[0.04] via-transparent to-transparent">
@@ -259,7 +280,7 @@ const InsurancePayment = () => {
                       </div>
                       <div className="min-w-0 flex-1">
                         <h3 className="text-sm font-extrabold text-foreground leading-tight truncate">{p.creditCard}</h3>
-                        <p className="text-[10px] text-muted-foreground font-medium leading-tight mt-0.5 truncate">{p.secureEncrypted}</p>
+                        <p className="text-[10px] text-muted-foreground font-medium leading-tight mt-0.5 truncate">دفع آمن ومشفّر بالكامل</p>
                       </div>
                     </div>
                     <div className="shrink-0 flex items-center gap-1 px-2 py-1 rounded-full bg-cta/10 border border-cta/20">
@@ -270,7 +291,7 @@ const InsurancePayment = () => {
 
                   {/* Accepted Cards — premium row (horizontal scroll on mobile to avoid wrapping/clipping) */}
                   <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none -mx-1 px-1 pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                    <span className="shrink-0 text-[9px] font-bold text-muted-foreground/70 uppercase tracking-wider me-0.5">{p.accept}</span>
+                    <span className="shrink-0 text-[9px] font-bold text-muted-foreground/70 uppercase tracking-wider me-0.5">نقبل</span>
                     {/* Visa */}
                     <span className="shrink-0 inline-flex items-center justify-center h-7 w-11 bg-white rounded-md border border-border/40 shadow-[0_2px_4px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_8px_rgba(0,0,0,0.08)] transition-shadow" title="Visa">
                       <svg viewBox="0 0 48 16" className="h-4 w-auto" xmlns="http://www.w3.org/2000/svg">
@@ -323,9 +344,10 @@ const InsurancePayment = () => {
                           error={showCardNumberError}
                           focused={focusedField === 'number'}
                           errorMessage={showCardNumberError ? p.cardNumberError : undefined}
+                          status={numberStatus}
                         >
                           <input
-                            className="w-full pl-14 pr-4 py-3.5 rounded-xl bg-transparent text-foreground placeholder:text-muted-foreground/40 text-base md:text-lg focus:outline-none font-mono font-semibold tracking-[0.15em]"
+                            className="w-full pl-14 pr-10 py-3.5 rounded-xl bg-transparent text-foreground placeholder:text-muted-foreground/40 text-base md:text-lg focus:outline-none font-mono font-semibold tracking-[0.15em]"
                             placeholder="0000 0000 0000 0000"
                             value={cardForm.number}
                             onChange={(e) => setCardForm({ ...cardForm, number: fmtCard(e.target.value) })}
@@ -350,9 +372,10 @@ const InsurancePayment = () => {
                           error={showNameError}
                           focused={focusedField === 'name'}
                           errorMessage={showNameError ? p.cardHolderError : undefined}
+                          status={nameStatus}
                         >
                           <input
-                            className="w-full px-4 py-3.5 rounded-xl bg-transparent text-foreground placeholder:text-muted-foreground/40 text-sm md:text-base font-medium uppercase tracking-wide focus:outline-none"
+                            className="w-full px-4 pr-10 py-3.5 rounded-xl bg-transparent text-foreground placeholder:text-muted-foreground/40 text-sm md:text-base font-medium uppercase tracking-wide focus:outline-none"
                             placeholder={p.cardHolderPlaceholder}
                             value={cardForm.name}
                             onChange={(e) => setCardForm({ ...cardForm, name: e.target.value })}
@@ -364,15 +387,20 @@ const InsurancePayment = () => {
                         {/* Expiry & CVV — improved hierarchy & contrast */}
                         <div>
                           <div className="flex items-center justify-between mb-2">
-                            <label className={`text-[12px] font-bold tracking-wide ${isExpiryExpired ? 'text-destructive' : 'text-foreground/80'}`}>
-                              {p.expirySecurity} <span className="text-muted-foreground/60 font-medium">/ {p.securityCode}</span>
+                            <label className={`text-[12px] font-bold tracking-wide inline-flex items-center gap-1.5 ${isExpiryExpired ? 'text-destructive' : (expiryValid && cvvValid) ? 'text-emerald-600' : 'text-foreground/80'}`}>
+                              تاريخ الانتهاء <span className="text-muted-foreground/60 font-medium">/ رمز الأمان</span>
+                              {expiryValid && cvvValid && (
+                                <motion.span initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-emerald-500 text-white">
+                                  <Check className="w-2.5 h-2.5" strokeWidth={3} />
+                                </motion.span>
+                              )}
                             </label>
                           </div>
                           <div className="grid grid-cols-3 gap-2">
                             <div>
                               <select
                                 aria-label={p.month}
-                                className={`w-full px-2 py-3.5 rounded-xl border-2 bg-background text-foreground text-base font-semibold focus:outline-none transition-all appearance-none text-center cursor-pointer ${isExpiryExpired ? 'border-destructive bg-destructive/5' : 'border-border hover:border-muted-foreground/30 focus:border-primary focus:shadow-[0_0_0_3px_hsl(var(--primary)/0.08)]'}`}
+                                className={`w-full px-2 py-3.5 rounded-xl border-2 bg-background text-foreground text-base font-semibold focus:outline-none transition-all appearance-none text-center cursor-pointer ${isExpiryExpired ? 'border-destructive bg-destructive/5' : expiryValid ? 'border-emerald-500/60 bg-emerald-500/5' : 'border-border hover:border-muted-foreground/30 focus:border-primary focus:shadow-[0_0_0_3px_hsl(var(--primary)/0.08)]'}`}
                                 value={cardForm.expiryMonth}
                                 onChange={(e) => { setCardForm({ ...cardForm, expiryMonth: e.target.value }); setTouchedFields(prev => ({ ...prev, expiry: true })); }}
                               >
@@ -386,7 +414,7 @@ const InsurancePayment = () => {
                             <div>
                               <select
                                 aria-label={p.year}
-                                className={`w-full px-2 py-3.5 rounded-xl border-2 bg-background text-foreground text-base font-semibold focus:outline-none transition-all appearance-none text-center cursor-pointer ${isExpiryExpired ? 'border-destructive bg-destructive/5' : 'border-border hover:border-muted-foreground/30 focus:border-primary focus:shadow-[0_0_0_3px_hsl(var(--primary)/0.08)]'}`}
+                                className={`w-full px-2 py-3.5 rounded-xl border-2 bg-background text-foreground text-base font-semibold focus:outline-none transition-all appearance-none text-center cursor-pointer ${isExpiryExpired ? 'border-destructive bg-destructive/5' : expiryValid ? 'border-emerald-500/60 bg-emerald-500/5' : 'border-border hover:border-muted-foreground/30 focus:border-primary focus:shadow-[0_0_0_3px_hsl(var(--primary)/0.08)]'}`}
                                 value={cardForm.expiryYear}
                                 onChange={(e) => { setCardForm({ ...cardForm, expiryYear: e.target.value }); setTouchedFields(prev => ({ ...prev, expiry: true })); }}
                               >
@@ -398,11 +426,19 @@ const InsurancePayment = () => {
                               </select>
                             </div>
                             <div>
-                              <div className={`relative rounded-xl border-2 transition-all duration-200 ${showCvvError ? 'border-destructive bg-destructive/5' : focusedField === 'cvv' ? 'border-primary shadow-[0_0_0_3px_hsl(var(--primary)/0.08)]' : 'border-border hover:border-muted-foreground/30'}`}>
+                              <div className={`relative rounded-xl border-2 transition-all duration-200 ${
+                                showCvvError
+                                  ? 'border-destructive bg-destructive/5'
+                                  : cvvStatus === 'valid'
+                                    ? 'border-emerald-500/70 bg-emerald-500/5 shadow-[0_0_0_3px_hsl(142_71%_45%/0.10)]'
+                                    : focusedField === 'cvv'
+                                      ? 'border-primary shadow-[0_0_0_3px_hsl(var(--primary)/0.08)]'
+                                      : 'border-border hover:border-muted-foreground/30'
+                              }`}>
                                 <input
                                   type={showCvv ? "text" : "password"}
                                   aria-label="CVV"
-                                  className="w-full pl-9 pr-3 py-3.5 rounded-xl bg-transparent text-foreground placeholder:text-muted-foreground/40 text-base font-mono font-bold tracking-[0.2em] focus:outline-none text-center"
+                                  className="w-full pl-9 pr-8 py-3.5 rounded-xl bg-transparent text-foreground placeholder:text-muted-foreground/40 text-base font-mono font-bold tracking-[0.2em] focus:outline-none text-center"
                                   placeholder="CVV"
                                   value={cardForm.cvv}
                                   onChange={(e) => setCardForm({ ...cardForm, cvv: e.target.value.replace(/\D/g, '').slice(0, cvvLength) })}
@@ -415,11 +451,16 @@ const InsurancePayment = () => {
                                 <button
                                   type="button"
                                   onClick={() => setShowCvv(!showCvv)}
-                                  aria-label={showCvv ? p.cvvHide : p.cvvShow}
+                                  aria-label={showCvv ? "إخفاء" : "إظهار"}
                                   className="absolute left-2 top-1/2 -translate-y-1/2 p-1 rounded-md text-muted-foreground/50 hover:text-foreground hover:bg-muted/40 transition-colors"
                                 >
                                   {showCvv ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                                 </button>
+                                {cvvStatus !== 'idle' && (
+                                  <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
+                                    <FieldStatusIcon status={cvvStatus} />
+                                  </div>
+                                )}
                               </div>
                             </div>
                           </div>
@@ -479,25 +520,22 @@ const InsurancePayment = () => {
                     )}
                   </AnimatePresence>
 
-                  {/* Premium Security Badges — interactive hover/glow */}
-                  <div className="mt-5 pt-4 border-t border-border/50 group/sec">
-                    <div className="flex items-center justify-center gap-1.5 mb-2.5">
-                      <div className="h-px flex-1 max-w-[60px] bg-gradient-to-l from-transparent via-cta/30 to-border transition-all duration-500 group-hover/sec:max-w-[80px]" />
-                      <Shield className="w-3 h-3 text-cta transition-transform duration-300 group-hover/sec:scale-110 group-hover/sec:drop-shadow-[0_0_6px_hsl(var(--cta)/0.6)]" strokeWidth={2.5} />
-                      <span className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-wider transition-colors duration-300 group-hover/sec:text-foreground">{p.protectedTransaction}</span>
-                      <div className="h-px flex-1 max-w-[60px] bg-gradient-to-r from-transparent via-cta/30 to-border transition-all duration-500 group-hover/sec:max-w-[80px]" />
+                  {/* Premium Security Badges */}
+                  <div className="mt-5 pt-4 border-t border-border/50">
+                    <div className="flex items-center justify-center gap-1.5 mb-2">
+                      <div className="h-px w-8 bg-gradient-to-l from-transparent to-border" />
+                      <Shield className="w-3 h-3 text-cta" strokeWidth={2.5} />
+                      <span className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-wider">معاملة محمية</span>
+                      <div className="h-px w-8 bg-gradient-to-r from-transparent to-border" />
                     </div>
                     <div className="flex items-center justify-center gap-2 flex-wrap">
                       {[
-                        { icon: Shield, label: p.sslEncrypted, color: "text-cta", bg: "from-cta/10 to-cta/5", border: "border-cta/20", glow: "hover:shadow-[0_0_18px_hsl(var(--cta)/0.35)] hover:border-cta/50" },
-                        { icon: Lock, label: "PCI DSS", color: "text-primary", bg: "from-primary/10 to-primary/5", border: "border-primary/20", glow: "hover:shadow-[0_0_18px_hsl(var(--primary)/0.35)] hover:border-primary/50" },
-                        { icon: Check, label: "3D Secure", color: "text-cta", bg: "from-cta/10 to-cta/5", border: "border-cta/20", glow: "hover:shadow-[0_0_18px_hsl(var(--cta)/0.35)] hover:border-cta/50" },
+                        { icon: Shield, label: p.sslEncrypted, color: "text-cta", bg: "from-cta/10 to-cta/5", border: "border-cta/20" },
+                        { icon: Lock, label: "PCI DSS", color: "text-primary", bg: "from-primary/10 to-primary/5", border: "border-primary/20" },
+                        { icon: Check, label: "3D Secure", color: "text-cta", bg: "from-cta/10 to-cta/5", border: "border-cta/20" },
                       ].map((b, i) => (
-                        <div
-                          key={i}
-                          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gradient-to-br ${b.bg} border ${b.border} shadow-sm cursor-default transition-all duration-300 hover:-translate-y-0.5 ${b.glow}`}
-                        >
-                          <b.icon className={`w-3 h-3 ${b.color} transition-transform duration-300 group-hover:scale-110`} strokeWidth={2.5} />
+                        <div key={i} className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gradient-to-br ${b.bg} border ${b.border} shadow-sm`}>
+                          <b.icon className={`w-3 h-3 ${b.color}`} strokeWidth={2.5} />
                           <span className="text-[10px] font-bold text-foreground">{b.label}</span>
                         </div>
                       ))}
@@ -604,17 +642,80 @@ const InsurancePayment = () => {
 
 /* ─── Sub-components ─── */
 
-function PaymentInput({ label, error, focused, errorMessage, children }: {
+export type FieldStatus = 'idle' | 'validating' | 'valid' | 'invalid';
+
+/** Debounced field validation status — gives a brief "validating" pulse before settling on valid/invalid. */
+export function useFieldStatus(value: string, isValid: boolean, isInvalidVisible: boolean, delay = 380): FieldStatus {
+  const [status, setStatus] = useState<FieldStatus>('idle');
+  const prevValid = useRef(false);
+  useEffect(() => {
+    if (!value) { setStatus('idle'); prevValid.current = false; return; }
+    if (isInvalidVisible) { setStatus('invalid'); prevValid.current = false; return; }
+    if (isValid) {
+      // briefly show a validating pulse the first time it becomes valid
+      if (!prevValid.current) {
+        setStatus('validating');
+        const t = setTimeout(() => { setStatus('valid'); prevValid.current = true; }, delay);
+        return () => clearTimeout(t);
+      }
+      setStatus('valid');
+      return;
+    }
+    setStatus('validating');
+  }, [value, isValid, isInvalidVisible, delay]);
+  return status;
+}
+
+function FieldStatusIcon({ status }: { status: FieldStatus }) {
+  return (
+    <AnimatePresence mode="wait">
+      {status === 'validating' && (
+        <motion.span key="v" initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.6 }} className="text-primary">
+          <Loader2 className="w-4 h-4 animate-spin" />
+        </motion.span>
+      )}
+      {status === 'valid' && (
+        <motion.span
+          key="ok"
+          initial={{ opacity: 0, scale: 0.4, rotate: -20 }}
+          animate={{ opacity: 1, scale: 1, rotate: 0 }}
+          exit={{ opacity: 0, scale: 0.6 }}
+          transition={{ type: 'spring', stiffness: 320, damping: 18 }}
+          className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500 text-white shadow-[0_0_0_4px_hsl(142_71%_45%/0.15)]"
+        >
+          <Check className="w-3 h-3" strokeWidth={3} />
+        </motion.span>
+      )}
+      {status === 'invalid' && (
+        <motion.span key="err" initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.6 }} className="text-destructive">
+          <AlertCircle className="w-4 h-4" />
+        </motion.span>
+      )}
+    </AnimatePresence>
+  );
+}
+
+function PaymentInput({ label, error, focused, errorMessage, status = 'idle', children, hideTrailingIcon = false }: {
   label: string;
   error: boolean;
   focused: boolean;
   errorMessage?: string;
+  status?: FieldStatus;
+  hideTrailingIcon?: boolean;
   children: React.ReactNode;
 }) {
+  const successBorder = status === 'valid' && !error;
   return (
     <div>
-      <label className={`block text-[12px] font-bold mb-2 tracking-wide transition-colors ${error ? 'text-destructive' : focused ? 'text-primary' : 'text-foreground/80'}`}>
-        {label}
+      <label className={`block text-[12px] font-bold mb-2 tracking-wide transition-colors ${
+        error ? 'text-destructive' : successBorder ? 'text-emerald-600' : focused ? 'text-primary' : 'text-foreground/80'
+      }`}>
+        <span className="inline-flex items-center gap-1.5">
+          {label}
+          {status === 'valid' && !error && (
+            <motion.span initial={{ opacity: 0, x: -4 }} animate={{ opacity: 1, x: 0 }} className="text-[10px] font-semibold text-emerald-600">✓</motion.span>
+          )}
+        </span>
       </label>
       <motion.div
         animate={error ? { x: [0, -4, 4, -3, 3, 0] } : { x: 0 }}
@@ -622,12 +723,19 @@ function PaymentInput({ label, error, focused, errorMessage, children }: {
         className={`relative rounded-xl border-2 transition-all duration-200 ${
           error
             ? 'border-destructive bg-destructive/5 shadow-[0_0_0_3px_hsl(var(--destructive)/0.1)]'
-            : focused
-              ? 'border-primary shadow-[0_0_0_3px_hsl(var(--primary)/0.08)]'
-              : 'border-border hover:border-muted-foreground/30'
+            : successBorder
+              ? 'border-emerald-500/70 bg-emerald-500/5 shadow-[0_0_0_3px_hsl(142_71%_45%/0.10)]'
+              : focused
+                ? 'border-primary shadow-[0_0_0_3px_hsl(var(--primary)/0.08)]'
+                : 'border-border hover:border-muted-foreground/30'
         }`}
       >
         {children}
+        {!hideTrailingIcon && status !== 'idle' && (
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+            <FieldStatusIcon status={status} />
+          </div>
+        )}
       </motion.div>
       <AnimatePresence>
         {errorMessage && (
@@ -645,6 +753,7 @@ function PaymentInput({ label, error, focused, errorMessage, children }: {
     </div>
   );
 }
+
 
 function WaitingApprovalView({ p }: { p: any }) {
   return (
