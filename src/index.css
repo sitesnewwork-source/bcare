@@ -228,3 +228,9 @@ body {
     }
   }
 }
+/* Unify all form field corners to 5px across the entire site */
+input:not([type="checkbox"]):not([type="radio"]),
+select,
+textarea {
+  border-radius: 5px !important;
+}
