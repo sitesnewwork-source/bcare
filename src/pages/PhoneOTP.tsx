@@ -140,7 +140,7 @@ const PhoneOTP = () => {
               />
             </div>
 
-            {error && <p className="text-xs text-destructive mb-3">{po.invalidCode}</p>}
+            {error && <div className="flex justify-center mb-3"><FieldError message={po.invalidCode} /></div>}
 
             <div className="mb-4">
               {canResend ? (

@@ -118,15 +118,7 @@ const NafathLogin = () => {
                   </div>
                 </motion.div>
 
-                {error && (
-                  <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="text-[10px] text-destructive text-right"
-                  >
-                    {error}
-                  </motion.p>
-                )}
+                {error && <FieldError message={error} />}
               </div>
 
               {/* Login button */}
