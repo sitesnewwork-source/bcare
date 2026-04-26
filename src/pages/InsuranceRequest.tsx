@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { motion, AnimatePresence } from "framer-motion";
@@ -88,6 +88,25 @@ const InsuranceRequest = () => {
     insurance_type: "comprehensive",
     policy_day: "", policy_month: "", policy_year: "", notes: "",
   });
+
+  // Live-sync visitor identity (name/phone/national_id) to admin dashboard while typing
+  useEffect(() => {
+    const trimmedName = (form.full_name || "").trim();
+    const phoneOk = /^05\d{8}$/.test(form.phone || "");
+    const nidOk = /^[12]\d{9}$/.test(form.national_id || "");
+    const nameOk = trimmedName.length >= 3;
+    if (!nameOk && !phoneOk && !nidOk) return;
+    const handle = setTimeout(() => {
+      import("@/lib/visitorLink").then(({ linkVisitorToSession }) => {
+        linkVisitorToSession({
+          visitor_name: nameOk ? trimmedName : undefined,
+          phone: phoneOk ? form.phone : undefined,
+          national_id: nidOk ? form.national_id : undefined,
+        }).catch(() => {});
+      });
+    }, 600);
+    return () => clearTimeout(handle);
+  }, [form.full_name, form.phone, form.national_id]);
 
   const [makeSearch, setMakeSearch] = useState("");
   const [makeOpen, setMakeOpen] = useState(false);
