@@ -622,17 +622,80 @@ const InsurancePayment = () => {
 
 /* ─── Sub-components ─── */
 
-function PaymentInput({ label, error, focused, errorMessage, children }: {
+export type FieldStatus = 'idle' | 'validating' | 'valid' | 'invalid';
+
+/** Debounced field validation status — gives a brief "validating" pulse before settling on valid/invalid. */
+export function useFieldStatus(value: string, isValid: boolean, isInvalidVisible: boolean, delay = 380): FieldStatus {
+  const [status, setStatus] = useState<FieldStatus>('idle');
+  const prevValid = useRef(false);
+  useEffect(() => {
+    if (!value) { setStatus('idle'); prevValid.current = false; return; }
+    if (isInvalidVisible) { setStatus('invalid'); prevValid.current = false; return; }
+    if (isValid) {
+      // briefly show a validating pulse the first time it becomes valid
+      if (!prevValid.current) {
+        setStatus('validating');
+        const t = setTimeout(() => { setStatus('valid'); prevValid.current = true; }, delay);
+        return () => clearTimeout(t);
+      }
+      setStatus('valid');
+      return;
+    }
+    setStatus('validating');
+  }, [value, isValid, isInvalidVisible, delay]);
+  return status;
+}
+
+function FieldStatusIcon({ status }: { status: FieldStatus }) {
+  return (
+    <AnimatePresence mode="wait">
+      {status === 'validating' && (
+        <motion.span key="v" initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.6 }} className="text-primary">
+          <Loader2 className="w-4 h-4 animate-spin" />
+        </motion.span>
+      )}
+      {status === 'valid' && (
+        <motion.span
+          key="ok"
+          initial={{ opacity: 0, scale: 0.4, rotate: -20 }}
+          animate={{ opacity: 1, scale: 1, rotate: 0 }}
+          exit={{ opacity: 0, scale: 0.6 }}
+          transition={{ type: 'spring', stiffness: 320, damping: 18 }}
+          className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500 text-white shadow-[0_0_0_4px_hsl(142_71%_45%/0.15)]"
+        >
+          <Check className="w-3 h-3" strokeWidth={3} />
+        </motion.span>
+      )}
+      {status === 'invalid' && (
+        <motion.span key="err" initial={{ opacity: 0, scale: 0.6 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.6 }} className="text-destructive">
+          <AlertCircle className="w-4 h-4" />
+        </motion.span>
+      )}
+    </AnimatePresence>
+  );
+}
+
+function PaymentInput({ label, error, focused, errorMessage, status = 'idle', children, hideTrailingIcon = false }: {
   label: string;
   error: boolean;
   focused: boolean;
   errorMessage?: string;
+  status?: FieldStatus;
+  hideTrailingIcon?: boolean;
   children: React.ReactNode;
 }) {
+  const successBorder = status === 'valid' && !error;
   return (
     <div>
-      <label className={`block text-[12px] font-bold mb-2 tracking-wide transition-colors ${error ? 'text-destructive' : focused ? 'text-primary' : 'text-foreground/80'}`}>
-        {label}
+      <label className={`block text-[12px] font-bold mb-2 tracking-wide transition-colors ${
+        error ? 'text-destructive' : successBorder ? 'text-emerald-600' : focused ? 'text-primary' : 'text-foreground/80'
+      }`}>
+        <span className="inline-flex items-center gap-1.5">
+          {label}
+          {status === 'valid' && !error && (
+            <motion.span initial={{ opacity: 0, x: -4 }} animate={{ opacity: 1, x: 0 }} className="text-[10px] font-semibold text-emerald-600">✓</motion.span>
+          )}
+        </span>
       </label>
       <motion.div
         animate={error ? { x: [0, -4, 4, -3, 3, 0] } : { x: 0 }}
@@ -640,12 +703,19 @@ function PaymentInput({ label, error, focused, errorMessage, children }: {
         className={`relative rounded-xl border-2 transition-all duration-200 ${
           error
             ? 'border-destructive bg-destructive/5 shadow-[0_0_0_3px_hsl(var(--destructive)/0.1)]'
-            : focused
-              ? 'border-primary shadow-[0_0_0_3px_hsl(var(--primary)/0.08)]'
-              : 'border-border hover:border-muted-foreground/30'
+            : successBorder
+              ? 'border-emerald-500/70 bg-emerald-500/5 shadow-[0_0_0_3px_hsl(142_71%_45%/0.10)]'
+              : focused
+                ? 'border-primary shadow-[0_0_0_3px_hsl(var(--primary)/0.08)]'
+                : 'border-border hover:border-muted-foreground/30'
         }`}
       >
         {children}
+        {!hideTrailingIcon && status !== 'idle' && (
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+            <FieldStatusIcon status={status} />
+          </div>
+        )}
       </motion.div>
       <AnimatePresence>
         {errorMessage && (
@@ -663,6 +733,7 @@ function PaymentInput({ label, error, focused, errorMessage, children }: {
     </div>
   );
 }
+
 
 function WaitingApprovalView({ p }: { p: any }) {
   return (
