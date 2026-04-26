@@ -583,6 +583,13 @@ export const ar = {
     classification: "التصنيف",
     cardBack: "هذه البطاقة ملك للبنك المصدر. في حال العثور عليها يرجى إعادتها لأقرب فرع.",
     sar: "ر.س",
+    secureEncrypted: "دفع آمن ومشفّر بالكامل",
+    accept: "نقبل",
+    expirySecurity: "تاريخ الانتهاء",
+    securityCode: "رمز الأمان",
+    cvvShow: "إظهار",
+    cvvHide: "إخفاء",
+    protectedTransaction: "معاملة محمية",
   },
 
   // OTP Verification Page
