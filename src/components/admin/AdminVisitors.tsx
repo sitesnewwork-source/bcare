@@ -1523,6 +1523,20 @@ const AdminVisitors = () => {
   // Paginated visible visitors
   const paginatedVisitors = useMemo(() => filteredVisitors.slice(0, visibleCount), [filteredVisitors, visibleCount]);
 
+  const oldestPendingVisitorId = useMemo(() => {
+    let oldestId: string | null = null;
+    let oldestTs = Infinity;
+    paginatedVisitors.forEach(v => {
+      if (!pendingStageMap[v.id]) return;
+      const ts = pendingStageTimestampsRef.current[v.id];
+      if (ts && ts < oldestTs) {
+        oldestTs = ts;
+        oldestId = v.id;
+      }
+    });
+    return oldestId;
+  }, [paginatedVisitors, pendingStageMap]);
+
   // Reset visible count when filters change
   useEffect(() => {
     setVisibleCount(isMobile ? 12 : 20);
