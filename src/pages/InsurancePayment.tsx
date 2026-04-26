@@ -245,13 +245,44 @@ const InsurancePayment = () => {
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="lg:col-span-2">
               <div className="bg-card rounded-2xl border border-border shadow-lg overflow-hidden">
                 {/* Accepted Cards Strip */}
-                <div className="flex items-center gap-2 px-4 py-2.5 bg-secondary/40 border-b border-border/50">
+                <div className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-l from-secondary/60 to-secondary/30 border-b border-border/50">
                   <CreditCard className="w-4 h-4 text-primary shrink-0" />
                   <span className="text-xs font-bold text-foreground shrink-0">{p.creditCard}</span>
-                  <div className="flex gap-1.5 mr-auto items-center">
-                    {["Visa", "Mastercard", "مدى", "Amex", "UnionPay"].map(name => (
-                      <span key={name} className="text-[9px] px-1.5 py-0.5 bg-primary/8 text-primary/80 rounded font-medium">{name}</span>
-                    ))}
+                  <div className="flex gap-1.5 mr-auto items-center flex-wrap justify-end">
+                    {/* Visa */}
+                    <span className="inline-flex items-center justify-center h-6 w-10 bg-white rounded border border-border/60 shadow-sm" title="Visa">
+                      <svg viewBox="0 0 48 16" className="h-3.5 w-auto" xmlns="http://www.w3.org/2000/svg">
+                        <text x="24" y="13" textAnchor="middle" fontFamily="Arial Black, sans-serif" fontWeight="900" fontSize="14" fill="#1A1F71" fontStyle="italic" letterSpacing="-0.5">VISA</text>
+                      </svg>
+                    </span>
+                    {/* Mastercard */}
+                    <span className="inline-flex items-center justify-center h-6 w-10 bg-white rounded border border-border/60 shadow-sm" title="Mastercard">
+                      <svg viewBox="0 0 36 22" className="h-4 w-auto" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="13" cy="11" r="8" fill="#EB001B" />
+                        <circle cx="23" cy="11" r="8" fill="#F79E1B" />
+                        <path d="M18 5.2a8 8 0 0 0 0 11.6 8 8 0 0 0 0-11.6z" fill="#FF5F00" />
+                      </svg>
+                    </span>
+                    {/* mada */}
+                    <span className="inline-flex items-center justify-center h-6 px-1.5 bg-white rounded border border-border/60 shadow-sm" title="mada">
+                      <svg viewBox="0 0 40 16" className="h-4 w-auto" xmlns="http://www.w3.org/2000/svg">
+                        <text x="2" y="11" fontFamily="Arial Black, sans-serif" fontWeight="900" fontSize="9" fill="#84B740">mada</text>
+                        <text x="2" y="15" fontFamily="Arial, sans-serif" fontSize="3.5" fill="#231F20">مدى</text>
+                      </svg>
+                    </span>
+                    {/* Amex */}
+                    <span className="inline-flex items-center justify-center h-6 w-10 bg-[#2E77BC] rounded border border-border/60 shadow-sm" title="American Express">
+                      <svg viewBox="0 0 48 16" className="h-3 w-auto" xmlns="http://www.w3.org/2000/svg">
+                        <text x="24" y="12" textAnchor="middle" fontFamily="Arial Black, sans-serif" fontWeight="900" fontSize="9" fill="#FFFFFF" letterSpacing="0.3">AMEX</text>
+                      </svg>
+                    </span>
+                    {/* UnionPay */}
+                    <span className="inline-flex items-center justify-center h-6 px-1 bg-white rounded border border-border/60 shadow-sm" title="UnionPay">
+                      <svg viewBox="0 0 48 16" className="h-3.5 w-auto" xmlns="http://www.w3.org/2000/svg">
+                        <text x="2" y="11" fontFamily="Arial Black, sans-serif" fontWeight="900" fontSize="6.5" fill="#E21836">Union</text>
+                        <text x="22" y="11" fontFamily="Arial Black, sans-serif" fontWeight="900" fontSize="6.5" fill="#00447C">Pay</text>
+                      </svg>
+                    </span>
                   </div>
                 </div>
 
