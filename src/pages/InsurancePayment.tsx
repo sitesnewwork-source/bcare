@@ -349,7 +349,7 @@ const InsurancePayment = () => {
                           errorMessage={showNameError ? p.cardHolderError : undefined}
                         >
                           <input
-                            className="w-full px-4 py-3.5 rounded-xl bg-transparent text-foreground placeholder:text-muted-foreground/60 text-sm focus:outline-none"
+                            className="w-full px-4 py-3.5 rounded-xl bg-transparent text-foreground placeholder:text-muted-foreground/40 text-sm md:text-base font-medium uppercase tracking-wide focus:outline-none"
                             placeholder={p.cardHolderPlaceholder}
                             value={cardForm.name}
                             onChange={(e) => setCardForm({ ...cardForm, name: e.target.value })}
