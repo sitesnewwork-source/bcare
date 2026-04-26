@@ -87,87 +87,239 @@ const InsuranceCheckout = () => {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>بوليصة تأمين - مسودة</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap');
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-   body { font-family: 'Tajawal', sans-serif; background: #fff; color: #1a1a1a; padding: 16px; direction: rtl; max-width: 100vw; overflow-x: hidden; }
-   .header { text-align: center; border-bottom: 3px solid #0d5c4b; padding-bottom: 20px; margin-bottom: 24px; }
-   .logo { font-size: 28px; font-weight: 800; color: #0d5c4b; }
-   .draft-badge { display: inline-block; background: #fff3cd; color: #856404; border: 1px solid #ffc107; border-radius: 8px; padding: 5px 12px; font-size: 12px; font-weight: 700; margin-top: 10px; }
-   .policy-num { font-family: monospace; font-size: 15px; color: #0d5c4b; margin-top: 8px; letter-spacing: 1.5px; word-break: break-all; }
-   .section { margin-bottom: 20px; }
-   .section-title { font-size: 14px; font-weight: 700; color: #0d5c4b; border-bottom: 1px solid #e0e0e0; padding-bottom: 6px; margin-bottom: 10px; }
-   table { width: 100%; border-collapse: collapse; }
-   td { padding: 6px 8px; font-size: 12px; border-bottom: 1px solid #f0f0f0; word-break: break-word; }
-   td:first-child { text-align: left; font-weight: 600; }
-   td:last-child { text-align: right; color: #666; white-space: nowrap; }
-   ul { list-style: none; padding: 0; }
-   li { padding: 5px 0; font-size: 12px; color: #333; }
-   .total-box { background: #f0faf7; border: 2px solid #0d5c4b; border-radius: 12px; padding: 16px; text-align: center; margin: 20px 0; }
-   .total-amount { font-size: 24px; font-weight: 800; color: #0d5c4b; }
-   .total-label { font-size: 12px; color: #666; margin-top: 4px; }
-   .disclaimer { font-size: 10px; color: #999; text-align: center; margin-top: 24px; padding-top: 12px; border-top: 1px solid #e0e0e0; line-height: 1.8; }
-   .print-btn { display: block; margin: 16px auto; padding: 12px 40px; background: #0d5c4b; color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; font-family: 'Tajawal'; cursor: pointer; width: calc(100% - 32px); max-width: 400px; }
-   .print-btn:hover { background: #094438; }
-   .qr-section { text-align: center; margin: 20px 0; padding: 16px; border: 1px solid #e0e0e0; border-radius: 12px; background: #f9f9f9; }
-   .qr-section img { max-width: 120px; height: auto; }
-   @media (min-width: 600px) { body { padding: 40px; } .logo { font-size: 32px; } .policy-num { font-size: 18px; } td { padding: 8px 12px; font-size: 13px; } .total-amount { font-size: 28px; } }
-   @media print { .print-btn { display: none; } }
+  @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body {
+    font-family: 'Tajawal', sans-serif;
+    background: linear-gradient(135deg, #f4f7fa 0%, #e8eef3 100%);
+    color: #1a2332;
+    padding: 0;
+    direction: rtl;
+    min-height: 100vh;
+  }
+  .page {
+    max-width: 820px;
+    margin: 16px auto;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(13, 92, 75, 0.12), 0 4px 16px rgba(0,0,0,0.04);
+    overflow: hidden;
+    position: relative;
+  }
+  .watermark {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) rotate(-30deg);
+    font-size: 140px;
+    font-weight: 900;
+    color: rgba(245, 166, 35, 0.06);
+    pointer-events: none;
+    z-index: 0;
+    white-space: nowrap;
+    letter-spacing: 8px;
+  }
+  .content { position: relative; z-index: 1; }
+  .header {
+    background: linear-gradient(135deg, #0d5c4b 0%, #156d5a 50%, #0a4a3c 100%);
+    color: #fff;
+    padding: 28px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 180px; height: 180px;
+    background: radial-gradient(circle, rgba(245,166,35,0.18) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .header-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; position: relative; }
+  .logo {
+    font-size: 32px; font-weight: 900; letter-spacing: -0.5px;
+    background: #fff; padding: 8px 18px; border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+  .header-meta { text-align: left; font-size: 11px; opacity: 0.92; line-height: 1.7; }
+  .header-meta strong { font-size: 13px; display: block; }
+  .draft-bar {
+    background: linear-gradient(90deg, #fff7e0 0%, #ffeec0 50%, #fff7e0 100%);
+    color: #8a5a00;
+    border-top: 2px dashed #f5a623;
+    border-bottom: 2px dashed #f5a623;
+    padding: 10px 20px;
+    font-size: 12px; font-weight: 800;
+    text-align: center;
+    letter-spacing: 0.5px;
+  }
+  .policy-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 24px; background: #fafbfc; border-bottom: 1px solid #e8edf2;
+    flex-wrap: wrap; gap: 8px;
+  }
+  .policy-bar .label { font-size: 11px; color: #6b7785; font-weight: 600; }
+  .policy-bar .value { font-family: 'Courier New', monospace; font-size: 14px; font-weight: 700; color: #0d5c4b; letter-spacing: 1.5px; }
+  .body { padding: 24px; }
+  .section { margin-bottom: 22px; }
+  .section-title {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 800; color: #0d5c4b;
+    padding: 10px 14px; margin-bottom: 12px;
+    background: linear-gradient(90deg, rgba(13,92,75,0.08) 0%, rgba(13,92,75,0.02) 100%);
+    border-right: 4px solid #0d5c4b;
+    border-radius: 6px;
+  }
+  .section-title .icon {
+    width: 22px; height: 22px; background: #0d5c4b; color: #fff;
+    border-radius: 6px; display: inline-flex; align-items: center; justify-content: center;
+    font-size: 11px;
+  }
+  table { width: 100%; border-collapse: separate; border-spacing: 0; }
+  td { padding: 9px 12px; font-size: 12.5px; border-bottom: 1px solid #f0f3f6; word-break: break-word; }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: #fafbfc; }
+  td:first-child { text-align: left; font-weight: 700; color: #1a2332; }
+  td:last-child { text-align: right; color: #6b7785; font-weight: 600; }
+  ul { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 6px; }
+  li {
+    padding: 8px 12px; font-size: 12px; color: #1a4d3f;
+    background: #f0faf7; border-radius: 6px;
+    border-right: 3px solid #0d5c4b;
+  }
+  .total-box {
+    background: linear-gradient(135deg, #0d5c4b 0%, #156d5a 100%);
+    color: #fff;
+    border-radius: 14px; padding: 22px;
+    text-align: center; margin: 20px 0;
+    box-shadow: 0 8px 24px rgba(13,92,75,0.25);
+    position: relative; overflow: hidden;
+  }
+  .total-box::before {
+    content: '';
+    position: absolute; top: -30px; left: -30px;
+    width: 120px; height: 120px;
+    background: radial-gradient(circle, rgba(245,166,35,0.25) 0%, transparent 70%);
+  }
+  .total-amount { font-size: 32px; font-weight: 900; letter-spacing: -1px; position: relative; }
+  .total-amount .currency { font-size: 16px; opacity: 0.85; margin-right: 4px; }
+  .total-label { font-size: 11px; opacity: 0.9; margin-top: 6px; position: relative; }
+  .qr-section {
+    text-align: center; margin: 20px 0; padding: 20px;
+    border: 2px dashed #0d5c4b; border-radius: 14px;
+    background: #f9fdfb;
+  }
+  .qr-title { font-size: 13px; font-weight: 800; color: #0d5c4b; margin-bottom: 12px; }
+  .qr-section img { max-width: 130px; height: auto; padding: 8px; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .qr-hint { font-size: 10.5px; color: #6b7785; margin-top: 10px; line-height: 1.6; }
+  .footer {
+    background: #1a2332; color: #cdd5dd;
+    padding: 18px 24px; text-align: center;
+    font-size: 10.5px; line-height: 1.8;
+  }
+  .footer .brand { color: #f5a623; font-weight: 800; }
+  .footer-grid { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 12px; }
+  .footer-item { font-size: 10.5px; }
+  .footer-item strong { display: block; color: #fff; font-size: 11px; margin-bottom: 2px; }
+  .print-btn {
+    display: block; margin: 20px auto; padding: 14px 40px;
+    background: linear-gradient(135deg, #0d5c4b 0%, #156d5a 100%);
+    color: #fff; border: none; border-radius: 12px;
+    font-size: 15px; font-weight: 800; font-family: 'Tajawal'; cursor: pointer;
+    width: calc(100% - 32px); max-width: 420px;
+    box-shadow: 0 6px 20px rgba(13,92,75,0.3);
+    transition: transform 0.2s;
+  }
+  .print-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(13,92,75,0.4); }
+  @media (max-width: 599px) {
+    .page { margin: 0; border-radius: 0; }
+    .body { padding: 16px; }
+    .total-amount { font-size: 26px; }
+    .watermark { font-size: 90px; }
+  }
+  @media print {
+    body { background: #fff; padding: 0; }
+    .page { box-shadow: none; margin: 0; max-width: 100%; border-radius: 0; }
+    .print-btn { display: none; }
+  }
 </style>
 </head>
 <body>
-  <div class="header">
-    <div class="logo"><span style="color:#2196a9">B</span><span style="color:#f5a623">Care</span></div>
-    <div class="draft-badge">⚠ مسودة - لأغراض المراجعة فقط</div>
-    <div class="policy-num">${policyNumber}</div>
+<div class="page">
+  <div class="watermark">مسودة • DRAFT</div>
+  <div class="content">
+    <div class="header">
+      <div class="header-row">
+        <div class="logo"><span style="color:#2196a9">B</span><span style="color:#f5a623">Care</span></div>
+        <div class="header-meta">
+          <strong>وثيقة تأمين مركبات</strong>
+          تاريخ الإصدار: ${today}<br>
+          صالحة حتى: ${endDate}
+        </div>
+      </div>
+    </div>
+
+    <div class="draft-bar">⚠ هذه مسودة أولية للمراجعة — غير سارية المفعول حتى إتمام الدفع</div>
+
+    <div class="policy-bar">
+      <div><span class="label">رقم الوثيقة: </span><span class="value">${policyNumber}</span></div>
+      <div><span class="label">المدة: </span><span class="value" style="color:#f5a623">12 شهر</span></div>
+    </div>
+
+    <div class="body">
+      <div class="section">
+        <div class="section-title"><span class="icon">🏢</span>شركة التأمين</div>
+        <table>
+          <tr><td>${offer.company}</td><td>اسم الشركة</td></tr>
+          <tr><td>${offer.type}</td><td>نوع التغطية</td></tr>
+          <tr><td>${today}</td><td>تاريخ بدء التغطية</td></tr>
+          <tr><td>${endDate}</td><td>تاريخ نهاية التغطية</td></tr>
+        </table>
+      </div>
+
+      ${customerRows ? `<div class="section"><div class="section-title"><span class="icon">👤</span>بيانات المؤمّن له</div><table>${customerRows}</table></div>` : ""}
+      ${vehicleRows ? `<div class="section"><div class="section-title"><span class="icon">🚗</span>بيانات المركبة</div><table>${vehicleRows}</table></div>` : ""}
+
+      <div class="section">
+        <div class="section-title"><span class="icon">✓</span>التغطيات المشمولة</div>
+        <ul>${featuresHtml}</ul>
+      </div>
+
+      ${addOnsHtml ? `<div class="section"><div class="section-title"><span class="icon">+</span>الإضافات المختارة</div><table>${addOnsHtml}</table></div>` : ""}
+
+      <div class="section">
+        <div class="section-title"><span class="icon">💰</span>ملخص الأسعار</div>
+        <table>
+          <tr><td style="text-decoration:line-through;color:#999">${offer.originalPrice?.toLocaleString()} ر.س</td><td>السعر الأصلي</td></tr>
+          <tr><td style="color:#0d5c4b;font-weight:800">-${(offer.originalPrice - offer.price)?.toLocaleString()} ر.س</td><td>قيمة الخصم</td></tr>
+          ${offer.addOnsTotal > 0 ? `<tr><td style="color:#f5a623;font-weight:700">+${offer.addOnsTotal?.toLocaleString()} ر.س</td><td>إجمالي الإضافات</td></tr>` : ""}
+        </table>
+      </div>
+
+      <div class="total-box">
+        <div class="total-amount"><span>${(offer.totalPrice || offer.price).toLocaleString()}</span><span class="currency">ر.س</span></div>
+        <div class="total-label">المبلغ الإجمالي شامل ضريبة القيمة المضافة 15%</div>
+      </div>
+
+      <div class="qr-section">
+        <div class="qr-title">🔒 رمز التحقق من صحة الوثيقة</div>
+        <img src="${qrUrl}" alt="QR Code" />
+        <div class="qr-hint">امسح الرمز ضوئياً للتحقق من صحة بيانات الوثيقة<br>أو قم بزيارة موقع بي كير الرسمي</div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="footer-grid">
+        <div class="footer-item"><strong>📞 خدمة العملاء</strong>8001180044</div>
+        <div class="footer-item"><strong>🌐 الموقع</strong>bcare.sa</div>
+        <div class="footer-item"><strong>📧 البريد</strong>info@bcare.sa</div>
+      </div>
+      هذه الوثيقة مسودة أولية لأغراض المراجعة فقط. سيتم إصدار الوثيقة النهائية بعد إتمام عملية الدفع.<br>
+      © ${new Date().getFullYear()} <span class="brand">بي كير BCare</span> — جميع الحقوق محفوظة • مرخصة من البنك المركزي السعودي
+    </div>
   </div>
+</div>
 
-  <div class="section">
-    <div class="section-title">شركة التأمين</div>
-    <table>
-      <tr><td>${offer.company}</td><td>اسم الشركة</td></tr>
-      <tr><td>${offer.type}</td><td>نوع التغطية</td></tr>
-      <tr><td>12 شهر</td><td>مدة التغطية</td></tr>
-      <tr><td>${today}</td><td>تاريخ البدء</td></tr>
-      <tr><td>${endDate}</td><td>تاريخ الانتهاء</td></tr>
-    </table>
-  </div>
-
-  ${customerRows ? `<div class="section"><div class="section-title">بيانات المؤمّن له</div><table>${customerRows}</table></div>` : ""}
-  ${vehicleRows ? `<div class="section"><div class="section-title">بيانات المركبة</div><table>${vehicleRows}</table></div>` : ""}
-
-  <div class="section">
-    <div class="section-title">التغطيات المشمولة</div>
-    <ul>${featuresHtml}</ul>
-  </div>
-
-  ${addOnsHtml ? `<div class="section"><div class="section-title">الإضافات المختارة</div><table>${addOnsHtml}</table></div>` : ""}
-
-  <div class="section">
-    <div class="section-title">ملخص الأسعار</div>
-    <table>
-      <tr><td style="text-decoration:line-through;color:#999">${offer.originalPrice?.toLocaleString()} ر.س</td><td>السعر الأصلي</td></tr>
-      <tr><td style="color:#0d5c4b;font-weight:700">-${(offer.originalPrice - offer.price)?.toLocaleString()} ر.س</td><td>الخصم</td></tr>
-      ${offer.addOnsTotal > 0 ? `<tr><td style="color:#0d5c4b">+${offer.addOnsTotal?.toLocaleString()} ر.س</td><td>خيارات إضافية</td></tr>` : ""}
-    </table>
-  </div>
-
-  <div class="total-box">
-    <div class="total-amount">${(offer.totalPrice || offer.price).toLocaleString()} ر.س</div>
-    <div class="total-label">الإجمالي شامل ضريبة القيمة المضافة 15%</div>
-  </div>
-
-  <div class="qr-section">
-    <p style="font-size:13px;font-weight:700;color:#0d5c4b;margin-bottom:10px">رمز التحقق من البوليصة</p>
-    <img src="${qrUrl}" alt="QR Code" style="margin:0 auto;display:block" width="120" height="120" />
-    <p style="font-size:10px;color:#999;margin-top:8px">امسح الرمز للتحقق من صحة البوليصة</p>
-  </div>
-
-  <div class="disclaimer">
-    هذه البوليصة مسودة أولية لأغراض المراجعة فقط. سيتم إصدار البوليصة النهائية بعد إتمام عملية الدفع والتحقق من جميع البيانات المطلوبة.
-    <br>© ${new Date().getFullYear()} بي كير. جميع الحقوق محفوظة.
-  </div>
-
-  <button class="print-btn" onclick="window.print()">طباعة / حفظ كـ PDF</button>
+<button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ كـ PDF</button>
 </body>
 </html>`;
 
