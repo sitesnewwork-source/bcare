@@ -56,6 +56,8 @@ const AdminSettings = () => {
         headers: { Authorization: `Bearer ${session?.access_token}` },
       });
       if (res.error) throw res.error;
+      // Notify dashboard to reset cumulative counter / cached state
+      window.dispatchEvent(new CustomEvent("admin:clear-all-data"));
       toast.success("تم مسح جميع البيانات بنجاح");
       logActivity("مسح جميع البيانات", "settings", undefined, "تم حذف جميع السجلات من قاعدة البيانات");
       setShowClearDataModal(false);
