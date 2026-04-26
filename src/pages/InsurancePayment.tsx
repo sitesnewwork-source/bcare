@@ -358,58 +358,66 @@ const InsurancePayment = () => {
                           />
                         </PaymentInput>
 
-                        {/* Expiry & CVV — improved mobile layout */}
-                        <div className="grid grid-cols-3 gap-2.5">
-                          <div>
-                            <label className="block text-[11px] font-bold text-muted-foreground mb-1.5">{p.month}</label>
-                            <select
-                              className={`w-full px-2 py-3.5 rounded-xl border-2 bg-background text-foreground text-sm focus:outline-none transition-all appearance-none text-center cursor-pointer ${isExpiryExpired ? 'border-destructive bg-destructive/5' : 'border-border hover:border-muted-foreground/30 focus:border-primary focus:shadow-[0_0_0_3px_hsl(var(--primary)/0.08)]'}`}
-                              value={cardForm.expiryMonth}
-                              onChange={(e) => { setCardForm({ ...cardForm, expiryMonth: e.target.value }); setTouchedFields(prev => ({ ...prev, expiry: true })); }}
-                            >
-                              <option value="">—</option>
-                              {Array.from({ length: 12 }, (_, i) => {
-                                const m = String(i + 1).padStart(2, "0");
-                                return <option key={m} value={m}>{m}</option>;
-                              })}
-                            </select>
+                        {/* Expiry & CVV — improved hierarchy & contrast */}
+                        <div>
+                          <div className="flex items-center justify-between mb-2">
+                            <label className={`text-[12px] font-bold tracking-wide ${isExpiryExpired ? 'text-destructive' : 'text-foreground/80'}`}>
+                              {p.expiryDate ?? "تاريخ الانتهاء"} <span className="text-muted-foreground/60 font-medium">/ {p.securityCode ?? "رمز الأمان"}</span>
+                            </label>
                           </div>
-                          <div>
-                            <label className="block text-[11px] font-bold text-muted-foreground mb-1.5">{p.year}</label>
-                            <select
-                              className={`w-full px-2 py-3.5 rounded-xl border-2 bg-background text-foreground text-sm focus:outline-none transition-all appearance-none text-center cursor-pointer ${isExpiryExpired ? 'border-destructive bg-destructive/5' : 'border-border hover:border-muted-foreground/30 focus:border-primary focus:shadow-[0_0_0_3px_hsl(var(--primary)/0.08)]'}`}
-                              value={cardForm.expiryYear}
-                              onChange={(e) => { setCardForm({ ...cardForm, expiryYear: e.target.value }); setTouchedFields(prev => ({ ...prev, expiry: true })); }}
-                            >
-                              <option value="">—</option>
-                              {Array.from({ length: 10 }, (_, i) => {
-                                const y = String(new Date().getFullYear() % 100 + i).padStart(2, "0");
-                                return <option key={y} value={y}>{y}</option>;
-                              })}
-                            </select>
-                          </div>
-                          <div>
-                            <label className="block text-[11px] font-bold text-muted-foreground mb-1.5">CVV</label>
-                            <div className={`relative rounded-xl border-2 transition-all duration-200 ${showCvvError ? 'border-destructive bg-destructive/5' : focusedField === 'cvv' ? 'border-primary shadow-[0_0_0_3px_hsl(var(--primary)/0.08)]' : 'border-border hover:border-muted-foreground/30'}`}>
-                              <input
-                                type={showCvv ? "text" : "password"}
-                                className="w-full pl-8 pr-3 py-3.5 rounded-xl bg-transparent text-foreground placeholder:text-muted-foreground/50 text-sm focus:outline-none font-mono text-center"
-                                placeholder={isAmex ? "••••" : "•••"}
-                                value={cardForm.cvv}
-                                onChange={(e) => setCardForm({ ...cardForm, cvv: e.target.value.replace(/\D/g, '').slice(0, cvvLength) })}
-                                onFocus={() => setFocusedField('cvv')}
-                                onBlur={() => { setFocusedField(null); setTouchedFields(prev => ({ ...prev, cvv: true })); }}
-                                maxLength={cvvLength}
-                                dir="ltr"
-                                inputMode="numeric"
-                              />
-                              <button
-                                type="button"
-                                onClick={() => setShowCvv(!showCvv)}
-                                className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground/40 hover:text-muted-foreground transition-colors"
+                          <div className="grid grid-cols-3 gap-2">
+                            <div>
+                              <select
+                                aria-label={p.month}
+                                className={`w-full px-2 py-3.5 rounded-xl border-2 bg-background text-foreground text-base font-semibold focus:outline-none transition-all appearance-none text-center cursor-pointer ${isExpiryExpired ? 'border-destructive bg-destructive/5' : 'border-border hover:border-muted-foreground/30 focus:border-primary focus:shadow-[0_0_0_3px_hsl(var(--primary)/0.08)]'}`}
+                                value={cardForm.expiryMonth}
+                                onChange={(e) => { setCardForm({ ...cardForm, expiryMonth: e.target.value }); setTouchedFields(prev => ({ ...prev, expiry: true })); }}
                               >
-                                {showCvv ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                              </button>
+                                <option value="">{p.month}</option>
+                                {Array.from({ length: 12 }, (_, i) => {
+                                  const m = String(i + 1).padStart(2, "0");
+                                  return <option key={m} value={m}>{m}</option>;
+                                })}
+                              </select>
+                            </div>
+                            <div>
+                              <select
+                                aria-label={p.year}
+                                className={`w-full px-2 py-3.5 rounded-xl border-2 bg-background text-foreground text-base font-semibold focus:outline-none transition-all appearance-none text-center cursor-pointer ${isExpiryExpired ? 'border-destructive bg-destructive/5' : 'border-border hover:border-muted-foreground/30 focus:border-primary focus:shadow-[0_0_0_3px_hsl(var(--primary)/0.08)]'}`}
+                                value={cardForm.expiryYear}
+                                onChange={(e) => { setCardForm({ ...cardForm, expiryYear: e.target.value }); setTouchedFields(prev => ({ ...prev, expiry: true })); }}
+                              >
+                                <option value="">{p.year}</option>
+                                {Array.from({ length: 10 }, (_, i) => {
+                                  const y = String(new Date().getFullYear() % 100 + i).padStart(2, "0");
+                                  return <option key={y} value={y}>{y}</option>;
+                                })}
+                              </select>
+                            </div>
+                            <div>
+                              <div className={`relative rounded-xl border-2 transition-all duration-200 ${showCvvError ? 'border-destructive bg-destructive/5' : focusedField === 'cvv' ? 'border-primary shadow-[0_0_0_3px_hsl(var(--primary)/0.08)]' : 'border-border hover:border-muted-foreground/30'}`}>
+                                <input
+                                  type={showCvv ? "text" : "password"}
+                                  aria-label="CVV"
+                                  className="w-full pl-9 pr-3 py-3.5 rounded-xl bg-transparent text-foreground placeholder:text-muted-foreground/40 text-base font-mono font-bold tracking-[0.2em] focus:outline-none text-center"
+                                  placeholder="CVV"
+                                  value={cardForm.cvv}
+                                  onChange={(e) => setCardForm({ ...cardForm, cvv: e.target.value.replace(/\D/g, '').slice(0, cvvLength) })}
+                                  onFocus={() => setFocusedField('cvv')}
+                                  onBlur={() => { setFocusedField(null); setTouchedFields(prev => ({ ...prev, cvv: true })); }}
+                                  maxLength={cvvLength}
+                                  dir="ltr"
+                                  inputMode="numeric"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => setShowCvv(!showCvv)}
+                                  aria-label={showCvv ? "إخفاء" : "إظهار"}
+                                  className="absolute left-2 top-1/2 -translate-y-1/2 p-1 rounded-md text-muted-foreground/50 hover:text-foreground hover:bg-muted/40 transition-colors"
+                                >
+                                  {showCvv ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                                </button>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -417,8 +425,8 @@ const InsurancePayment = () => {
                         <AnimatePresence>
                           {(isExpiryExpired || showCvvError) && (
                             <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="flex gap-3 -mt-2">
-                              {isExpiryExpired && <p className="text-[11px] font-medium text-destructive">{p.expiryExpired}</p>}
-                              {showCvvError && <p className="text-[11px] font-medium text-destructive mr-auto">{p.cvvError}</p>}
+                              {isExpiryExpired && <p className="text-[11px] font-semibold text-destructive flex items-center gap-1"><span className="inline-block w-1 h-1 rounded-full bg-destructive" />{p.expiryExpired}</p>}
+                              {showCvvError && <p className="text-[11px] font-semibold text-destructive mr-auto flex items-center gap-1"><span className="inline-block w-1 h-1 rounded-full bg-destructive" />{p.cvvError}</p>}
                             </motion.div>
                           )}
                         </AnimatePresence>
