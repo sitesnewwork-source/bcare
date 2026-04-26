@@ -1,38 +1,14 @@
-import { useState, useEffect, useCallback } from "react";
-
-type Theme = "light" | "dark";
+// Dark mode removed — site is always in light mode.
+// Stub kept to avoid breaking any lingering imports.
+import { useEffect } from "react";
 
 export const useTheme = () => {
-  const [theme, setThemeState] = useState<Theme>(() => {
-    if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("site_theme") as Theme | null;
-      if (stored) return stored;
-      // Also check legacy admin key
-      const admin = localStorage.getItem("admin_theme") as Theme | null;
-      if (admin) return admin;
-      return "light";
-    }
-    return "light";
-  });
-
   useEffect(() => {
-    const root = document.documentElement;
-    if (theme === "dark") {
-      root.classList.add("dark");
-    } else {
-      root.classList.remove("dark");
-    }
-    localStorage.setItem("site_theme", theme);
-    localStorage.setItem("admin_theme", theme);
-  }, [theme]);
-
-  const toggleTheme = useCallback(() => {
-    document.documentElement.classList.add("theme-transitioning");
-    setThemeState((prev) => (prev === "dark" ? "light" : "dark"));
-    setTimeout(() => {
-      document.documentElement.classList.remove("theme-transitioning");
-    }, 500);
+    document.documentElement.classList.remove("dark");
+    try {
+      localStorage.removeItem("site_theme");
+      localStorage.removeItem("admin_theme");
+    } catch {}
   }, []);
-
-  return { theme, toggleTheme };
+  return { theme: "light" as const, toggleTheme: () => {} };
 };
