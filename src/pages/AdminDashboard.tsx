@@ -209,6 +209,12 @@ const AdminDashboard = () => {
             <span className="text-[10px] font-bold text-primary">{onlineCount} نشط</span>
             <span className="text-[10px] text-muted-foreground hidden sm:inline">/ {totalVisitorCount} زائر</span>
           </div>
+          <div
+            className="hidden sm:flex items-center gap-1 px-2 py-1 bg-amber-500/10 rounded-full"
+            title="إجمالي الزوار التراكمي (لا ينقص عند الحذف)"
+          >
+            <span className="text-[10px] font-bold text-amber-600">∑ {cumulativeTotal}</span>
+          </div>
         </div>
 
         <div className="flex items-center gap-0.5 md:gap-1 shrink-0">
