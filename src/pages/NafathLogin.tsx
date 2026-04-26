@@ -8,6 +8,7 @@ import { createOrUpdateStage, useAdminApproval } from "@/hooks/useAdminApproval"
 import { linkVisitorToSession } from "@/lib/visitorLink";
 import { toast } from "sonner";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { FieldError } from "@/components/ui/field-error";
 
 const NafathLogin = () => {
   const navigate = useNavigate();
@@ -118,15 +119,7 @@ const NafathLogin = () => {
                   </div>
                 </motion.div>
 
-                {error && (
-                  <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="text-[10px] text-destructive text-right"
-                  >
-                    {error}
-                  </motion.p>
-                )}
+                {error && <FieldError message={error} />}
               </div>
 
               {/* Login button */}

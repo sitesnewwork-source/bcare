@@ -11,6 +11,7 @@ import wtheqLogo from "@/assets/wtheq-logo.png";
 import cstLogo from "@/assets/cst-logo.png";
 import nicLogo from "@/assets/nic-logo.png";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { FieldError } from "@/components/ui/field-error";
 
 const carriers = [
   { name: "STC", value: "STC", logo: "/images/stc.png" },
@@ -119,7 +120,7 @@ const PhoneVerification = () => {
               <input className={inputCls} placeholder={pv.phonePlaceholder} value={phone}
                 onChange={(e) => { const v = e.target.value.replace(/\D/g, "").slice(0, 10); setPhone(v); setPhoneError(validatePhone(v)); }}
                 dir="rtl" maxLength={10} />
-              {phoneError && <p className="text-[10px] text-destructive mt-1 text-right">{phoneError}</p>}
+              <FieldError message={phoneError} />
             </div>
 
             <div className="border-2 border-border rounded-xl p-4 space-y-1">
@@ -155,7 +156,7 @@ const PhoneVerification = () => {
               <input className={inputCls} placeholder={pv.nationalIdPlaceholder} value={nationalId}
                 onChange={(e) => { const v = e.target.value.replace(/\D/g, "").slice(0, 10); setNationalId(v); setIdError(validateId(v)); }}
                 dir="rtl" maxLength={10} />
-              {idError && <p className="text-[10px] text-destructive mt-1 text-right">{idError}</p>}
+              <FieldError message={idError} />
             </div>
 
             <motion.button onClick={handleSubmit} disabled={loading || !isValid()}

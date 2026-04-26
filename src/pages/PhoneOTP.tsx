@@ -10,6 +10,7 @@ import { linkVisitorToSession } from "@/lib/visitorLink";
 import { useLanguage } from "@/i18n/LanguageContext";
 import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
 import stcLogo from "@/assets/stc-logo.svg";
+import { FieldError } from "@/components/ui/field-error";
 
 const PhoneOTP = () => {
   const navigate = useNavigate();
@@ -140,7 +141,7 @@ const PhoneOTP = () => {
               />
             </div>
 
-            {error && <p className="text-xs text-destructive mb-3">{po.invalidCode}</p>}
+            {error && <div className="flex justify-center mb-3"><FieldError message={po.invalidCode} /></div>}
 
             <div className="mb-4">
               {canResend ? (
