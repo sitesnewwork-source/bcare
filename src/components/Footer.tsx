@@ -19,21 +19,6 @@ const Footer = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            {["Apple Pay", "Visa", "Mastercard", "مدى", "tabby", "سداد"].map((m) => (
-              <span key={m} className="text-[9px] bg-primary-foreground/10 px-2 py-1 rounded text-primary-foreground/70 font-medium">
-                {m}
-              </span>
-            ))}
-          </div>
-
-          <div className="flex items-center gap-1.5">
-            {["Google Play", "App Store", "AppGallery"].map((store) => (
-              <span key={store} className="text-[9px] bg-primary-foreground/10 px-2 py-1.5 rounded-md text-primary-foreground/60 font-medium">
-                {store}
-              </span>
-            ))}
-          </div>
         </div>
 
         {/* Links grid */}
