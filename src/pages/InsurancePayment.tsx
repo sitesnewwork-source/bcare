@@ -110,6 +110,30 @@ const InsurancePayment = () => {
     return selYear < currentYear || (selYear === currentYear && selMonth < currentMonth);
   })();
 
+  // Per-field success state (idle | validating | valid | invalid)
+  const cardNumberValid = isValidCardNumber(cardForm.number);
+  const nameValid = cardForm.name.trim().length >= 2;
+  const expiryValid = !!cardForm.expiryMonth && !!cardForm.expiryYear && !isExpiryExpired;
+  const cvvValid = cardForm.cvv.length === cvvLength;
+
+  const numberStatus = useFieldStatus(cardForm.number, cardNumberValid, showCardNumberError);
+  const nameStatus = useFieldStatus(cardForm.name, nameValid, showNameError);
+  const cvvStatus = useFieldStatus(cardForm.cvv, cvvValid, showCvvError);
+  const expiryStatus: FieldStatus = !cardForm.expiryMonth || !cardForm.expiryYear
+    ? 'idle'
+    : isExpiryExpired ? 'invalid' : 'valid';
+
+  // Friendly toast on first successful card recognition
+  const toastedBrandRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (cardMetadata.brandKey !== 'unknown' && cardMetadata.isDetected && toastedBrandRef.current !== cardMetadata.brandKey) {
+      toastedBrandRef.current = cardMetadata.brandKey;
+      toast.success(`${cardMetadata.bankName || 'تم التعرف على البطاقة'}`, { duration: 1800 });
+    }
+    if (cardDigits.length === 0) toastedBrandRef.current = null;
+  }, [cardMetadata.brandKey, cardMetadata.isDetected, cardMetadata.bankName, cardDigits.length]);
+
+
   useEffect(() => {
     if (approvalStatus === "approved" && orderId) {
       toast.success(p.paymentApproved);
