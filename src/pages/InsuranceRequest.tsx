@@ -889,25 +889,33 @@ const InsuranceRequest = () => {
                       <label className="flex items-center gap-2 text-sm font-black text-foreground">
                         <Wrench className="w-3.5 h-3.5" />{r.fields.repairLocation}
                       </label>
-                      <div className="grid grid-cols-2 gap-2">
+                      <div className="grid grid-cols-2 gap-3">
                          {[
-                           { v: "workshop", l: r.fields.workshop, icon: "🔧" },
-                           { v: "agency", l: r.fields.agency, icon: "🏢" },
-                         ].map((opt) => (
-                           <button
-                             key={opt.v}
-                             type="button"
-                             onClick={() => { upd("repair_location", opt.v); toast.success(`${r.nav.selected} ${opt.l}`, { icon: "✅", duration: 1500 }); }}
-                            className={`flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 text-sm font-bold transition-all ${
-                              form.repair_location === opt.v
-                                ? "border-primary bg-primary text-primary-foreground shadow-md shadow-primary/20"
-                                : "border-border bg-secondary/50 text-muted-foreground hover:border-primary/30 hover:bg-secondary/80"
-                            }`}
-                          >
-                            <span>{opt.icon}</span>
-                            <span>{opt.l}</span>
-                          </button>
-                        ))}
+                           { v: "workshop", l: r.fields.workshop, icon: "🔧", activeCls: "border-cta bg-gradient-to-br from-cta/20 via-cta/10 to-orange-500/15 text-cta shadow-lg shadow-cta/30 ring-2 ring-cta/40", labelCls: "text-cta" },
+                           { v: "agency", l: r.fields.agency, icon: "🏢", activeCls: "border-primary bg-gradient-to-br from-primary/20 via-primary/10 to-blue-500/15 text-primary shadow-lg shadow-primary/30 ring-2 ring-primary/40", labelCls: "text-primary" },
+                         ].map((opt) => {
+                           const selected = form.repair_location === opt.v;
+                           return (
+                             <button
+                               key={opt.v}
+                               type="button"
+                               onClick={() => { upd("repair_location", opt.v); toast.success(`${r.nav.selected} ${opt.l}`, { icon: "✅", duration: 1500 }); }}
+                               className={`relative overflow-hidden flex flex-col items-center justify-center gap-1.5 px-4 py-4 rounded-lg border-2 text-sm font-extrabold transition-all duration-300 ${
+                                 selected
+                                   ? `${opt.activeCls} scale-[1.03]`
+                                   : "border-border bg-card text-muted-foreground hover:border-primary/30 hover:bg-secondary/60 hover:scale-[1.01]"
+                               }`}
+                             >
+                               {selected && (
+                                 <span className={`absolute top-1.5 end-1.5 w-5 h-5 rounded-full ${opt.v === "workshop" ? "bg-cta text-cta-foreground" : "bg-primary text-primary-foreground"} flex items-center justify-center shadow-md`}>
+                                   <CheckCircle2 className="w-3.5 h-3.5" strokeWidth={3} />
+                                 </span>
+                               )}
+                               <span className={`text-2xl transition-transform ${selected ? "scale-110" : ""}`}>{opt.icon}</span>
+                               <span className={selected ? opt.labelCls : ""}>{opt.l}</span>
+                             </button>
+                           );
+                         })}
                       </div>
                     </motion.div>
 
