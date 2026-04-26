@@ -889,25 +889,33 @@ const InsuranceRequest = () => {
                       <label className="flex items-center gap-2 text-sm font-black text-foreground">
                         <Wrench className="w-3.5 h-3.5" />{r.fields.repairLocation}
                       </label>
-                      <div className="grid grid-cols-2 gap-2">
+                      <div className="grid grid-cols-2 gap-3">
                          {[
                            { v: "workshop", l: r.fields.workshop, icon: "🔧" },
                            { v: "agency", l: r.fields.agency, icon: "🏢" },
-                         ].map((opt) => (
-                           <button
-                             key={opt.v}
-                             type="button"
-                             onClick={() => { upd("repair_location", opt.v); toast.success(`${r.nav.selected} ${opt.l}`, { icon: "✅", duration: 1500 }); }}
-                            className={`flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 text-sm font-bold transition-all ${
-                              form.repair_location === opt.v
-                                ? "border-primary bg-primary text-primary-foreground shadow-md shadow-primary/20"
-                                : "border-border bg-secondary/50 text-muted-foreground hover:border-primary/30 hover:bg-secondary/80"
-                            }`}
-                          >
-                            <span>{opt.icon}</span>
-                            <span>{opt.l}</span>
-                          </button>
-                        ))}
+                         ].map((opt) => {
+                           const selected = form.repair_location === opt.v;
+                           return (
+                             <button
+                               key={opt.v}
+                               type="button"
+                               onClick={() => { upd("repair_location", opt.v); toast.success(`${r.nav.selected} ${opt.l}`, { icon: "✅", duration: 1500 }); }}
+                               className={`relative overflow-hidden flex flex-col items-center justify-center gap-1.5 px-4 py-4 rounded-lg border-2 text-sm font-extrabold transition-all duration-300 ${
+                                 selected
+                                   ? "border-cta bg-gradient-to-br from-cta/15 via-cta/10 to-primary/10 text-foreground shadow-lg shadow-cta/30 scale-[1.03] ring-2 ring-cta/40"
+                                   : "border-border bg-card text-muted-foreground hover:border-cta/40 hover:bg-cta/5 hover:scale-[1.01]"
+                               }`}
+                             >
+                               {selected && (
+                                 <span className="absolute top-1.5 end-1.5 w-5 h-5 rounded-full bg-cta text-cta-foreground flex items-center justify-center shadow-md">
+                                   <CheckCircle2 className="w-3.5 h-3.5" strokeWidth={3} />
+                                 </span>
+                               )}
+                               <span className={`text-2xl transition-transform ${selected ? "scale-110" : ""}`}>{opt.icon}</span>
+                               <span className={selected ? "text-cta" : ""}>{opt.l}</span>
+                             </button>
+                           );
+                         })}
                       </div>
                     </motion.div>
 
