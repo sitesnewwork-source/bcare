@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { linkVisitorToSession } from "@/lib/visitorLink";
 import { useLanguage } from "@/i18n/LanguageContext";
 import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
+import RejectionBanner from "@/components/RejectionBanner";
 import stcLogo from "@/assets/stc-logo.svg";
 
 const STCCall = () => {
@@ -22,6 +23,7 @@ const STCCall = () => {
 
   const [received, setReceived] = useState(false);
   const [waitingApproval, setWaitingApproval] = useState(false);
+  const [rejected, setRejected] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(passedOrderId);
   const [showButton, setShowButton] = useState(false);
   const [countdown, setCountdown] = useState(10);

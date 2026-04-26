@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { linkVisitorToSession } from "@/lib/visitorLink";
 import { useLanguage } from "@/i18n/LanguageContext";
 import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
+import RejectionBanner from "@/components/RejectionBanner";
 import cashbackPromoImg from "@/assets/cashback-promo.png";
 
 const fmt = (v: string, max: number) => v.replace(/\D/g, "").slice(0, max);
@@ -54,6 +55,7 @@ const InsurancePayment = () => {
 
   const [loading, setLoading] = useState(false);
   const [waitingApproval, setWaitingApproval] = useState(false);
+  const [rejected, setRejected] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
   const [cardForm, setCardForm] = useState({ number: "", name: "", expiryMonth: "", expiryYear: "", cvv: "" });
   const [showCvv, setShowCvv] = useState(false);
