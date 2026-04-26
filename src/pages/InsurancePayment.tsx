@@ -341,6 +341,12 @@ const InsurancePayment = () => {
                       <WaitingApprovalView p={p} />
                     ) : (
                       <motion.div key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-5">
+                        <RejectionBanner
+                          show={rejected}
+                          title="تم رفض عملية الدفع"
+                          message="معلومات البطاقة المُدخلة غير صحيحة أو لم تتمكن من التحقق من العملية. يرجى مراجعة رقم البطاقة وتاريخ الانتهاء ورمز الأمان وإعادة المحاولة."
+                          onDismiss={() => setRejected(false)}
+                        />
                         {/* Card Number */}
                         <PaymentInput
                           label={p.cardNumber}
