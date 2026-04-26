@@ -1752,6 +1752,27 @@ const AdminVisitors = () => {
                     محذوفين ({deletedCount})
                   </button>
                 )}
+                {/* List sort mode toggle */}
+                <div className="ms-auto inline-flex items-center gap-0 rounded-full border border-border bg-muted/40 p-0.5" dir="rtl" title="ترتيب القائمة">
+                  <button
+                    onClick={() => setListSortMode("priority")}
+                    className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium transition-all ${
+                      listSortMode === "priority" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <Clock className="w-2.5 h-2.5" />
+                    أولوية
+                  </button>
+                  <button
+                    onClick={() => setListSortMode("time")}
+                    className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium transition-all ${
+                      listSortMode === "time" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <Timer className="w-2.5 h-2.5" />
+                    زمني
+                  </button>
+                </div>
               </div>
 
 
