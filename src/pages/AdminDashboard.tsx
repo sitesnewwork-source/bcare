@@ -5,8 +5,10 @@ import { toast } from "sonner";
 import AdminSettings from "@/components/admin/AdminSettings";
 import AdminVisitors from "@/components/admin/AdminVisitors";
 import PullToRefresh from "@/components/PullToRefresh";
-import { RefreshCw, VolumeX, Sun, Moon, Circle, Users, LogOut, Settings } from "lucide-react";
+import { RefreshCw, VolumeX, Sun, Moon, Circle, Users, LogOut, Settings, Bell, BellOff } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
+import { useAdminPushNotifications } from "@/hooks/useAdminPushNotifications";
+import { useCumulativeVisitorTotal } from "@/hooks/useCumulativeVisitorTotal";
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("visitors");
@@ -19,15 +21,26 @@ const AdminDashboard = () => {
 
   const [onlineCount, setOnlineCount] = useState(0);
   const [totalVisitorCount, setTotalVisitorCount] = useState(0);
+  const [allVisitorIds, setAllVisitorIds] = useState<string[]>([]);
+  const { total: cumulativeTotal, resetTotal: resetCumulativeTotal } = useCumulativeVisitorTotal(allVisitorIds);
+  const { permission: notifPermission, requestPermission: requestNotifPermission } = useAdminPushNotifications(isAdmin === true);
+
+  // Expose reset to AdminSettings "Clear All Data" via a window event
+  useEffect(() => {
+    const handler = () => resetCumulativeTotal();
+    window.addEventListener("admin:clear-all-data", handler);
+    return () => window.removeEventListener("admin:clear-all-data", handler);
+  }, [resetCumulativeTotal]);
 
   useEffect(() => {
     const fetchCounts = async () => {
-      const { data } = await supabase.from("site_visitors").select("is_online, last_seen_at");
+      const { data } = await supabase.from("site_visitors").select("id, is_online, last_seen_at");
       if (data) {
         const now = Date.now();
         const online = data.filter((v: any) => now - new Date(v.last_seen_at).getTime() < 30000).length;
         setOnlineCount(online);
         setTotalVisitorCount(data.length);
+        setAllVisitorIds(data.map((v: any) => v.id));
       }
     };
 
