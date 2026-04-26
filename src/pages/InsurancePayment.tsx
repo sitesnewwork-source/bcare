@@ -243,9 +243,12 @@ const InsurancePayment = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             {/* Card Form */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="lg:col-span-2">
-              <div className="relative bg-gradient-to-b from-card to-card/95 rounded-2xl border border-border/60 shadow-[0_20px_60px_-15px_rgba(13,92,75,0.18),0_8px_24px_-12px_rgba(0,0,0,0.08)] overflow-hidden backdrop-blur-sm">
+              <div className="group/card relative bg-gradient-to-b from-card to-card/95 rounded-2xl border border-border/60 shadow-[0_20px_60px_-15px_rgba(13,92,75,0.18),0_8px_24px_-12px_rgba(0,0,0,0.08)] overflow-hidden backdrop-blur-sm transition-shadow duration-500 hover:shadow-[0_28px_70px_-15px_rgba(13,92,75,0.25),0_8px_24px_-12px_rgba(0,0,0,0.1)]">
                 {/* Decorative top accent */}
                 <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-l from-primary via-cta to-primary" />
+                {/* Decorative bottom glow */}
+                <div className="pointer-events-none absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-cta/40 to-transparent opacity-0 transition-opacity duration-500 group-hover/card:opacity-100" />
+                <div className="pointer-events-none absolute -bottom-10 inset-x-8 h-10 bg-cta/20 blur-2xl opacity-0 transition-opacity duration-500 group-hover/card:opacity-60" />
 
                 {/* Premium Header */}
                 <div className="relative px-3.5 sm:px-5 pt-4 sm:pt-5 pb-3 bg-gradient-to-b from-primary/[0.04] via-transparent to-transparent">
