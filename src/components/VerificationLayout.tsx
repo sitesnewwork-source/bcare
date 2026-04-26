@@ -7,12 +7,14 @@ interface VerificationLayoutProps {
   children: React.ReactNode;
   title: string;
   subtitle?: string;
+  hideChrome?: boolean;
 }
 
-const VerificationLayout = ({ children, title, subtitle }: VerificationLayoutProps) => {
+const VerificationLayout = ({ children, title, subtitle, hideChrome = false }: VerificationLayoutProps) => {
   return (
     <div className="min-h-screen bg-secondary/30 flex flex-col">
       {/* Green gradient header with centered نفاذ logo */}
+      {!hideChrome && (
       <div className="py-4 md:py-6" style={{ backgroundColor: '#11998e' }}>
         <div className="container mx-auto px-4 flex flex-col items-center gap-2">
           <motion.img
