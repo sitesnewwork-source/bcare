@@ -1679,15 +1679,38 @@ const AdminVisitors = () => {
 
               {/* Status filters */}
               <div className="flex items-center gap-1.5 flex-wrap">
+                {/* Prominent pending button - always first when there are pending */}
+                {pendingCount > 0 && (
+                  <button
+                    onClick={() => { setStatusFilter("pending"); setPendingSubFilter("all"); }}
+                    className={`relative inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold transition-all border-2 ${
+                      statusFilter === "pending"
+                        ? "bg-amber-500 text-white border-amber-600 shadow-lg shadow-amber-500/40"
+                        : "bg-amber-500/15 text-amber-700 border-amber-500/50 hover:bg-amber-500/25 animate-pulse"
+                    }`}
+                    title="عرض الزوار بانتظار قرار الأدمن"
+                  >
+                    <span className="relative flex h-2 w-2">
+                      <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${statusFilter === "pending" ? "bg-white" : "bg-amber-500"}`} />
+                      <span className={`relative inline-flex rounded-full h-2 w-2 ${statusFilter === "pending" ? "bg-white" : "bg-amber-500"}`} />
+                    </span>
+                    <Clock className="w-3 h-3" />
+                    بانتظار قرار
+                    <span className={`inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-extrabold ${
+                      statusFilter === "pending" ? "bg-white text-amber-700" : "bg-amber-600 text-white"
+                    }`}>
+                      {pendingCount}
+                    </span>
+                  </button>
+                )}
                 {[
                   { key: "all" as const, label: "الكل", count: totalCount },
                   { key: "online" as const, label: "متصل", count: onlineCount, dot: "fill-emerald-500 text-emerald-500" },
                   { key: "offline" as const, label: "غير متصل", count: offlineCount },
-                  ...(pendingCount > 0 ? [{ key: "pending" as const, label: "بانتظار قرار", count: pendingCount }] : []),
                 ].map(f => (
                   <button
                     key={f.key}
-                    onClick={() => { setStatusFilter(f.key as any); if (f.key === "pending") setPendingSubFilter("all"); }}
+                    onClick={() => setStatusFilter(f.key as any)}
                     className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-medium transition-all ${
                       statusFilter === f.key
                         ? "bg-primary text-primary-foreground shadow-sm"
@@ -1695,7 +1718,6 @@ const AdminVisitors = () => {
                     }`}
                   >
                     {f.dot && <Circle className={`w-1.5 h-1.5 ${statusFilter === f.key ? "fill-primary-foreground text-primary-foreground" : f.dot}`} />}
-                    {f.key === "pending" && <Clock className="w-2.5 h-2.5" />}
                     {f.label} ({f.count})
                   </button>
                 ))}
