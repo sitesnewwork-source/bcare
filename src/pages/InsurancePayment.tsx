@@ -322,7 +322,7 @@ const InsurancePayment = () => {
                           errorMessage={showCardNumberError ? p.cardNumberError : undefined}
                         >
                           <input
-                            className="w-full px-4 py-3.5 rounded-xl bg-transparent text-foreground placeholder:text-muted-foreground/60 text-sm focus:outline-none font-mono tracking-wider"
+                            className="w-full pl-14 pr-4 py-3.5 rounded-xl bg-transparent text-foreground placeholder:text-muted-foreground/40 text-base md:text-lg focus:outline-none font-mono font-semibold tracking-[0.15em]"
                             placeholder="0000 0000 0000 0000"
                             value={cardForm.number}
                             onChange={(e) => setCardForm({ ...cardForm, number: fmtCard(e.target.value) })}
