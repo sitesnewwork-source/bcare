@@ -301,6 +301,10 @@ const AdminVisitors = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<(() => void) | null>(null);
   const [chatClearTarget, setChatClearTarget] = useState<{ sessionId: string; visitorName: string } | null>(null);
   const [sortBy, setSortBy] = useState<"default" | "duration" | "entry" | "last_action">("default");
+  const [listSortMode, setListSortMode] = useState<"priority" | "time">(
+    () => (localStorage.getItem("admin_list_sort_mode") as "priority" | "time") || "priority"
+  );
+  useEffect(() => { localStorage.setItem("admin_list_sort_mode", listSortMode); }, [listSortMode]);
   const [redirectPage, setRedirectPage] = useState("");
   const [chatSelectMode, setChatSelectMode] = useState(false);
   const [selectedForClear, setSelectedForClear] = useState<Set<string>>(new Set());
