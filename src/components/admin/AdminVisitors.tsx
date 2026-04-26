@@ -1861,7 +1861,7 @@ const AdminVisitors = () => {
                           visitor.is_blocked
                             ? "bg-destructive/[0.04] border-destructive/20 opacity-50"
                             : pendingStage
-                            ? "bg-gradient-to-l from-amber-500/10 via-amber-500/[0.04] to-card border-amber-500/40 shadow-amber-500/5"
+                            ? "bg-gradient-to-l from-amber-500/20 via-amber-500/10 to-card border-amber-500 ring-2 ring-amber-500/40 shadow-lg shadow-amber-500/20"
                             : isPriority
                             ? "bg-amber-500/[0.06] border-amber-500/30 ring-1 ring-amber-500/15"
                             : hasPendingRequest
