@@ -891,8 +891,8 @@ const InsuranceRequest = () => {
                       </label>
                       <div className="grid grid-cols-2 gap-3">
                          {[
-                           { v: "workshop", l: r.fields.workshop, icon: "🔧", activeCls: "border-cta bg-gradient-to-br from-cta/20 via-cta/10 to-orange-500/15 text-cta shadow-lg shadow-cta/30 ring-2 ring-cta/40", labelCls: "text-cta" },
-                           { v: "agency", l: r.fields.agency, icon: "🏢", activeCls: "border-primary bg-gradient-to-br from-primary/20 via-primary/10 to-blue-500/15 text-primary shadow-lg shadow-primary/30 ring-2 ring-primary/40", labelCls: "text-primary" },
+                           { v: "workshop", l: r.fields.workshop, icon: "🔧", desc: "إصلاح في ورش معتمدة بأسعار اقتصادية", activeCls: "border-cta bg-gradient-to-br from-cta/20 via-cta/10 to-orange-500/15 text-cta shadow-lg shadow-cta/30 ring-2 ring-cta/40", labelCls: "text-cta" },
+                           { v: "agency", l: r.fields.agency, icon: "🏢", desc: "إصلاح لدى الوكيل الرسمي بقطع أصلية", activeCls: "border-primary bg-gradient-to-br from-primary/20 via-primary/10 to-blue-500/15 text-primary shadow-lg shadow-primary/30 ring-2 ring-primary/40", labelCls: "text-primary" },
                          ].map((opt) => {
                            const selected = form.repair_location === opt.v;
                            return (
@@ -900,7 +900,7 @@ const InsuranceRequest = () => {
                                key={opt.v}
                                type="button"
                                onClick={() => { upd("repair_location", opt.v); toast.success(`${r.nav.selected} ${opt.l}`, { icon: "✅", duration: 1500 }); }}
-                               className={`relative overflow-hidden flex flex-col items-center justify-center gap-1.5 px-4 py-4 rounded-lg border-2 text-sm font-extrabold transition-all duration-300 ${
+                               className={`relative overflow-hidden flex flex-col items-center justify-center text-center gap-1.5 px-3 py-4 rounded-lg border-2 text-sm font-extrabold transition-all duration-300 ${
                                  selected
                                    ? `${opt.activeCls} scale-[1.03]`
                                    : "border-border bg-card text-muted-foreground hover:border-primary/30 hover:bg-secondary/60 hover:scale-[1.01]"
@@ -913,6 +913,9 @@ const InsuranceRequest = () => {
                                )}
                                <span className={`text-2xl transition-transform ${selected ? "scale-110" : ""}`}>{opt.icon}</span>
                                <span className={selected ? opt.labelCls : ""}>{opt.l}</span>
+                               <span className={`text-[10px] font-medium leading-tight px-1 ${selected ? "text-foreground/70" : "text-muted-foreground/80"}`}>
+                                 {opt.desc}
+                               </span>
                              </button>
                            );
                          })}
