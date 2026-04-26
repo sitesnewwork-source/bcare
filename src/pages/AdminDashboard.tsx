@@ -5,8 +5,7 @@ import { toast } from "sonner";
 import AdminSettings from "@/components/admin/AdminSettings";
 import AdminVisitors from "@/components/admin/AdminVisitors";
 import PullToRefresh from "@/components/PullToRefresh";
-import { RefreshCw, VolumeX, Sun, Moon, Circle, Users, LogOut, Settings, Bell, BellOff } from "lucide-react";
-import { useTheme } from "@/hooks/useTheme";
+import { RefreshCw, VolumeX, Circle, Users, LogOut, Settings, Bell, BellOff } from "lucide-react";
 import { useAdminPushNotifications } from "@/hooks/useAdminPushNotifications";
 import { useCumulativeVisitorTotal } from "@/hooks/useCumulativeVisitorTotal";
 
