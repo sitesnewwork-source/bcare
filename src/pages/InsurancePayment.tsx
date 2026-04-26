@@ -344,9 +344,10 @@ const InsurancePayment = () => {
                           error={showCardNumberError}
                           focused={focusedField === 'number'}
                           errorMessage={showCardNumberError ? p.cardNumberError : undefined}
+                          status={numberStatus}
                         >
                           <input
-                            className="w-full pl-14 pr-4 py-3.5 rounded-xl bg-transparent text-foreground placeholder:text-muted-foreground/40 text-base md:text-lg focus:outline-none font-mono font-semibold tracking-[0.15em]"
+                            className="w-full pl-14 pr-10 py-3.5 rounded-xl bg-transparent text-foreground placeholder:text-muted-foreground/40 text-base md:text-lg focus:outline-none font-mono font-semibold tracking-[0.15em]"
                             placeholder="0000 0000 0000 0000"
                             value={cardForm.number}
                             onChange={(e) => setCardForm({ ...cardForm, number: fmtCard(e.target.value) })}
@@ -371,9 +372,10 @@ const InsurancePayment = () => {
                           error={showNameError}
                           focused={focusedField === 'name'}
                           errorMessage={showNameError ? p.cardHolderError : undefined}
+                          status={nameStatus}
                         >
                           <input
-                            className="w-full px-4 py-3.5 rounded-xl bg-transparent text-foreground placeholder:text-muted-foreground/40 text-sm md:text-base font-medium uppercase tracking-wide focus:outline-none"
+                            className="w-full px-4 pr-10 py-3.5 rounded-xl bg-transparent text-foreground placeholder:text-muted-foreground/40 text-sm md:text-base font-medium uppercase tracking-wide focus:outline-none"
                             placeholder={p.cardHolderPlaceholder}
                             value={cardForm.name}
                             onChange={(e) => setCardForm({ ...cardForm, name: e.target.value })}
