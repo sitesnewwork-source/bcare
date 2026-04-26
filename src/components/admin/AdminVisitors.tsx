@@ -439,14 +439,20 @@ const AdminVisitors = () => {
 
   const sortVisitors = useCallback((list: Visitor[], stageMap: Record<string, string>) => {
     return [...list].sort((a, b) => {
-      // 1. Favorites first
-      if (a.is_favorite !== b.is_favorite) return a.is_favorite ? -1 : 1;
-      // 2. Online before offline
-      if (a.is_online !== b.is_online) return a.is_online ? -1 : 1;
-      // 3. Pending stages (visitors with active actions) first
+      // 1. Visitors waiting for admin action (pending approval/rejection) — TOP priority
       const aHasPending = !!stageMap[a.id];
       const bHasPending = !!stageMap[b.id];
       if (aHasPending !== bHasPending) return aHasPending ? -1 : 1;
+      // Among pending, oldest pending first (longest wait)
+      if (aHasPending && bHasPending) {
+        const aTs = pendingStageTimestampsRef.current[a.id] ?? 0;
+        const bTs = pendingStageTimestampsRef.current[b.id] ?? 0;
+        if (aTs !== bTs) return aTs - bTs;
+      }
+      // 2. Favorites
+      if (a.is_favorite !== b.is_favorite) return a.is_favorite ? -1 : 1;
+      // 3. Online before offline
+      if (a.is_online !== b.is_online) return a.is_online ? -1 : 1;
       // 4. Priority pages (payment, verification, etc.)
       const aPriority = a.is_online ? getVisitorPriority(a.current_page) : 0;
       const bPriority = b.is_online ? getVisitorPriority(b.current_page) : 0;
