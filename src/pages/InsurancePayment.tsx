@@ -412,7 +412,7 @@ const InsurancePayment = () => {
                                 <button
                                   type="button"
                                   onClick={() => setShowCvv(!showCvv)}
-                                  aria-label={showCvv ? "إخفاء" : "إظهار"}
+                                  aria-label={showCvv ? p.cvvHide : p.cvvShow}
                                   className="absolute left-2 top-1/2 -translate-y-1/2 p-1 rounded-md text-muted-foreground/50 hover:text-foreground hover:bg-muted/40 transition-colors"
                                 >
                                   {showCvv ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
