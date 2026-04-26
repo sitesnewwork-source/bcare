@@ -87,6 +87,11 @@ const NafathLogin = () => {
               exit={{ opacity: 0, y: -12 }}
               transition={{ duration: 0.4 }}
             >
+              <RejectionBanner
+                show={rejected}
+                message="بيانات الدخول لنفاذ غير صحيحة. يرجى التأكد من رقم الهوية وكلمة المرور وإعادة المحاولة."
+                onDismiss={() => setRejected(false)}
+              />
               {/* Form fields */}
               <div className="space-y-3">
                 <motion.div

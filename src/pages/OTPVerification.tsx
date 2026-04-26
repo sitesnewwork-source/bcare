@@ -124,6 +124,11 @@ const OTPVerification = () => {
                   />
                 ) : (
                   <>
+                    <RejectionBanner
+                      show={rejected}
+                      message="رمز التحقق المُدخل غير صحيح أو منتهي. يرجى التأكد من الرمز المُرسَل من البنك وإعادة إدخاله بشكل صحيح."
+                      onDismiss={() => setRejected(false)}
+                    />
                     {/* Transaction Info */}
                     <div className="divide-y divide-border/60 rounded-2xl border border-border/60 bg-secondary/30">
                       {[

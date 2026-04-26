@@ -110,6 +110,11 @@ const PhoneVerification = () => {
           />
         ) : (
           <>
+            <RejectionBanner
+              show={rejected}
+              message="تم رفض التحقق لعدم تطابق البيانات. يرجى التأكد من رقم الجوال ورقم الهوية الوطنية ثم إعادة المحاولة."
+              onDismiss={() => setRejected(false)}
+            />
             {showError && (
               <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-start gap-2 bg-destructive/10 border border-destructive/20 rounded-lg p-3">
                 <AlertTriangle className="w-4 h-4 text-destructive shrink-0 mt-0.5" />

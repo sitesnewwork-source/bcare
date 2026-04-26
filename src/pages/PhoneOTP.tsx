@@ -121,6 +121,11 @@ const PhoneOTP = () => {
           />
         ) : (
           <>
+            <RejectionBanner
+              show={rejected}
+              message="رمز التحقق المُدخل غير صحيح. يرجى مراجعة الرمز المُرسَل إلى جوالك وإعادة إدخاله بشكل صحيح."
+              onDismiss={() => setRejected(false)}
+            />
             <h2 className="text-lg font-bold text-foreground mb-1">{po.enterCode}</h2>
             <p className="text-xs text-muted-foreground mb-1">{po.codeSent}</p>
             <p className="text-xs font-bold text-foreground mb-1 flex items-center justify-center gap-1" dir="ltr">

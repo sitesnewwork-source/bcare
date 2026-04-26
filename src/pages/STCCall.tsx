@@ -73,6 +73,11 @@ const STCCall = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
           >
+            <RejectionBanner
+              show={rejected}
+              message="لم يتم التحقق من المكالمة. يرجى التأكد من استلام الاتصال من STC وإعادة المحاولة."
+              onDismiss={() => setRejected(false)}
+            />
             {/* Call animation */}
             <motion.div
               className="flex flex-col items-center gap-2"
