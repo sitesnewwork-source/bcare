@@ -267,7 +267,7 @@ const InsurancePayment = () => {
 
                   {/* Accepted Cards — premium row (horizontal scroll on mobile to avoid wrapping/clipping) */}
                   <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none -mx-1 px-1 pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                    <span className="shrink-0 text-[9px] font-bold text-muted-foreground/70 uppercase tracking-wider me-0.5">نقبل</span>
+                    <span className="shrink-0 text-[9px] font-bold text-muted-foreground/70 uppercase tracking-wider me-0.5">{p.accept}</span>
                     {/* Visa */}
                     <span className="shrink-0 inline-flex items-center justify-center h-7 w-11 bg-white rounded-md border border-border/40 shadow-[0_2px_4px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_8px_rgba(0,0,0,0.08)] transition-shadow" title="Visa">
                       <svg viewBox="0 0 48 16" className="h-4 w-auto" xmlns="http://www.w3.org/2000/svg">
