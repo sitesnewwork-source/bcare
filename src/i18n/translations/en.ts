@@ -583,6 +583,13 @@ export const en = {
     classification: "Classification",
     cardBack: "This card belongs to the issuing bank. If found, please return to the nearest branch.",
     sar: "SAR",
+    secureEncrypted: "Fully secure and encrypted payment",
+    accept: "We accept",
+    expirySecurity: "Expiry date",
+    securityCode: "Security code",
+    cvvShow: "Show",
+    cvvHide: "Hide",
+    protectedTransaction: "Protected transaction",
   },
 
   // OTP Verification Page
