@@ -599,7 +599,9 @@ function PaymentInput({ label, error, focused, errorMessage, children }: {
 }) {
   return (
     <div>
-      <label className="block text-[11px] font-bold text-muted-foreground mb-1.5">{label}</label>
+      <label className={`block text-[12px] font-bold mb-2 tracking-wide transition-colors ${error ? 'text-destructive' : focused ? 'text-primary' : 'text-foreground/80'}`}>
+        {label}
+      </label>
       <motion.div
         animate={error ? { x: [0, -4, 4, -3, 3, 0] } : { x: 0 }}
         transition={{ duration: 0.28 }}
@@ -619,8 +621,9 @@ function PaymentInput({ label, error, focused, errorMessage, children }: {
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -4 }}
-            className="mt-1.5 text-[11px] font-medium text-destructive"
+            className="mt-1.5 text-[11px] font-semibold text-destructive flex items-center gap-1"
           >
+            <span className="inline-block w-1 h-1 rounded-full bg-destructive" />
             {errorMessage}
           </motion.p>
         )}
