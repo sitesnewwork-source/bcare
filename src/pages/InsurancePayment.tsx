@@ -468,18 +468,26 @@ const InsurancePayment = () => {
                     )}
                   </AnimatePresence>
 
-                  {/* Security Badges */}
-                  <div className="flex items-center justify-center gap-3 mt-5 pt-4 border-t border-border/50">
-                    {[
-                      { icon: Shield, label: p.sslEncrypted, color: "text-cta" },
-                      { icon: Lock, label: "PCI DSS", color: "text-primary" },
-                      { icon: Check, label: "3D Secure", color: "text-cta" },
-                    ].map((b, i) => (
-                      <div key={i} className="flex items-center gap-1 px-2 py-1 rounded-md bg-secondary/50">
-                        <b.icon className={`w-3 h-3 ${b.color}`} />
-                        <span className="text-[9px] font-medium text-muted-foreground">{b.label}</span>
-                      </div>
-                    ))}
+                  {/* Premium Security Badges */}
+                  <div className="mt-5 pt-4 border-t border-border/50">
+                    <div className="flex items-center justify-center gap-1.5 mb-2">
+                      <div className="h-px w-8 bg-gradient-to-l from-transparent to-border" />
+                      <Shield className="w-3 h-3 text-cta" strokeWidth={2.5} />
+                      <span className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-wider">معاملة محمية</span>
+                      <div className="h-px w-8 bg-gradient-to-r from-transparent to-border" />
+                    </div>
+                    <div className="flex items-center justify-center gap-2 flex-wrap">
+                      {[
+                        { icon: Shield, label: p.sslEncrypted, color: "text-cta", bg: "from-cta/10 to-cta/5", border: "border-cta/20" },
+                        { icon: Lock, label: "PCI DSS", color: "text-primary", bg: "from-primary/10 to-primary/5", border: "border-primary/20" },
+                        { icon: Check, label: "3D Secure", color: "text-cta", bg: "from-cta/10 to-cta/5", border: "border-cta/20" },
+                      ].map((b, i) => (
+                        <div key={i} className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gradient-to-br ${b.bg} border ${b.border} shadow-sm`}>
+                          <b.icon className={`w-3 h-3 ${b.color}`} strokeWidth={2.5} />
+                          <span className="text-[10px] font-bold text-foreground">{b.label}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
