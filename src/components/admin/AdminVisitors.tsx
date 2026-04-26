@@ -717,8 +717,9 @@ const AdminVisitors = () => {
       setVisitors(sorted);
 
       if (selectedVisitorRef.current) {
-        const updated = sorted.find(v => v.id === selectedVisitorRef.current?.id) || null;
-        setSelectedVisitor(updated);
+        const updated = sorted.find(v => v.id === selectedVisitorRef.current?.id);
+        // Only update with fresh data; never auto-clear selection on re-fetch — admin keeps the panel open until they close it explicitly
+        if (updated) setSelectedVisitor(updated);
       }
 
       return processed;
