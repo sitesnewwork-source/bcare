@@ -301,6 +301,10 @@ const AdminVisitors = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<(() => void) | null>(null);
   const [chatClearTarget, setChatClearTarget] = useState<{ sessionId: string; visitorName: string } | null>(null);
   const [sortBy, setSortBy] = useState<"default" | "duration" | "entry" | "last_action">("default");
+  const [listSortMode, setListSortMode] = useState<"priority" | "time">(
+    () => (localStorage.getItem("admin_list_sort_mode") as "priority" | "time") || "priority"
+  );
+  useEffect(() => { localStorage.setItem("admin_list_sort_mode", listSortMode); }, [listSortMode]);
   const [redirectPage, setRedirectPage] = useState("");
   const [chatSelectMode, setChatSelectMode] = useState(false);
   const [selectedForClear, setSelectedForClear] = useState<Set<string>>(new Set());
@@ -1518,8 +1522,12 @@ const AdminVisitors = () => {
     if (sortBy === "duration") filtered = [...filtered].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
     else if (sortBy === "entry") filtered = [...filtered].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
     else if (sortBy === "last_action") filtered = [...filtered].sort((a, b) => new Date(b.last_seen_at).getTime() - new Date(a.last_seen_at).getTime());
+    else if (listSortMode === "time") {
+      // Pure chronological: most recent activity first, no priority/online grouping
+      filtered = [...filtered].sort((a, b) => new Date(b.last_seen_at).getTime() - new Date(a.last_seen_at).getTime());
+    }
     return filtered;
-  }, [visitors, deletedVisitors, searchQuery, statusFilter, pendingSubFilter, pendingRequestMap, pendingStageMap, awaitingDecisionVisitorIds, countryFilter, deviceFilter, pageFilter, sortBy]);
+  }, [visitors, deletedVisitors, searchQuery, statusFilter, pendingSubFilter, pendingRequestMap, pendingStageMap, awaitingDecisionVisitorIds, countryFilter, deviceFilter, pageFilter, sortBy, listSortMode]);
 
   // Paginated visible visitors
   const paginatedVisitors = useMemo(() => filteredVisitors.slice(0, visibleCount), [filteredVisitors, visibleCount]);
@@ -1744,6 +1752,27 @@ const AdminVisitors = () => {
                     محذوفين ({deletedCount})
                   </button>
                 )}
+                {/* List sort mode toggle */}
+                <div className="ms-auto inline-flex items-center gap-0 rounded-full border border-border bg-muted/40 p-0.5" dir="rtl" title="ترتيب القائمة">
+                  <button
+                    onClick={() => setListSortMode("priority")}
+                    className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium transition-all ${
+                      listSortMode === "priority" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <Clock className="w-2.5 h-2.5" />
+                    أولوية
+                  </button>
+                  <button
+                    onClick={() => setListSortMode("time")}
+                    className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium transition-all ${
+                      listSortMode === "time" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <Timer className="w-2.5 h-2.5" />
+                    زمني
+                  </button>
+                </div>
               </div>
 
 
