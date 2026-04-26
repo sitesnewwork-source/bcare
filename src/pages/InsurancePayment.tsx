@@ -362,7 +362,7 @@ const InsurancePayment = () => {
                         <div>
                           <div className="flex items-center justify-between mb-2">
                             <label className={`text-[12px] font-bold tracking-wide ${isExpiryExpired ? 'text-destructive' : 'text-foreground/80'}`}>
-                              {p.expiryDate ?? "تاريخ الانتهاء"} <span className="text-muted-foreground/60 font-medium">/ {p.securityCode ?? "رمز الأمان"}</span>
+                              تاريخ الانتهاء <span className="text-muted-foreground/60 font-medium">/ رمز الأمان</span>
                             </label>
                           </div>
                           <div className="grid grid-cols-3 gap-2">
