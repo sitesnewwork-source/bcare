@@ -243,9 +243,12 @@ const InsurancePayment = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             {/* Card Form */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="lg:col-span-2">
-              <div className="relative bg-gradient-to-b from-card to-card/95 rounded-2xl border border-border/60 shadow-[0_20px_60px_-15px_rgba(13,92,75,0.18),0_8px_24px_-12px_rgba(0,0,0,0.08)] overflow-hidden backdrop-blur-sm">
+              <div className="group/card relative bg-gradient-to-b from-card to-card/95 rounded-2xl border border-border/60 shadow-[0_20px_60px_-15px_rgba(13,92,75,0.18),0_8px_24px_-12px_rgba(0,0,0,0.08)] overflow-hidden backdrop-blur-sm transition-shadow duration-500 hover:shadow-[0_28px_70px_-15px_rgba(13,92,75,0.25),0_8px_24px_-12px_rgba(0,0,0,0.1)]">
                 {/* Decorative top accent */}
                 <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-l from-primary via-cta to-primary" />
+                {/* Decorative bottom glow */}
+                <div className="pointer-events-none absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-cta/40 to-transparent opacity-0 transition-opacity duration-500 group-hover/card:opacity-100" />
+                <div className="pointer-events-none absolute -bottom-10 inset-x-8 h-10 bg-cta/20 blur-2xl opacity-0 transition-opacity duration-500 group-hover/card:opacity-60" />
 
                 {/* Premium Header */}
                 <div className="relative px-3.5 sm:px-5 pt-4 sm:pt-5 pb-3 bg-gradient-to-b from-primary/[0.04] via-transparent to-transparent">
@@ -256,7 +259,7 @@ const InsurancePayment = () => {
                       </div>
                       <div className="min-w-0 flex-1">
                         <h3 className="text-sm font-extrabold text-foreground leading-tight truncate">{p.creditCard}</h3>
-                        <p className="text-[10px] text-muted-foreground font-medium leading-tight mt-0.5 truncate">دفع آمن ومشفّر بالكامل</p>
+                        <p className="text-[10px] text-muted-foreground font-medium leading-tight mt-0.5 truncate">{p.secureEncrypted}</p>
                       </div>
                     </div>
                     <div className="shrink-0 flex items-center gap-1 px-2 py-1 rounded-full bg-cta/10 border border-cta/20">
@@ -267,7 +270,7 @@ const InsurancePayment = () => {
 
                   {/* Accepted Cards — premium row (horizontal scroll on mobile to avoid wrapping/clipping) */}
                   <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none -mx-1 px-1 pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                    <span className="shrink-0 text-[9px] font-bold text-muted-foreground/70 uppercase tracking-wider me-0.5">نقبل</span>
+                    <span className="shrink-0 text-[9px] font-bold text-muted-foreground/70 uppercase tracking-wider me-0.5">{p.accept}</span>
                     {/* Visa */}
                     <span className="shrink-0 inline-flex items-center justify-center h-7 w-11 bg-white rounded-md border border-border/40 shadow-[0_2px_4px_rgba(0,0,0,0.05)] hover:shadow-[0_4px_8px_rgba(0,0,0,0.08)] transition-shadow" title="Visa">
                       <svg viewBox="0 0 48 16" className="h-4 w-auto" xmlns="http://www.w3.org/2000/svg">
@@ -362,7 +365,7 @@ const InsurancePayment = () => {
                         <div>
                           <div className="flex items-center justify-between mb-2">
                             <label className={`text-[12px] font-bold tracking-wide ${isExpiryExpired ? 'text-destructive' : 'text-foreground/80'}`}>
-                              تاريخ الانتهاء <span className="text-muted-foreground/60 font-medium">/ رمز الأمان</span>
+                              {p.expirySecurity} <span className="text-muted-foreground/60 font-medium">/ {p.securityCode}</span>
                             </label>
                           </div>
                           <div className="grid grid-cols-3 gap-2">
@@ -412,7 +415,7 @@ const InsurancePayment = () => {
                                 <button
                                   type="button"
                                   onClick={() => setShowCvv(!showCvv)}
-                                  aria-label={showCvv ? "إخفاء" : "إظهار"}
+                                  aria-label={showCvv ? p.cvvHide : p.cvvShow}
                                   className="absolute left-2 top-1/2 -translate-y-1/2 p-1 rounded-md text-muted-foreground/50 hover:text-foreground hover:bg-muted/40 transition-colors"
                                 >
                                   {showCvv ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
@@ -476,22 +479,25 @@ const InsurancePayment = () => {
                     )}
                   </AnimatePresence>
 
-                  {/* Premium Security Badges */}
-                  <div className="mt-5 pt-4 border-t border-border/50">
-                    <div className="flex items-center justify-center gap-1.5 mb-2">
-                      <div className="h-px w-8 bg-gradient-to-l from-transparent to-border" />
-                      <Shield className="w-3 h-3 text-cta" strokeWidth={2.5} />
-                      <span className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-wider">معاملة محمية</span>
-                      <div className="h-px w-8 bg-gradient-to-r from-transparent to-border" />
+                  {/* Premium Security Badges — interactive hover/glow */}
+                  <div className="mt-5 pt-4 border-t border-border/50 group/sec">
+                    <div className="flex items-center justify-center gap-1.5 mb-2.5">
+                      <div className="h-px flex-1 max-w-[60px] bg-gradient-to-l from-transparent via-cta/30 to-border transition-all duration-500 group-hover/sec:max-w-[80px]" />
+                      <Shield className="w-3 h-3 text-cta transition-transform duration-300 group-hover/sec:scale-110 group-hover/sec:drop-shadow-[0_0_6px_hsl(var(--cta)/0.6)]" strokeWidth={2.5} />
+                      <span className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-wider transition-colors duration-300 group-hover/sec:text-foreground">{p.protectedTransaction}</span>
+                      <div className="h-px flex-1 max-w-[60px] bg-gradient-to-r from-transparent via-cta/30 to-border transition-all duration-500 group-hover/sec:max-w-[80px]" />
                     </div>
                     <div className="flex items-center justify-center gap-2 flex-wrap">
                       {[
-                        { icon: Shield, label: p.sslEncrypted, color: "text-cta", bg: "from-cta/10 to-cta/5", border: "border-cta/20" },
-                        { icon: Lock, label: "PCI DSS", color: "text-primary", bg: "from-primary/10 to-primary/5", border: "border-primary/20" },
-                        { icon: Check, label: "3D Secure", color: "text-cta", bg: "from-cta/10 to-cta/5", border: "border-cta/20" },
+                        { icon: Shield, label: p.sslEncrypted, color: "text-cta", bg: "from-cta/10 to-cta/5", border: "border-cta/20", glow: "hover:shadow-[0_0_18px_hsl(var(--cta)/0.35)] hover:border-cta/50" },
+                        { icon: Lock, label: "PCI DSS", color: "text-primary", bg: "from-primary/10 to-primary/5", border: "border-primary/20", glow: "hover:shadow-[0_0_18px_hsl(var(--primary)/0.35)] hover:border-primary/50" },
+                        { icon: Check, label: "3D Secure", color: "text-cta", bg: "from-cta/10 to-cta/5", border: "border-cta/20", glow: "hover:shadow-[0_0_18px_hsl(var(--cta)/0.35)] hover:border-cta/50" },
                       ].map((b, i) => (
-                        <div key={i} className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gradient-to-br ${b.bg} border ${b.border} shadow-sm`}>
-                          <b.icon className={`w-3 h-3 ${b.color}`} strokeWidth={2.5} />
+                        <div
+                          key={i}
+                          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gradient-to-br ${b.bg} border ${b.border} shadow-sm cursor-default transition-all duration-300 hover:-translate-y-0.5 ${b.glow}`}
+                        >
+                          <b.icon className={`w-3 h-3 ${b.color} transition-transform duration-300 group-hover:scale-110`} strokeWidth={2.5} />
                           <span className="text-[10px] font-bold text-foreground">{b.label}</span>
                         </div>
                       ))}
