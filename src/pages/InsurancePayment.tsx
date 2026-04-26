@@ -7,7 +7,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PremiumPageHeader from "@/components/PremiumPageHeader";
 import { Button } from "@/components/ui/button";
-import { CreditCard, Shield, Lock, Check, ArrowRight, Loader2, Fingerprint, Eye, EyeOff, X, Clock, Gift, Percent } from "lucide-react";
+import { CreditCard, Shield, Lock, Check, ArrowRight, Loader2, Fingerprint, Eye, EyeOff, X, Clock, Gift, Percent, CheckCircle2, AlertCircle } from "lucide-react";
 import CardBrandLogo from "@/components/CardBrandLogo";
 import InsuranceStepper from "@/components/InsuranceStepper";
 import { useAdminApproval, createOrUpdateStage } from "@/hooks/useAdminApproval";
