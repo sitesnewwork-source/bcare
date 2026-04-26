@@ -889,6 +889,9 @@ const InsuranceRequest = () => {
                       <label className="flex items-center gap-2 text-sm font-black text-foreground">
                         <Wrench className="w-3.5 h-3.5" />{r.fields.repairLocation}
                       </label>
+                      <p className="text-[11px] text-muted-foreground leading-relaxed">
+                        يرجى اختيار مكان إصلاح المركبة المفضل في حال وقوع حادث
+                      </p>
                       <div className="grid grid-cols-2 gap-3">
                          {[
                            { v: "workshop", l: r.fields.workshop, icon: "🔧", desc: "إصلاح في ورش معتمدة بأسعار اقتصادية", activeCls: "border-cta bg-gradient-to-br from-cta/20 via-cta/10 to-orange-500/15 text-cta shadow-lg shadow-cta/30 ring-2 ring-cta/40", labelCls: "text-cta" },
