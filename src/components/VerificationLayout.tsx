@@ -56,6 +56,7 @@ const VerificationLayout = ({ children, title, subtitle, hideChrome = false }: V
       </div>
 
       {/* NIC Footer */}
+      {!hideChrome && (
       <div className="border-t border-border bg-card py-5 mt-auto">
         <div className="container mx-auto px-4 flex flex-col items-center gap-2 text-center">
           <div className="flex items-center gap-2">
@@ -68,6 +69,7 @@ const VerificationLayout = ({ children, title, subtitle, hideChrome = false }: V
           <p className="text-[10px] text-muted-foreground">النفاذ الوطني الموحد جميع الحقوق محفوظة © {new Date().getFullYear()}</p>
         </div>
       </div>
+      )}
     </div>
   );
 };
