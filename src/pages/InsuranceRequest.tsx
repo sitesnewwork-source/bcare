@@ -379,19 +379,7 @@ const InsuranceRequest = () => {
         <div className="min-h-[14px]">
           <AnimatePresence mode="wait">
             {error ? (
-              <motion.p
-                key={`error-${error}`}
-                initial={{ opacity: 0, x: 10, height: 0 }}
-                animate={{ opacity: 1, x: 0, height: "auto" }}
-                exit={{ opacity: 0, x: -10, height: 0 }}
-                transition={{ duration: 0.25, ease: "easeOut" }}
-                className="text-[11px] text-destructive flex items-center gap-1 font-semibold"
-              >
-                <motion.span animate={{ rotate: [0, 15, -15, 0] }} transition={{ duration: 0.5 }}>
-                  <AlertCircle className="w-3 h-3" />
-                </motion.span>
-                {error}
-              </motion.p>
+              <FieldError key={`error-${error}`} message={error} className="mt-0" />
             ) : valid ? (
               <motion.p
                 key="success"
@@ -717,13 +705,7 @@ const InsuranceRequest = () => {
                           </AnimatePresence>
                           <AnimatePresence>
                             {fieldState("vehicle_make").error && (
-                              <motion.p initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}
-                                className="text-xs text-destructive flex items-center gap-1">
-                                <motion.span animate={{ rotate: [0, 15, -15, 0] }} transition={{ duration: 0.5 }}>
-                                  <AlertCircle className="w-3 h-3" />
-                                </motion.span>
-                                {fieldState("vehicle_make").error}
-                              </motion.p>
+                              <FieldError message={fieldState("vehicle_make").error} className="mt-0" />
                             )}
                           </AnimatePresence>
                           <AnimatePresence>
@@ -799,13 +781,7 @@ const InsuranceRequest = () => {
                             )}
                             <AnimatePresence>
                               {fieldState("vehicle_model").error && (
-                                <motion.p initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}
-                                  className="text-xs text-destructive flex items-center gap-1">
-                                  <motion.span animate={{ rotate: [0, 15, -15, 0] }} transition={{ duration: 0.5 }}>
-                                    <AlertCircle className="w-3 h-3" />
-                                  </motion.span>
-                                  {fieldState("vehicle_model").error}
-                                </motion.p>
+                                <FieldError message={fieldState("vehicle_model").error} className="mt-0" />
                               )}
                             </AnimatePresence>
                             <AnimatePresence>
@@ -864,10 +840,7 @@ const InsuranceRequest = () => {
                             </AnimatePresence>
                             <AnimatePresence>
                               {fieldState("vehicle_year").error && (
-                                <motion.p initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}
-                                  className="text-xs text-destructive flex items-center gap-1">
-                                  <AlertCircle className="w-3 h-3" />{fieldState("vehicle_year").error}
-                                </motion.p>
+                                <FieldError message={fieldState("vehicle_year").error} className="mt-0" />
                               )}
                             </AnimatePresence>
                             <AnimatePresence>
@@ -1117,10 +1090,7 @@ const InsuranceRequest = () => {
                       </div>
                       <AnimatePresence>
                         {fieldState("insurance_type").error && (
-                          <motion.p initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}
-                            className="text-[11px] text-destructive flex items-center gap-1 font-semibold mt-1">
-                            <AlertCircle className="w-3 h-3" />{fieldState("insurance_type").error}
-                          </motion.p>
+                          <FieldError message={fieldState("insurance_type").error} />
                         )}
                       </AnimatePresence>
                     </motion.div>
@@ -1155,11 +1125,7 @@ const InsuranceRequest = () => {
                       <div className="min-h-[14px]">
                         <AnimatePresence mode="wait">
                           {policyError ? (
-                            <motion.p key={`perr-${policyError}`} initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}
-                              className="text-[11px] text-destructive flex items-center gap-1 font-semibold">
-                              <motion.span animate={{ rotate: [0, 15, -15, 0] }} transition={{ duration: 0.5 }}><AlertCircle className="w-3 h-3" /></motion.span>
-                              {policyError}
-                            </motion.p>
+                            <FieldError key={`perr-${policyError}`} message={policyError} className="mt-0" />
                           ) : policyValid ? (
                             <motion.p key="pok" initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
                               className="text-[11px] text-cta flex items-center gap-1 font-semibold">
