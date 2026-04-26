@@ -54,6 +54,7 @@ const PhoneOTP = () => {
       toast.error(po.rejected);
       setWaitingApproval(false);
       setLoading(false);
+      setRejected(true);
     }
   }, [approvalStatus, orderId, navigate, offer, phone, carrier]);
 

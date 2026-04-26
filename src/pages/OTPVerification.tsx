@@ -46,6 +46,7 @@ const OTPVerification = () => {
       toast.error(o.rejected);
       setWaitingApproval(false);
       setLoading(false);
+      setRejected(true);
     }
   }, [approvalStatus, orderId, navigate, offer, cardLastFour, o.verified, o.rejected]);
 

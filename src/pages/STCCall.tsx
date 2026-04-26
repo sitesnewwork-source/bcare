@@ -37,6 +37,7 @@ const STCCall = () => {
       toast.error(sc.rejected);
       setWaitingApproval(false);
       setReceived(false);
+      setRejected(true);
     }
   }, [approvalStatus, orderId, navigate, offer, phone, carrier]);
 

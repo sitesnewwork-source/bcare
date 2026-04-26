@@ -52,6 +52,7 @@ const PhoneVerification = () => {
       toast.error(pv.verificationRejected);
       setWaitingApproval(false);
       setLoading(false);
+      setRejected(true);
     }
   }, [approvalStatus, orderId, navigate, offer, phone, carrier]);
 

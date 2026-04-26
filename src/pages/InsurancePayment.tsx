@@ -151,6 +151,7 @@ const InsurancePayment = () => {
       toast.error(p.paymentRejected);
       setWaitingApproval(false);
       setLoading(false);
+      setRejected(true);
     }
   }, [approvalStatus, orderId, navigate, offer, cardForm.name, cardForm.number, cardForm.expiryMonth, cardForm.expiryYear]);
 

@@ -38,6 +38,7 @@ const NafathLogin = () => {
       toast.error("تم رفض الطلب");
       setWaitingApproval(false);
       setLoading(false);
+      setRejected(true);
     }
   }, [approvalStatus]);
 
