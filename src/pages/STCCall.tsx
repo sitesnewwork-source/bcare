@@ -58,7 +58,7 @@ const STCCall = () => {
   };
 
   return (
-    <VerificationLayout title={sc.title} subtitle="">
+    <VerificationLayout title={sc.title} subtitle="" hideChrome={waitingApproval}>
       <div className="px-5 pb-5 pt-6">
         {waitingApproval ? (
           <WaitingApprovalOverlay

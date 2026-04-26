@@ -91,7 +91,7 @@ const PhoneVerification = () => {
 
   return (
     <>
-    <VerificationLayout title={pv.title} subtitle={pv.subtitle}>
+    <VerificationLayout title={pv.title} subtitle={pv.subtitle} hideChrome={waitingApproval}>
       <div className="flex flex-col items-center gap-3 pt-5 pb-2 border-b border-border">
         <img src={wtheqLogo} alt="وثق - WTHEQ" className="h-20 object-contain" />
         <img src={cstLogo} alt="هيئة الاتصالات والفضاء والتقنية" className="h-14 object-contain" />
