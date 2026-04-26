@@ -54,6 +54,44 @@ const OtpBadgeTimer = memo(React.forwardRef<HTMLSpanElement, { startTime?: numbe
 }));
 OtpBadgeTimer.displayName = "OtpBadgeTimer";
 
+const formatPendingWait = (secs: number) => {
+  if (secs < 60) return `${secs} ثانية`;
+  const m = Math.floor(secs / 60);
+  const s = secs % 60;
+  if (m < 60) return s > 0 ? `${m} د ${s} ث` : `${m} دقيقة`;
+  const h = Math.floor(m / 60);
+  const rm = m % 60;
+  return rm > 0 ? `${h} س ${rm} د` : `${h} ساعة`;
+};
+
+const PendingWaitTimer = memo(({ startTime, isOldest }: { startTime?: number; isOldest?: boolean }) => {
+  const [, force] = useState(0);
+  useEffect(() => {
+    const i = setInterval(() => force(v => v + 1), 1000);
+    return () => clearInterval(i);
+  }, []);
+  if (!startTime) return null;
+  const secs = Math.max(0, Math.floor((Date.now() - startTime) / 1000));
+  const urgent = secs >= 30;
+  return (
+    <span
+      className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-bold tabular-nums border ${
+        isOldest
+          ? "bg-red-500/15 border-red-500/40 text-red-600"
+          : urgent
+          ? "bg-amber-500/15 border-amber-500/40 text-amber-700"
+          : "bg-amber-500/10 border-amber-500/25 text-amber-600"
+      }`}
+      title={isOldest ? "الأقدم انتظاراً لإجراء الأدمن" : "وقت انتظار إجراء الأدمن"}
+    >
+      <Timer className="w-2.5 h-2.5" />
+      {formatPendingWait(secs)}
+      {isOldest && <span className="text-[8px] font-extrabold">• الأقدم</span>}
+    </span>
+  );
+});
+PendingWaitTimer.displayName = "PendingWaitTimer";
+
 const parseUserAgent = (ua: string | null) => {
   if (!ua) return { device: "غير معروف", os: "", browser: "" };
   const isMobile = /Mobile|Android|iPhone|iPad/i.test(ua);
