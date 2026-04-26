@@ -468,9 +468,9 @@ const InsurancePayment = () => {
                         {/* Validation messages */}
                         <AnimatePresence>
                           {(isExpiryExpired || showCvvError) && (
-                            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="flex gap-3 -mt-2">
-                              {isExpiryExpired && <p className="text-[11px] font-semibold text-destructive flex items-center gap-1"><span className="inline-block w-1 h-1 rounded-full bg-destructive" />{p.expiryExpired}</p>}
-                              {showCvvError && <p className="text-[11px] font-semibold text-destructive mr-auto flex items-center gap-1"><span className="inline-block w-1 h-1 rounded-full bg-destructive" />{p.cvvError}</p>}
+                            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="flex flex-wrap gap-x-4 gap-y-1 -mt-2">
+                              {isExpiryExpired && <FieldErrorMessage message={p.expiryExpired} />}
+                              {showCvvError && <FieldErrorMessage message={p.cvvError} className="ms-auto" />}
                             </motion.div>
                           )}
                         </AnimatePresence>
@@ -738,19 +738,26 @@ function PaymentInput({ label, error, focused, errorMessage, status = 'idle', ch
         )}
       </motion.div>
       <AnimatePresence>
-        {errorMessage && (
-          <motion.p
-            initial={{ opacity: 0, y: -4 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -4 }}
-            className="mt-1.5 text-[11px] font-semibold text-destructive flex items-center gap-1"
-          >
-            <span className="inline-block w-1 h-1 rounded-full bg-destructive" />
-            {errorMessage}
-          </motion.p>
-        )}
+        {errorMessage && <FieldErrorMessage message={errorMessage} />}
       </AnimatePresence>
     </div>
+  );
+}
+
+/** Unified error message — same dot + icon + weight + size across every short field. */
+export function FieldErrorMessage({ message, className = "" }: { message: string; className?: string }) {
+  return (
+    <motion.p
+      initial={{ opacity: 0, y: -4 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -4 }}
+      role="alert"
+      className={`mt-1.5 text-[11px] font-semibold leading-none text-destructive flex items-center gap-1.5 ${className}`}
+    >
+      <span aria-hidden className="inline-block w-1.5 h-1.5 rounded-full bg-destructive shrink-0" />
+      <AlertCircle aria-hidden className="w-3 h-3 shrink-0" strokeWidth={2.5} />
+      <span className="leading-none">{message}</span>
+    </motion.p>
   );
 }
 
