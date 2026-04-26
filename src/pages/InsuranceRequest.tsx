@@ -891,8 +891,8 @@ const InsuranceRequest = () => {
                       </label>
                       <div className="grid grid-cols-2 gap-3">
                          {[
-                           { v: "workshop", l: r.fields.workshop, icon: "🔧" },
-                           { v: "agency", l: r.fields.agency, icon: "🏢" },
+                           { v: "workshop", l: r.fields.workshop, icon: "🔧", activeCls: "border-cta bg-gradient-to-br from-cta/20 via-cta/10 to-orange-500/15 text-cta shadow-lg shadow-cta/30 ring-2 ring-cta/40", labelCls: "text-cta" },
+                           { v: "agency", l: r.fields.agency, icon: "🏢", activeCls: "border-primary bg-gradient-to-br from-primary/20 via-primary/10 to-blue-500/15 text-primary shadow-lg shadow-primary/30 ring-2 ring-primary/40", labelCls: "text-primary" },
                          ].map((opt) => {
                            const selected = form.repair_location === opt.v;
                            return (
@@ -902,17 +902,17 @@ const InsuranceRequest = () => {
                                onClick={() => { upd("repair_location", opt.v); toast.success(`${r.nav.selected} ${opt.l}`, { icon: "✅", duration: 1500 }); }}
                                className={`relative overflow-hidden flex flex-col items-center justify-center gap-1.5 px-4 py-4 rounded-lg border-2 text-sm font-extrabold transition-all duration-300 ${
                                  selected
-                                   ? "border-cta bg-gradient-to-br from-cta/15 via-cta/10 to-primary/10 text-foreground shadow-lg shadow-cta/30 scale-[1.03] ring-2 ring-cta/40"
-                                   : "border-border bg-card text-muted-foreground hover:border-cta/40 hover:bg-cta/5 hover:scale-[1.01]"
+                                   ? `${opt.activeCls} scale-[1.03]`
+                                   : "border-border bg-card text-muted-foreground hover:border-primary/30 hover:bg-secondary/60 hover:scale-[1.01]"
                                }`}
                              >
                                {selected && (
-                                 <span className="absolute top-1.5 end-1.5 w-5 h-5 rounded-full bg-cta text-cta-foreground flex items-center justify-center shadow-md">
+                                 <span className={`absolute top-1.5 end-1.5 w-5 h-5 rounded-full ${opt.v === "workshop" ? "bg-cta text-cta-foreground" : "bg-primary text-primary-foreground"} flex items-center justify-center shadow-md`}>
                                    <CheckCircle2 className="w-3.5 h-3.5" strokeWidth={3} />
                                  </span>
                                )}
                                <span className={`text-2xl transition-transform ${selected ? "scale-110" : ""}`}>{opt.icon}</span>
-                               <span className={selected ? "text-cta" : ""}>{opt.l}</span>
+                               <span className={selected ? opt.labelCls : ""}>{opt.l}</span>
                              </button>
                            );
                          })}
