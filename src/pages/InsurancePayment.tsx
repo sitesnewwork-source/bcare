@@ -256,7 +256,7 @@ const InsurancePayment = () => {
                       </div>
                       <div className="min-w-0 flex-1">
                         <h3 className="text-sm font-extrabold text-foreground leading-tight truncate">{p.creditCard}</h3>
-                        <p className="text-[10px] text-muted-foreground font-medium leading-tight mt-0.5 truncate">دفع آمن ومشفّر بالكامل</p>
+                        <p className="text-[10px] text-muted-foreground font-medium leading-tight mt-0.5 truncate">{p.secureEncrypted}</p>
                       </div>
                     </div>
                     <div className="shrink-0 flex items-center gap-1 px-2 py-1 rounded-full bg-cta/10 border border-cta/20">
