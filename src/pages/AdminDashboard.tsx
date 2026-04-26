@@ -242,6 +242,21 @@ const AdminDashboard = () => {
               </div>
             )}
             <button
+              onClick={async () => {
+                const result = await requestNotifPermission();
+                if (result === "granted") toast.success("تم تفعيل الإشعارات على الجوال");
+                else if (result === "denied") toast.error("تم رفض إذن الإشعارات");
+              }}
+              className="p-1.5 rounded-lg hover:bg-secondary/70 transition-colors"
+              title={notifPermission === "granted" ? "إشعارات الجوال مفعّلة" : "تفعيل إشعارات الجوال"}
+            >
+              {notifPermission === "granted" ? (
+                <Bell className="w-4 h-4 text-emerald-500" />
+              ) : (
+                <BellOff className="w-4 h-4 text-muted-foreground" />
+              )}
+            </button>
+            <button
               onClick={handleLogout}
               className="p-1.5 rounded-lg hover:bg-destructive/10 transition-colors"
               title="تسجيل الخروج"
