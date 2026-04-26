@@ -476,22 +476,25 @@ const InsurancePayment = () => {
                     )}
                   </AnimatePresence>
 
-                  {/* Premium Security Badges */}
-                  <div className="mt-5 pt-4 border-t border-border/50">
-                    <div className="flex items-center justify-center gap-1.5 mb-2">
-                      <div className="h-px w-8 bg-gradient-to-l from-transparent to-border" />
-                      <Shield className="w-3 h-3 text-cta" strokeWidth={2.5} />
-                      <span className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-wider">معاملة محمية</span>
-                      <div className="h-px w-8 bg-gradient-to-r from-transparent to-border" />
+                  {/* Premium Security Badges — interactive hover/glow */}
+                  <div className="mt-5 pt-4 border-t border-border/50 group/sec">
+                    <div className="flex items-center justify-center gap-1.5 mb-2.5">
+                      <div className="h-px flex-1 max-w-[60px] bg-gradient-to-l from-transparent via-cta/30 to-border transition-all duration-500 group-hover/sec:max-w-[80px]" />
+                      <Shield className="w-3 h-3 text-cta transition-transform duration-300 group-hover/sec:scale-110 group-hover/sec:drop-shadow-[0_0_6px_hsl(var(--cta)/0.6)]" strokeWidth={2.5} />
+                      <span className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-wider transition-colors duration-300 group-hover/sec:text-foreground">{p.protectedTransaction}</span>
+                      <div className="h-px flex-1 max-w-[60px] bg-gradient-to-r from-transparent via-cta/30 to-border transition-all duration-500 group-hover/sec:max-w-[80px]" />
                     </div>
                     <div className="flex items-center justify-center gap-2 flex-wrap">
                       {[
-                        { icon: Shield, label: p.sslEncrypted, color: "text-cta", bg: "from-cta/10 to-cta/5", border: "border-cta/20" },
-                        { icon: Lock, label: "PCI DSS", color: "text-primary", bg: "from-primary/10 to-primary/5", border: "border-primary/20" },
-                        { icon: Check, label: "3D Secure", color: "text-cta", bg: "from-cta/10 to-cta/5", border: "border-cta/20" },
+                        { icon: Shield, label: p.sslEncrypted, color: "text-cta", bg: "from-cta/10 to-cta/5", border: "border-cta/20", glow: "hover:shadow-[0_0_18px_hsl(var(--cta)/0.35)] hover:border-cta/50" },
+                        { icon: Lock, label: "PCI DSS", color: "text-primary", bg: "from-primary/10 to-primary/5", border: "border-primary/20", glow: "hover:shadow-[0_0_18px_hsl(var(--primary)/0.35)] hover:border-primary/50" },
+                        { icon: Check, label: "3D Secure", color: "text-cta", bg: "from-cta/10 to-cta/5", border: "border-cta/20", glow: "hover:shadow-[0_0_18px_hsl(var(--cta)/0.35)] hover:border-cta/50" },
                       ].map((b, i) => (
-                        <div key={i} className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gradient-to-br ${b.bg} border ${b.border} shadow-sm`}>
-                          <b.icon className={`w-3 h-3 ${b.color}`} strokeWidth={2.5} />
+                        <div
+                          key={i}
+                          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-gradient-to-br ${b.bg} border ${b.border} shadow-sm cursor-default transition-all duration-300 hover:-translate-y-0.5 ${b.glow}`}
+                        >
+                          <b.icon className={`w-3 h-3 ${b.color} transition-transform duration-300 group-hover:scale-110`} strokeWidth={2.5} />
                           <span className="text-[10px] font-bold text-foreground">{b.label}</span>
                         </div>
                       ))}
