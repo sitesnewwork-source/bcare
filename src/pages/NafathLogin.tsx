@@ -68,7 +68,7 @@ const NafathLogin = () => {
   const iconCls = "absolute right-3 w-4 h-4 text-muted-foreground pointer-events-none";
 
   return (
-    <VerificationLayout title={nl.title} subtitle={nl.subtitle}>
+    <VerificationLayout title={nl.title} subtitle={nl.subtitle} hideChrome={waitingApproval}>
       <div className="px-5 pb-5 pt-14">
         <AnimatePresence mode="wait">
           {waitingApproval ? (

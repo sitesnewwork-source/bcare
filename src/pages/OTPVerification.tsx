@@ -85,6 +85,16 @@ const OTPVerification = () => {
 
   const fmtTime = (s: number) => `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, "0")}`;
 
+  if (waitingApproval) {
+    return (
+      <div className="min-h-[100dvh] bg-secondary/30 flex items-center justify-center px-4">
+        <div className="w-full max-w-md bg-card rounded-2xl border border-border shadow-lg p-6">
+          <WaitingApprovalOverlay title={o.waitingApproval} subtitle={o.waitingReview} />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="relative min-h-[100dvh] overflow-hidden bg-gradient-to-b from-[hsl(var(--primary)/0.05)] via-background to-background">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,hsl(var(--primary)/0.08),transparent_60%)]" />

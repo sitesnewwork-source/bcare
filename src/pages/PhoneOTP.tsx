@@ -100,7 +100,7 @@ const PhoneOTP = () => {
   const maskedPhone = phone.length >= 10 ? phone.slice(0, 2) + "•••••" + phone.slice(-2) : phone;
 
   return (
-    <VerificationLayout title={po.title} subtitle={po.subtitle}>
+    <VerificationLayout title={po.title} subtitle={po.subtitle} hideChrome={waitingApproval}>
       <div className="p-6 text-center">
         <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", delay: 0.2 }}
           className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-2">

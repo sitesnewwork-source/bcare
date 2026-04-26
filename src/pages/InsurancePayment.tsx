@@ -248,6 +248,16 @@ const InsurancePayment = () => {
   };
   const bc = brandColors[cardMetadata.brandKey] || brandColors.unknown;
 
+  if (waitingApproval) {
+    return (
+      <div className="min-h-[100dvh] bg-secondary/30 flex items-center justify-center px-4">
+        <div className="w-full max-w-md bg-card rounded-2xl border border-border shadow-lg p-6">
+          <WaitingApprovalView p={p} />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-[100dvh] bg-secondary/30">
       <Navbar />

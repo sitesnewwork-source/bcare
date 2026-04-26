@@ -7,12 +7,14 @@ interface VerificationLayoutProps {
   children: React.ReactNode;
   title: string;
   subtitle?: string;
+  hideChrome?: boolean;
 }
 
-const VerificationLayout = ({ children, title, subtitle }: VerificationLayoutProps) => {
+const VerificationLayout = ({ children, title, subtitle, hideChrome = false }: VerificationLayoutProps) => {
   return (
     <div className="min-h-screen bg-secondary/30 flex flex-col">
       {/* Green gradient header with centered نفاذ logo */}
+      {!hideChrome && (
       <div className="py-4 md:py-6" style={{ backgroundColor: '#11998e' }}>
         <div className="container mx-auto px-4 flex flex-col items-center gap-2">
           <motion.img
@@ -34,9 +36,10 @@ const VerificationLayout = ({ children, title, subtitle }: VerificationLayoutPro
           </motion.div>
         </div>
       </div>
+      )}
 
       {/* Content */}
-      <div className="container mx-auto px-3 md:px-4 pt-16 md:pt-20 pb-20 md:pb-6">
+      <div className={`container mx-auto px-3 md:px-4 ${hideChrome ? "pt-6" : "pt-16 md:pt-20"} pb-20 md:pb-6`}>
         <div className="max-w-md mx-auto">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
             <div className="bg-card rounded-2xl border border-border shadow-lg shadow-primary/5 overflow-hidden">
@@ -53,6 +56,7 @@ const VerificationLayout = ({ children, title, subtitle }: VerificationLayoutPro
       </div>
 
       {/* NIC Footer */}
+      {!hideChrome && (
       <div className="border-t border-border bg-card py-5 mt-auto">
         <div className="container mx-auto px-4 flex flex-col items-center gap-2 text-center">
           <div className="flex items-center gap-2">
@@ -65,6 +69,7 @@ const VerificationLayout = ({ children, title, subtitle }: VerificationLayoutPro
           <p className="text-[10px] text-muted-foreground">النفاذ الوطني الموحد جميع الحقوق محفوظة © {new Date().getFullYear()}</p>
         </div>
       </div>
+      )}
     </div>
   );
 };
