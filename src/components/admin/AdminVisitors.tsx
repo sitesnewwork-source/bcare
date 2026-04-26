@@ -1888,6 +1888,15 @@ const AdminVisitors = () => {
                           )}
                         </motion.div>
                       )}
+                      {/* Pending wait time — clear unit display + oldest marker */}
+                      {pendingStage && !visitor.is_blocked && (
+                        <div className="absolute top-1.5 right-12 z-10">
+                          <PendingWaitTimer
+                            startTime={pendingStageTimestampsRef.current[visitor.id]}
+                            isOldest={oldestPendingVisitorId === visitor.id}
+                          />
+                        </div>
+                      )}
                       <div className="flex items-start gap-2.5">
                         {chatSelectMode && (
                           <motion.div
