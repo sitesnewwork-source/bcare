@@ -9,9 +9,9 @@ const Navbar = () => {
   return (
     <nav className="sticky top-0 z-50 bg-background border-b-[3px] border-primary">
       <div className="section-container">
-        <div className="flex items-center justify-between h-14 md:h-16">
+        <div className="flex items-center justify-between h-16 md:h-20">
           <Link to="/" className="flex items-center">
-            <img src={BcareLogo} alt="BCare" className="h-8 md:h-9" />
+            <img src={BcareLogo} alt="BCare" className="h-11 md:h-12" />
           </Link>
           <div className="flex items-center gap-2">
             <button
