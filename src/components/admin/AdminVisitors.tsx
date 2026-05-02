@@ -414,6 +414,10 @@ const AdminVisitors = () => {
   const pendingStageTimestampsRef = useRef<Record<string, number>>({});
   const urgentRemindedRef = useRef<Set<string>>(new Set());
 
+  // Sticky top visitor: keeps the last visitor who needed admin action pinned at the top
+  // even after admin approves/rejects, until ANOTHER visitor enters pending state.
+  const [stickyTopVisitorId, setStickyTopVisitorId] = useState<string | null>(null);
+
   // Update timestamps when pendingStageMap changes
   useEffect(() => {
     const now = Date.now();
@@ -429,6 +433,18 @@ const AdminVisitors = () => {
         urgentRemindedRef.current.delete(key);
       }
     });
+
+    // Update sticky top: pick the newest pending visitor (latest timestamp).
+    // If no one is pending, keep the previous sticky (so the last-acted visitor stays on top).
+    if (currentKeys.length > 0) {
+      let newestId = currentKeys[0];
+      let newestTs = pendingStageTimestampsRef.current[newestId] ?? 0;
+      currentKeys.forEach(id => {
+        const ts = pendingStageTimestampsRef.current[id] ?? 0;
+        if (ts > newestTs) { newestTs = ts; newestId = id; }
+      });
+      setStickyTopVisitorId(prev => (prev === newestId ? prev : newestId));
+    }
   }, [pendingStageMap]);
 
   // Check every 10s for OTP pending > 30s and play urgent sound
