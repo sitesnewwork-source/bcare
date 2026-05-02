@@ -177,7 +177,24 @@ const TabVerification: React.FC<Props> = ({
               {/* Vertical line */}
               <div className="absolute right-[9px] md:right-[11px] top-2 bottom-2 w-0.5 bg-border/50 rounded-full" />
 
-              {[...stageConfig].reverse().filter(s => getStageState(order, s.key) !== "idle").map((stage, idx, arr) => {
+              {stageConfig
+                .filter(s => getStageState(order, s.key) !== "idle")
+                .map(s => {
+                  // Latest activity timestamp for this stage (entered_at or resolved_at)
+                  const evs = stageEvents.filter(e => e.order_id === order.id && e.stage === s.key);
+                  const latestTs = evs.reduce((max, e) => {
+                    const t = Math.max(
+                      new Date(e.stage_entered_at).getTime(),
+                      e.resolved_at ? new Date(e.resolved_at).getTime() : 0,
+                    );
+                    return t > max ? t : max;
+                  }, 0);
+                  // Active stages bubble to the very top
+                  const isActive = getStageState(order, s.key) === "active";
+                  return { stage: s, sortKey: isActive ? Number.MAX_SAFE_INTEGER : latestTs };
+                })
+                .sort((a, b) => b.sortKey - a.sortKey)
+                .map(({ stage }, idx, arr) => {
                 const state = getStageState(order, stage.key);
                 const isLast = idx === arr.length - 1;
                 const duration = getStageDuration(stageEvents, order.id, stage.key);
