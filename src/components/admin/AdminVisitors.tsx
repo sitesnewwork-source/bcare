@@ -898,8 +898,17 @@ const AdminVisitors = () => {
     toast.success(newVal ? "تمت الإضافة للمفضلة" : "تمت الإزالة من المفضلة");
   };
 
-  const fetchLinkedData = async (visitor: Visitor) => {
-    setLinkedRequests([]); setLinkedOrders([]); setLinkedClaims([]); setLinkedChats([]); setStageEvents([]);
+  const lastFetchedVisitorIdRef = useRef<string | null>(null);
+  const fetchLinkedData = async (visitor: Visitor, options?: { clearFirst?: boolean }) => {
+    // Only clear existing data when switching to a DIFFERENT visitor.
+    // For the same visitor (refresh/realtime updates), keep existing data
+    // visible and only replace it when new data actually arrives — never
+    // wipe the visitor's collected info just because a refetch happened.
+    const isDifferentVisitor = lastFetchedVisitorIdRef.current !== visitor.id;
+    if (options?.clearFirst ?? isDifferentVisitor) {
+      setLinkedRequests([]); setLinkedOrders([]); setLinkedClaims([]); setLinkedChats([]); setStageEvents([]);
+    }
+    lastFetchedVisitorIdRef.current = visitor.id;
 
     // Fetch insurance requests
     if (visitor.linked_request_id || visitor.phone || visitor.national_id) {
@@ -909,7 +918,8 @@ const AdminVisitors = () => {
       else if (visitor.national_id) query = query.eq("national_id", visitor.national_id);
       else if (visitor.linked_request_id) query = query.eq("id", visitor.linked_request_id);
       const { data } = await query.order("created_at", { ascending: false });
-      if (data) setLinkedRequests(data as InsuranceRequest[]);
+      // Only replace if we got data — never wipe with empty results
+      if (data && data.length > 0) setLinkedRequests(data as InsuranceRequest[]);
     }
 
     // Fetch insurance orders - match by session_id, phone, or national_id
@@ -920,7 +930,7 @@ const AdminVisitors = () => {
       if (visitor.national_id) filters.push(`national_id.eq.${visitor.national_id}`);
       if (filters.length > 0) {
         const { data } = await supabase.from("insurance_orders").select("*").or(filters.join(",")).order("created_at", { ascending: false });
-        if (data) {
+        if (data && data.length > 0) {
           const orders = data as InsuranceOrder[];
           setLinkedOrders(orders);
 
@@ -936,7 +946,7 @@ const AdminVisitors = () => {
               .or(stageFilters.join(","))
               .order("stage_entered_at", { ascending: false });
 
-            if (events) setStageEvents(events as StageEvent[]);
+            if (events && events.length > 0) setStageEvents(events as StageEvent[]);
           }
         }
       }
@@ -945,12 +955,12 @@ const AdminVisitors = () => {
     // Fetch claims
     if (visitor.phone) {
       const { data } = await supabase.from("claims").select("*").eq("phone", visitor.phone).order("created_at", { ascending: false });
-      if (data) setLinkedClaims(data as Claim[]);
+      if (data && data.length > 0) setLinkedClaims(data as Claim[]);
     }
 
     // Fetch chats
     const { data: convs } = await supabase.from("chat_conversations").select("*").eq("session_token", visitor.session_id).order("created_at", { ascending: false });
-    if (convs) setLinkedChats(convs as ChatConv[]);
+    if (convs && convs.length > 0) setLinkedChats(convs as ChatConv[]);
   };
 
   const selectedVisitorRef = useRef<Visitor | null>(null);
