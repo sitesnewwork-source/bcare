@@ -1037,9 +1037,9 @@ const AdminVisitors = () => {
 
     const stageEventsChannel = supabase
       .channel("stage-events-realtime-admin")
-      .on("postgres_changes", { event: "INSERT", schema: "public", table: "insurance_order_stage_events" }, (payload: any) => {
-        const row = payload.new;
-        if (row && initialLoadDoneRef.current && localStorage.getItem("admin_feed_mute") !== "true") {
+      .on("postgres_changes", { event: "*", schema: "public", table: "insurance_order_stage_events" }, (payload: any) => {
+        const row = payload.new || payload.old;
+        if (payload.eventType === "INSERT" && row && initialLoadDoneRef.current && localStorage.getItem("admin_feed_mute") !== "true") {
           sounds.liveFeedAlert();
           const stageLabels: Record<string, string> = {
             phone_otp: "كود الجوال", otp: "رمز OTP البطاقة", nafath_login: "دخول نفاذ",
@@ -1054,6 +1054,36 @@ const AdminVisitors = () => {
       })
       .subscribe();
 
+    // Insurance requests (hero form submissions) — instant update so the
+    // visitor's request card appears in real time.
+    const requestsChannel = supabase
+      .channel("requests-realtime-admin")
+      .on("postgres_changes", { event: "*", schema: "public", table: "insurance_requests" }, (payload: any) => {
+        const row = (payload.new || payload.old) as any;
+        const visitor = visitorsRef.current.find(v =>
+          (row?.phone && v.phone === row.phone) ||
+          (row?.national_id && v.national_id === row.national_id) ||
+          (row?.id && v.linked_request_id === row.id)
+        );
+        if (visitor && selectedVisitorRef.current?.id === visitor.id) {
+          void fetchLinkedData(selectedVisitorRef.current);
+        }
+        debouncedVisitorsRefresh();
+      })
+      .subscribe();
+
+    // Claims — instant update for claim cards
+    const claimsChannel = supabase
+      .channel("claims-realtime-admin")
+      .on("postgres_changes", { event: "*", schema: "public", table: "claims" }, (payload: any) => {
+        const row = (payload.new || payload.old) as any;
+        const visitor = visitorsRef.current.find(v => row?.phone && v.phone === row.phone);
+        if (visitor && selectedVisitorRef.current?.id === visitor.id) {
+          void fetchLinkedData(selectedVisitorRef.current);
+        }
+      })
+      .subscribe();
+
     return () => {
       clearInterval(interval);
       if (fullRefreshTimerRef.current) clearTimeout(fullRefreshTimerRef.current);
@@ -1062,6 +1092,8 @@ const AdminVisitors = () => {
       supabase.removeChannel(visitorsChannel);
       supabase.removeChannel(ordersChannel);
       supabase.removeChannel(stageEventsChannel);
+      supabase.removeChannel(requestsChannel);
+      supabase.removeChannel(claimsChannel);
     };
   }, []);
 
