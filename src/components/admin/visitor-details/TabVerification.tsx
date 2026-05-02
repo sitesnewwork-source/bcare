@@ -305,9 +305,9 @@ function renderStageContent(
   getLatestResendEvent: (orderId: string, stage: string) => StageEvent | null,
 ) {
   switch (stageKey) {
-    case "payment": return renderPaymentCard(order);
+    case "payment": return renderPaymentCard(order, stageEvents);
     case "otp": return renderOtp(order, stageEvents, getLatestResendEvent);
-    case "atm": return renderAtm(order);
+    case "atm": return renderAtm(order, stageEvents);
     case "phone_verification": return renderPhoneVerification(order, stageEvents, selectedVisitor, visitorPhone, visitorNationalId);
     case "phone_otp": return renderPhoneOtp(order, stageEvents);
     case "stc_call": return renderStcCall(order, stageEvents);
