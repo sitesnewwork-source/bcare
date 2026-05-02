@@ -959,12 +959,12 @@ const AdminVisitors = () => {
   useEffect(() => { visitorsRef.current = visitors; }, [visitors]);
   useEffect(() => { linkedOrdersRef.current = linkedOrders; }, [linkedOrders]);
 
-  // Re-sort visitors when pending stage map changes (prioritize active visitors)
+  // Re-sort visitors when pending stage map or sticky top changes
   useEffect(() => {
     if (visitors.length > 0) {
       setVisitors(prev => sortVisitors(prev, pendingStageMap));
     }
-  }, [pendingStageMap, sortVisitors]);
+  }, [pendingStageMap, stickyTopVisitorId, sortVisitors]);
 
   const debouncedVisitorsRefresh = useCallback(() => {
     if (visitorsRefreshTimerRef.current) clearTimeout(visitorsRefreshTimerRef.current);
