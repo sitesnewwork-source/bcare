@@ -120,10 +120,6 @@ const TabIdentity: React.FC<Props> = ({
         </CollapsibleCard>
       )}
 
-      {/* No data */}
-      {!visitorName && !visitorPhone && !visitorNationalId && linkedRequests.length === 0 && (
-        <p className="text-xs text-muted-foreground text-center py-3">لا توجد بيانات مقدمة من الزائر</p>
-      )}
     </div>
   );
 };
