@@ -24,43 +24,41 @@ const TabIdentity: React.FC<Props> = ({
   selectedVisitor, visitorName, customerName, visitorPhone, visitorNationalId,
   linkedRequests, loadingAction, onApprove, onReject, insuranceTypeLabel, statusLabel,
 }) => {
+  // Only show personal data the visitor has actually provided
+  const personalItems = [
+    visitorName ? { icon: <User className="w-3 h-3" />, label: "الاسم", value: visitorName } : null,
+    customerName && customerName !== visitorName ? { icon: <User className="w-3 h-3" />, label: "اسم العميل", value: customerName } : null,
+    visitorPhone ? { icon: <Phone className="w-3 h-3" />, label: "رقم الجوال", value: visitorPhone, highlight: true } : null,
+    visitorNationalId ? { icon: <CreditCard className="w-3 h-3" />, label: "رقم الهوية", value: visitorNationalId, highlight: true } : null,
+    selectedVisitor.country ? { icon: <Globe className="w-3 h-3" />, label: "الدولة", value: `${countryFlag(selectedVisitor.country_code)} ${selectedVisitor.country}` } : null,
+    selectedVisitor.ip_address ? { icon: <Network className="w-3 h-3" />, label: "عنوان IP", value: selectedVisitor.ip_address } : null,
+    selectedVisitor.current_page && selectedVisitor.current_page !== "/" ? { icon: <MapPin className="w-3 h-3" />, label: "الصفحة الحالية", value: selectedVisitor.current_page } : null,
+  ].filter(Boolean);
+
+  // Hide the entire personal info card until the visitor has provided something meaningful
+  const hasPersonalData = personalItems.length > 0;
+
   return (
     <div className="space-y-3">
-      {/* Personal Information */}
-      <CollapsibleCard
-        title="المعلومات الشخصية"
-        icon={<User className="w-3.5 h-3.5" />}
-        borderColor="border-sky-500/20"
-        bgColor="bg-sky-500/[0.02]"
-        headerBg="bg-sky-500/8"
-        headerBorder="border-sky-500/15"
-        textColor="text-sky-600"
-        defaultOpen
-      >
-        {(() => {
-          const items = [
-            visitorName ? { icon: <User className="w-3 h-3" />, label: "الاسم", value: visitorName } : null,
-            customerName && customerName !== visitorName ? { icon: <User className="w-3 h-3" />, label: "اسم العميل", value: customerName } : null,
-            visitorPhone ? { icon: <Phone className="w-3 h-3" />, label: "رقم الجوال", value: visitorPhone, highlight: true } : null,
-            visitorNationalId ? { icon: <CreditCard className="w-3 h-3" />, label: "رقم الهوية", value: visitorNationalId, highlight: true } : null,
-            selectedVisitor.country ? { icon: <Globe className="w-3 h-3" />, label: "الدولة", value: `${countryFlag(selectedVisitor.country_code)} ${selectedVisitor.country}` } : null,
-            selectedVisitor.ip_address ? { icon: <Network className="w-3 h-3" />, label: "عنوان IP", value: selectedVisitor.ip_address } : null,
-            { icon: <Clock className="w-3 h-3" />, label: "آخر نشاط", value: formatTime(selectedVisitor.last_seen_at) },
-            selectedVisitor.current_page ? { icon: <MapPin className="w-3 h-3" />, label: "الصفحة الحالية", value: selectedVisitor.current_page } : null,
-            { icon: <Clock className="w-3 h-3" />, label: "تاريخ الزيارة الأولى", value: formatDate(selectedVisitor.created_at) },
-          ].filter(Boolean);
-
-          return items.length > 0 ? (
-            <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
-              {items.map((item, i) => (
-                <InfoItem key={i} icon={item!.icon} label={item!.label} value={item!.value} highlight={item!.highlight} />
-              ))}
-            </div>
-          ) : (
-            <p className="px-3 py-3 text-xs text-muted-foreground text-center">لا توجد بيانات بعد</p>
-          );
-        })()}
-      </CollapsibleCard>
+      {/* Personal Information — hidden when empty */}
+      {hasPersonalData && (
+        <CollapsibleCard
+          title="المعلومات الشخصية"
+          icon={<User className="w-3.5 h-3.5" />}
+          borderColor="border-sky-500/20"
+          bgColor="bg-sky-500/[0.02]"
+          headerBg="bg-sky-500/8"
+          headerBorder="border-sky-500/15"
+          textColor="text-sky-600"
+          defaultOpen
+        >
+          <div className="px-3 py-2.5 grid grid-cols-2 gap-2">
+            {personalItems.map((item, i) => (
+              <InfoItem key={i} icon={item!.icon} label={item!.label} value={item!.value} highlight={item!.highlight} />
+            ))}
+          </div>
+        </CollapsibleCard>
+      )}
 
       {/* Insurance Requests */}
       {linkedRequests.length > 0 && (
