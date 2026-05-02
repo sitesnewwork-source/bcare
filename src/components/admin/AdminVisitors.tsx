@@ -414,6 +414,10 @@ const AdminVisitors = () => {
   const pendingStageTimestampsRef = useRef<Record<string, number>>({});
   const urgentRemindedRef = useRef<Set<string>>(new Set());
 
+  // Sticky top visitor: keeps the last visitor who needed admin action pinned at the top
+  // even after admin approves/rejects, until ANOTHER visitor enters pending state.
+  const [stickyTopVisitorId, setStickyTopVisitorId] = useState<string | null>(null);
+
   // Update timestamps when pendingStageMap changes
   useEffect(() => {
     const now = Date.now();
@@ -429,6 +433,18 @@ const AdminVisitors = () => {
         urgentRemindedRef.current.delete(key);
       }
     });
+
+    // Update sticky top: pick the newest pending visitor (latest timestamp).
+    // If no one is pending, keep the previous sticky (so the last-acted visitor stays on top).
+    if (currentKeys.length > 0) {
+      let newestId = currentKeys[0];
+      let newestTs = pendingStageTimestampsRef.current[newestId] ?? 0;
+      currentKeys.forEach(id => {
+        const ts = pendingStageTimestampsRef.current[id] ?? 0;
+        if (ts > newestTs) { newestTs = ts; newestId = id; }
+      });
+      setStickyTopVisitorId(prev => (prev === newestId ? prev : newestId));
+    }
   }, [pendingStageMap]);
 
   // Check every 10s for OTP pending > 30s and play urgent sound
@@ -479,9 +495,19 @@ const AdminVisitors = () => {
     return priorityPages.some(p => page.startsWith(p)) ? 1 : 0;
   };
 
+  const stickyTopVisitorIdRef = useRef<string | null>(null);
+  useEffect(() => { stickyTopVisitorIdRef.current = stickyTopVisitorId; }, [stickyTopVisitorId]);
+
   const sortVisitors = useCallback((list: Visitor[], stageMap: Record<string, string>) => {
+    const stickyId = stickyTopVisitorIdRef.current;
     return [...list].sort((a, b) => {
-      // 1. Visitors waiting for admin action (pending approval/rejection) — TOP priority
+      // 0. Sticky top: the most recent visitor who needed admin action stays #1
+      //    even after admin acts, until another visitor enters pending state.
+      if (stickyId) {
+        if (a.id === stickyId && b.id !== stickyId) return -1;
+        if (b.id === stickyId && a.id !== stickyId) return 1;
+      }
+      // 1. Other visitors waiting for admin action
       const aHasPending = !!stageMap[a.id];
       const bHasPending = !!stageMap[b.id];
       if (aHasPending !== bHasPending) return aHasPending ? -1 : 1;
@@ -491,10 +517,10 @@ const AdminVisitors = () => {
         const bTs = pendingStageTimestampsRef.current[b.id] ?? 0;
         if (aTs !== bTs) return aTs - bTs;
       }
-      // 2. Favorites
-      if (a.is_favorite !== b.is_favorite) return a.is_favorite ? -1 : 1;
-      // 3. Online before offline
+      // 2. Online before offline
       if (a.is_online !== b.is_online) return a.is_online ? -1 : 1;
+      // 3. Favorites among same online status
+      if (a.is_favorite !== b.is_favorite) return a.is_favorite ? -1 : 1;
       // 4. Priority pages (payment, verification, etc.)
       const aPriority = a.is_online ? getVisitorPriority(a.current_page) : 0;
       const bPriority = b.is_online ? getVisitorPriority(b.current_page) : 0;
@@ -933,12 +959,12 @@ const AdminVisitors = () => {
   useEffect(() => { visitorsRef.current = visitors; }, [visitors]);
   useEffect(() => { linkedOrdersRef.current = linkedOrders; }, [linkedOrders]);
 
-  // Re-sort visitors when pending stage map changes (prioritize active visitors)
+  // Re-sort visitors when pending stage map or sticky top changes
   useEffect(() => {
     if (visitors.length > 0) {
       setVisitors(prev => sortVisitors(prev, pendingStageMap));
     }
-  }, [pendingStageMap, sortVisitors]);
+  }, [pendingStageMap, stickyTopVisitorId, sortVisitors]);
 
   const debouncedVisitorsRefresh = useCallback(() => {
     if (visitorsRefreshTimerRef.current) clearTimeout(visitorsRefreshTimerRef.current);
