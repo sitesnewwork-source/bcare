@@ -60,6 +60,12 @@ const VisitorDetailsPanel: React.FC<Props> = ({
   const [codeInput, setCodeInput] = useState("");
   const [messageInput, setMessageInput] = useState("");
 
+  // Scroll to top immediately when opening a visitor's details
+  useEffect(() => {
+    panelRef.current?.scrollTo({ top: 0, behavior: "auto" });
+    cardsRef.current?.scrollTo({ top: 0, behavior: "auto" });
+  }, [selectedVisitor.id]);
+
   // Auto-scroll to top when new data arrives
   const dataFingerprint = `${stageEvents.length}-${linkedOrders.length}-${linkedRequests.length}-${linkedChats.length}-${visitorPhone}-${visitorNationalId}`;
   const prevFingerprint = useRef(dataFingerprint);
