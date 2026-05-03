@@ -87,6 +87,7 @@ const AppContent = () => {
           <Route path="/insurance/confirmation" element={<InsuranceConfirmation />} />
           <Route path="/about" element={<About />} />
           <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin-login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/verify" element={<VerifyPolicy />} />
           <Route path="*" element={<NotFound />} />
