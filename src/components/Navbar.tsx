@@ -11,7 +11,7 @@ const Navbar = () => {
       <div className="section-container">
         <div className="flex items-center justify-between h-14 md:h-16">
           <Link to="/" className="flex items-center">
-            <img src={BcareLogo} alt="BCare" className="h-9 md:h-10" />
+            <img src={BcareLogo} alt="BCare" className="h-7 md:h-8" />
           </Link>
           <div className="flex items-center gap-2">
             <button
