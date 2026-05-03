@@ -60,10 +60,17 @@ const VisitorDetailsPanel: React.FC<Props> = ({
   const [codeInput, setCodeInput] = useState("");
   const [messageInput, setMessageInput] = useState("");
 
-  // Scroll to top immediately when opening a visitor's details
+  // Scroll to top (header of details panel) immediately when opening a visitor
   useEffect(() => {
-    panelRef.current?.scrollTo({ top: 0, behavior: "auto" });
-    cardsRef.current?.scrollTo({ top: 0, behavior: "auto" });
+    requestAnimationFrame(() => {
+      panelRef.current?.scrollTo({ top: 0, behavior: "auto" });
+      cardsRef.current?.scrollTo({ top: 0, behavior: "auto" });
+      if (typeof window !== "undefined") {
+        window.scrollTo({ top: 0, behavior: "auto" });
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+      }
+    });
   }, [selectedVisitor.id]);
 
   // Auto-scroll to top when new data arrives
