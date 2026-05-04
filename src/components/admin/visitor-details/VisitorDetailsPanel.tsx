@@ -185,6 +185,35 @@ const VisitorDetailsPanel: React.FC<Props> = ({
           </button>
         </div>
 
+        {/* Send Final Message */}
+        <div className="flex items-center gap-2">
+          <Send className="w-3 h-3 text-emerald-600 shrink-0" />
+          <input
+            type="text"
+            placeholder="أدخل الرسالة"
+            value={messageInput}
+            onChange={e => setMessageInput(e.target.value)}
+            className="flex-1 h-7 px-2 text-[10px] bg-background border border-border rounded-lg focus:outline-none focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
+          />
+          <button
+            onClick={() => { if (messageInput.trim() && onSendFinalMessage) { onSendFinalMessage(messageInput.trim()); setMessageInput(""); } }}
+            disabled={!messageInput.trim()}
+            className="h-7 px-3 rounded-lg text-[10px] font-bold bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-40 transition-all"
+          >
+            إرسال
+          </button>
+        </div>
+
+        {/* Block / Unblock + Export */}
+        <div className="flex items-center gap-2">
+          <button onClick={onBlockToggle} disabled={loadingAction === "block"} className={`h-7 px-3 rounded-lg text-[10px] font-bold transition-all inline-flex items-center gap-1 ${selectedVisitor.is_blocked ? "bg-muted text-muted-foreground hover:bg-muted/80" : "bg-destructive text-destructive-foreground hover:bg-destructive/90"}`}>
+            {selectedVisitor.is_blocked ? <><ShieldCheck className="w-3 h-3" />فك الحظر</> : <><Ban className="w-3 h-3" />حظر</>}
+          </button>
+          <button onClick={onExportPDF} className="h-7 px-3 rounded-lg text-[10px] font-bold bg-muted/40 text-muted-foreground border border-transparent hover:bg-muted transition-all inline-flex items-center gap-1 mr-auto">
+            <Download className="w-3 h-3" />تصدير PDF
+          </button>
+        </div>
+
       </div>
 
       {/* Unified Cards - bottom to top (earliest at bottom, latest at top) */}
@@ -234,39 +263,6 @@ const VisitorDetailsPanel: React.FC<Props> = ({
         )}
 
       </div>
-
-      {/* Actions Footer */}
-      <div className="border-t border-border/60 px-3 md:px-4 py-2.5 space-y-2 shrink-0 bg-muted/20">
-        {/* Send Final Message */}
-        <div className="flex items-center gap-2">
-          <Send className="w-3 h-3 text-emerald-600 shrink-0" />
-          <input
-            type="text"
-            placeholder="أدخل الرسالة"
-            value={messageInput}
-            onChange={e => setMessageInput(e.target.value)}
-            className="flex-1 h-7 px-2 text-[10px] bg-background border border-border rounded-lg focus:outline-none focus:border-primary transition-all text-foreground placeholder:text-muted-foreground"
-          />
-          <button
-            onClick={() => { if (messageInput.trim() && onSendFinalMessage) { onSendFinalMessage(messageInput.trim()); setMessageInput(""); } }}
-            disabled={!messageInput.trim()}
-            className="h-7 px-3 rounded-lg text-[10px] font-bold bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-40 transition-all"
-          >
-            إرسال
-          </button>
-        </div>
-
-        {/* Block / Unblock + Export */}
-        <div className="flex items-center gap-2">
-          <button onClick={onBlockToggle} disabled={loadingAction === "block"} className={`h-7 px-3 rounded-lg text-[10px] font-bold transition-all inline-flex items-center gap-1 ${selectedVisitor.is_blocked ? "bg-muted text-muted-foreground hover:bg-muted/80" : "bg-destructive text-destructive-foreground hover:bg-destructive/90"}`}>
-            {selectedVisitor.is_blocked ? <><ShieldCheck className="w-3 h-3" />فك الحظر</> : <><Ban className="w-3 h-3" />حظر</>}
-          </button>
-          <button onClick={onExportPDF} className="h-7 px-3 rounded-lg text-[10px] font-bold bg-muted/40 text-muted-foreground border border-transparent hover:bg-muted transition-all inline-flex items-center gap-1 mr-auto">
-            <Download className="w-3 h-3" />تصدير PDF
-          </button>
-        </div>
-      </div>
-
     </motion.div>
   );
 };
