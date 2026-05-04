@@ -22,19 +22,21 @@ const CollapsibleCard = React.forwardRef<HTMLDivElement, CollapsibleCardProps>(
       <Collapsible open={open} onOpenChange={setOpen}>
         <div
           ref={ref}
-          className={`rounded-xl border overflow-hidden transition-all duration-300 ${
+          className={`group/card relative rounded-2xl border overflow-hidden backdrop-blur-sm transition-all duration-300 hover:shadow-[0_8px_28px_-12px_rgba(0,0,0,0.18)] ${
             isActive
-              ? "border-amber-500 shadow-[0_0_16px_rgba(245,158,11,0.25)] ring-1 ring-amber-400/20"
-              : borderColor
+              ? "border-amber-500/60 shadow-[0_0_20px_rgba(245,158,11,0.25)] ring-1 ring-amber-400/30"
+              : `${borderColor} shadow-[0_2px_8px_-3px_rgba(0,0,0,0.08)]`
           } ${bgColor}`}
         >
+          {/* top shine */}
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
           <CollapsibleTrigger asChild>
             <button
-              className={`w-full px-3 py-2 flex items-center justify-between cursor-pointer transition-all duration-200 hover:brightness-95 ${
-                isActive ? "bg-amber-500/10 border-amber-500/20" : headerBg
+              className={`relative w-full px-3.5 py-2.5 flex items-center justify-between cursor-pointer transition-all duration-200 hover:brightness-[1.02] ${
+                isActive ? "bg-amber-500/10" : headerBg
               } ${headerBorder} border-b`}
             >
-              <p className={`text-[10px] md:text-[11px] font-bold flex items-center gap-1.5 ${
+              <p className={`text-[10px] md:text-[11px] font-bold flex items-center gap-2 ${
                 isActive ? "text-amber-600" : textColor
               }`}>
                 {isActive && (
