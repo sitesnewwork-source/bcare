@@ -61,9 +61,11 @@ const VisitorDetailsPanel: React.FC<Props> = ({
   const [messageInput, setMessageInput] = useState("");
 
   // Scroll to show latest card (top of visual list, which is bottom of scroll due to flex-col-reverse)
+  // With flex-col-reverse, the latest card (last DOM child) renders visually at top.
+  // scrollTop = 0 reveals it.
   const scrollToLatest = () => {
     const el = cardsRef.current;
-    if (el) el.scrollTop = el.scrollHeight;
+    if (el) el.scrollTo({ top: 0, behavior: "auto" });
   };
 
   useEffect(() => {
