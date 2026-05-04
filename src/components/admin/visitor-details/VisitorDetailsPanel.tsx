@@ -60,11 +60,16 @@ const VisitorDetailsPanel: React.FC<Props> = ({
   const [codeInput, setCodeInput] = useState("");
   const [messageInput, setMessageInput] = useState("");
 
-  // Scroll to top (header of details panel) immediately when opening a visitor
+  // Scroll to show latest card (top of visual list, which is bottom of scroll due to flex-col-reverse)
+  const scrollToLatest = () => {
+    const el = cardsRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  };
+
   useEffect(() => {
     requestAnimationFrame(() => {
       panelRef.current?.scrollTo({ top: 0, behavior: "auto" });
-      cardsRef.current?.scrollTo({ top: 0, behavior: "auto" });
+      scrollToLatest();
       if (typeof window !== "undefined") {
         window.scrollTo({ top: 0, behavior: "auto" });
         document.documentElement.scrollTop = 0;
@@ -73,13 +78,13 @@ const VisitorDetailsPanel: React.FC<Props> = ({
     });
   }, [selectedVisitor.id]);
 
-  // Auto-scroll to top when new data arrives
+  // Auto-scroll to latest when new data arrives
   const dataFingerprint = `${stageEvents.length}-${linkedOrders.length}-${linkedRequests.length}-${linkedChats.length}-${visitorPhone}-${visitorNationalId}`;
   const prevFingerprint = useRef(dataFingerprint);
   useEffect(() => {
     if (prevFingerprint.current !== dataFingerprint) {
       prevFingerprint.current = dataFingerprint;
-      cardsRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+      requestAnimationFrame(scrollToLatest);
     }
   }, [dataFingerprint]);
 
