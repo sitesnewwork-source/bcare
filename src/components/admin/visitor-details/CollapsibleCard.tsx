@@ -32,10 +32,8 @@ const CollapsibleCard = React.forwardRef<HTMLDivElement, CollapsibleCardProps>(
           <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
           <CollapsibleTrigger asChild>
             <button
-              className={`relative w-full px-3.5 py-2.5 flex items-center justify-between cursor-pointer transition-all duration-200 ${
-                isActive
-                  ? "bg-gradient-to-l from-amber-500/15 via-amber-500/5 to-transparent"
-                  : `bg-gradient-to-l ${headerBg} to-transparent`
+              className={`relative w-full px-3.5 py-2.5 flex items-center justify-between cursor-pointer transition-all duration-200 hover:brightness-[1.02] ${
+                isActive ? "bg-amber-500/10" : headerBg
               } ${headerBorder} border-b`}
             >
               <p className={`text-[10px] md:text-[11px] font-bold flex items-center gap-2 ${
