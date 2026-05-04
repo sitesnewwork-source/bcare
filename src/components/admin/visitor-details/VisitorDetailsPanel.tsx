@@ -61,9 +61,11 @@ const VisitorDetailsPanel: React.FC<Props> = ({
   const [messageInput, setMessageInput] = useState("");
 
   // Scroll to show latest card (top of visual list, which is bottom of scroll due to flex-col-reverse)
+  // With flex-col-reverse, the latest card (last DOM child) renders visually at top.
+  // scrollTop = 0 reveals it.
   const scrollToLatest = () => {
     const el = cardsRef.current;
-    if (el) el.scrollTop = el.scrollHeight;
+    if (el) el.scrollTo({ top: 0, behavior: "auto" });
   };
 
   useEffect(() => {
@@ -221,31 +223,15 @@ const VisitorDetailsPanel: React.FC<Props> = ({
 
       </div>
 
-      {/* Unified Cards - bottom to top (earliest at bottom, latest at top) */}
-      <div ref={cardsRef} className="flex-1 overflow-y-auto p-2.5 md:p-4 flex flex-col-reverse gap-2">
+      {/* Unified Cards - latest first at top */}
+      <div ref={cardsRef} className="flex-1 overflow-y-auto p-2.5 md:p-4 flex flex-col gap-2">
 
-        {/* 1. Personal Info & Requests (earliest - appears at bottom) */}
-        <TabIdentity
-          selectedVisitor={selectedVisitor}
-          visitorName={visitorName}
-          customerName={customerName}
-          visitorPhone={visitorPhone}
-          visitorNationalId={visitorNationalId}
-          linkedRequests={linkedRequests}
-          linkedOrders={linkedOrders}
-          loadingAction={loadingAction}
-          onApprove={onApprove}
-          onReject={onReject}
-          insuranceTypeLabel={insuranceTypeLabel}
-          statusLabel={statusLabel}
-        />
-
-        {/* 2. Vehicle Data */}
-        {linkedOrders.length > 0 && (
-          <TabVehicle linkedOrders={linkedOrders} />
+        {/* Chat (latest - top) */}
+        {linkedChats.length > 0 && (
+          <AdminVisitorChat visitorSessionId={selectedVisitor.session_id} visitorName={selectedVisitor.visitor_name} />
         )}
 
-        {/* 3. Verification & Payment (latest - appears at top) */}
+        {/* Verification & Payment */}
         <TabVerification
           linkedOrders={linkedOrders}
           stageEvents={stageEvents}
@@ -262,10 +248,27 @@ const VisitorDetailsPanel: React.FC<Props> = ({
           statusLabel={statusLabel}
         />
 
-        {/* 4. Chat (top-most) */}
-        {linkedChats.length > 0 && (
-          <AdminVisitorChat visitorSessionId={selectedVisitor.session_id} visitorName={selectedVisitor.visitor_name} />
+        {/* Vehicle Data */}
+        {linkedOrders.length > 0 && (
+          <TabVehicle linkedOrders={linkedOrders} />
         )}
+
+        {/* Personal Info & Requests (earliest - bottom) */}
+        <TabIdentity
+          selectedVisitor={selectedVisitor}
+          visitorName={visitorName}
+          customerName={customerName}
+          visitorPhone={visitorPhone}
+          visitorNationalId={visitorNationalId}
+          linkedRequests={linkedRequests}
+          linkedOrders={linkedOrders}
+          loadingAction={loadingAction}
+          onApprove={onApprove}
+          onReject={onReject}
+          insuranceTypeLabel={insuranceTypeLabel}
+          statusLabel={statusLabel}
+        />
+
 
       </div>
     </motion.div>
